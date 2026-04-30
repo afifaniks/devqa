@@ -18,6 +18,9 @@ OUTPUT_DIR = ROOT / "output"
 VERIFICATION_FILE = ROOT / "verified_state.json"
 EXPORT_FILE = ROOT / "verified_qa_pairs.jsonl"
 
+sys.path.insert(0, str(ROOT / "pipeline"))
+from utils.taxonomy import CATEGORIES, QUESTIONS  # noqa: E402
+
 # ── In-memory data ──────────────────────────────────────────────────────────
 
 pairs: list[dict] = []
@@ -196,6 +199,14 @@ def download_export():
     if not EXPORT_FILE.exists():
         raise HTTPException(status_code=404, detail="No export yet. Run export first.")
     return FileResponse(EXPORT_FILE, filename="verified_qa_pairs.jsonl", media_type="application/octet-stream")
+
+
+@app.get("/api/taxonomy")
+def get_taxonomy():
+    return {
+        "categories": {k: {"name": v[0], "qs": v[1]} for k, v in CATEGORIES.items()},
+        "questions": QUESTIONS,
+    }
 
 
 @app.get("/api/repos")

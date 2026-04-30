@@ -21,6 +21,65 @@
       --radius: 8px;
       --sidebar-w: 360px;
     }
+    html.light {
+      --bg: #f4f6fb;
+      --surface: #ffffff;
+      --surface2: #eef0f6;
+      --border: #d0d5e3;
+      --accent: #3b5bdb;
+      --accent-dim: #c5cff7;
+      --green: #16a34a;
+      --red: #dc2626;
+      --yellow: #d97706;
+      --text: #111827;
+      --text-dim: #4b5563;
+      --text-muted: #9ca3af;
+    }
+
+    /* ── Light mode overrides for hardcoded dark colours ── */
+
+    /* Stat pills */
+    html.light .stat-pill.accepted { background: #dcfce7; color: #15803d; }
+    html.light .stat-pill.rejected { background: #fee2e2; color: #b91c1c; }
+    html.light .stat-pill.pending  { background: #f1f5f9; color: #64748b; }
+
+    /* Confidence badges */
+    html.light .badge.conf-high { background: #dcfce7; color: #15803d; }
+    html.light .badge.conf-mid  { background: #fef3c7; color: #b45309; }
+    html.light .badge.conf-low  { background: #fee2e2; color: #b91c1c; }
+
+    /* Source badges */
+    html.light .badge.source-issue        { background: #dbeafe; color: #1d4ed8; }
+    html.light .badge.source-discussion   { background: #ede9fe; color: #6d28d9; }
+    html.light .badge.source-pull_request { background: #f0f4ff; color: #4338ca; }
+
+    /* Thread label/state badges */
+    html.light .ti-label-badge             { background: #f1f5f9; color: #475569; border-color: #cbd5e1; }
+    html.light .ti-state-open              { background: #dcfce7; color: #15803d; border-color: #86efac; }
+    html.light .ti-state-closed            { background: #fee2e2; color: #b91c1c; border-color: #fca5a5; }
+
+    /* Q / A thread tags */
+    html.light .qa-tag.q-tag { background: #dbeafe; color: #1d4ed8; }
+    html.light .qa-tag.a-tag { background: #dcfce7; color: #15803d; }
+
+    /* Thread item header strip */
+    html.light .ti-header { background: rgba(0,0,0,.025); }
+    html.light .ti-bubble.is-issue-body { background: #f8f9fd; }
+
+    /* Verify panel buttons */
+    html.light button.btn.accept       { background: #dcfce7; color: #15803d; border-color: #86efac; }
+    html.light button.btn.accept:hover { background: #bbf7d0; }
+    html.light button.btn.reject       { background: #fee2e2; color: #b91c1c; border-color: #fca5a5; }
+    html.light button.btn.reject:hover { background: #fecaca; }
+    html.light button.btn.export       { background: #dcfce7; color: #15803d; border-color: #86efac; }
+
+    /* Markdown inline code */
+    html.light .md code { color: #c2410c; background: #fff7ed; border-color: #fed7aa; }
+    html.light .md pre  { background: #f1f3f9; }
+    html.light .md pre code { color: #1e293b; background: none; border: none; }
+
+    /* Tooltip shadow */
+    html.light #tax-tooltip { box-shadow: 0 8px 24px rgba(0,0,0,.12); }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { background: var(--bg); color: var(--text); font-family: 'Inter', system-ui, sans-serif; font-size: 14px; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
@@ -76,7 +135,6 @@
     .pair-title { font-size: 12px; color: var(--text-dim); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .pair-question { font-size: 13px; color: var(--text); margin-top: 3px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
     .pair-repo-tag { font-size: 10px; color: var(--text-muted); margin-top: 3px; }
-
     #sidebar-footer { padding: 8px 12px; border-top: 1px solid var(--border); font-size: 12px; color: var(--text-dim); }
 
     /* ── Detail panel ── */
@@ -92,6 +150,7 @@
     .detail-header h2 { font-size: 16px; font-weight: 600; flex: 1; }
     .badge { padding: 3px 10px; border-radius: 99px; font-size: 12px; font-weight: 500; white-space: nowrap; }
     .badge.source-issue { background: #1e3a5f; color: #60a5fa; }
+    .badge.source-discussion { background: #2d1f4f; color: #c4b5fd; }
     .badge.source-pull_request { background: #1e3655; color: #a78bfa; }
     .badge.cat { background: var(--surface2); color: var(--text-dim); border: 1px solid var(--border); }
     .badge.conf-high { background: #14532d55; color: var(--green); }
@@ -113,13 +172,83 @@
     .card p { line-height: 1.6; color: var(--text); white-space: pre-wrap; word-break: break-word; }
     .card .author-line { font-size: 11px; color: var(--text-muted); margin-top: 8px; display: flex; gap: 8px; }
     .accepted-badge { color: var(--green); }
-
     .reasoning-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; font-size: 13px; color: var(--text-dim); line-height: 1.6; }
 
-    details.thread-details { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
-    details.thread-details summary { padding: 10px 14px; cursor: pointer; font-size: 13px; font-weight: 500; color: var(--text-dim); user-select: none; }
-    details.thread-details summary:hover { background: var(--surface2); }
-    .thread-body { padding: 14px; font-size: 12px; line-height: 1.7; color: var(--text-dim); white-space: pre-wrap; word-break: break-word; max-height: 400px; overflow-y: auto; border-top: 1px solid var(--border); }
+    /* ── Thread ── */
+    .thread-section { display: flex; flex-direction: column; gap: 0; }
+
+    /* Connector line between items */
+    .thread-item { display: flex; gap: 12px; position: relative; padding-bottom: 0; }
+    .thread-item + .thread-item { margin-top: 8px; }
+
+    .ti-avatar-col { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+    .ti-avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700; color: #fff; flex-shrink: 0;
+      border: 2px solid var(--bg);
+    }
+    .ti-connector { width: 2px; background: var(--border); flex: 1; margin: 4px 0; min-height: 12px; }
+
+    .ti-main { flex: 1; min-width: 0; padding-bottom: 4px; }
+    .ti-bubble {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden;
+    }
+    .ti-bubble.is-question { border-left: 3px solid var(--accent); }
+    .ti-bubble.is-answer   { border-left: 3px solid var(--green); }
+    .ti-bubble.is-issue-body { background: var(--surface2); border-color: var(--border); }
+
+    .ti-header {
+      padding: 8px 14px; background: rgba(255,255,255,0.03); border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    }
+    .ti-author { font-weight: 600; font-size: 13px; color: var(--text); }
+    .ti-author-link { color: var(--accent); text-decoration: none; font-size: 12px; }
+    .ti-author-link:hover { text-decoration: underline; }
+
+    .ti-label-badge {
+      padding: 1px 7px; border-radius: 99px; font-size: 11px; font-weight: 500;
+      background: #1e293b; color: var(--text-dim); border: 1px solid var(--border);
+    }
+    .ti-state-open   { background: #14532d44; color: var(--green); border-color: #166534; }
+    .ti-state-closed { background: #7f1d1d44; color: var(--red); border-color: #991b1b; }
+
+    .qa-tag {
+      margin-left: auto; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700;
+    }
+    .qa-tag.q-tag { background: #1e3a5f; color: #60a5fa; }
+    .qa-tag.a-tag { background: #14532d; color: var(--green); }
+
+    .ti-accepted-tag { font-size: 11px; color: var(--green); font-weight: 500; }
+
+    .ti-body { padding: 14px; font-size: 13px; line-height: 1.7; color: var(--text); word-break: break-word; }
+
+    /* ── Markdown rendering ── */
+    .md h1, .md h2, .md h3 { color: var(--text); margin: 12px 0 6px; font-weight: 600; }
+    .md h1 { font-size: 16px; } .md h2 { font-size: 15px; } .md h3 { font-size: 14px; }
+    .md p { margin: 6px 0; }
+    .md ul, .md ol { padding-left: 20px; margin: 6px 0; }
+    .md li { margin: 2px 0; }
+    .md pre {
+      background: #0a0c14; border: 1px solid var(--border); border-radius: 6px;
+      padding: 12px 14px; overflow-x: auto; margin: 10px 0; font-size: 12px; line-height: 1.5;
+    }
+    .md pre code { background: none; border: none; padding: 0; font-size: inherit; color: #c9d1d9; }
+    .md code {
+      background: rgba(99,110,123,0.2); border: 1px solid var(--border); border-radius: 4px;
+      padding: 1px 6px; font-size: 12px; font-family: 'Consolas', 'SF Mono', monospace;
+      color: #e6b87a;
+    }
+    .md a { color: var(--accent); text-decoration: none; }
+    .md a:hover { text-decoration: underline; }
+    .md blockquote {
+      border-left: 3px solid var(--border); padding-left: 12px; margin: 8px 0;
+      color: var(--text-dim); font-style: italic;
+    }
+    .md strong { color: var(--text); font-weight: 600; }
+    .md hr { border: none; border-top: 1px solid var(--border); margin: 10px 0; }
+    .md .issue-ref { color: var(--accent); font-weight: 500; }
 
     /* ── Verify panel ── */
     #verify-panel {
@@ -143,20 +272,37 @@
     .status-text.rejected { color: var(--red); font-weight: 600; }
     .status-text.pending  { color: var(--text-muted); }
 
-    /* ── Navigation ── */
     .nav-row { display: flex; gap: 8px; align-items: center; }
     .nav-row span { font-size: 12px; color: var(--text-muted); }
 
-    /* ── Toast ── */
     #toast { position: fixed; bottom: 24px; right: 24px; background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 10px 18px; border-radius: var(--radius); font-size: 13px; opacity: 0; transition: opacity .25s; pointer-events: none; z-index: 999; }
     #toast.show { opacity: 1; }
     #toast.ok { border-color: var(--green); color: var(--green); }
     #toast.err { border-color: var(--red); color: var(--red); }
+
+    /* ── Taxonomy tooltip ── */
+    .tax-trigger { cursor: pointer; text-decoration: underline dotted; text-underline-offset: 3px; }
+    .tax-trigger:hover { opacity: .8; }
+
+    #tax-tooltip {
+      position: fixed; z-index: 1000; display: none;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 12px 14px;
+      max-width: 340px; min-width: 220px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.5);
+      pointer-events: none;
+    }
+    #tax-tooltip .tt-qid  { font-size: 13px; font-weight: 700; color: var(--accent); margin-bottom: 4px; }
+    #tax-tooltip .tt-cat  { font-size: 11px; color: var(--text-muted); margin-bottom: 6px; letter-spacing: .05em; text-transform: uppercase; }
+    #tax-tooltip .tt-desc { font-size: 13px; color: var(--text); line-height: 1.5; }
+    #tax-tooltip .tt-divider { border: none; border-top: 1px solid var(--border); margin: 8px 0; }
+    #tax-tooltip .tt-qlist { display: flex; flex-direction: column; gap: 4px; }
+    #tax-tooltip .tt-qrow { font-size: 12px; color: var(--text-dim); display: flex; gap: 8px; }
+    #tax-tooltip .tt-qrow b { color: var(--accent); flex-shrink: 0; }
   </style>
 </head>
 <body>
 
-<!-- Top bar -->
 <div id="topbar">
   <h1>QA Pair Review</h1>
   <div class="progress-bar-wrap"><div class="progress-bar-fill" id="prog-fill" style="width:0%"></div></div>
@@ -165,11 +311,11 @@
   <span class="stat-pill rejected" id="pill-rejected">✗ 0</span>
   <span class="stat-pill pending"  id="pill-pending">● 0</span>
   <div class="topbar-actions">
+    <button class="btn secondary" id="theme-btn" onclick="toggleTheme()">☀ Light</button>
     <button class="btn export" onclick="exportData()">⬇ Export Accepted</button>
   </div>
 </div>
 
-<!-- Main layout -->
 <div id="layout">
 
   <!-- Sidebar -->
@@ -194,7 +340,7 @@
       </div>
     </div>
     <div id="pair-list"></div>
-    <div id="sidebar-footer" id="list-count">–</div>
+    <div id="sidebar-footer">–</div>
   </div>
 
   <!-- Detail -->
@@ -205,27 +351,31 @@
     </div>
 
     <div id="detail-content">
+
+      <!-- Issue title + badges -->
       <div class="detail-header">
         <h2 id="d-title"></h2>
         <span class="badge" id="d-source-badge"></span>
-        <span class="badge cat" id="d-cat-badge"></span>
+        <span class="badge cat tax-trigger" id="d-cat-badge" onclick="taxTip(event,'cat',this.dataset.cat)"></span>
         <span class="badge" id="d-conf-badge"></span>
       </div>
 
+      <!-- Meta row -->
       <div class="meta-row">
         <span id="d-repo"></span>
-        <span id="d-qid"></span>
+        <span id="d-qid" class="tax-trigger" onclick="taxTip(event,'q',this.dataset.qid)"></span>
         <span id="d-date"></span>
-        <a id="d-url" href="#" target="_blank" rel="noopener">Open on GitHub ↗</a>
+        <a id="d-url" href="#" target="_blank" rel="noopener"></a>
       </div>
 
+      <!-- Extracted Q&A -->
       <div class="qa-block">
         <div class="card q-card">
-          <div class="section-label">Question</div>
+          <div class="section-label">Extracted Question</div>
           <p id="d-question"></p>
         </div>
         <div class="card a-card">
-          <div class="section-label">Answer</div>
+          <div class="section-label">Extracted Answer</div>
           <p id="d-answer"></p>
           <div class="author-line">
             <span id="d-author"></span>
@@ -234,21 +384,20 @@
         </div>
       </div>
 
+      <!-- Reasoning + models -->
       <div>
-        <div class="section-label">Reasoning</div>
+        <div class="section-label">Classification Reasoning</div>
         <div class="reasoning-card" id="d-reasoning"></div>
       </div>
+      <div class="meta-row" id="d-models" style="font-size:12px;color:var(--text-muted)"></div>
 
+      <!-- Thread -->
       <div>
-        <div class="section-label">Models</div>
-        <div class="meta-row" id="d-models" style="font-size:12px;color:var(--text-muted)"></div>
+        <div class="section-label">Thread</div>
+        <div class="thread-section" id="d-thread-section"></div>
       </div>
 
-      <details class="thread-details">
-        <summary>Thread context</summary>
-        <div class="thread-body" id="d-thread"></div>
-      </details>
-    </div>
+    </div><!-- /detail-content -->
 
     <div id="verify-panel">
       <div class="verify-row">
@@ -276,25 +425,35 @@
 </div>
 
 <div id="toast"></div>
+<div id="tax-tooltip"></div>
 
 <script>
   let allItems = [];
-  let currentIndex = null;  // global pair index
-  let currentListPos = null; // position in filtered list
+  let currentIndex = null;
+  let currentListPos = null;
   let debounceTimer = null;
 
   // ── Bootstrap ────────────────────────────────────────────────────────────
 
+  function toggleTheme() {
+    const light = document.documentElement.classList.toggle('light');
+    document.getElementById('theme-btn').textContent = light ? '🌙 Dark' : '☀ Light';
+    localStorage.setItem('theme', light ? 'light' : 'dark');
+  }
+  if (localStorage.getItem('theme') === 'light') toggleTheme();
+
   async function init() {
-    const [repos, qids] = await Promise.all([
+    const [repos, qids, taxonomy] = await Promise.all([
       fetch('/api/repos').then(r => r.json()),
       fetch('/api/question_ids').then(r => r.json()),
+      fetch('/api/taxonomy').then(r => r.json()),
     ]);
+    CATEGORIES = taxonomy.categories;
+    QUESTIONS  = taxonomy.questions;
     const repoSel = document.getElementById('filter-repo');
     repos.forEach(r => { const o = document.createElement('option'); o.value = r; o.textContent = r; repoSel.appendChild(o); });
     const qidSel = document.getElementById('filter-qid');
     qids.forEach(q => { const o = document.createElement('option'); o.value = q; o.textContent = q; qidSel.appendChild(o); });
-
     await loadList();
     await loadStats();
   }
@@ -328,17 +487,14 @@
       div.className = 'pair-item' + (item.index === currentIndex ? ' active' : '');
       div.dataset.index = item.index;
       div.onclick = () => selectPair(item.index, pos);
-
       const conf = parseFloat(item.confidence) || 0;
-      const confPct = Math.round(conf * 100);
-
       div.innerHTML = `
         <div class="pair-status-dot ${item.status}"></div>
         <div class="pair-meta">
           <div class="pair-qid">
-            ${item.question_id}
-            <span class="cat-badge">${item.stage1_category || '?'}</span>
-            <span class="pair-conf">${confPct}%</span>
+            <span class="tax-trigger" onclick="taxTip(event,'q','${item.question_id}')">${item.question_id}</span>
+            <span class="cat-badge tax-trigger" onclick="taxTip(event,'cat','${item.stage1_category || ''}')">${item.stage1_category || '?'}</span>
+            <span class="pair-conf">${Math.round(conf * 100)}%</span>
           </div>
           <div class="pair-title">${escHtml(item.title || '')}</div>
           <div class="pair-question">${escHtml(item.question_text || '')}</div>
@@ -353,12 +509,9 @@
   async function selectPair(globalIndex, listPos) {
     currentIndex = globalIndex;
     currentListPos = listPos;
-
-    // highlight sidebar
     document.querySelectorAll('.pair-item').forEach(el => {
       el.classList.toggle('active', parseInt(el.dataset.index) === globalIndex);
     });
-
     const p = await fetch(`/api/pairs/${globalIndex}`).then(r => r.json());
     renderDetail(p, listPos);
   }
@@ -374,7 +527,9 @@
     srcBadge.textContent = p.source || '';
     srcBadge.className = 'badge source-' + (p.source || '');
 
-    document.getElementById('d-cat-badge').textContent = 'Category ' + (p.stage1_category || '?');
+    const catBadge = document.getElementById('d-cat-badge');
+    catBadge.textContent = 'Category ' + (p.stage1_category || '?');
+    catBadge.dataset.cat = p.stage1_category || '';
 
     const conf = parseFloat(p.confidence) || 0;
     const confBadge = document.getElementById('d-conf-badge');
@@ -382,7 +537,9 @@
     confBadge.className = 'badge ' + (conf >= 0.8 ? 'conf-high' : conf >= 0.6 ? 'conf-mid' : 'conf-low');
 
     document.getElementById('d-repo').textContent = p.repo || '';
-    document.getElementById('d-qid').textContent = p.question_id || '';
+    const qidEl = document.getElementById('d-qid');
+    qidEl.textContent = p.question_id || '';
+    qidEl.dataset.qid = p.question_id || '';
     document.getElementById('d-date').textContent = (p.created_at || '').slice(0, 10);
     const urlEl = document.getElementById('d-url');
     urlEl.href = p.url || '#';
@@ -391,20 +548,240 @@
     document.getElementById('d-question').textContent = p.question_text || '';
     document.getElementById('d-answer').textContent = p.answer_text || '';
     document.getElementById('d-author').textContent = p.answer_author ? `@${p.answer_author}` : '';
-    document.getElementById('d-accepted').innerHTML = p.answer_is_accepted ? '<span class="accepted-badge">✓ Accepted answer</span>' : '';
+    document.getElementById('d-accepted').innerHTML = p.answer_is_accepted
+      ? '<span class="accepted-badge">✓ Accepted answer</span>' : '';
 
     document.getElementById('d-reasoning').textContent = p.reasoning || '';
-    document.getElementById('d-models').textContent = [p.stage1_model, p.stage2_model].filter(Boolean).join('  ·  ');
-    document.getElementById('d-thread').textContent = p.thread_text || '';
+    document.getElementById('d-models').textContent =
+      [p.stage1_model, p.stage2_model].filter(Boolean).join('  ·  ');
 
-    // verify panel
+    // Render thread
+    document.getElementById('d-thread-section').innerHTML =
+      renderThread(p.thread_text || '', p.question_text || '', p.answer_text || '');
+
+    // Verify panel
     const st = p.status || 'pending';
     const stEl = document.getElementById('current-status-text');
     stEl.textContent = st;
     stEl.className = 'status-text ' + st;
-    document.getElementById('verified-at-text').textContent = p.verified_at ? `(${p.verified_at.slice(0, 10)})` : '';
+    document.getElementById('verified-at-text').textContent =
+      p.verified_at ? `(${p.verified_at.slice(0, 10)})` : '';
     document.getElementById('note').value = p.note || '';
     document.getElementById('nav-label').textContent = `${(listPos ?? 0) + 1} / ${allItems.length}`;
+
+    // Scroll detail to top
+    document.getElementById('detail-content').scrollTop = 0;
+  }
+
+  // ── Thread rendering ──────────────────────────────────────────────────────
+
+  function parseThread(threadText) {
+    const COMMENTS_SEP = '\n--- COMMENTS ---\n';
+    const sepIdx = threadText.indexOf(COMMENTS_SEP);
+    const headerSection = sepIdx > -1 ? threadText.slice(0, sepIdx) : threadText;
+    const commentsSection = sepIdx > -1 ? threadText.slice(sepIdx + COMMENTS_SEP.length) : '';
+
+    const lines = headerSection.split('\n');
+    const titleLine = lines[0] || '';
+    const isDiscussion = titleLine.startsWith('DISCUSSION');
+
+    // Parse meta lines (Author, Labels, State)
+    let i = 1;
+    const meta = {};
+    while (i < lines.length && /^(Author|Labels|State):\s/.test(lines[i])) {
+      const colonIdx = lines[i].indexOf(': ');
+      meta[lines[i].slice(0, colonIdx).toLowerCase()] = lines[i].slice(colonIdx + 2);
+      i++;
+    }
+
+    // Skip blank lines, then rest is body
+    while (i < lines.length && !lines[i].trim()) i++;
+    const body = lines.slice(i).join('\n').trim();
+
+    // Parse comments — split on \n---\n only when followed by @ (avoids splitting inside code)
+    const comments = [];
+    if (commentsSection.trim()) {
+      const blocks = commentsSection.split(/\n---\n(?=@|\[ACCEPTED)/);
+      for (const block of blocks) {
+        const trimmed = block.replace(/\n---\s*$/, '').trim();
+        if (!trimmed) continue;
+        const nlIdx = trimmed.indexOf('\n');
+        const firstLine = nlIdx > -1 ? trimmed.slice(0, nlIdx) : trimmed;
+        const cbody = nlIdx > -1 ? trimmed.slice(nlIdx + 1).trim() : '';
+
+        let author = '?';
+        let isAccepted = false;
+        if (firstLine.startsWith('[ACCEPTED ANSWER] @')) {
+          author = firstLine.replace('[ACCEPTED ANSWER] @', '').replace(/:$/, '').trim();
+          isAccepted = true;
+        } else if (firstLine.match(/^@\S+:?$/)) {
+          author = firstLine.replace(/^@/, '').replace(/:$/, '').trim();
+        } else {
+          continue;
+        }
+        comments.push({ author, body: cbody, isAccepted });
+      }
+    }
+
+    return { isDiscussion, meta, body, comments };
+  }
+
+  function textMatches(text, reference) {
+    if (!reference || !text) return false;
+    const norm = s => s.replace(/\s+/g, ' ').trim().toLowerCase();
+    const needle = norm(reference).slice(0, 100);
+    return needle.length > 10 && norm(text).includes(needle);
+  }
+
+  const AVATAR_COLORS = [
+    '#5b7cf6','#22c55e','#f59e0b','#ef4444',
+    '#a78bfa','#60a5fa','#fb7185','#34d399','#f97316','#e879f9',
+  ];
+
+  function avatarHtml(author) {
+    const color = AVATAR_COLORS[(author.charCodeAt(0) || 0) % AVATAR_COLORS.length];
+    return `<div class="ti-avatar" style="background:${color}">${(author[0] || '?').toUpperCase()}</div>`;
+  }
+
+  function renderThread(threadText, questionText, answerText) {
+    if (!threadText) return '<p style="color:var(--text-muted);padding:8px">No thread text</p>';
+
+    const { isDiscussion, meta, body, comments } = parseThread(threadText);
+    const items = [];
+    const totalItems = (body ? 1 : 0) + comments.length;
+    let idx = 0;
+
+    // Issue/discussion body
+    if (body) {
+      const isQ = textMatches(body, questionText);
+      const isA = textMatches(body, answerText);
+      const author = meta.author || (isDiscussion ? 'author' : 'reporter');
+      const labelsPart = (meta.labels || '').split(',').map(l => l.trim()).filter(Boolean)
+        .map(l => `<span class="ti-label-badge">${escHtml(l)}</span>`).join('');
+      const stateCls = meta.state === 'closed' ? 'ti-state-closed' : meta.state === 'open' ? 'ti-state-open' : '';
+      const statePart = meta.state
+        ? `<span class="ti-label-badge ${stateCls}">${escHtml(meta.state)}</span>` : '';
+      const qaTags = (isQ ? '<span class="qa-tag q-tag">Q</span>' : '')
+                   + (isA ? '<span class="qa-tag a-tag">A</span>' : '');
+      const isLast = idx === totalItems - 1;
+      idx++;
+
+      items.push(`
+        <div class="thread-item">
+          <div class="ti-avatar-col">
+            ${avatarHtml(author)}
+            ${!isLast ? '<div class="ti-connector"></div>' : ''}
+          </div>
+          <div class="ti-main">
+            <div class="ti-bubble is-issue-body ${isQ ? 'is-question' : ''} ${isA ? 'is-answer' : ''}">
+              <div class="ti-header">
+                <span class="ti-author">@${escHtml(author)}</span>
+                <span style="font-size:11px;color:var(--text-muted)">${isDiscussion ? 'opened discussion' : 'opened issue'}</span>
+                ${labelsPart}${statePart}
+                ${qaTags ? `<span style="margin-left:auto;display:flex;gap:4px">${qaTags}</span>` : ''}
+              </div>
+              <div class="ti-body md">${renderMarkdown(body)}</div>
+            </div>
+          </div>
+        </div>`);
+    }
+
+    // Comments
+    comments.forEach((c, ci) => {
+      const isQ = textMatches(c.body, questionText);
+      const isA = textMatches(c.body, answerText);
+      const qaTags = (isQ ? '<span class="qa-tag q-tag">Q</span>' : '')
+                   + (isA ? '<span class="qa-tag a-tag">A</span>' : '');
+      const isLast = idx === totalItems - 1;
+      idx++;
+
+      items.push(`
+        <div class="thread-item">
+          <div class="ti-avatar-col">
+            ${avatarHtml(c.author)}
+            ${!isLast ? '<div class="ti-connector"></div>' : ''}
+          </div>
+          <div class="ti-main">
+            <div class="ti-bubble ${isQ ? 'is-question' : ''} ${isA ? 'is-answer' : ''}">
+              <div class="ti-header">
+                <span class="ti-author">@${escHtml(c.author)}</span>
+                ${c.isAccepted ? '<span class="ti-accepted-tag">✓ accepted answer</span>' : ''}
+                ${qaTags ? `<span style="margin-left:auto;display:flex;gap:4px">${qaTags}</span>` : ''}
+              </div>
+              <div class="ti-body md">${renderMarkdown(c.body)}</div>
+            </div>
+          </div>
+        </div>`);
+    });
+
+    return items.join('') || '<p style="color:var(--text-muted);padding:8px">No content</p>';
+  }
+
+  // ── Markdown renderer ────────────────────────────────────────────────────
+
+  function renderMarkdown(raw) {
+    if (!raw) return '';
+
+    // 1. Extract fenced code blocks to protect them from escaping
+    const codeBlocks = [];
+    let text = raw.replace(/```(\w*)\n?([\s\S]*?)```/g, (_, lang, code) => {
+      codeBlocks.push({ lang, code });
+      return `\x00CODE${codeBlocks.length - 1}\x00`;
+    });
+
+    // 2. Extract inline code spans
+    const inlineCodes = [];
+    text = text.replace(/`([^`\n]+)`/g, (_, code) => {
+      inlineCodes.push(code);
+      return `\x00IC${inlineCodes.length - 1}\x00`;
+    });
+
+    // 3. Escape HTML in remaining text
+    text = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+    // 4. Block-level elements
+    // Headings
+    text = text.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+    text = text.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+    text = text.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+    // Blockquote
+    text = text.replace(/^&gt; (.+)$/gm, '<blockquote>$1</blockquote>');
+    // Horizontal rule
+    text = text.replace(/^[-*]{3,}$/gm, '<hr>');
+    // Unordered lists (simple — single level)
+    text = text.replace(/^[*\-] (.+)$/gm, '<li>$1</li>');
+    text = text.replace(/(<li>.*<\/li>\n?)+/g, m => `<ul>${m}</ul>`);
+
+    // 5. Inline elements
+    text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    text = text.replace(/\*([^*\n]+)\*/g, '<em>$1</em>');
+    // Issue/PR refs
+    text = text.replace(/#(\d+)/g, '<span class="issue-ref">#$1</span>');
+    // Bare URLs
+    text = text.replace(/(https?:\/\/[^\s<"&]+)/g,
+      '<a href="$1" target="_blank" rel="noopener">$1</a>');
+
+    // 6. Newlines → <br> (skip inside block elements)
+    text = text.replace(/\n/g, '<br>');
+    // Fix <br> inside block elements
+    text = text.replace(/<br>(<\/?(?:ul|ol|li|h[1-3]|blockquote|hr))/g, '$1');
+    text = text.replace(/(<\/?(?:ul|ol|li|h[1-3]|blockquote|hr)[^>]*>)<br>/g, '$1');
+
+    // 7. Restore inline codes
+    text = text.replace(/\x00IC(\d+)\x00/g, (_, i) => {
+      const escaped = inlineCodes[i]
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      return `<code>${escaped}</code>`;
+    });
+
+    // 8. Restore fenced code blocks
+    text = text.replace(/\x00CODE(\d+)\x00(<br>)?/g, (_, i) => {
+      const { lang, code } = codeBlocks[i];
+      const escaped = code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      return `<pre${lang ? ` data-lang="${lang}"` : ''}><code>${escaped}</code></pre>`;
+    });
+
+    return text;
   }
 
   // ── Verify ───────────────────────────────────────────────────────────────
@@ -419,20 +796,14 @@
     });
     if (res.ok) {
       showToast(status === 'pending' ? 'Reset to pending' : `Marked as ${status}`, 'ok');
-      // update sidebar dot without full reload
       const dot = document.querySelector(`.pair-item[data-index="${currentIndex}"] .pair-status-dot`);
-      if (dot) { dot.className = 'pair-status-dot ' + status; }
-      // update allItems cache
+      if (dot) dot.className = 'pair-status-dot ' + status;
       const item = allItems.find(i => i.index === currentIndex);
       if (item) item.status = status;
-
       const stEl = document.getElementById('current-status-text');
       stEl.textContent = status;
       stEl.className = 'status-text ' + status;
-
       await loadStats();
-
-      // auto-advance on accept/reject
       if (status !== 'pending') setTimeout(() => navigate(1), 300);
     } else {
       showToast('Error saving', 'err');
@@ -444,12 +815,11 @@
     const next = currentListPos + dir;
     if (next < 0 || next >= allItems.length) return;
     selectPair(allItems[next].index, next);
-    // scroll sidebar item into view
     const el = document.querySelector(`.pair-item[data-index="${allItems[next].index}"]`);
     if (el) el.scrollIntoView({ block: 'nearest' });
   }
 
-  // ── Stats ────────────────────────────────────────────────────────────────
+  // ── Stats ─────────────────────────────────────────────────────────────────
 
   async function loadStats() {
     const s = await fetch('/api/stats').then(r => r.json());
@@ -463,7 +833,7 @@
     document.getElementById('pill-pending').textContent = `● ${s.counts.pending}`;
   }
 
-  // ── Export ───────────────────────────────────────────────────────────────
+  // ── Export ────────────────────────────────────────────────────────────────
 
   async function exportData() {
     const res = await fetch('/api/export', { method: 'POST' });
@@ -472,10 +842,10 @@
     window.open('/api/export/download', '_blank');
   }
 
-  // ── Helpers ──────────────────────────────────────────────────────────────
+  // ── Helpers ───────────────────────────────────────────────────────────────
 
   function escHtml(s) {
-    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   }
 
   function showToast(msg, type = '') {
@@ -486,7 +856,73 @@
     t._timer = setTimeout(() => { t.className = ''; }, 2500);
   }
 
-  // keyboard shortcuts
+  // ── Taxonomy tooltip ─────────────────────────────────────────────────────
+  // Data is fetched from /api/taxonomy (sourced from pipeline/utils/taxonomy.py)
+
+  let CATEGORIES = {};
+  let QUESTIONS = {};
+
+  function catForQuestion(qid) {
+    return Object.entries(CATEGORIES).find(([, v]) => v.qs.includes(qid))?.[0] || '';
+  }
+
+  function taxTip(event, type, value) {
+    event.stopPropagation();
+    if (!value) return;
+
+    const tt = document.getElementById('tax-tooltip');
+    let html = '';
+
+    if (type === 'q') {
+      const desc = QUESTIONS[value] || 'Unknown question';
+      const cat = catForQuestion(value);
+      const catName = cat ? CATEGORIES[cat].name : '';
+      html = `
+        <div class="tt-qid">${escHtml(value)}</div>
+        ${cat ? `<div class="tt-cat">Category ${cat} — ${escHtml(catName)}</div>` : ''}
+        <div class="tt-desc">${escHtml(desc)}</div>`;
+    } else if (type === 'cat') {
+      const cat = CATEGORIES[value];
+      if (!cat) return;
+      const rows = cat.qs.map(q =>
+        `<div class="tt-qrow"><b>${q}</b><span>${escHtml(QUESTIONS[q] || '')}</span></div>`
+      ).join('');
+      html = `
+        <div class="tt-qid">Category ${escHtml(value)}</div>
+        <div class="tt-cat">${escHtml(cat.name)}</div>
+        <hr class="tt-divider">
+        <div class="tt-qlist">${rows}</div>`;
+    }
+
+    tt.innerHTML = html;
+    tt.style.display = 'block';
+
+    // Position near the clicked element
+    const rect = event.currentTarget.getBoundingClientRect();
+    const pad = 8;
+    let top = rect.bottom + pad;
+    let left = rect.left;
+
+    // Measure and clamp horizontally
+    tt.style.left = left + 'px';
+    tt.style.top = top + 'px';
+    const tRect = tt.getBoundingClientRect();
+    if (tRect.right > window.innerWidth - pad) {
+      left = Math.max(pad, window.innerWidth - tRect.width - pad);
+      tt.style.left = left + 'px';
+    }
+    // Flip above if it goes below viewport
+    if (tRect.bottom > window.innerHeight - pad) {
+      tt.style.top = (rect.top - tRect.height - pad) + 'px';
+    }
+  }
+
+  document.addEventListener('click', () => {
+    document.getElementById('tax-tooltip').style.display = 'none';
+  });
+
+  // ── Keyboard shortcuts ────────────────────────────────────────────────────
+
   document.addEventListener('keydown', e => {
     if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') return;
     if (e.key === 'ArrowDown' || e.key === 'j') navigate(1);
