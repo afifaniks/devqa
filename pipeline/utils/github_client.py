@@ -9,7 +9,9 @@ _THRESHOLD = 50
 class _TokenPool:
     def __init__(self, tokens):
         if not tokens:
-            raise ValueError("No GitHub tokens configured (set GITHUB_TOKENS or GITHUB_TOKEN)")
+            raise ValueError(
+                "No GitHub tokens configured (set GITHUB_TOKENS or GITHUB_TOKEN)"
+            )
         self._tokens = tokens
         self._sessions = [self._make_session(t) for t in tokens]
         self._remaining = [10_000] * len(tokens)  # optimistic until first response
@@ -18,11 +20,13 @@ class _TokenPool:
 
     def _make_session(self, token):
         s = requests.Session()
-        s.headers.update({
-            "Authorization": f"token {token}",
-            "Accept": "application/vnd.github+json",
-            "X-GitHub-Api-Version": "2022-11-28",
-        })
+        s.headers.update(
+            {
+                "Authorization": f"token {token}",
+                "Accept": "application/vnd.github+json",
+                "X-GitHub-Api-Version": "2022-11-28",
+            }
+        )
         return s
 
     @property
@@ -31,7 +35,9 @@ class _TokenPool:
 
     def record(self, response):
         """Update rate-limit state from a response and rotate/sleep if needed."""
-        self._remaining[self._idx] = int(response.headers.get("X-RateLimit-Remaining", 100))
+        self._remaining[self._idx] = int(
+            response.headers.get("X-RateLimit-Remaining", 100)
+        )
         self._reset_at[self._idx] = int(response.headers.get("X-RateLimit-Reset", 0))
 
         if self._remaining[self._idx] >= _THRESHOLD:
@@ -89,3 +95,38 @@ def paginate(path, params=None):
 
         url = response.links.get("next", {}).get("url")
         params = {}
+
+
+_GRAPHQL_URL = f"{BASE}/graphql"
+
+
+def graphql(query, variables=None):
+    """Execute a single GraphQL query. Raises on HTTP or GraphQL errors."""
+    response = _pool.session.post(
+        _GRAPHQL_URL,
+        json={"query": query, "variables": variables or {}},
+        timeout=30,
+    )
+    _pool.record(response)
+    response.raise_for_status()
+    payload = response.json()
+    if "errors" in payload:
+        raise RuntimeError(f"GraphQL errors: {payload['errors']}")
+    return payload.get("data", {})
+
+
+def paginate_graphql(query, variables, get_page):
+    """
+    Yield nodes from a paginated GraphQL query.
+
+    get_page(data) must return a dict with keys 'nodes', 'pageInfo'
+    where pageInfo has 'hasNextPage' and 'endCursor'.
+    """
+    variables = {**variables}
+    while True:
+        data = graphql(query, variables)
+        page = get_page(data)
+        yield from page.get("nodes", [])
+        if not page.get("pageInfo", {}).get("hasNextPage"):
+            break
+        variables["cursor"] = page["pageInfo"]["endCursor"]
