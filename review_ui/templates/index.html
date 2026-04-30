@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QA Pair Review Tool</title>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --surface2: #22263a;
+      --border: #2e3348;
+      --accent: #5b7cf6;
+      --accent-dim: #3a4f9e;
+      --green: #22c55e;
+      --red: #ef4444;
+      --yellow: #f59e0b;
+      --text: #e2e8f0;
+      --text-dim: #8892a4;
+      --text-muted: #4a5568;
+      --radius: 8px;
+      --sidebar-w: 360px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', system-ui, sans-serif; font-size: 14px; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+    /* ── Top bar ── */
+    #topbar {
+      height: 52px; background: var(--surface); border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; padding: 0 16px; gap: 16px; flex-shrink: 0;
+    }
+    #topbar h1 { font-size: 15px; font-weight: 600; color: var(--text); white-space: nowrap; }
+    .progress-bar-wrap { flex: 1; max-width: 300px; height: 6px; background: var(--border); border-radius: 99px; overflow: hidden; }
+    .progress-bar-fill { height: 100%; background: var(--green); border-radius: 99px; transition: width .3s; }
+    #progress-label { font-size: 12px; color: var(--text-dim); white-space: nowrap; }
+    .stat-pill { padding: 3px 10px; border-radius: 99px; font-size: 12px; font-weight: 500; }
+    .stat-pill.accepted { background: #14532d55; color: var(--green); }
+    .stat-pill.rejected { background: #7f1d1d55; color: var(--red); }
+    .stat-pill.pending  { background: #1e293b; color: var(--text-dim); }
+    .topbar-actions { margin-left: auto; display: flex; gap: 8px; }
+    button.btn { padding: 6px 14px; border-radius: var(--radius); border: none; cursor: pointer; font-size: 13px; font-weight: 500; transition: opacity .15s; }
+    button.btn:hover { opacity: .85; }
+    button.btn.primary { background: var(--accent); color: #fff; }
+    button.btn.secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+    button.btn.export { background: #0d4f2e; color: var(--green); border: 1px solid #166534; }
+
+    /* ── Layout ── */
+    #layout { display: flex; flex: 1; overflow: hidden; }
+
+    /* ── Sidebar ── */
+    #sidebar { width: var(--sidebar-w); min-width: var(--sidebar-w); background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
+    #sidebar-filters { padding: 10px 12px; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; }
+    .filter-row { display: flex; gap: 6px; }
+    input.search, select.filter { background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: var(--radius); padding: 6px 10px; font-size: 13px; width: 100%; }
+    input.search::placeholder { color: var(--text-muted); }
+    select.filter option { background: var(--bg); }
+    #pair-list { flex: 1; overflow-y: auto; }
+    #pair-list::-webkit-scrollbar { width: 6px; }
+    #pair-list::-webkit-scrollbar-track { background: transparent; }
+    #pair-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    .pair-item {
+      padding: 10px 14px; border-bottom: 1px solid var(--border); cursor: pointer;
+      transition: background .1s; display: flex; gap: 10px; align-items: flex-start;
+    }
+    .pair-item:hover { background: var(--surface2); }
+    .pair-item.active { background: var(--accent-dim); border-left: 3px solid var(--accent); padding-left: 11px; }
+    .pair-status-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+    .pair-status-dot.accepted { background: var(--green); }
+    .pair-status-dot.rejected { background: var(--red); }
+    .pair-status-dot.pending  { background: var(--text-muted); }
+    .pair-meta { flex: 1; min-width: 0; }
+    .pair-qid { font-size: 11px; font-weight: 600; color: var(--accent); display: flex; gap: 6px; align-items: center; }
+    .pair-qid .cat-badge { padding: 1px 6px; background: var(--surface2); border-radius: 4px; color: var(--text-dim); font-weight: 400; }
+    .pair-conf { margin-left: auto; font-size: 11px; color: var(--text-muted); }
+    .pair-title { font-size: 12px; color: var(--text-dim); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .pair-question { font-size: 13px; color: var(--text); margin-top: 3px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .pair-repo-tag { font-size: 10px; color: var(--text-muted); margin-top: 3px; }
+
+    #sidebar-footer { padding: 8px 12px; border-top: 1px solid var(--border); font-size: 12px; color: var(--text-dim); }
+
+    /* ── Detail panel ── */
+    #detail { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+    #detail-empty { flex: 1; display: flex; align-items: center; justify-content: center; color: var(--text-muted); flex-direction: column; gap: 10px; }
+    #detail-empty svg { opacity: .3; }
+
+    #detail-content { flex: 1; overflow-y: auto; padding: 20px 24px; display: none; flex-direction: column; gap: 16px; }
+    #detail-content::-webkit-scrollbar { width: 6px; }
+    #detail-content::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    .detail-header { display: flex; gap: 12px; align-items: flex-start; flex-wrap: wrap; }
+    .detail-header h2 { font-size: 16px; font-weight: 600; flex: 1; }
+    .badge { padding: 3px 10px; border-radius: 99px; font-size: 12px; font-weight: 500; white-space: nowrap; }
+    .badge.source-issue { background: #1e3a5f; color: #60a5fa; }
+    .badge.source-pull_request { background: #1e3655; color: #a78bfa; }
+    .badge.cat { background: var(--surface2); color: var(--text-dim); border: 1px solid var(--border); }
+    .badge.conf-high { background: #14532d55; color: var(--green); }
+    .badge.conf-mid  { background: #713f1255; color: var(--yellow); }
+    .badge.conf-low  { background: #7f1d1d55; color: var(--red); }
+
+    .meta-row { display: flex; gap: 16px; flex-wrap: wrap; font-size: 12px; color: var(--text-dim); }
+    .meta-row a { color: var(--accent); text-decoration: none; }
+    .meta-row a:hover { text-decoration: underline; }
+
+    .section-label { font-size: 11px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
+
+    .qa-block { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 900px) { .qa-block { grid-template-columns: 1fr; } }
+
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; }
+    .card.q-card { border-left: 3px solid var(--accent); }
+    .card.a-card { border-left: 3px solid var(--green); }
+    .card p { line-height: 1.6; color: var(--text); white-space: pre-wrap; word-break: break-word; }
+    .card .author-line { font-size: 11px; color: var(--text-muted); margin-top: 8px; display: flex; gap: 8px; }
+    .accepted-badge { color: var(--green); }
+
+    .reasoning-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; font-size: 13px; color: var(--text-dim); line-height: 1.6; }
+
+    details.thread-details { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    details.thread-details summary { padding: 10px 14px; cursor: pointer; font-size: 13px; font-weight: 500; color: var(--text-dim); user-select: none; }
+    details.thread-details summary:hover { background: var(--surface2); }
+    .thread-body { padding: 14px; font-size: 12px; line-height: 1.7; color: var(--text-dim); white-space: pre-wrap; word-break: break-word; max-height: 400px; overflow-y: auto; border-top: 1px solid var(--border); }
+
+    /* ── Verify panel ── */
+    #verify-panel {
+      border-top: 1px solid var(--border); background: var(--surface); padding: 14px 24px;
+      display: none; flex-direction: column; gap: 10px; flex-shrink: 0;
+    }
+    .verify-row { display: flex; gap: 10px; align-items: center; }
+    .verify-row label { font-size: 13px; color: var(--text-dim); white-space: nowrap; }
+    textarea#note { flex: 1; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: var(--radius); padding: 8px 12px; font-size: 13px; resize: none; height: 60px; font-family: inherit; }
+    textarea#note:focus { outline: none; border-color: var(--accent); }
+
+    .verify-buttons { display: flex; gap: 8px; }
+    button.btn.accept  { background: #14532d; color: var(--green); border: 1px solid #166534; }
+    button.btn.accept:hover  { background: #166534; }
+    button.btn.reject  { background: #7f1d1d; color: var(--red); border: 1px solid #991b1b; }
+    button.btn.reject:hover  { background: #991b1b; }
+    button.btn.unset   { background: var(--surface2); color: var(--text-dim); border: 1px solid var(--border); }
+
+    .current-status-line { font-size: 12px; display: flex; align-items: center; gap: 6px; }
+    .status-text.accepted { color: var(--green); font-weight: 600; }
+    .status-text.rejected { color: var(--red); font-weight: 600; }
+    .status-text.pending  { color: var(--text-muted); }
+
+    /* ── Navigation ── */
+    .nav-row { display: flex; gap: 8px; align-items: center; }
+    .nav-row span { font-size: 12px; color: var(--text-muted); }
+
+    /* ── Toast ── */
+    #toast { position: fixed; bottom: 24px; right: 24px; background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 10px 18px; border-radius: var(--radius); font-size: 13px; opacity: 0; transition: opacity .25s; pointer-events: none; z-index: 999; }
+    #toast.show { opacity: 1; }
+    #toast.ok { border-color: var(--green); color: var(--green); }
+    #toast.err { border-color: var(--red); color: var(--red); }
+  </style>
+</head>
+<body>
+
+<!-- Top bar -->
+<div id="topbar">
+  <h1>QA Pair Review</h1>
+  <div class="progress-bar-wrap"><div class="progress-bar-fill" id="prog-fill" style="width:0%"></div></div>
+  <span id="progress-label">0 / 0</span>
+  <span class="stat-pill accepted" id="pill-accepted">✓ 0</span>
+  <span class="stat-pill rejected" id="pill-rejected">✗ 0</span>
+  <span class="stat-pill pending"  id="pill-pending">● 0</span>
+  <div class="topbar-actions">
+    <button class="btn export" onclick="exportData()">⬇ Export Accepted</button>
+  </div>
+</div>
+
+<!-- Main layout -->
+<div id="layout">
+
+  <!-- Sidebar -->
+  <div id="sidebar">
+    <div id="sidebar-filters">
+      <input class="search" type="text" id="search-input" placeholder="Search questions, answers, titles…" oninput="debounceLoad()" />
+      <div class="filter-row">
+        <select class="filter" id="filter-repo" onchange="loadList()">
+          <option value="">All repos</option>
+        </select>
+        <select class="filter" id="filter-qid" onchange="loadList()">
+          <option value="">All Q-IDs</option>
+        </select>
+      </div>
+      <div class="filter-row">
+        <select class="filter" id="filter-status" onchange="loadList()">
+          <option value="">All statuses</option>
+          <option value="pending">Pending</option>
+          <option value="accepted">Accepted</option>
+          <option value="rejected">Rejected</option>
+        </select>
+      </div>
+    </div>
+    <div id="pair-list"></div>
+    <div id="sidebar-footer" id="list-count">–</div>
+  </div>
+
+  <!-- Detail -->
+  <div id="detail">
+    <div id="detail-empty">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 12h8M8 8h5M8 16h3"/></svg>
+      <span>Select a pair to review</span>
+    </div>
+
+    <div id="detail-content">
+      <div class="detail-header">
+        <h2 id="d-title"></h2>
+        <span class="badge" id="d-source-badge"></span>
+        <span class="badge cat" id="d-cat-badge"></span>
+        <span class="badge" id="d-conf-badge"></span>
+      </div>
+
+      <div class="meta-row">
+        <span id="d-repo"></span>
+        <span id="d-qid"></span>
+        <span id="d-date"></span>
+        <a id="d-url" href="#" target="_blank" rel="noopener">Open on GitHub ↗</a>
+      </div>
+
+      <div class="qa-block">
+        <div class="card q-card">
+          <div class="section-label">Question</div>
+          <p id="d-question"></p>
+        </div>
+        <div class="card a-card">
+          <div class="section-label">Answer</div>
+          <p id="d-answer"></p>
+          <div class="author-line">
+            <span id="d-author"></span>
+            <span id="d-accepted"></span>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-label">Reasoning</div>
+        <div class="reasoning-card" id="d-reasoning"></div>
+      </div>
+
+      <div>
+        <div class="section-label">Models</div>
+        <div class="meta-row" id="d-models" style="font-size:12px;color:var(--text-muted)"></div>
+      </div>
+
+      <details class="thread-details">
+        <summary>Thread context</summary>
+        <div class="thread-body" id="d-thread"></div>
+      </details>
+    </div>
+
+    <div id="verify-panel">
+      <div class="verify-row">
+        <div class="current-status-line">
+          Status: <span class="status-text" id="current-status-text">pending</span>
+          <span id="verified-at-text" style="color:var(--text-muted);font-size:11px"></span>
+        </div>
+        <div class="nav-row" style="margin-left:auto">
+          <button class="btn secondary" onclick="navigate(-1)">← Prev</button>
+          <span id="nav-label">–</span>
+          <button class="btn secondary" onclick="navigate(1)">Next →</button>
+        </div>
+      </div>
+      <div class="verify-row">
+        <label>Note:</label>
+        <textarea id="note" placeholder="Optional notes…"></textarea>
+      </div>
+      <div class="verify-buttons">
+        <button class="btn accept" onclick="verify('accepted')">✓ Accept</button>
+        <button class="btn reject" onclick="verify('rejected')">✗ Reject</button>
+        <button class="btn unset"  onclick="verify('pending')">↩ Reset</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+  let allItems = [];
+  let currentIndex = null;  // global pair index
+  let currentListPos = null; // position in filtered list
+  let debounceTimer = null;
+
+  // ── Bootstrap ────────────────────────────────────────────────────────────
+
+  async function init() {
+    const [repos, qids] = await Promise.all([
+      fetch('/api/repos').then(r => r.json()),
+      fetch('/api/question_ids').then(r => r.json()),
+    ]);
+    const repoSel = document.getElementById('filter-repo');
+    repos.forEach(r => { const o = document.createElement('option'); o.value = r; o.textContent = r; repoSel.appendChild(o); });
+    const qidSel = document.getElementById('filter-qid');
+    qids.forEach(q => { const o = document.createElement('option'); o.value = q; o.textContent = q; qidSel.appendChild(o); });
+
+    await loadList();
+    await loadStats();
+  }
+
+  // ── List ─────────────────────────────────────────────────────────────────
+
+  function debounceLoad() {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(loadList, 280);
+  }
+
+  async function loadList() {
+    const params = new URLSearchParams({
+      page: 1, page_size: 500,
+      repo: document.getElementById('filter-repo').value,
+      question_id: document.getElementById('filter-qid').value,
+      status: document.getElementById('filter-status').value,
+      q: document.getElementById('search-input').value,
+    });
+    const data = await fetch('/api/pairs?' + params).then(r => r.json());
+    allItems = data.items;
+    renderList();
+    document.getElementById('sidebar-footer').textContent = `${data.total} pairs`;
+  }
+
+  function renderList() {
+    const el = document.getElementById('pair-list');
+    el.innerHTML = '';
+    allItems.forEach((item, pos) => {
+      const div = document.createElement('div');
+      div.className = 'pair-item' + (item.index === currentIndex ? ' active' : '');
+      div.dataset.index = item.index;
+      div.onclick = () => selectPair(item.index, pos);
+
+      const conf = parseFloat(item.confidence) || 0;
+      const confPct = Math.round(conf * 100);
+
+      div.innerHTML = `
+        <div class="pair-status-dot ${item.status}"></div>
+        <div class="pair-meta">
+          <div class="pair-qid">
+            ${item.question_id}
+            <span class="cat-badge">${item.stage1_category || '?'}</span>
+            <span class="pair-conf">${confPct}%</span>
+          </div>
+          <div class="pair-title">${escHtml(item.title || '')}</div>
+          <div class="pair-question">${escHtml(item.question_text || '')}</div>
+          <div class="pair-repo-tag">${item.repo} · ${item.source}</div>
+        </div>`;
+      el.appendChild(div);
+    });
+  }
+
+  // ── Detail ───────────────────────────────────────────────────────────────
+
+  async function selectPair(globalIndex, listPos) {
+    currentIndex = globalIndex;
+    currentListPos = listPos;
+
+    // highlight sidebar
+    document.querySelectorAll('.pair-item').forEach(el => {
+      el.classList.toggle('active', parseInt(el.dataset.index) === globalIndex);
+    });
+
+    const p = await fetch(`/api/pairs/${globalIndex}`).then(r => r.json());
+    renderDetail(p, listPos);
+  }
+
+  function renderDetail(p, listPos) {
+    document.getElementById('detail-empty').style.display = 'none';
+    document.getElementById('detail-content').style.display = 'flex';
+    document.getElementById('verify-panel').style.display = 'flex';
+
+    document.getElementById('d-title').textContent = p.title || '(no title)';
+
+    const srcBadge = document.getElementById('d-source-badge');
+    srcBadge.textContent = p.source || '';
+    srcBadge.className = 'badge source-' + (p.source || '');
+
+    document.getElementById('d-cat-badge').textContent = 'Category ' + (p.stage1_category || '?');
+
+    const conf = parseFloat(p.confidence) || 0;
+    const confBadge = document.getElementById('d-conf-badge');
+    confBadge.textContent = `Conf ${Math.round(conf * 100)}%`;
+    confBadge.className = 'badge ' + (conf >= 0.8 ? 'conf-high' : conf >= 0.6 ? 'conf-mid' : 'conf-low');
+
+    document.getElementById('d-repo').textContent = p.repo || '';
+    document.getElementById('d-qid').textContent = p.question_id || '';
+    document.getElementById('d-date').textContent = (p.created_at || '').slice(0, 10);
+    const urlEl = document.getElementById('d-url');
+    urlEl.href = p.url || '#';
+    urlEl.textContent = p.url ? 'Open on GitHub ↗' : '';
+
+    document.getElementById('d-question').textContent = p.question_text || '';
+    document.getElementById('d-answer').textContent = p.answer_text || '';
+    document.getElementById('d-author').textContent = p.answer_author ? `@${p.answer_author}` : '';
+    document.getElementById('d-accepted').innerHTML = p.answer_is_accepted ? '<span class="accepted-badge">✓ Accepted answer</span>' : '';
+
+    document.getElementById('d-reasoning').textContent = p.reasoning || '';
+    document.getElementById('d-models').textContent = [p.stage1_model, p.stage2_model].filter(Boolean).join('  ·  ');
+    document.getElementById('d-thread').textContent = p.thread_text || '';
+
+    // verify panel
+    const st = p.status || 'pending';
+    const stEl = document.getElementById('current-status-text');
+    stEl.textContent = st;
+    stEl.className = 'status-text ' + st;
+    document.getElementById('verified-at-text').textContent = p.verified_at ? `(${p.verified_at.slice(0, 10)})` : '';
+    document.getElementById('note').value = p.note || '';
+    document.getElementById('nav-label').textContent = `${(listPos ?? 0) + 1} / ${allItems.length}`;
+  }
+
+  // ── Verify ───────────────────────────────────────────────────────────────
+
+  async function verify(status) {
+    if (currentIndex === null) return;
+    const note = document.getElementById('note').value;
+    const res = await fetch(`/api/pairs/${currentIndex}/verify`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status, note }),
+    });
+    if (res.ok) {
+      showToast(status === 'pending' ? 'Reset to pending' : `Marked as ${status}`, 'ok');
+      // update sidebar dot without full reload
+      const dot = document.querySelector(`.pair-item[data-index="${currentIndex}"] .pair-status-dot`);
+      if (dot) { dot.className = 'pair-status-dot ' + status; }
+      // update allItems cache
+      const item = allItems.find(i => i.index === currentIndex);
+      if (item) item.status = status;
+
+      const stEl = document.getElementById('current-status-text');
+      stEl.textContent = status;
+      stEl.className = 'status-text ' + status;
+
+      await loadStats();
+
+      // auto-advance on accept/reject
+      if (status !== 'pending') setTimeout(() => navigate(1), 300);
+    } else {
+      showToast('Error saving', 'err');
+    }
+  }
+
+  function navigate(dir) {
+    if (currentListPos === null) return;
+    const next = currentListPos + dir;
+    if (next < 0 || next >= allItems.length) return;
+    selectPair(allItems[next].index, next);
+    // scroll sidebar item into view
+    const el = document.querySelector(`.pair-item[data-index="${allItems[next].index}"]`);
+    if (el) el.scrollIntoView({ block: 'nearest' });
+  }
+
+  // ── Stats ────────────────────────────────────────────────────────────────
+
+  async function loadStats() {
+    const s = await fetch('/api/stats').then(r => r.json());
+    const total = s.total;
+    const done = s.counts.accepted + s.counts.rejected;
+    const pct = total ? Math.round(done / total * 100) : 0;
+    document.getElementById('prog-fill').style.width = pct + '%';
+    document.getElementById('progress-label').textContent = `${done} / ${total} reviewed`;
+    document.getElementById('pill-accepted').textContent = `✓ ${s.counts.accepted}`;
+    document.getElementById('pill-rejected').textContent = `✗ ${s.counts.rejected}`;
+    document.getElementById('pill-pending').textContent = `● ${s.counts.pending}`;
+  }
+
+  // ── Export ───────────────────────────────────────────────────────────────
+
+  async function exportData() {
+    const res = await fetch('/api/export', { method: 'POST' });
+    const data = await res.json();
+    showToast(`Exported ${data.exported} accepted pairs`, 'ok');
+    window.open('/api/export/download', '_blank');
+  }
+
+  // ── Helpers ──────────────────────────────────────────────────────────────
+
+  function escHtml(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function showToast(msg, type = '') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'show ' + type;
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => { t.className = ''; }, 2500);
+  }
+
+  // keyboard shortcuts
+  document.addEventListener('keydown', e => {
+    if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') return;
+    if (e.key === 'ArrowDown' || e.key === 'j') navigate(1);
+    if (e.key === 'ArrowUp'   || e.key === 'k') navigate(-1);
+    if (e.key === 'a') verify('accepted');
+    if (e.key === 'r') verify('rejected');
+    if (e.key === 'u') verify('pending');
+  });
+
+  init();
+</script>
+</body>
+</html>
