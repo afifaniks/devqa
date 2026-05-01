@@ -196,11 +196,17 @@ def classify_threads(
         print("  [error] no raw_threads.jsonl found — run mine_threads.py first")
         return
 
-    # Checkpoint key includes model name so switching models re-classifies
     checkpoint_key = f"classify_{stage1_model}_{stage2_model}".replace(
         ":", "_"
     ).replace("/", "_")
-    done = set() if force else load_checkpoint(repo, checkpoint_key)
+    # Model-agnostic seen set: every thread ever sent to the LLM (positives + negatives).
+    # Union with the model-specific checkpoint so we never re-run inference on a thread
+    # that was already processed, even when the model changes.
+    seen_key = "classify_seen"
+    if force:
+        done = set()
+    else:
+        done = load_checkpoint(repo, checkpoint_key) | load_checkpoint(repo, seen_key)
 
     threads_to_do = [t for t in threads if t["number"] not in done]
     if limit:
@@ -239,9 +245,9 @@ def classify_threads(
             skipped_no_qa += 1
             continue
 
-        if result.get("question_id") == "NONE":
-            skipped_no_qa += 1
-            continue
+        # if result.get("question_id") == "NONE":
+        #     skipped_no_qa += 1
+        #     continue
 
         if result.get("confidence", 0) < confidence_threshold:
             skipped_low_confidence += 1
@@ -277,8 +283,10 @@ def classify_threads(
 
         if len(done) % 100 == 0:
             save_checkpoint(repo, checkpoint_key, done)
+            save_checkpoint(repo, seen_key, done)
 
     save_checkpoint(repo, checkpoint_key, done)
+    save_checkpoint(repo, seen_key, done)
 
     # Summary
     print(f"\n  results:")
