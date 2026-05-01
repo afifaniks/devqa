@@ -15,16 +15,15 @@ Issues miner — covers questions:
 import re
 import sys
 import argparse
-from datetime import datetime, timezone
+from datetime import datetime
 from tqdm import tqdm
 
 sys.path.insert(0, "..")
-from utils.github_client import paginate, get
+from utils.github_client import paginate_graphql
 from utils.storage import save_jsonl, already_mined
 from config import REPOS, BUG_LABELS, MIN_COMMENT_LENGTH
 
 
-# Patterns that indicate a duplicate reference
 DUPLICATE_PATTERNS = [
     re.compile(r"duplicate of #(\d+)", re.IGNORECASE),
     re.compile(r"dup of #(\d+)", re.IGNORECASE),
@@ -32,16 +31,10 @@ DUPLICATE_PATTERNS = [
     re.compile(r"same as #(\d+)", re.IGNORECASE),
 ]
 
-# Patterns that indicate a related issue reference
 RELATED_PATTERNS = [
     re.compile(r"related to #(\d+)", re.IGNORECASE),
     re.compile(r"see also #(\d+)", re.IGNORECASE),
     re.compile(r"similar to #(\d+)", re.IGNORECASE),
-]
-
-# Closing keywords that link an issue to a PR/commit
-CLOSING_PATTERNS = [
-    re.compile(r"(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?) #(\d+)", re.IGNORECASE),
 ]
 
 
@@ -59,55 +52,114 @@ def parse_related_refs(text: str) -> list:
     return [int(r) for r in refs]
 
 
-def mine_issue_events(repo: str, issue_number: int) -> dict:
-    """
-    Fetch the full timeline for one issue.
-    Returns structured data: assignments, labels, cross-references, close event.
-    """
-    events = list(paginate(
-        f"/repos/{repo}/issues/{issue_number}/timeline",
-        params={"per_page": 100}
-    ))
+# Fetches issues with labels, assignees, comments, and timeline items in one query.
+# first: 20 issues × (50 comments + 50 timeline items) ≈ 2,020 nodes — within the
+# 5,000-node GraphQL rate-limit budget.
+_ISSUES_QUERY = """
+query($owner: String!, $name: String!, $labels: [String!], $cursor: String) {
+  repository(owner: $owner, name: $name) {
+    issues(
+      first: 20
+      after: $cursor
+      labels: $labels
+      states: [OPEN, CLOSED]
+      orderBy: {field: CREATED_AT, direction: ASC}
+    ) {
+      pageInfo { hasNextPage endCursor }
+      nodes {
+        number
+        title
+        body
+        state
+        createdAt
+        closedAt
+        author { login }
+        labels(first: 15) { nodes { name } }
+        assignees(first: 10) { nodes { login } }
+        comments(first: 50) {
+          totalCount
+          nodes {
+            databaseId
+            author { login }
+            body
+            createdAt
+          }
+        }
+        timelineItems(
+          first: 50
+          itemTypes: [ASSIGNED_EVENT, LABELED_EVENT, CLOSED_EVENT, CROSS_REFERENCED_EVENT]
+        ) {
+          pageInfo { hasNextPage }
+          nodes {
+            __typename
+            ... on AssignedEvent {
+              createdAt
+              assignee { ... on User { login } }
+            }
+            ... on LabeledEvent {
+              createdAt
+              label { name }
+            }
+            ... on ClosedEvent {
+              createdAt
+            }
+            ... on CrossReferencedEvent {
+              createdAt
+              source {
+                ... on Issue {
+                  number
+                  title
+                  state
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+"""
 
+
+def _parse_timeline(nodes: list) -> dict:
     assignments = []
     labels_applied = []
     first_bug_label_at = None
     first_assignee_after_bug = None
     closed_at = None
     cross_refs = []
-
     bug_label_seen = False
+    bug_label_set = {l.lower() for l in BUG_LABELS}
 
-    for event in events:
-        etype = event.get("event")
+    for node in nodes:
+        typename = node.get("__typename")
 
-        if etype == "assigned":
-            assignee = event.get("assignee", {}).get("login")
-            assigned_at = event.get("created_at")
-            assignments.append({"assignee": assignee, "at": assigned_at})
-            # Ground truth for Q54: first assignee after bug label
-            if bug_label_seen and first_assignee_after_bug is None:
-                first_assignee_after_bug = assignee
+        if typename == "AssignedEvent":
+            assignee = (node.get("assignee") or {}).get("login")
+            assigned_at = node.get("createdAt")
+            if assignee:
+                assignments.append({"assignee": assignee, "at": assigned_at})
+                if bug_label_seen and first_assignee_after_bug is None:
+                    first_assignee_after_bug = assignee
 
-        elif etype == "labeled":
-            label_name = event.get("label", {}).get("name", "")
-            labels_applied.append({"label": label_name, "at": event.get("created_at")})
-            if label_name.lower() in [l.lower() for l in BUG_LABELS]:
-                if not bug_label_seen:
-                    first_bug_label_at = event.get("created_at")
-                    bug_label_seen = True
+        elif typename == "LabeledEvent":
+            label_name = (node.get("label") or {}).get("name", "")
+            labels_applied.append({"label": label_name, "at": node.get("createdAt")})
+            if label_name.lower() in bug_label_set and not bug_label_seen:
+                first_bug_label_at = node.get("createdAt")
+                bug_label_seen = True
 
-        elif etype == "closed":
-            closed_at = event.get("created_at")
+        elif typename == "ClosedEvent":
+            closed_at = node.get("createdAt")
 
-        elif etype == "cross-referenced":
-            source = event.get("source", {})
-            ref_issue = source.get("issue", {})
+        elif typename == "CrossReferencedEvent":
+            source = node.get("source") or {}
             cross_refs.append({
-                "ref_number": ref_issue.get("number"),
-                "ref_title": ref_issue.get("title"),
-                "ref_state": ref_issue.get("state"),
-                "at": event.get("created_at"),
+                "ref_number": source.get("number"),
+                "ref_title": source.get("title"),
+                "ref_state": (source.get("state") or "").lower(),
+                "at": node.get("createdAt"),
             })
 
     return {
@@ -120,24 +172,6 @@ def mine_issue_events(repo: str, issue_number: int) -> dict:
     }
 
 
-def mine_issue_comments(repo: str, issue_number: int) -> list:
-    """Fetch all comments on an issue, keeping only substantive ones."""
-    comments = []
-    for c in paginate(f"/repos/{repo}/issues/{issue_number}/comments"):
-        body = c.get("body", "") or ""
-        if len(body) < MIN_COMMENT_LENGTH:
-            continue
-        comments.append({
-            "id": c["id"],
-            "author": c["user"]["login"],
-            "body": body,
-            "created_at": c["created_at"],
-            "duplicate_refs": parse_duplicate_refs(body),
-            "related_refs": parse_related_refs(body),
-        })
-    return comments
-
-
 def mine_issues(repo: str):
     if already_mined(repo, "issues"):
         print(f"  [skip] issues already mined for {repo}")
@@ -145,60 +179,66 @@ def mine_issues(repo: str):
 
     print(f"\n[issues] mining {repo} ...")
 
-    # Fetch all issues labelled as bugs
-    label_filter = ",".join(BUG_LABELS) if BUG_LABELS else None
-    params = {"state": "all", "sort": "created", "direction": "asc"}
-    if label_filter:
-        params["labels"] = label_filter
+    owner, name = repo.split("/")
+    labels = BUG_LABELS if BUG_LABELS else None
 
     raw_issues = list(tqdm(
-        paginate(f"/repos/{repo}/issues", params=params),
+        paginate_graphql(
+            _ISSUES_QUERY,
+            {"owner": owner, "name": name, "labels": labels},
+            lambda data: data["repository"]["issues"],
+        ),
         desc="  fetching issues"
     ))
 
-    # Filter out pull requests (GitHub returns PRs in /issues endpoint)
-    raw_issues = [i for i in raw_issues if "pull_request" not in i]
-
     records = []
-    for issue in tqdm(raw_issues, desc="  enriching issues"):
+    for issue in tqdm(raw_issues, desc="  processing issues"):
         number = issue["number"]
         body = issue.get("body", "") or ""
-        labels = [l["name"] for l in issue.get("labels", [])]
+        labels_list = [l["name"] for l in (issue.get("labels") or {}).get("nodes", [])]
 
-        # Parse duplicate/related references from the issue body
         dup_refs_body = parse_duplicate_refs(body)
         related_refs_body = parse_related_refs(body)
 
-        # Determine if this issue was closed as a duplicate
         is_duplicate = (
-            "duplicate" in [l.lower() for l in labels]
+            "duplicate" in [l.lower() for l in labels_list]
             or len(dup_refs_body) > 0
         )
 
-        # Time to fix (in hours) — only meaningful if issue is closed
-        created_at = issue.get("created_at")
-        closed_at_raw = issue.get("closed_at")
+        created_at = issue.get("createdAt")
+        closed_at_raw = issue.get("closedAt")
         time_to_close_hours = None
         if created_at and closed_at_raw:
             t0 = datetime.fromisoformat(created_at.replace("Z", "+00:00"))
             t1 = datetime.fromisoformat(closed_at_raw.replace("Z", "+00:00"))
             time_to_close_hours = (t1 - t0).total_seconds() / 3600
 
-        # Priority/severity from labels
         priority = None
-        for label in labels:
+        for label in labels_list:
             ll = label.lower()
             if any(p in ll for p in ["p0", "p1", "p2", "critical", "high", "medium", "low"]):
                 priority = label
                 break
 
-        # Get full timeline (assignments, labels, cross-refs)
-        events = mine_issue_events(repo, number)
+        timeline_nodes = (issue.get("timelineItems") or {}).get("nodes", [])
+        events = _parse_timeline(timeline_nodes)
 
-        # Get comments
-        comments = mine_issue_comments(repo, number)
+        comment_data = issue.get("comments") or {}
+        comment_count = comment_data.get("totalCount", 0)
+        comments = []
+        for c in comment_data.get("nodes", []):
+            cbody = c.get("body", "") or ""
+            if len(cbody) < MIN_COMMENT_LENGTH:
+                continue
+            comments.append({
+                "id": c.get("databaseId"),
+                "author": (c.get("author") or {}).get("login"),
+                "body": cbody,
+                "created_at": c.get("createdAt"),
+                "duplicate_refs": parse_duplicate_refs(cbody),
+                "related_refs": parse_related_refs(cbody),
+            })
 
-        # Collect all duplicate refs from body + comments
         all_dup_refs = dup_refs_body[:]
         all_related_refs = related_refs_body[:]
         for c in comments:
@@ -206,47 +246,31 @@ def mine_issues(repo: str):
             all_related_refs.extend(c["related_refs"])
 
         record = {
-            # Identity
             "repo": repo,
             "number": number,
             "title": issue["title"],
             "body": body,
-            "state": issue["state"],
+            "state": issue["state"].lower(),
             "created_at": created_at,
             "closed_at": closed_at_raw,
-            "reporter": issue["user"]["login"],
-            "labels": labels,
-
-            # Q54 ground truth: who was assigned after bug label applied
-            "assignees": [a["login"] for a in issue.get("assignees", [])],
+            "reporter": (issue.get("author") or {}).get("login"),
+            "labels": labels_list,
+            "assignees": [n["login"] for n in (issue.get("assignees") or {}).get("nodes", [])],
             "first_assignee_after_bug_label": events["first_assignee_after_bug"],
             "first_bug_label_at": events["first_bug_label_at"],
-
-            # Q53 ground truth: duplicate detection
             "is_duplicate": is_duplicate,
             "duplicate_of": all_dup_refs,
-
-            # Q58: related issues
             "related_issues": all_related_refs,
             "cross_refs": events["cross_refs"],
-
-            # Q57: severity
             "priority_label": priority,
-
-            # Q59: time to fix
             "time_to_close_hours": time_to_close_hours,
-
-            # Q60: full lifecycle
             "assignment_history": events["assignments"],
             "label_history": events["labels_applied"],
-
-            # Comments (ground truth for interpretive questions)
             "comments": comments,
-            "comment_count": len(comments),
+            "comment_count": comment_count,
         }
         records.append(record)
 
-        # Save incrementally every 10 issues in case of interruption
         if len(records) % 10 == 0:
             print(f"  saving {len(records)} issues so far...")
             save_jsonl(repo, "issues", records)
