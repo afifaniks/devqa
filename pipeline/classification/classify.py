@@ -40,7 +40,7 @@ def build_stage1_prompt(thread_text):
     return f"""Read this GitHub thread.
 
 <thread>
-{thread_text[:10000]}
+{thread_text[:50000]}
 </thread>
 
 Task: Does this thread contain a genuine developer information need AND a clear answer?
@@ -79,7 +79,7 @@ def build_stage2_prompt(thread_text, category_key):
     return f"""Read this GitHub thread.
 
 <thread>
-{thread_text[:10000]}
+{thread_text[:50000]}
 </thread>
 
 Category: {category_name}
@@ -98,9 +98,11 @@ Extract:
 - question_source: "issue_body" if the question is in the issue body, "comment" if in a comment
 - question_author: GitHub username of whoever asked
 - question_text: exact phrasing from the thread, not a paraphrase
+- question_comment_id: the [cN] ID (e.g. "c0", "c1") of the post containing the question
 - answer_text: the specific answer, not the whole comment
 - answer_author: GitHub username of whoever answered
-- answer_is_accepted: true only if the issue was closed immediately after 
+- answer_comment_id: the [cN] ID of the post containing the answer
+- answer_is_accepted: true only if the issue was closed immediately after
   this comment or the commenter explicitly resolved the question
 
 Return only this JSON:
@@ -109,8 +111,10 @@ Return only this JSON:
   "question_source": "issue_body" or "comment",
   "question_author": "...",
   "question_text": "...",
+  "question_comment_id": "c0",
   "answer_text": "...",
   "answer_author": "...",
+  "answer_comment_id": "c1",
   "answer_is_accepted": true or false,
   "confidence": 0.0 to 1.0,
   "reasoning": "one sentence"
@@ -163,8 +167,10 @@ def classify(thread_text, stage1_model, stage2_model):
         "contains_qa": True,
         "question_id": s2.get("question_id", "NONE"),
         "question_text": s2.get("question_text", ""),
+        "question_comment_id": s2.get("question_comment_id", ""),
         "answer_text": s2.get("answer_text", ""),
         "answer_author": s2.get("answer_author", ""),
+        "answer_comment_id": s2.get("answer_comment_id", ""),
         "answer_is_accepted": s2.get("answer_is_accepted", False),
         "confidence": s1_confidence * float(s2.get("confidence", 0.0)),
         "reasoning": s2.get("reasoning", ""),
@@ -264,14 +270,17 @@ def classify_threads(
             # Classification results
             "question_id": result["question_id"],
             "question_text": result["question_text"],
+            "question_comment_id": result.get("question_comment_id", ""),
             "answer_text": result["answer_text"],
             "answer_author": result["answer_author"],
+            "answer_comment_id": result.get("answer_comment_id", ""),
             "answer_is_accepted": result.get("answer_is_accepted", False),
             "confidence": result["confidence"],
             "reasoning": result.get("reasoning", ""),
             "stage1_category": result.get("stage1_category", ""),
             # Keep original thread for manual review
             "thread_text": thread_text,
+            "comments": thread.get("comments", []),
             # Classification metadata
             "stage1_model": stage1_model,
             "stage2_model": stage2_model,
