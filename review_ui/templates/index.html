@@ -24,6 +24,7 @@
   </div>
   <div class="topbar-right">
     <button class="btn" @click="toggleTheme()" x-text="isDark ? '☀ Light' : '🌙 Dark'"></button>
+    <button class="btn" @click="reloadSources()" :disabled="reloading" x-text="reloading ? 'Reloading…' : '↺ Reload'"></button>
     <button class="btn btn-primary" @click="exportData()">↓ Export Accepted</button>
   </div>
 </div>
@@ -174,14 +175,17 @@
 <div id="tax-tooltip" style="display:none"></div>
 
 <script>
+  const renderer = new marked.Renderer();
+  renderer.link = function(href, title, text) {
+    const safeHref = href || '#';
+    const safeText = text || safeHref;
+    return `<a href="${safeHref}" target="_blank" rel="noopener">${safeText}</a>`;
+  };
+
   marked.use({
     breaks: true,
     gfm: true,
-    renderer: {
-      link({ href, text }) {
-        return `<a href="${href}" target="_blank" rel="noopener">${text}</a>`;
-      }
-    }
+    renderer
   });
 
   const decodeEntityEl = document.createElement('textarea');
@@ -357,6 +361,7 @@
       filterRepo:'', filterQid:'', filterStatus:'', searchQuery:'',
       repos:[], qids:[], note:'',
       isDark: document.documentElement.classList.contains('dark'),
+      reloading: false,
       toastMsg:'', toastType:'', toastVisible:false, toastTimer:null,
 
       decodeHtml,
@@ -423,6 +428,17 @@
       async loadStats() {
         const s=await fetch('/api/stats').then(r=>r.json());
         this.stats={...s.counts,total:s.total};
+      },
+
+      async reloadSources() {
+        this.reloading=true;
+        try {
+          const data=await fetch('/api/reload',{method:'POST'}).then(r=>r.json());
+          await Promise.all([this.loadList(),this.loadStats()]);
+          this.showToast(`Reloaded — ${data.total} pairs`,'ok');
+        } finally {
+          this.reloading=false;
+        }
       },
 
       async exportData() {

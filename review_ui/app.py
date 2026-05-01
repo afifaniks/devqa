@@ -89,7 +89,7 @@ async def lifespan(app: FastAPI):
 
 _INDEX_HTML = Path(__file__).parent / "templates" / "index.html"
 
-app = FastAPI(title="QA Pair Review Tool", lifespan=lifespan)
+app = FastAPI(title="DevQA – Pair Review Tool", lifespan=lifespan)
 app.mount(
     "/static", StaticFiles(directory=Path(__file__).parent / "static"), name="static"
 )
@@ -210,6 +210,12 @@ def get_stats():
         "repos": repos,
         "question_ids": dict(sorted(question_ids.items(), key=lambda x: -x[1])),
     }
+
+
+@app.post("/api/reload")
+def reload_data():
+    load_data()
+    return {"ok": True, "total": len(pairs)}
 
 
 @app.post("/api/export")
