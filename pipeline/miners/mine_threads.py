@@ -22,26 +22,61 @@ from utils.storage import append_record, load_checkpoint, save_checkpoint, alrea
 from config import REPOS
 
 
-def format_issue_thread(issue):
-    """Convert a mined issue record into a clean thread string."""
+def build_issue_comments(issue):
+    """Build a structured comment list from a mined issue record.
+
+    Index 0 is always the issue body (role='body'); subsequent entries are comments.
+    Each entry has a short ID (c0, c1, …) for use in thread_text and the UI.
+    """
+    comments = [
+        {
+            "id": "c0",
+            "author": issue.get("reporter", "unknown"),
+            "timestamp": issue.get("created_at", ""),
+            "body": (issue.get("body", "") or "")[:5000],
+            "is_accepted": False,
+            "role": "body",
+        }
+    ]
+    for i, c in enumerate((issue.get("comments") or [])[:20], start=1):
+        comments.append(
+            {
+                "id": f"c{i}",
+                "author": c.get("author", "?"),
+                "timestamp": c.get("created_at", ""),
+                "body": (c.get("body") or "")[:5000],
+                "is_accepted": False,
+                "role": "comment",
+            }
+        )
+    return comments
+
+
+def format_issue_thread(issue, comments):
+    """Convert a mined issue + structured comments into a thread string.
+
+    Each comment block is prefixed with its ID (e.g. [c1]) so the LLM can
+    reference specific comments when returning question_comment_id/answer_comment_id.
+    """
+    c0 = comments[0]
     lines = [
         f"ISSUE #{issue['number']}: {issue['title']}",
-        f"Author: {issue.get('reporter', 'unknown')}",
-        f"Date: {issue.get('created_at', '')}",
+        f"Author: {c0['author']}",
+        f"Date: {c0['timestamp']}",
         f"Labels: {', '.join(issue.get('labels', []))}",
         f"State: {issue.get('state', '')}",
         "",
-        issue.get("body", "")[:5000] or "[no body]",
+        "[c0]",
+        c0["body"] or "[no body]",
         "",
         "--- COMMENTS ---",
     ]
-    for c in (issue.get("comments") or [])[:20]:
-        ts = c.get("created_at", "")
-        author_line = f"@{c.get('author', '?')}"
-        if ts:
-            author_line += f" {ts}"
+    for c in comments[1:]:
+        author_line = f"[{c['id']}] @{c['author']}"
+        if c["timestamp"]:
+            author_line += f" {c['timestamp']}"
         lines.append(author_line + ":")
-        lines.append((c.get("body") or "")[:5000])
+        lines.append(c["body"])
         lines.append("---")
     return "\n".join(lines)
 
@@ -72,7 +107,8 @@ def mine_issue_threads(repo):
             done.add(number)
             continue
 
-        thread_text = format_issue_thread(issue)
+        comments = build_issue_comments(issue)
+        thread_text = format_issue_thread(issue, comments)
 
         record = {
             "source": "issue",
@@ -80,6 +116,7 @@ def mine_issue_threads(repo):
             "number": number,
             "title": issue["title"],
             "thread_text": thread_text,
+            "comments": comments,
             "comment_count": issue.get("comment_count", 0),
             "labels": issue.get("labels", []),
             "state": issue.get("state", ""),
@@ -132,6 +169,86 @@ query($owner: String!, $name: String!, $cursor: String) {
 """
 
 
+def build_discussion_comments(d):
+    """Build a structured comment list from a discussion GraphQL node.
+
+    Index 0 is the discussion body. Subsequent entries are comments.
+    The accepted answer is marked is_accepted=True; if it wasn't already in
+    the comments list (e.g. it was a nested reply) it is appended at the end.
+    """
+    comments = [
+        {
+            "id": "c0",
+            "author": d["author"]["login"],
+            "timestamp": d.get("createdAt", ""),
+            "body": (d.get("body") or ""),
+            "is_accepted": False,
+            "role": "body",
+        }
+    ]
+
+    ans_body = d["answer"]["body"] if d.get("answer") else None
+    ans_author = d["answer"]["author"]["login"] if d.get("answer") else None
+    accepted_matched = False
+
+    for i, c in enumerate((d.get("comments", {}).get("nodes") or []), start=1):
+        body = c.get("body") or ""
+        author = c["author"]["login"]
+        is_accepted = bool(ans_body is not None and body == ans_body and author == ans_author)
+        if is_accepted:
+            accepted_matched = True
+        comments.append(
+            {
+                "id": f"c{i}",
+                "author": author,
+                "timestamp": c.get("createdAt", ""),
+                "body": body,
+                "is_accepted": is_accepted,
+                "role": "comment",
+            }
+        )
+
+    if d.get("answer") and not accepted_matched:
+        comments.append(
+            {
+                "id": f"c{len(comments)}",
+                "author": ans_author,
+                "timestamp": d["answer"].get("createdAt", ""),
+                "body": ans_body,
+                "is_accepted": True,
+                "role": "comment",
+            }
+        )
+
+    return comments
+
+
+def format_discussion_thread(d, comments):
+    """Convert a discussion + structured comments into a thread string with IDs."""
+    c0 = comments[0]
+    lines = [
+        f"DISCUSSION #{d['number']}: {d['title']}",
+        f"Author: {c0['author']}",
+        f"Date: {c0['timestamp']}",
+        "",
+        "[c0]",
+        c0["body"] or "[no body]",
+        "",
+        "--- COMMENTS ---",
+    ]
+    for c in comments[1:]:
+        prefix = f"[{c['id']}]"
+        if c["is_accepted"]:
+            prefix += " [ACCEPTED ANSWER]"
+        author_line = f"{prefix} @{c['author']}"
+        if c["timestamp"]:
+            author_line += f" {c['timestamp']}"
+        lines.append(author_line + ":")
+        lines.append(c["body"])
+        lines.append("---")
+    return "\n".join(lines)
+
+
 def mine_discussion_threads(repo):
     """
     Mine GitHub Discussions via GraphQL API.
@@ -154,38 +271,16 @@ def mine_discussion_threads(repo):
             if number in done:
                 continue
 
-            lines = [
-                f"DISCUSSION #{number}: {d['title']}",
-                f"Author: {d['author']['login']}",
-                f"Date: {d.get('createdAt', '')}",
-                "",
-                (d.get("body") or ""),
-                "",
-                "--- COMMENTS ---",
-            ]
-            for c in d.get("comments", {}).get("nodes") or []:
-                ts = c.get("createdAt", "")
-                author_line = f"@{c['author']['login']}"
-                if ts:
-                    author_line += f" {ts}"
-                lines.append(author_line + ":")
-                lines.append((c.get("body") or ""))
-                lines.append("---")
-
-            if d.get("answer"):
-                ts = d["answer"].get("createdAt", "")
-                ans_line = f"[ACCEPTED ANSWER] @{d['answer']['author']['login']}"
-                if ts:
-                    ans_line += f" {ts}"
-                lines.append(ans_line + ":")
-                lines.append((d["answer"].get("body") or ""))
+            comments = build_discussion_comments(d)
+            thread_text = format_discussion_thread(d, comments)
 
             record = {
                 "source": "discussion",
                 "repo": repo,
                 "number": number,
                 "title": d["title"],
-                "thread_text": "\n".join(lines),
+                "thread_text": thread_text,
+                "comments": comments,
                 "comment_count": d["comments"]["totalCount"],
                 "has_accepted_answer": d.get("answer") is not None,
                 "created_at": d.get("createdAt", ""),
