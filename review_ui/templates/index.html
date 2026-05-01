@@ -283,37 +283,58 @@
     }
   };
 
+  const qaTags=(isQ,isA) => (isQ||isA)
+    ? `<span style="margin-left:auto;display:flex;gap:3px">${isQ?'<span class="qa-tag q-tag">Q</span>':''}${isA?'<span class="qa-tag a-tag">A</span>':''}</span>` : '';
+  const dateSpan = iso => iso ? `<span class="ti-date">${fmtDate(iso)}</span>` : '';
+
+  const threadItem=(author, cls, headerContent, bodyText, isLast) => `
+    <div class="thread-item">
+      <div class="ti-avatar-col">${avatar(author)}${!isLast?'<div class="ti-connector"></div>':''}</div>
+      <div class="ti-main"><div class="ti-bubble ${cls}">
+        <div class="ti-header">${headerContent}</div>
+        <div class="ti-body md">${renderMd(bodyText)}</div>
+      </div></div>
+    </div>`;
+
+  function renderThreadStructured(comments, qCommentId, aCommentId, qText, aText) {
+    if (!comments || !comments.length) return '<p style="color:var(--text-muted);font-size:12px">No content</p>';
+    const total = comments.length;
+    let idx = 0, out = [];
+    for (const c of comments) {
+      const isQ = qCommentId ? c.id === qCommentId : match(c.body, qText);
+      const isA = aCommentId ? c.id === aCommentId : match(c.body, aText);
+      const author = c.author || '?';
+      const isBody = c.role === 'body';
+      const cls = `${isBody ? 'is-issue-body' : ''}${isQ ? ' is-question' : ''}${isA ? ' is-answer' : ''}`;
+      const roleLabel = isBody
+        ? `<span style="font-size:11px;color:var(--text-muted)">${c.source === 'discussion' ? 'opened discussion' : 'opened issue'}</span>`
+        : '';
+      const acceptedTag = c.is_accepted ? '<span class="ti-accepted-tag">✓ accepted answer</span>' : '';
+      out.push(threadItem(author, cls,
+        `<span class="ti-author">@${esc(author)}</span>${roleLabel}${dateSpan(c.timestamp)}${acceptedTag}${qaTags(isQ, isA)}`,
+        c.body, idx++ === total - 1));
+    }
+    return out.join('') || '<p style="color:var(--text-muted);font-size:12px">No content</p>';
+  }
+
   function renderThread(threadText, qText, aText) {
     if (!threadText) return '<p style="color:var(--text-muted);padding:6px 0;font-size:12px">No thread text</p>';
     const {isDiscussion, meta, body, comments} = parseThread(threadText);
     const total=(body?1:0)+comments.length;
     let idx=0, out=[];
 
-    const qaTags=(isQ,isA) => (isQ||isA)
-      ? `<span style="margin-left:auto;display:flex;gap:3px">${isQ?'<span class="qa-tag q-tag">Q</span>':''}${isA?'<span class="qa-tag a-tag">A</span>':''}</span>` : '';
-    const dateSpan = iso => iso ? `<span class="ti-date">${fmtDate(iso)}</span>` : '';
-
-    const item=(author, cls, headerContent, bodyText, isLast) => `
-      <div class="thread-item">
-        <div class="ti-avatar-col">${avatar(author)}${!isLast?'<div class="ti-connector"></div>':''}</div>
-        <div class="ti-main"><div class="ti-bubble ${cls}">
-          <div class="ti-header">${headerContent}</div>
-          <div class="ti-body md">${renderMd(bodyText)}</div>
-        </div></div>
-      </div>`;
-
     if (body) {
       const isQ=match(body,qText), isA=match(body,aText), author=meta.author||(isDiscussion?'author':'reporter');
       const labels=(meta.labels||'').split(',').map(l=>l.trim()).filter(Boolean).map(l=>`<span class="ti-label-badge">${esc(l)}</span>`).join('');
       const state=meta.state?`<span class="ti-label-badge ${meta.state==='closed'?'ti-state-closed':meta.state==='open'?'ti-state-open':''}">${esc(meta.state)}</span>`:'';
-      out.push(item(author,`is-issue-body${isQ?' is-question':''}${isA?' is-answer':''}`,
+      out.push(threadItem(author,`is-issue-body${isQ?' is-question':''}${isA?' is-answer':''}`,
         `<span class="ti-author">@${esc(author)}</span><span style="font-size:11px;color:var(--text-muted)">${isDiscussion?'opened discussion':'opened issue'}</span>${dateSpan(meta.date)}${labels}${state}${qaTags(isQ,isA)}`,
         body, idx++===total-1));
     }
 
     comments.forEach(c => {
       const isQ=match(c.body,qText), isA=match(c.body,aText);
-      out.push(item(c.author,`${isQ?'is-question':''}${isA?' is-answer':''}`,
+      out.push(threadItem(c.author,`${isQ?'is-question':''}${isA?' is-answer':''}`,
         `<span class="ti-author">@${esc(c.author)}</span>${dateSpan(c.date)}${c.isAccepted?'<span class="ti-accepted-tag">✓ accepted answer</span>':''}${qaTags(isQ,isA)}`,
         c.body, idx++===total-1));
     });
@@ -370,7 +391,19 @@
       get done()      { return this.stats.accepted+this.stats.rejected; },
       get progress()  { return this.stats.total ? Math.round(this.done/this.stats.total*100) : 0; },
       get confClass() { const c=parseFloat(this.pair?.confidence)||0; return c>=.8?'conf-high':c>=.6?'conf-mid':'conf-low'; },
-      get threadHtml(){ return this.pair ? renderThread(this.pair.thread_text||'',this.pair.question_text||'',this.pair.answer_text||'') : ''; },
+      get threadHtml() {
+        if (!this.pair) return '';
+        if (Array.isArray(this.pair.comments) && this.pair.comments.length) {
+          return renderThreadStructured(
+            this.pair.comments,
+            this.pair.question_comment_id || '',
+            this.pair.answer_comment_id || '',
+            this.pair.question_text || '',
+            this.pair.answer_text || ''
+          );
+        }
+        return renderThread(this.pair.thread_text || '', this.pair.question_text || '', this.pair.answer_text || '');
+      },
 
       async init() {
         const [repos,qids,tax] = await Promise.all([
