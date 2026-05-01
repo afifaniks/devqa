@@ -27,16 +27,21 @@ def format_issue_thread(issue):
     lines = [
         f"ISSUE #{issue['number']}: {issue['title']}",
         f"Author: {issue.get('reporter', 'unknown')}",
+        f"Date: {issue.get('created_at', '')}",
         f"Labels: {', '.join(issue.get('labels', []))}",
         f"State: {issue.get('state', '')}",
         "",
-        issue.get("body", "")[:1000] or "[no body]",
+        issue.get("body", "")[:5000] or "[no body]",
         "",
         "--- COMMENTS ---",
     ]
-    for c in (issue.get("comments") or [])[:15]:
-        lines.append(f"@{c.get('author', '?')}:")
-        lines.append((c.get("body") or "")[:600])
+    for c in (issue.get("comments") or [])[:20]:
+        ts = c.get("created_at", "")
+        author_line = f"@{c.get('author', '?')}"
+        if ts:
+            author_line += f" {ts}"
+        lines.append(author_line + ":")
+        lines.append((c.get("body") or "")[:5000])
         lines.append("---")
     return "\n".join(lines)
 
@@ -152,19 +157,28 @@ def mine_discussion_threads(repo):
             lines = [
                 f"DISCUSSION #{number}: {d['title']}",
                 f"Author: {d['author']['login']}",
+                f"Date: {d.get('createdAt', '')}",
                 "",
-                (d.get("body") or "")[:1000],
+                (d.get("body") or ""),
                 "",
                 "--- COMMENTS ---",
             ]
             for c in d.get("comments", {}).get("nodes") or []:
-                lines.append(f"@{c['author']['login']}:")
-                lines.append((c.get("body") or "")[:600])
+                ts = c.get("createdAt", "")
+                author_line = f"@{c['author']['login']}"
+                if ts:
+                    author_line += f" {ts}"
+                lines.append(author_line + ":")
+                lines.append((c.get("body") or ""))
                 lines.append("---")
 
             if d.get("answer"):
-                lines.append(f"[ACCEPTED ANSWER] @{d['answer']['author']['login']}:")
-                lines.append((d["answer"].get("body") or "")[:800])
+                ts = d["answer"].get("createdAt", "")
+                ans_line = f"[ACCEPTED ANSWER] @{d['answer']['author']['login']}"
+                if ts:
+                    ans_line += f" {ts}"
+                lines.append(ans_line + ":")
+                lines.append((d["answer"].get("body") or ""))
 
             record = {
                 "source": "discussion",
