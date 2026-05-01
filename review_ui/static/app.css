@@ -179,11 +179,21 @@ html.dark .pair-item.active { background: rgba(68,147,248,.1); }
 .status-dot.rejected { background: var(--red); }
 .status-dot.pending  { background: var(--border-dark); }
 .pair-meta { flex: 1; min-width: 0; }
-.pair-qid-row { font-size: 11px; font-weight: 600; color: var(--accent); display: flex; gap: 5px; align-items: center; }
+.pair-qid-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.pair-ref {
+  font-weight: 600;
+  color: var(--accent);
+  margin-right: 2px;
+}
 .pair-conf { margin-left: auto; font-size: 11px; color: var(--text-muted); font-weight: 400; }
 .pair-title { font-size: 11.5px; color: var(--text-dim); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .pair-question { font-size: 12.5px; color: var(--text); margin-top: 2px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.45; }
-.pair-repo { font-size: 10.5px; color: var(--text-muted); margin-top: 3px; }
 
 /* ── Detail panel ────────────────────────────────────────────────────────── */
 #detail-empty { flex: 1; display: flex; align-items: center; justify-content: center; color: var(--text-muted); flex-direction: column; gap: 8px; }
@@ -319,17 +329,25 @@ html.dark .md pre { background: #161b22; }
 .tax-trigger { cursor: pointer; text-decoration: underline dotted 1px; text-underline-offset: 2px; }
 .tax-trigger:hover { opacity: .75; }
 #tax-tooltip {
-  position: fixed; z-index: 2000; pointer-events: none;
-  background: var(--surface); border: 1px solid var(--border-dark);
-  border-radius: var(--radius-lg); padding: 11px 13px;
-  max-width: 320px; min-width: 200px;
+  position: fixed;
+  z-index: 9999;
+  pointer-events: auto;
+  background: var(--surface);
+  border: 1px solid var(--border-dark);
+  border-radius: var(--radius-lg);
+  padding: 11px 13px;
+  max-width: 320px;
+  min-width: 200px;
+  max-height: 320px;
+  overflow: hidden;
   box-shadow: var(--shadow-lg);
   font-size: 12.5px;
 }
+
 #tax-tooltip .tt-qid     { font-weight: 700; color: var(--accent); margin-bottom: 3px; }
 #tax-tooltip .tt-cat     { font-size: 10.5px; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .06em; }
 #tax-tooltip .tt-desc    { color: var(--text); line-height: 1.5; }
 #tax-tooltip .tt-divider { border: none; border-top: 1px solid var(--border); margin: 7px 0; }
-#tax-tooltip .tt-qlist   { display: flex; flex-direction: column; gap: 3px; max-height: 260px; overflow-y: auto; }
+#tax-tooltip .tt-qlist   { display: flex; flex-direction: column; gap: 3px; max-height: 260px; padding-bottom: 10px; overflow-y: auto; overflow-x: hidden; }
 #tax-tooltip .tt-qrow    { font-size: 11.5px; color: var(--text-dim); display: flex; gap: 7px; }
 #tax-tooltip .tt-qrow b  { color: var(--accent); flex-shrink: 0; font-weight: 600; }

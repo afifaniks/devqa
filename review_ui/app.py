@@ -71,12 +71,14 @@ def save_verification() -> None:
 
 # ── Models ──────────────────────────────────────────────────────────────────
 
+
 class VerifyRequest(BaseModel):
     status: str  # "accepted" | "rejected" | "pending"
     note: Optional[str] = ""
 
 
 # ── App ──────────────────────────────────────────────────────────────────────
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -88,7 +90,9 @@ async def lifespan(app: FastAPI):
 _INDEX_HTML = Path(__file__).parent / "templates" / "index.html"
 
 app = FastAPI(title="QA Pair Review Tool", lifespan=lifespan)
-app.mount("/static", StaticFiles(directory=Path(__file__).parent / "static"), name="static")
+app.mount(
+    "/static", StaticFiles(directory=Path(__file__).parent / "static"), name="static"
+)
 
 
 # ── Routes ──────────────────────────────────────────────────────────────────
@@ -121,27 +125,32 @@ def get_pairs(
             continue
         if q:
             q_lower = q.lower()
-            if q_lower not in p.get("question_text", "").lower() and \
-               q_lower not in p.get("answer_text", "").lower() and \
-               q_lower not in p.get("title", "").lower():
+            if (
+                q_lower not in p.get("question_text", "").lower()
+                and q_lower not in p.get("answer_text", "").lower()
+                and q_lower not in p.get("title", "").lower()
+            ):
                 continue
 
-        filtered.append({
-            "index": i,
-            "repo": p.get("repo"),
-            "question_id": p.get("question_id"),
-            "question_text": p.get("question_text", ""),
-            "title": p.get("title"),
-            "confidence": p.get("confidence"),
-            "stage1_category": p.get("stage1_category"),
-            "source": p.get("source"),
-            "status": vstatus,
-            "note": v.get("note", ""),
-        })
+        filtered.append(
+            {
+                "index": i,
+                "repo": p.get("repo"),
+                "question_id": p.get("question_id"),
+                "number": p.get("number"),
+                "question_text": p.get("question_text", ""),
+                "title": p.get("title"),
+                "confidence": p.get("confidence"),
+                "stage1_category": p.get("stage1_category"),
+                "source": p.get("source"),
+                "status": vstatus,
+                "note": v.get("note", ""),
+            }
+        )
 
     total = len(filtered)
     start = (page - 1) * page_size
-    page_items = filtered[start: start + page_size]
+    page_items = filtered[start : start + page_size]
 
     return {
         "total": total,
@@ -206,8 +215,7 @@ def get_stats():
 @app.post("/api/export")
 def export_verified():
     accepted = [
-        p for p in pairs
-        if verification.get(pair_id(p), {}).get("status") == "accepted"
+        p for p in pairs if verification.get(pair_id(p), {}).get("status") == "accepted"
     ]
     with EXPORT_FILE.open("w") as f:
         for p in accepted:
@@ -219,7 +227,11 @@ def export_verified():
 def download_export():
     if not EXPORT_FILE.exists():
         raise HTTPException(status_code=404, detail="No export yet. Run export first.")
-    return FileResponse(EXPORT_FILE, filename="verified_qa_pairs.jsonl", media_type="application/octet-stream")
+    return FileResponse(
+        EXPORT_FILE,
+        filename="verified_qa_pairs.jsonl",
+        media_type="application/octet-stream",
+    )
 
 
 @app.get("/api/taxonomy")
@@ -244,4 +256,11 @@ def get_question_ids():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("app:app", host="0.0.0.0", port=8765, reload=True, app_dir=str(Path(__file__).parent))
+
+    uvicorn.run(
+        "app:app",
+        host="0.0.0.0",
+        port=8765,
+        reload=True,
+        app_dir=str(Path(__file__).parent),
+    )

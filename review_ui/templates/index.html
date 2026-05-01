@@ -51,27 +51,37 @@
       </select>
     </div>
 
-    <div id="pair-list">
-      <template x-for="(item, pos) in allItems" :key="item.index">
-        <div class="pair-item" :class="{active: item.index===currentIndex}"
-             :data-index="item.index" @click="selectPair(item.index, pos)">
-          <div class="status-dot" :class="item.status"></div>
-          <div class="pair-meta">
-            <div class="pair-qid-row">
-              <span class="tax-trigger" @click.stop="taxTip($event,'q',item.question_id)"
-                    x-text="item.question_id"></span>
-              <span class="badge badge-neutral tax-trigger" style="font-size:10px;padding:1px 5px"
-                    @click.stop="taxTip($event,'cat',item.stage1_category)"
-                    x-text="item.stage1_category||'?'"></span>
-              <span class="pair-conf" x-text="Math.round((parseFloat(item.confidence)||0)*100)+'%'"></span>
-            </div>
-            <div class="pair-title" x-text="decodeHtml(item.title||'')"></div>
-            <div class="pair-question" x-text="decodeHtml(item.question_text||'')"></div>
-            <div class="pair-repo" x-text="`${item.repo} · ${item.source}`"></div>
-          </div>
+<div id="pair-list">
+  <template x-for="(item, pos) in allItems" :key="item.index">
+    <div class="pair-item" :class="{active: item.index===currentIndex}"
+         :data-index="item.index" @click="selectPair(item.index, pos)">
+      <div class="status-dot" :class="item.status"></div>
+      <div class="pair-meta">
+        <div class="pair-qid-row">
+          <span class="pair-ref" x-text="`${item.repo}/${item.number}`"></span>
+
+          <span class="badge badge-neutral tax-trigger"
+                @click.stop="taxTip($event,'cat',item.stage1_category)"
+                x-text="`${item.stage1_category || '?'}`"></span>
+
+          <span class="badge badge-neutral tax-trigger"
+                @click.stop="taxTip($event,'q',item.question_id)"
+                x-text="item.question_id"></span>
+
+          <span class="pair-conf" x-text="Math.round((parseFloat(item.confidence)||0)*100)+'%'"></span>
         </div>
-      </template>
+
+        <div class="pair-title" x-text="decodeHtml(item.title || '')"></div>
+        <div class="pair-question" x-text="decodeHtml(item.question_text || '')"></div>
+
+        <div class="pair-repo">
+          <span class="pair-source" x-text="item.source"></span>
+        </div>
+      </div>
     </div>
+  </template>
+</div>
+
 
     <div id="sidebar-footer" x-text="`${allItems.length} pairs`">–</div>
   </div>
