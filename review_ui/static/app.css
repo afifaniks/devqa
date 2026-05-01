@@ -152,8 +152,12 @@ html.dark .input:focus, html.dark .select:focus, html.dark .textarea:focus { box
 
 /* ── Cards ───────────────────────────────────────────────────────────────── */
 .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px; box-shadow: var(--shadow-sm); }
-.card-q { border-left: 3px solid var(--accent); }
-.card-a { border-left: 3px solid var(--green); }
+.card-q { border-left: 4px solid var(--accent); background: rgba(9,105,218,.04); }
+.card-a { border-left: 4px solid var(--green);  background: rgba(26,127,55,.04); }
+.card-q .label { color: var(--accent); }
+.card-a .label { color: var(--green); }
+html.dark .card-q { background: rgba(68,147,248,.07); }
+html.dark .card-a { background: rgba(63,185,80,.07); }
 
 /* ── Section label ───────────────────────────────────────────────────────── */
 .label { font-size: 10.5px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--text-muted); }
@@ -226,8 +230,32 @@ html.dark .pair-item.active { background: rgba(68,147,248,.1); }
   overflow: hidden; background: var(--surface);
 }
 .ti-bubble.is-issue-body { background: var(--surface2); }
-.ti-bubble.is-question   { border-left: 3px solid var(--accent); }
-.ti-bubble.is-answer     { border-left: 3px solid var(--green); }
+.ti-bubble.is-question {
+  border-left: 4px solid var(--accent);
+  background: rgba(9,105,218,.05);
+  box-shadow: 0 0 0 1px rgba(9,105,218,.12), var(--shadow-sm);
+}
+.ti-bubble.is-answer {
+  border-left: 4px solid var(--green);
+  background: rgba(26,127,55,.05);
+  box-shadow: 0 0 0 1px rgba(26,127,55,.15), var(--shadow-sm);
+}
+html.dark .ti-bubble.is-question {
+  background: rgba(68,147,248,.09);
+  box-shadow: 0 0 0 1px rgba(68,147,248,.2), var(--shadow-sm);
+}
+html.dark .ti-bubble.is-answer {
+  background: rgba(63,185,80,.09);
+  box-shadow: 0 0 0 1px rgba(63,185,80,.2), var(--shadow-sm);
+}
+.ti-bubble.is-question .ti-header {
+  background: rgba(9,105,218,.07); border-bottom-color: rgba(9,105,218,.15);
+}
+.ti-bubble.is-answer .ti-header {
+  background: rgba(26,127,55,.07); border-bottom-color: rgba(26,127,55,.18);
+}
+html.dark .ti-bubble.is-question .ti-header { background: rgba(68,147,248,.12); border-bottom-color: rgba(68,147,248,.2); }
+html.dark .ti-bubble.is-answer   .ti-header { background: rgba(63,185,80,.12);  border-bottom-color: rgba(63,185,80,.2); }
 .ti-header {
   padding: 6px 12px; font-size: 12px;
   background: var(--surface2); border-bottom: 1px solid var(--border);
@@ -235,6 +263,7 @@ html.dark .pair-item.active { background: rgba(68,147,248,.1); }
 }
 html.dark .ti-header { background: #1c2128; }
 .ti-author       { font-weight: 600; }
+.ti-date         { font-size: 11px; color: var(--text-muted); }
 .ti-accepted-tag { font-size: 11px; color: var(--green); font-weight: 500; }
 .ti-label-badge {
   padding: 1px 6px; border-radius: 99px; font-size: 10.5px; font-weight: 500;

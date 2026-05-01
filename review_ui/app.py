@@ -24,7 +24,16 @@ from utils.taxonomy import CATEGORIES, QUESTIONS  # noqa: E402
 # ── In-memory data ──────────────────────────────────────────────────────────
 
 pairs: list[dict] = []
-verification: dict[str, dict] = {}  # key = str index
+verification: dict[str, dict] = {}  # key = pair_id (repo/source/number/question_id)
+
+
+def pair_id(p: dict) -> str:
+    return "{}/{}/{}/{}".format(
+        p.get("repo", "unknown"),
+        p.get("source", "unknown"),
+        p.get("number", "unknown"),
+        p.get("question_id", "unknown"),
+    )
 
 
 def load_data() -> None:
@@ -41,6 +50,19 @@ def load_data() -> None:
         verification = json.loads(VERIFICATION_FILE.read_text())
     else:
         verification = {}
+
+    # Migrate legacy integer-index keys to pair_id keys
+    if any(k.isdigit() for k in verification):
+        migrated = {}
+        for k, v in verification.items():
+            if k.isdigit():
+                idx = int(k)
+                if 0 <= idx < len(pairs):
+                    migrated[pair_id(pairs[idx])] = v
+            else:
+                migrated[k] = v
+        verification = migrated
+        save_verification()
 
 
 def save_verification() -> None:
@@ -88,7 +110,7 @@ def get_pairs(
 ):
     filtered = []
     for i, p in enumerate(pairs):
-        v = verification.get(str(i), {})
+        v = verification.get(pair_id(p), {})
         vstatus = v.get("status", "pending")
 
         if repo and p.get("repo") != repo:
@@ -108,7 +130,7 @@ def get_pairs(
             "index": i,
             "repo": p.get("repo"),
             "question_id": p.get("question_id"),
-            "question_text": p.get("question_text", "")[:120],
+            "question_text": p.get("question_text", ""),
             "title": p.get("title"),
             "confidence": p.get("confidence"),
             "stage1_category": p.get("stage1_category"),
@@ -134,7 +156,7 @@ def get_pair(index: int):
     if index < 0 or index >= len(pairs):
         raise HTTPException(status_code=404, detail="Pair not found")
     p = dict(pairs[index])
-    v = verification.get(str(index), {})
+    v = verification.get(pair_id(p), {})
     p["index"] = index
     p["status"] = v.get("status", "pending")
     p["note"] = v.get("note", "")
@@ -149,7 +171,7 @@ def verify_pair(index: int, body: VerifyRequest):
     if body.status not in ("accepted", "rejected", "pending"):
         raise HTTPException(status_code=400, detail="Invalid status")
 
-    verification[str(index)] = {
+    verification[pair_id(pairs[index])] = {
         "status": body.status,
         "note": body.note or "",
         "verified_at": datetime.utcnow().isoformat() + "Z",
@@ -164,12 +186,12 @@ def get_stats():
     question_ids: dict[str, int] = {}
     counts = {"accepted": 0, "rejected": 0, "pending": 0}
 
-    for i, p in enumerate(pairs):
+    for p in pairs:
         repo = p.get("repo", "unknown")
         repos[repo] = repos.get(repo, 0) + 1
         qid = p.get("question_id", "?")
         question_ids[qid] = question_ids.get(qid, 0) + 1
-        v = verification.get(str(i), {})
+        v = verification.get(pair_id(p), {})
         status = v.get("status", "pending")
         counts[status] = counts.get(status, 0) + 1
 
@@ -184,9 +206,8 @@ def get_stats():
 @app.post("/api/export")
 def export_verified():
     accepted = [
-        pairs[i]
-        for i in range(len(pairs))
-        if verification.get(str(i), {}).get("status") == "accepted"
+        p for p in pairs
+        if verification.get(pair_id(p), {}).get("status") == "accepted"
     ]
     with EXPORT_FILE.open("w") as f:
         for p in accepted:

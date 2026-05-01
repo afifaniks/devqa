@@ -7,14 +7,12 @@
   <link rel="stylesheet" href="/static/app.css" />
   <script src="https://cdn.jsdelivr.net/npm/marked@9/marked.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3/dist/cdn.min.js"></script>
-  <!-- Must be inline so it applies before Alpine initialises -->
   <style>[x-cloak]{display:none!important}</style>
   <script>if (localStorage.getItem('theme')==='dark') document.documentElement.classList.add('dark');</script>
 </head>
 
 <body x-data="app()" x-init="init()" @keydown.window="handleKey($event)">
 
-<!-- ── Topbar ──────────────────────────────────────────────────────────────── -->
 <div id="topbar">
   <h1>QA Pair Review</h1>
   <div class="prog-wrap"><div class="prog-fill" :style="`width:${progress}%`"></div></div>
@@ -22,7 +20,7 @@
   <div class="topbar-pills">
     <span class="badge badge-accepted" x-text="`✓ ${stats.accepted}`"></span>
     <span class="badge badge-rejected" x-text="`✗ ${stats.rejected}`"></span>
-    <span class="badge badge-pending"  x-text="`● ${stats.pending}`"></span>
+    <span class="badge badge-pending" x-text="`● ${stats.pending}`"></span>
   </div>
   <div class="topbar-right">
     <button class="btn" @click="toggleTheme()" x-text="isDark ? '☀ Light' : '🌙 Dark'"></button>
@@ -30,10 +28,7 @@
   </div>
 </div>
 
-<!-- ── Layout ──────────────────────────────────────────────────────────────── -->
 <div id="layout">
-
-  <!-- Sidebar -->
   <div id="sidebar">
     <div id="sidebar-filters">
       <input class="input" type="text" x-model="searchQuery" @input.debounce.300ms="loadList()"
@@ -70,9 +65,9 @@
                     x-text="item.stage1_category||'?'"></span>
               <span class="pair-conf" x-text="Math.round((parseFloat(item.confidence)||0)*100)+'%'"></span>
             </div>
-            <div class="pair-title"    x-text="item.title||''"></div>
-            <div class="pair-question" x-text="item.question_text||''"></div>
-            <div class="pair-repo"     x-text="`${item.repo} · ${item.source}`"></div>
+            <div class="pair-title" x-text="decodeHtml(item.title||'')"></div>
+            <div class="pair-question" x-text="decodeHtml(item.question_text||'')"></div>
+            <div class="pair-repo" x-text="`${item.repo} · ${item.source}`"></div>
           </div>
         </div>
       </template>
@@ -81,9 +76,7 @@
     <div id="sidebar-footer" x-text="`${allItems.length} pairs`">–</div>
   </div>
 
-  <!-- Detail -->
   <div id="detail">
-    <!-- Empty state -->
     <div id="detail-empty" x-show="!pair">
       <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
         <rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 12h8M8 8h5M8 16h3"/>
@@ -91,16 +84,14 @@
       <span style="font-size:13px">Select a pair to review</span>
     </div>
 
-    <!-- Content -->
     <div id="detail-content" x-show="pair" x-cloak>
-
       <div class="detail-header">
-        <h2 x-text="pair?.title||'(no title)'"></h2>
-        <span class="badge src-badge" :class="'src-'+(pair?.source||'')" x-text="pair?.source||''"></span>
+        <h2 x-text="decodeHtml(pair?.title||'(no title)')"></h2>
+        <span class="badge src-badge" :class="'src-'+(pair?.source||'')" x-text="(pair?.source||'').charAt(0).toUpperCase()+(pair?.source||'').slice(1)"></span>
         <span class="badge badge-neutral tax-trigger" @click.stop="taxTip($event,'cat',pair?.stage1_category)"
-              x-text="`Cat. ${pair?.stage1_category||'?'}`"></span>
+              x-text="`Category: ${pair?.stage1_category||'?'}`"></span>
         <span class="badge" :class="confClass"
-              x-text="`${Math.round((parseFloat(pair?.confidence)||0)*100)}% conf`"></span>
+              x-text="`Confidence: ${Math.round((parseFloat(pair?.confidence)||0)*100)}%`"></span>
       </div>
 
       <div class="meta-row">
@@ -110,16 +101,19 @@
               x-text="pair?.question_id||''"></span>
         <span x-text="(pair?.created_at||'').slice(0,10)"></span>
         <a :href="pair?.url||'#'" target="_blank" rel="noopener" x-show="pair?.url">Open on GitHub ↗</a>
+            <div style="font-size:11px;color:var(--text-muted)"
+          x-text="[pair?.stage1_model ? 'Stage 1 LLM: '+pair.stage1_model : null, pair?.stage2_model ? 'Stage 2 LLM: '+pair.stage2_model : null].filter(Boolean).join(' · ')">
+      </div>
       </div>
 
       <div class="qa-grid">
         <div class="card card-q">
           <div class="label" style="margin-bottom:8px">Extracted Question</div>
-          <p style="font-size:13px" x-text="pair?.question_text||''"></p>
+          <p style="font-size:13px" x-text="decodeHtml(pair?.question_text||'')"></p>
         </div>
         <div class="card card-a">
           <div class="label" style="margin-bottom:8px">Extracted Answer</div>
-          <p style="font-size:13px" x-text="pair?.answer_text||''"></p>
+          <p style="font-size:13px" x-text="decodeHtml(pair?.answer_text||'')"></p>
           <div class="author-line">
             <span x-text="pair?.answer_author?'@'+pair.answer_author:''"></span>
             <span class="accepted-badge" x-show="pair?.answer_is_accepted">✓ Accepted answer</span>
@@ -129,11 +123,8 @@
 
       <div>
         <div class="label" style="margin-bottom:6px">Classification Reasoning</div>
-        <div class="reasoning-card" x-text="pair?.reasoning||''"></div>
+        <div class="reasoning-card" x-text="decodeHtml(pair?.reasoning||'')"></div>
       </div>
-
-      <div style="font-size:11px;color:var(--text-muted)"
-           x-text="[pair?.stage1_model,pair?.stage2_model].filter(Boolean).join(' · ')"></div>
 
       <div>
         <div class="label" style="margin-bottom:8px">Thread</div>
@@ -141,7 +132,6 @@
       </div>
     </div>
 
-    <!-- Verify panel -->
     <div id="verify-panel" x-show="pair" x-cloak>
       <div class="verify-top">
         <div style="font-size:12px;display:flex;align-items:center;gap:5px">
@@ -168,27 +158,58 @@
   </div>
 </div>
 
-<!-- Toast -->
 <div id="toast" :class="{show:toastVisible, ok:toastType==='ok', err:toastType==='err'}"
      x-text="toastMsg"></div>
 
-<!-- Taxonomy tooltip — positioned via direct DOM manipulation for accuracy -->
 <div id="tax-tooltip" style="display:none"></div>
 
 <script>
-  // ── marked setup ──────────────────────────────────────────────────────────
   marked.use({
-    breaks: true, gfm: true,
+    breaks: true,
+    gfm: true,
     renderer: {
-      link({ href, text }) { return `<a href="${href}" target="_blank" rel="noopener">${text}</a>`; }
+      link({ href, text }) {
+        return `<a href="${href}" target="_blank" rel="noopener">${text}</a>`;
+      }
     }
   });
-  function renderMd(text) {
-    if (!text) return '';
-    return marked.parse(text).replace(/#(\d+)/g, '<span class="issue-ref">#$1</span>');
+
+  const decodeEntityEl = document.createElement('textarea');
+
+  function decodeHtml(value) {
+    if (value == null) return '';
+    let decoded = String(value);
+
+    for (let i = 0; i < 6; i++) {
+      decodeEntityEl.innerHTML = decoded;
+      const next = decodeEntityEl.value;
+      if (next === decoded) break;
+      decoded = next;
+    }
+
+    return decoded;
   }
 
-  // ── Thread utilities ──────────────────────────────────────────────────────
+  function decodeRenderedHtml(html) {
+    const tpl = document.createElement('template');
+    tpl.innerHTML = html;
+
+    const walk = document.createTreeWalker(tpl.content, NodeFilter.SHOW_TEXT);
+    let node;
+    while ((node = walk.nextNode())) {
+      node.textContent = decodeHtml(node.textContent);
+    }
+
+    return tpl.innerHTML;
+  }
+
+  function renderMd(text) {
+    if (!text) return '';
+    const decoded = decodeHtml(text);
+    const rendered = marked.parse(decoded);
+    return decodeRenderedHtml(rendered).replace(/#(\d+)/g, '<span class="issue-ref">#$1</span>');
+  }
+
   function esc(s) {
     return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   }
@@ -200,21 +221,33 @@
     const lines = header.split('\n');
     const isDiscussion = (lines[0]||'').startsWith('DISCUSSION');
     let i=1; const meta={};
-    while (i<lines.length && /^(Author|Labels|State):\s/.test(lines[i])) {
-      const ci=lines[i].indexOf(': '); meta[lines[i].slice(0,ci).toLowerCase()]=lines[i].slice(ci+2); i++;
+    while (i<lines.length && /^(Author|Labels|State|Date):\s/.test(lines[i])) {
+      const ci=lines[i].indexOf(': ');
+      meta[lines[i].slice(0,ci).toLowerCase()]=lines[i].slice(ci+2);
+      i++;
     }
     while (i<lines.length && !lines[i].trim()) i++;
     const body = lines.slice(i).join('\n').trim();
     const comments = [];
     if (cSec.trim()) {
       for (const block of cSec.split(/\n---\n(?=@|\[ACCEPTED)/)) {
-        const t=block.replace(/\n---\s*$/,'').trim(); if (!t) continue;
+        const t=block.replace(/\n---\s*$/,'').trim();
+        if (!t) continue;
         const nl=t.indexOf('\n'), first=nl>-1?t.slice(0,nl):t, cbody=nl>-1?t.slice(nl+1).trim():'';
-        let author='?', isAccepted=false;
-        if (first.startsWith('[ACCEPTED ANSWER] @')) { author=first.replace('[ACCEPTED ANSWER] @','').replace(/:$/,'').trim(); isAccepted=true; }
-        else if (/^@\S+:?$/.test(first)) author=first.replace(/^@/,'').replace(/:$/,'').trim();
-        else continue;
-        comments.push({author, body:cbody, isAccepted});
+        let author='?', isAccepted=false, date='';
+        if (first.startsWith('[ACCEPTED ANSWER] @')) {
+          const rest=first.replace('[ACCEPTED ANSWER] @','').replace(/:$/,'').trim();
+          const sp=rest.indexOf(' ');
+          author=sp>-1?rest.slice(0,sp):rest;
+          date=sp>-1?rest.slice(sp+1):'';
+          isAccepted=true;
+        } else if (/^@/.test(first)) {
+          const rest=first.replace(/^@/,'').replace(/:$/,'').trim();
+          const sp=rest.indexOf(' ');
+          author=sp>-1?rest.slice(0,sp):rest;
+          date=sp>-1?rest.slice(sp+1):'';
+        } else continue;
+        comments.push({author, body:cbody, isAccepted, date});
       }
     }
     return {isDiscussion, meta, body, comments};
@@ -222,15 +255,29 @@
 
   const AV_COLORS=['#0969da','#1a7f37','#9a6700','#cf222e','#8250df','#0550ae','#bf4b8a','#0a7b77','#b35900','#693cc5'];
   const avatar = a => `<div class="ti-avatar" style="background:${AV_COLORS[(a.charCodeAt(0)||0)%AV_COLORS.length]}">${(a[0]||'?').toUpperCase()}</div>`;
-  const match  = (t,r) => { if (!r||!t) return false; const n=s=>s.replace(/\s+/g,' ').trim().toLowerCase(); const needle=n(r).slice(0,100); return needle.length>10&&n(t).includes(needle); };
+  const match  = (t,r) => {
+    if (!r||!t) return false;
+    const n=s=>s.replace(/\s+/g,' ').trim().toLowerCase();
+    const needle=n(r).slice(0,100);
+    return needle.length>10&&n(t).includes(needle);
+  };
+  const fmtDate = iso => {
+    try {
+      return iso ? new Date(iso).toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'}) : '';
+    } catch {
+      return '';
+    }
+  };
 
   function renderThread(threadText, qText, aText) {
     if (!threadText) return '<p style="color:var(--text-muted);padding:6px 0;font-size:12px">No thread text</p>';
     const {isDiscussion, meta, body, comments} = parseThread(threadText);
-    const total=(body?1:0)+comments.length; let idx=0, out=[];
+    const total=(body?1:0)+comments.length;
+    let idx=0, out=[];
 
     const qaTags=(isQ,isA) => (isQ||isA)
       ? `<span style="margin-left:auto;display:flex;gap:3px">${isQ?'<span class="qa-tag q-tag">Q</span>':''}${isA?'<span class="qa-tag a-tag">A</span>':''}</span>` : '';
+    const dateSpan = iso => iso ? `<span class="ti-date">${fmtDate(iso)}</span>` : '';
 
     const item=(author, cls, headerContent, bodyText, isLast) => `
       <div class="thread-item">
@@ -246,19 +293,20 @@
       const labels=(meta.labels||'').split(',').map(l=>l.trim()).filter(Boolean).map(l=>`<span class="ti-label-badge">${esc(l)}</span>`).join('');
       const state=meta.state?`<span class="ti-label-badge ${meta.state==='closed'?'ti-state-closed':meta.state==='open'?'ti-state-open':''}">${esc(meta.state)}</span>`:'';
       out.push(item(author,`is-issue-body${isQ?' is-question':''}${isA?' is-answer':''}`,
-        `<span class="ti-author">@${esc(author)}</span><span style="font-size:11px;color:var(--text-muted)">${isDiscussion?'opened discussion':'opened issue'}</span>${labels}${state}${qaTags(isQ,isA)}`,
+        `<span class="ti-author">@${esc(author)}</span><span style="font-size:11px;color:var(--text-muted)">${isDiscussion?'opened discussion':'opened issue'}</span>${dateSpan(meta.date)}${labels}${state}${qaTags(isQ,isA)}`,
         body, idx++===total-1));
     }
+
     comments.forEach(c => {
       const isQ=match(c.body,qText), isA=match(c.body,aText);
       out.push(item(c.author,`${isQ?'is-question':''}${isA?' is-answer':''}`,
-        `<span class="ti-author">@${esc(c.author)}</span>${c.isAccepted?'<span class="ti-accepted-tag">✓ accepted answer</span>':''}${qaTags(isQ,isA)}`,
+        `<span class="ti-author">@${esc(c.author)}</span>${dateSpan(c.date)}${c.isAccepted?'<span class="ti-accepted-tag">✓ accepted answer</span>':''}${qaTags(isQ,isA)}`,
         c.body, idx++===total-1));
     });
+
     return out.join('')||'<p style="color:var(--text-muted);font-size:12px">No content</p>';
   }
 
-  // ── Taxonomy tooltip (direct DOM — bypasses Alpine reactivity for accurate positioning) ──
   let CATEGORIES_G={}, QUESTIONS_G={};
 
   function taxTip(event, type, value) {
@@ -269,24 +317,29 @@
     if (type==='q') {
       const desc = QUESTIONS_G[value]||'Unknown question';
       const cat  = Object.entries(CATEGORIES_G).find(([,v])=>v.qs.includes(value))?.[0]||'';
-      html = `<div class="tt-qid">${esc(value)}</div>${cat?`<div class="tt-cat">Category ${cat} — ${esc(CATEGORIES_G[cat].name)}</div>`:''}<div class="tt-desc">${esc(desc)}</div>`;
+      html = `<div class="tt-qid">${esc(value)}</div>${cat?`<div class="tt-cat">Category ${cat} - ${esc(CATEGORIES_G[cat].name)}</div>`:''}<div class="tt-desc">${esc(desc)}</div>`;
     } else {
-      const cat=CATEGORIES_G[value]; if (!cat) return;
+      const cat=CATEGORIES_G[value];
+      if (!cat) return;
       html = `<div class="tt-qid">Category ${esc(value)}</div><div class="tt-cat">${esc(cat.name)}</div><hr class="tt-divider"><div class="tt-qlist">${cat.qs.map(q=>`<div class="tt-qrow"><b>${q}</b><span>${esc(QUESTIONS_G[q]||'')}</span></div>`).join('')}</div>`;
     }
     tt.innerHTML = html;
-    // Show offscreen to measure
-    tt.style.display='block'; tt.style.left='-9999px'; tt.style.top='0px';
+    tt.style.display='block';
+    tt.style.left='-9999px';
+    tt.style.top='0px';
     const r=event.currentTarget.getBoundingClientRect(), pad=8;
     const tr=tt.getBoundingClientRect();
     let left=r.left, top=r.bottom+pad;
-    if (left+tr.width > window.innerWidth-pad)  left = Math.max(pad, window.innerWidth-tr.width-pad);
+    if (left+tr.width > window.innerWidth-pad) left = Math.max(pad, window.innerWidth-tr.width-pad);
     if (top+tr.height > window.innerHeight-pad) top  = r.top-tr.height-pad;
-    tt.style.left=left+'px'; tt.style.top=top+'px';
+    tt.style.left=left+'px';
+    tt.style.top=top+'px';
   }
-  document.addEventListener('click', () => { document.getElementById('tax-tooltip').style.display='none'; });
 
-  // ── Alpine app ────────────────────────────────────────────────────────────
+  document.addEventListener('click', () => {
+    document.getElementById('tax-tooltip').style.display='none';
+  });
+
   function app() {
     return {
       allItems:[], currentIndex:null, currentListPos:null, pair:null,
@@ -295,6 +348,9 @@
       repos:[], qids:[], note:'',
       isDark: document.documentElement.classList.contains('dark'),
       toastMsg:'', toastType:'', toastVisible:false, toastTimer:null,
+
+      decodeHtml,
+      taxTip,
 
       get done()      { return this.stats.accepted+this.stats.rejected; },
       get progress()  { return this.stats.total ? Math.round(this.done/this.stats.total*100) : 0; },
@@ -307,9 +363,12 @@
           fetch('/api/question_ids').then(r=>r.json()),
           fetch('/api/taxonomy').then(r=>r.json()),
         ]);
-        this.repos=repos; this.qids=qids;
-        CATEGORIES_G=tax.categories; QUESTIONS_G=tax.questions;
-        await this.loadList(); await this.loadStats();
+        this.repos=repos;
+        this.qids=qids;
+        CATEGORIES_G=tax.categories;
+        QUESTIONS_G=tax.questions;
+        await this.loadList();
+        await this.loadStats();
       },
 
       async loadList() {
@@ -318,7 +377,8 @@
       },
 
       async selectPair(index, pos) {
-        this.currentIndex=index; this.currentListPos=pos;
+        this.currentIndex=index;
+        this.currentListPos=pos;
         this.pair=await fetch(`/api/pairs/${index}`).then(r=>r.json());
         this.note=this.pair.note||'';
         this.$nextTick(()=>document.getElementById('detail-content')?.scrollTo(0,0));
@@ -326,14 +386,21 @@
 
       async verify(status) {
         if (this.currentIndex===null) return;
-        const res=await fetch(`/api/pairs/${this.currentIndex}/verify`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({status,note:this.note})});
+        const res=await fetch(`/api/pairs/${this.currentIndex}/verify`,{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({status,note:this.note})
+        });
         if (res.ok) {
           this.showToast(status==='pending'?'Reset to pending':`Marked as ${status}`,'ok');
-          const item=this.allItems.find(i=>i.index===this.currentIndex); if (item) item.status=status;
+          const item=this.allItems.find(i=>i.index===this.currentIndex);
+          if (item) item.status=status;
           if (this.pair) this.pair.status=status;
           await this.loadStats();
           if (status!=='pending') setTimeout(()=>this.navigate(1),300);
-        } else this.showToast('Error saving','err');
+        } else {
+          this.showToast('Error saving','err');
+        }
       },
 
       navigate(dir) {
@@ -361,7 +428,9 @@
       },
 
       showToast(msg,type='') {
-        this.toastMsg=msg; this.toastType=type; this.toastVisible=true;
+        this.toastMsg=msg;
+        this.toastType=type;
+        this.toastVisible=true;
         clearTimeout(this.toastTimer);
         this.toastTimer=setTimeout(()=>{this.toastVisible=false;},2500);
       },
@@ -369,7 +438,7 @@
       handleKey(e) {
         if (e.target.tagName==='TEXTAREA'||e.target.tagName==='INPUT') return;
         if (e.key==='ArrowDown'||e.key==='j') this.navigate(1);
-        if (e.key==='ArrowUp'  ||e.key==='k') this.navigate(-1);
+        if (e.key==='ArrowUp'||e.key==='k') this.navigate(-1);
         if (e.key==='a') this.verify('accepted');
         if (e.key==='r') this.verify('rejected');
         if (e.key==='u') this.verify('pending');
