@@ -8,10 +8,11 @@ and re-running on already-classified threads with --force.
 
 Usage:
   python classify_threads.py --repo pallets/flask
-  python classify_threads.py --repo pallets/flask --model mistral:7b
-  python classify_threads.py --repo pallets/flask --confidence 0.55
+  python classify_threads.py --repo pallets/flask --stage1-model mistral:7b
+  python classify_threads.py --repo pallets/flask --stage2-model qwen2.5:14b
+  python classify_threads.py --repo pallets/flask --confidence 0.7
   python classify_threads.py --repo pallets/flask --force   # re-classify everything
-  python classify_threads.py --repo pallets/flask --limit 100  # classify first 100 only
+  python classify_threads.py --repo facebook/react --limit 100  # classify first 100 only
 """
 
 import sys
@@ -36,7 +37,11 @@ precisely and return only valid JSON with no extra text."""
 
 
 def build_stage1_prompt(thread_text):
+    # Categories A–G are the F&M categories; H is OTHER (relevant but doesn't fit
+    # any F&M category); N is NONE (not a real developer information need).
+    # The auto-generated list already contains H and N, so we don't repeat them.
     category_list = "\n".join(f"{k} - {v[0]}" for k, v in CATEGORIES.items())
+    valid_letters = "/".join(k for k in CATEGORIES.keys())
     return f"""Read this GitHub thread.
 
 <thread>
@@ -45,54 +50,91 @@ def build_stage1_prompt(thread_text):
 
 Task: Does this thread contain a genuine developer information need AND a clear answer?
 
-A genuine developer information need is a question about the development 
+A genuine developer information need is a question about the development
 process itself — about people, code ownership, history, or process.
 
-ACCEPT these:
-- "Who owns this component?" → answered by naming a person
-- "Which commit broke this?" → answered by pointing to a specific commit  
-- "Who should review this?" → answered by suggesting a reviewer
+ACCEPT these — pick the matching F&M category A–G:
+- "Who owns this component?" → A (people-specific)
+- "Which commit broke this?" → D (broken builds)
+- "Who should review this?" → A (people-specific)
+- "Why was this change introduced?" → B (changes to the code)
 
-REJECT these (mark as N):
+USE H (OTHER) for relevant developer information needs that do NOT fit
+any F&M category A–G. Use this for real questions about the development
+process that F&M's 2010 taxonomy did not anticipate. Examples:
+- "How do I run the CI locally to reproduce this failure?"
+- "Does this PR follow our security review process?"
+- "What's the convention for naming feature flags here?"
+- "Where do I start contributing to the parser?"
+The question must still be a real developer information need with a clear answer.
+If you are not sure between A–G and H, prefer H — it is the correct choice
+when no specific F&M category clearly fits.
+
+USE N (NONE) for threads that are NOT a developer information need:
 - Bug reports: "I am getting this error" even if they end with "any ideas?"
 - Feature requests: "Can you add support for X?"
 - "Is this a bug?" or "Can this be fixed?" — these are support requests
 - "Why does X not work?" — this is a bug report, not a process question
-- Any thread where the "answer" is a code fix or workaround rather than 
+- Any thread where the "answer" is a code fix or workaround rather than
   information about the development process
 - Threads where the question is rhetorical or conversational
 
-The question MUST be about: who, what, when, or why regarding the 
+The question MUST be about: who, what, when, or why regarding the
 development process — not about how to use the library.
 
-If yes, which broad category fits best?
+Categories available:
 {category_list}
-N - Not a genuine developer information need
 
 Return only this JSON:
-{{"contains_qa": true or false, "category": "A" to "K" or "N", "confidence": 0.0 to 1.0}}"""
+{{"contains_qa": true or false, "category": "{valid_letters}", "confidence": 0.0 to 1.0}}
+
+Note: set contains_qa=true for categories A–H, and false for N."""
 
 
 def build_stage2_prompt(thread_text, category_key):
     category_name, question_ids = CATEGORIES[category_key]
+    # The F&M Q-IDs for this category, plus OTHER (escape: category was right but
+    # no specific F&M question fits) and NONE (escape: stage 1 was wrong).
     question_list = "\n".join(f"{qid}: {QUESTIONS[qid]}" for qid in question_ids)
+    is_other_category = category_key == "H"
+
+    if is_other_category:
+        # Stage 1 already routed this to OTHER. We're not asking for Q-ID classification —
+        # we just need the question/answer extraction. OTHER stays the Q-ID; NONE is the
+        # escape if the LLM thinks stage 1 was wrong.
+        choice_instruction = (
+            "Confirm this is a relevant developer information need that doesn't fit any "
+            "F&M category. Choose OTHER if it is. Choose NONE if you think stage 1 was wrong "
+            "and this isn't actually a developer information need."
+        )
+        valid_ids = "OTHER or NONE"
+    else:
+        choice_instruction = (
+            f"Which specific F&M question best matches this thread?\n{question_list}\n"
+            f"OTHER: The thread IS a real developer information need about {category_name.lower()}, "
+            f"but no specific F&M question above captures it. Use this when the category is right "
+            f"but the question doesn't match Q1–Q78.\n"
+            f"NONE: Stage 1 was wrong — this is not actually a developer information need."
+        )
+        valid_ids = "one of the Q-IDs above, or OTHER, or NONE"
+
     return f"""Read this GitHub thread.
 
 <thread>
 {thread_text[:50000]}
 </thread>
 
-Category: {category_name}
+Category (from stage 1): {category_name}
 
-Which specific question does this thread match?
-{question_list}
-NONE: Does not clearly match any of the above
+{choice_instruction}
 
-Important: Choose NONE if:
+Important: Choose NONE only if you think stage 1 was wrong, i.e.:
 - The question is about how to use the library, not about the development process
 - The answer is a code snippet or workaround rather than process information
-- The match requires stretching the question definition
-- You are not confident the question and answer clearly align
+- The thread does not actually contain a clear question/answer pair
+
+Choose OTHER (not NONE) when the thread IS a real developer information need
+but the specific F&M question list doesn't capture it.
 
 Extract:
 - question_source: "issue_body" if the question is in the issue body, "comment" if in a comment
@@ -107,7 +149,7 @@ Extract:
 
 Return only this JSON:
 {{
-  "question_id": "Q54" or "NONE",
+  "question_id": {valid_ids!r},
   "question_source": "issue_body" or "comment",
   "question_author": "...",
   "question_text": "...",
@@ -132,7 +174,7 @@ def classify(thread_text, stage1_model, stage2_model):
         build_stage1_prompt(thread_text),
         model=stage1_model,
         system=SYSTEM_PROMPT,
-        max_tokens=150,
+        max_tokens=250,
     )
 
     print(f"  [classify] stage 1 raw response: {s1}")
@@ -185,7 +227,7 @@ def classify_threads(
     repo,
     stage1_model=STAGE1_MODEL,
     stage2_model=STAGE2_MODEL,
-    confidence_threshold=0.55,
+    confidence_threshold=0.7,
     limit=None,
     force=False,
 ):
@@ -215,6 +257,8 @@ def classify_threads(
         done = load_checkpoint(repo, checkpoint_key) | load_checkpoint(repo, seen_key)
 
     threads_to_do = [t for t in threads if t["number"] not in done]
+    # Sort descending by number
+    threads_to_do.sort(key=lambda t: t["number"], reverse=True)
     if limit:
         threads_to_do = threads_to_do[:limit]
 

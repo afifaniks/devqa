@@ -3,7 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>QA Pair Review Tool</title>
+  <title>DevQA Pair Review Tool</title>
+  <!-- Add an emoji favicon for fun -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22https://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><text y=%221.2em%22 font-size=%2220%22>👀</text></svg>">
   <link rel="stylesheet" href="/static/app.css" />
   <script src="https://cdn.jsdelivr.net/npm/marked@9/marked.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3/dist/cdn.min.js"></script>
@@ -14,7 +16,7 @@
 <body x-data="app()" x-init="init()" @keydown.window="handleKey($event)">
 
 <div id="topbar">
-  <h1>QA Pair Review</h1>
+  <h1>DevQA Pair Review</h1>
   <div class="prog-wrap"><div class="prog-fill" :style="`width:${progress}%`"></div></div>
   <span class="prog-label" x-text="`${done} / ${stats.total} reviewed`"></span>
   <div class="topbar-pills">
@@ -284,7 +286,7 @@
   };
 
   const qaTags=(isQ,isA) => (isQ||isA)
-    ? `<span style="margin-left:auto;display:flex;gap:3px">${isQ?'<span class="qa-tag q-tag">Q</span>':''}${isA?'<span class="qa-tag a-tag">A</span>':''}</span>` : '';
+    ? `<span style="margin-left:auto;display:flex;gap:3px">${isQ?'<span class="qa-tag q-tag">Question</span>':''}${isA?'<span class="qa-tag a-tag">Answer</span>':''}</span>` : '';
   const dateSpan = iso => iso ? `<span class="ti-date">${fmtDate(iso)}</span>` : '';
 
   const threadItem=(author, cls, headerContent, bodyText, isLast) => `

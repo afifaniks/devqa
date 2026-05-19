@@ -52,6 +52,7 @@ def save_checkpoint(repo, miner_name, processed_ids):
 
 def append_record(repo, miner_name, record):
     """Append a single record to jsonl immediately — no buffering."""
+    print(f"Saving {miner_name} record: {record.get('id', 'unknown id')}")
     path = f"output/{repo.replace('/', '__')}/{miner_name}.jsonl"
     with open(path, "a") as f:
         f.write(json.dumps(record) + "\n")

@@ -45,7 +45,7 @@ Produced by the structured builder. Each record is a deterministic question/answ
 ```
 pipeline/
 ├── config.py                  # Repos list, GitHub tokens, output path, thresholds
-├── run_all.py                 # Master runner: mine → classify → build QA pairs
+├── run_all.py                 # Master runner: mine → build raw threads
 ├── miners/
 │   ├── issues.py
 │   ├── pull_requests.py
@@ -131,11 +131,8 @@ python run_all.py --repo psf/requests
 # Skip CI mining (slow for large repos)
 python run_all.py --repo psf/requests --skip-ci
 
-# Only rebuild QA pairs (mining already done)
-python run_all.py --only-qa
-
-# Mine threads only (needed before classification)
-python miners/mine_threads.py --repo psf/requests
+# Only rebuild raw threads (mining already done)
+python run_all.py --only-threads
 
 # Classify threads with the LLM (requires Ollama)
 python classification/classify.py --repo psf/requests

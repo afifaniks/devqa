@@ -1,11 +1,11 @@
 """
-Master pipeline script — runs all miners in order, then builds QA pairs.
+Master pipeline script — runs all miners in order, then builds raw threads.
 
 Usage:
-    python run_all.py                        # mine all configured repos
+    python run_all.py                          # mine all configured repos
     python run_all.py --repo microsoft/vscode  # mine one repo only
-    python run_all.py --skip-ci              # skip CI runs (slow)
-    python run_all.py --only-qa             # only rebuild QA pairs (re-use existing data)
+    python run_all.py --skip-ci               # skip CI runs (slow)
+    python run_all.py --only-threads          # only rebuild threads (re-use existing data)
 """
 
 import argparse
@@ -20,15 +20,15 @@ from miners.commits import mine_commits, run_szz
 from miners.pull_requests import mine_pull_requests
 from miners.ci_runs import mine_ci_runs
 from miners.contributors import mine_contributors
-from miners.qa_builder import build_all_pairs
+from miners.mine_threads import mine_threads
 
 
-def run_pipeline(repo: str, skip_ci: bool = False, only_qa: bool = False):
+def run_pipeline(repo: str, skip_ci: bool = False, only_threads: bool = False):
     print(f"\n{'='*60}")
     print(f"  PIPELINE: {repo}")
     print(f"{'='*60}")
 
-    if not only_qa:
+    if not only_threads:
         # Step 1: Issues (most important — run first)
         mine_issues(repo)
 
@@ -46,21 +46,27 @@ def run_pipeline(repo: str, skip_ci: bool = False, only_qa: bool = False):
         # Step 5: Contributors (depends on commits + issues + PRs being done)
         mine_contributors(repo)
 
-    # Step 6: Build QA pairs from all mined data
-    build_all_pairs(repo)
+    # Step 6: Build raw threads from issues + discussions
+    mine_threads(repo)
 
     print(f"\n[done] {repo} pipeline complete.")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="GitHub mining pipeline")
-    parser.add_argument("--repo", default=None, help="Mine a single repo (e.g. microsoft/vscode)")
+    parser.add_argument(
+        "--repo", default=None, help="Mine a single repo (e.g. microsoft/vscode)"
+    )
     parser.add_argument("--skip-ci", action="store_true", help="Skip CI run mining")
-    parser.add_argument("--only-qa", action="store_true", help="Skip mining, only rebuild QA pairs")
+    parser.add_argument(
+        "--only-threads",
+        action="store_true",
+        help="Skip mining, only rebuild raw threads",
+    )
     args = parser.parse_args()
 
     repos = [args.repo] if args.repo else REPOS
     for repo in repos:
-        run_pipeline(repo, skip_ci=args.skip_ci, only_qa=args.only_qa)
+        run_pipeline(repo, skip_ci=args.skip_ci, only_threads=args.only_threads)
 
-    print(f"\nAll done. QA pairs are in output/<repo>/qa_pairs.jsonl")
+    print(f"\nAll done. Threads are in output/<repo>/raw_threads.jsonl")
