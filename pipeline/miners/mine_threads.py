@@ -33,18 +33,18 @@ def build_issue_comments(issue):
             "id": "c0",
             "author": issue.get("reporter", "unknown"),
             "timestamp": issue.get("created_at", ""),
-            "body": (issue.get("body", "") or "")[:5000],
+            "body": (issue.get("body", "") or ""),
             "is_accepted": False,
             "role": "body",
         }
     ]
-    for i, c in enumerate((issue.get("comments") or [])[:20], start=1):
+    for i, c in enumerate((issue.get("comments") or [])[:40], start=1):
         comments.append(
             {
                 "id": f"c{i}",
                 "author": c.get("author", "?"),
                 "timestamp": c.get("created_at", ""),
-                "body": (c.get("body") or "")[:5000],
+                "body": (c.get("body") or ""),
                 "is_accepted": False,
                 "role": "comment",
             }

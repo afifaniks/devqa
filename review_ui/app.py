@@ -141,7 +141,7 @@ def get_pairs(
                 "question_text": p.get("question_text", ""),
                 "title": p.get("title"),
                 "confidence": p.get("confidence"),
-                "stage1_category": p.get("stage1_category"),
+                "stage1_category": p.get("stage1_category") or p.get("category"),
                 "source": p.get("source"),
                 "status": vstatus,
                 "note": v.get("note", ""),
@@ -170,6 +170,7 @@ def get_pair(index: int):
     p["status"] = v.get("status", "pending")
     p["note"] = v.get("note", "")
     p["verified_at"] = v.get("verified_at", "")
+    p["stage1_category"] = p.get("stage1_category") or p.get("category")
     return p
 
 

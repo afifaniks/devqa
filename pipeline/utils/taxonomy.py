@@ -154,6 +154,13 @@ QUESTIONS: dict[str, str] = {
     "NONE":  "Does not contain a valid developer information need.",
 }
 
+# ── Reverse map: Q-ID → category letter (auto-derived from CATEGORIES) ────────
+
+QUESTION_TO_CATEGORY: dict[str, str] = {}
+for _cat_key, (_, _qids) in CATEGORIES.items():
+    for _qid in _qids:
+        QUESTION_TO_CATEGORY[_qid] = _cat_key
+
 # ── LLM prompt string (derived from the dicts above) ─────────────────────────
 
 TAXONOMY_FOR_PROMPT = """
