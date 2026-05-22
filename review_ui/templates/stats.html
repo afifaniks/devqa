@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DevQA – Statistics</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22https://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><text y=%221.2em%22 font-size=%2220%22>📊</text></svg>">
+  <link rel="stylesheet" href="/static/app.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+  <style>
+    html, body { height: auto; overflow: auto; }
+
+    #stats-topbar {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; gap: 12px;
+      padding: 0 20px; height: 48px;
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+    }
+    #stats-topbar h1 { font-size: 15px; font-weight: 600; flex: 1; }
+    #stats-topbar a.back-link {
+      font-size: 12px; color: var(--accent); text-decoration: none;
+    }
+    #stats-topbar a.back-link:hover { text-decoration: underline; }
+
+    #stats-content {
+      max-width: 1000px; margin: 0 auto; padding: 24px 20px 60px;
+    }
+
+    /* Summary cards */
+    .summary-cards {
+      display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px;
+      margin-bottom: 28px;
+    }
+    .stat-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 14px 16px;
+      text-align: center;
+    }
+    .stat-card .sc-val {
+      font-size: 26px; font-weight: 700; line-height: 1.1;
+    }
+    .stat-card .sc-label {
+      font-size: 11px; color: var(--text-muted); margin-top: 4px;
+    }
+    .sc-val.accepted { color: var(--green); }
+    .sc-val.rejected { color: var(--red); }
+    .sc-val.pending  { color: var(--text-dim); }
+    .sc-val.progress { color: var(--accent); }
+
+    /* Chart grid */
+    .chart-grid-2 {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+      margin-bottom: 16px;
+    }
+    .chart-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 16px 18px;
+    }
+    .chart-card.full { grid-column: 1 / -1; }
+    .chart-title {
+      font-size: 12px; font-weight: 600; color: var(--text-dim);
+      text-transform: uppercase; letter-spacing: .04em;
+      margin-bottom: 14px;
+    }
+    canvas { display: block; width: 100% !important; }
+
+    #loading { color: var(--text-muted); font-size: 13px;
+               padding: 60px; text-align: center; }
+  </style>
+  <script>if (localStorage.getItem('theme')==='dark') document.documentElement.classList.add('dark');</script>
+</head>
+<body>
+
+<div id="stats-topbar">
+  <h1>Statistics</h1>
+  <a class="back-link" href="/">← Back to Review</a>
+  <button class="btn" id="theme-btn" onclick="toggleTheme()">☀ Light</button>
+</div>
+
+<div id="stats-content">
+  <div id="loading">Loading…</div>
+  <div id="main" style="display:none">
+    <div class="summary-cards">
+      <div class="stat-card"><div class="sc-val" id="sc-total">–</div><div class="sc-label">Total pairs</div></div>
+      <div class="stat-card"><div class="sc-val accepted" id="sc-accepted">–</div><div class="sc-label">Accepted</div></div>
+      <div class="stat-card"><div class="sc-val rejected" id="sc-rejected">–</div><div class="sc-label">Rejected</div></div>
+      <div class="stat-card"><div class="sc-val pending" id="sc-pending">–</div><div class="sc-label">Pending</div></div>
+      <div class="stat-card"><div class="sc-val progress" id="sc-progress">–</div><div class="sc-label">Reviewed</div></div>
+    </div>
+
+    <div class="chart-grid-2">
+      <div class="chart-card">
+        <div class="chart-title">Review status</div>
+        <canvas id="chart-status" height="220"></canvas>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Pairs per repo</div>
+        <canvas id="chart-repos" height="220"></canvas>
+      </div>
+    </div>
+
+    <div class="chart-grid-2">
+      <div class="chart-card full">
+        <div class="chart-title">Pairs per category — stacked by review status</div>
+        <canvas id="chart-cats" height="220"></canvas>
+      </div>
+    </div>
+
+    <div class="chart-grid-2">
+      <div class="chart-card full">
+        <div class="chart-title">Top question IDs by instance count</div>
+        <canvas id="chart-qids" height="320"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function toggleTheme() {
+    const isDark = document.documentElement.classList.toggle('dark');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    document.getElementById('theme-btn').textContent = isDark ? '☀ Light' : '🌙 Dark';
+    location.reload(); // easiest way to re-theme Chart.js canvases
+  }
+  (function() {
+    const isDark = document.documentElement.classList.contains('dark');
+    document.getElementById('theme-btn').textContent = isDark ? '☀ Light' : '🌙 Dark';
+  })();
+
+  function cv(name) {
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  }
+
+  const CAT_NAMES = {
+    A:'People & awareness', B:'Code changes', C:'Work item progress',
+    D:'Broken builds', E:'Test cases', F:'References on web',
+    G:'Other questions', H:'Outside F&M (OTHER)', N:'Not a need (NONE)', '?':'Unknown'
+  };
+  const CAT_ORDER = ['A','B','C','D','E','F','G','H','N','?'];
+
+  const CAT_PALETTE = [
+    '#0969da','#1a7f37','#9a6700','#cf222e','#8250df',
+    '#0550ae','#bf4b8a','#0a7b77','#b35900','#57606a'
+  ];
+
+  Promise.all([
+    fetch('/api/stats').then(r => r.json()),
+    fetch('/api/taxonomy').then(r => r.json()),
+  ]).then(([stats, tax]) => {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('main').style.display = 'block';
+
+    const { total, counts, repos, question_ids, categories, cat_status } = stats;
+    const reviewed = (counts.accepted || 0) + (counts.rejected || 0);
+    const pct = total ? Math.round(reviewed / total * 100) : 0;
+
+    document.getElementById('sc-total').textContent    = total;
+    document.getElementById('sc-accepted').textContent = counts.accepted || 0;
+    document.getElementById('sc-rejected').textContent = counts.rejected || 0;
+    document.getElementById('sc-pending').textContent  = counts.pending  || 0;
+    document.getElementById('sc-progress').textContent = pct + '%';
+
+    const textColor  = cv('--text');
+    const mutedColor = cv('--text-muted');
+    const dimColor   = cv('--text-dim');
+    const borderColor = cv('--border');
+    const green  = cv('--green');
+    const red    = cv('--red');
+    const yellow = cv('--yellow');
+
+    const baseOpts = {
+      plugins: { legend: { labels: { color: textColor, font: { size: 11 } } } },
+      scales: {},
+    };
+
+    // ── Status doughnut ────────────────────────────────────────────────────────
+    new Chart(document.getElementById('chart-status'), {
+      type: 'doughnut',
+      data: {
+        labels: ['Accepted', 'Rejected', 'Pending'],
+        datasets: [{
+          data: [counts.accepted || 0, counts.rejected || 0, counts.pending || 0],
+          backgroundColor: [green, red, mutedColor],
+          borderColor: cv('--surface'),
+          borderWidth: 3,
+        }],
+      },
+      options: {
+        cutout: '62%',
+        plugins: {
+          legend: { position: 'bottom', labels: { color: textColor, font: { size: 11 }, padding: 16 } },
+        },
+      },
+    });
+
+    // ── Repos bar ──────────────────────────────────────────────────────────────
+    const repoLabels = Object.keys(repos);
+    const repoVals   = repoLabels.map(r => repos[r]);
+    new Chart(document.getElementById('chart-repos'), {
+      type: 'bar',
+      data: {
+        labels: repoLabels,
+        datasets: [{
+          data: repoVals,
+          backgroundColor: CAT_PALETTE.slice(0, repoLabels.length),
+          borderRadius: 4,
+        }],
+      },
+      options: {
+        indexAxis: 'y',
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { color: dimColor, font: { size: 11 } }, grid: { color: borderColor } },
+          y: { ticks: { color: textColor, font: { size: 11 } }, grid: { display: false } },
+        },
+      },
+    });
+
+    // ── Category stacked bar ───────────────────────────────────────────────────
+    const catLabels = CAT_ORDER.filter(c => categories && categories[c]);
+    const catTotals = catLabels.map(c => (categories && categories[c]) || 0);
+    const catAccepted = catLabels.map(c => cat_status?.[c]?.accepted || 0);
+    const catRejected = catLabels.map(c => cat_status?.[c]?.rejected || 0);
+    const catPending  = catLabels.map(c => cat_status?.[c]?.pending  || 0);
+    const catDisplayLabels = catLabels.map(c => `${c} – ${CAT_NAMES[c] || c}`);
+
+    new Chart(document.getElementById('chart-cats'), {
+      type: 'bar',
+      data: {
+        labels: catDisplayLabels,
+        datasets: [
+          { label: 'Accepted', data: catAccepted, backgroundColor: green,     borderRadius: 3 },
+          { label: 'Rejected', data: catRejected, backgroundColor: red,       borderRadius: 3 },
+          { label: 'Pending',  data: catPending,  backgroundColor: mutedColor, borderRadius: 3 },
+        ],
+      },
+      options: {
+        indexAxis: 'y',
+        plugins: {
+          legend: { position: 'top', labels: { color: textColor, font: { size: 11 }, padding: 12 } },
+          tooltip: {
+            callbacks: {
+              afterBody(items) {
+                const idx = items[0].dataIndex;
+                return [`Total: ${catTotals[idx]}`];
+              }
+            }
+          }
+        },
+        scales: {
+          x: { stacked: true, ticks: { color: dimColor, font: { size: 11 } }, grid: { color: borderColor } },
+          y: { stacked: true, ticks: { color: textColor, font: { size: 11 } }, grid: { display: false } },
+        },
+      },
+    });
+
+    // ── Top Q-IDs bar ─────────────────────────────────────────────────────────
+    const qidEntries = Object.entries(question_ids || {})
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 25);
+    const qidLabels = qidEntries.map(([id]) => id);
+    const qidVals   = qidEntries.map(([, v]) => v);
+
+    const qidColors = qidLabels.map((_, i) => CAT_PALETTE[i % CAT_PALETTE.length]);
+
+    new Chart(document.getElementById('chart-qids'), {
+      type: 'bar',
+      data: {
+        labels: qidLabels,
+        datasets: [{
+          data: qidVals,
+          backgroundColor: qidColors,
+          borderRadius: 4,
+        }],
+      },
+      options: {
+        indexAxis: 'y',
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { color: dimColor, font: { size: 11 } }, grid: { color: borderColor } },
+          y: { ticks: { color: textColor, font: { size: 11 } }, grid: { display: false } },
+        },
+      },
+    });
+
+  }).catch(err => {
+    document.getElementById('loading').textContent = 'Failed to load stats: ' + err.message;
+  });
+</script>
+</body>
+</html>

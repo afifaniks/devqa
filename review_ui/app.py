@@ -19,7 +19,7 @@ VERIFICATION_FILE = ROOT / "verified_state.json"
 EXPORT_FILE = ROOT / "verified_qa_pairs.jsonl"
 
 sys.path.insert(0, str(ROOT / "pipeline"))
-from utils.taxonomy import CATEGORIES, QUESTIONS  # noqa: E402
+from utils.taxonomy import CATEGORIES, QUESTIONS, QUESTION_TO_CATEGORY  # noqa: E402
 
 # ── In-memory data ──────────────────────────────────────────────────────────
 
@@ -77,6 +77,10 @@ class VerifyRequest(BaseModel):
     note: Optional[str] = ""
 
 
+class AssignRequest(BaseModel):
+    question_id: str
+
+
 # ── App ──────────────────────────────────────────────────────────────────────
 
 
@@ -88,6 +92,8 @@ async def lifespan(app: FastAPI):
 
 
 _INDEX_HTML = Path(__file__).parent / "templates" / "index.html"
+_TAXONOMY_HTML = Path(__file__).parent / "templates" / "taxonomy.html"
+_STATS_HTML = Path(__file__).parent / "templates" / "stats.html"
 
 app = FastAPI(title="DevQA – Pair Review Tool", lifespan=lifespan)
 app.mount(
@@ -101,6 +107,16 @@ app.mount(
 @app.get("/", response_class=HTMLResponse)
 async def index():
     return HTMLResponse(_INDEX_HTML.read_text())
+
+
+@app.get("/taxonomy", response_class=HTMLResponse)
+async def taxonomy_page():
+    return HTMLResponse(_TAXONOMY_HTML.read_text())
+
+
+@app.get("/stats", response_class=HTMLResponse)
+async def stats_page():
+    return HTMLResponse(_STATS_HTML.read_text())
 
 
 @app.get("/api/pairs")
@@ -117,9 +133,11 @@ def get_pairs(
         v = verification.get(pair_id(p), {})
         vstatus = v.get("status", "pending")
 
+        effective_qid = v.get("question_id_override", p.get("question_id"))
+
         if repo and p.get("repo") != repo:
             continue
-        if question_id and p.get("question_id") != question_id:
+        if question_id and effective_qid != question_id:
             continue
         if status and vstatus != status:
             continue
@@ -136,7 +154,7 @@ def get_pairs(
             {
                 "index": i,
                 "repo": p.get("repo"),
-                "question_id": p.get("question_id"),
+                "question_id": v.get("question_id_override", p.get("question_id")),
                 "number": p.get("number"),
                 "question_text": p.get("question_text", ""),
                 "title": p.get("title"),
@@ -171,6 +189,8 @@ def get_pair(index: int):
     p["note"] = v.get("note", "")
     p["verified_at"] = v.get("verified_at", "")
     p["stage1_category"] = p.get("stage1_category") or p.get("category")
+    if "question_id_override" in v:
+        p["question_id"] = v["question_id_override"]
     return p
 
 
@@ -190,26 +210,49 @@ def verify_pair(index: int, body: VerifyRequest):
     return {"ok": True}
 
 
+@app.post("/api/pairs/{index}/assign")
+def assign_question_id(index: int, body: AssignRequest):
+    if index < 0 or index >= len(pairs):
+        raise HTTPException(status_code=404, detail="Pair not found")
+    if body.question_id not in QUESTIONS:
+        raise HTTPException(status_code=400, detail="Unknown question_id")
+    entry = verification.setdefault(pair_id(pairs[index]), {"status": "pending", "note": ""})
+    entry["question_id_override"] = body.question_id
+    save_verification()
+    return {"ok": True}
+
+
 @app.get("/api/stats")
 def get_stats():
-    repos = {}
+    repos: dict[str, int] = {}
     question_ids: dict[str, int] = {}
+    categories: dict[str, int] = {}
+    cat_status: dict[str, dict[str, int]] = {}
     counts = {"accepted": 0, "rejected": 0, "pending": 0}
 
     for p in pairs:
         repo = p.get("repo", "unknown")
         repos[repo] = repos.get(repo, 0) + 1
-        qid = p.get("question_id", "?")
-        question_ids[qid] = question_ids.get(qid, 0) + 1
+
         v = verification.get(pair_id(p), {})
         status = v.get("status", "pending")
         counts[status] = counts.get(status, 0) + 1
+
+        qid = v.get("question_id_override", p.get("question_id", "?"))
+        question_ids[qid] = question_ids.get(qid, 0) + 1
+
+        cat = QUESTION_TO_CATEGORY.get(qid, "?")
+        categories[cat] = categories.get(cat, 0) + 1
+        cs = cat_status.setdefault(cat, {"accepted": 0, "rejected": 0, "pending": 0})
+        cs[status] = cs.get(status, 0) + 1
 
     return {
         "total": len(pairs),
         "counts": counts,
         "repos": repos,
         "question_ids": dict(sorted(question_ids.items(), key=lambda x: -x[1])),
+        "categories": categories,
+        "cat_status": cat_status,
     }
 
 

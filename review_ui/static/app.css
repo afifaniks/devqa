@@ -217,6 +217,7 @@ html.dark .pair-item.active { background: rgba(68,147,248,.1); }
 }
 .verify-top  { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .verify-buttons { display: flex; gap: 7px; }
+.assign-row  { display: flex; align-items: center; gap: 7px; }
 .status-word.accepted { color: var(--green); font-weight: 600; }
 .status-word.rejected { color: var(--red);   font-weight: 600; }
 .status-word.pending  { color: var(--text-muted); }

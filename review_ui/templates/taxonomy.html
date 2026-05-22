@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DevQA – Taxonomy Reference</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22https://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><text y=%221.2em%22 font-size=%2220%22>📋</text></svg>">
+  <link rel="stylesheet" href="/static/app.css" />
+  <style>
+    html, body { height: auto; overflow: auto; }
+
+    #tax-topbar {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; gap: 12px;
+      padding: 0 20px; height: 48px;
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+    }
+    #tax-topbar h1 { font-size: 15px; font-weight: 600; flex: 1; }
+    #tax-topbar a.back-link {
+      font-size: 12px; color: var(--accent); text-decoration: none;
+      display: flex; align-items: center; gap: 4px;
+    }
+    #tax-topbar a.back-link:hover { text-decoration: underline; }
+
+    #tax-content {
+      max-width: 860px; margin: 0 auto; padding: 28px 20px 60px;
+    }
+
+    .tax-intro {
+      font-size: 12px; color: var(--text-muted);
+      margin-bottom: 28px; line-height: 1.6;
+    }
+
+    .cat-block { margin-bottom: 32px; }
+
+    .cat-header {
+      display: flex; align-items: baseline; gap: 10px;
+      padding: 8px 14px;
+      background: var(--surface2); border-radius: var(--radius);
+      border: 1px solid var(--border);
+      margin-bottom: 6px;
+    }
+    .cat-letter {
+      font-size: 18px; font-weight: 700; color: var(--accent);
+      min-width: 22px;
+    }
+    .cat-name { font-size: 13px; font-weight: 600; }
+    .cat-range { font-size: 11px; color: var(--text-muted); margin-left: auto; }
+
+    table.q-table {
+      width: 100%; border-collapse: collapse;
+    }
+    table.q-table tr {
+      border-bottom: 1px solid var(--border);
+    }
+    table.q-table tr:last-child { border-bottom: none; }
+    table.q-table td {
+      padding: 7px 10px; vertical-align: top; font-size: 12px;
+    }
+    table.q-table td.qid {
+      white-space: nowrap; font-weight: 600; color: var(--accent);
+      width: 54px; font-size: 11px;
+    }
+    table.q-table td.qdesc { color: var(--text); line-height: 1.5; }
+    table.q-table tr:hover { background: var(--surface2); }
+
+    .cat-special .cat-letter { color: var(--text-muted); }
+    .cat-special table.q-table td.qid { color: var(--text-muted); }
+
+    #loading { color: var(--text-muted); font-size: 13px; padding: 40px 20px; text-align: center; }
+  </style>
+  <script>if (localStorage.getItem('theme')==='dark') document.documentElement.classList.add('dark');</script>
+</head>
+<body>
+
+<div id="tax-topbar">
+  <h1>Taxonomy Reference — Fritz &amp; Murphy (ICSE 2010)</h1>
+  <a class="back-link" href="/">← Back to Review</a>
+  <button class="btn" id="theme-btn" onclick="toggleTheme()">☀ Light</button>
+</div>
+
+<div id="tax-content">
+  <p class="tax-intro">
+    78 developer information need questions (Q1–Q78) across 7 categories, from
+    <em>Using Information Fragments to Answer the Questions Developers Ask</em>,
+    Fritz &amp; Murphy, ICSE 2010. Two extra options (OTHER / NONE) are appended
+    for classification.
+  </p>
+  <div id="loading">Loading…</div>
+  <div id="tax-body"></div>
+</div>
+
+<script>
+  function toggleTheme() {
+    const isDark = document.documentElement.classList.toggle('dark');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    document.getElementById('theme-btn').textContent = isDark ? '☀ Light' : '🌙 Dark';
+  }
+
+  (function syncThemeBtn() {
+    const isDark = document.documentElement.classList.contains('dark');
+    document.getElementById('theme-btn').textContent = isDark ? '☀ Light' : '🌙 Dark';
+  })();
+
+  const CAT_ORDER = ['A','B','C','D','E','F','G','H','N'];
+  const SPECIAL = new Set(['H','N']);
+
+  fetch('/api/taxonomy')
+    .then(r => r.json())
+    .then(({categories, questions}) => {
+      document.getElementById('loading').style.display = 'none';
+      const body = document.getElementById('tax-body');
+      let html = '';
+
+      for (const letter of CAT_ORDER) {
+        const cat = categories[letter];
+        if (!cat) continue;
+        const qids = cat.qs;
+        const range = qids.length === 1 ? qids[0] : `${qids[0]}–${qids[qids.length-1]}`;
+        const specialCls = SPECIAL.has(letter) ? ' cat-special' : '';
+
+        html += `<div class="cat-block${specialCls}">
+          <div class="cat-header">
+            <span class="cat-letter">${letter}</span>
+            <span class="cat-name">${esc(cat.name)}</span>
+            <span class="cat-range">${esc(range)}</span>
+          </div>
+          <table class="q-table"><tbody>`;
+
+        for (const qid of qids) {
+          const desc = questions[qid] || '';
+          html += `<tr>
+            <td class="qid">${esc(qid)}</td>
+            <td class="qdesc">${esc(desc)}</td>
+          </tr>`;
+        }
+
+        html += `</tbody></table></div>`;
+      }
+
+      body.innerHTML = html;
+    })
+    .catch(() => {
+      document.getElementById('loading').textContent = 'Failed to load taxonomy.';
+    });
+
+  function esc(s) {
+    return String(s)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+</script>
+</body>
+</html>

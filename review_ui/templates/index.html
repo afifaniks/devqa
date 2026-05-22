@@ -25,6 +25,8 @@
     <span class="badge badge-pending" x-text="`● ${stats.pending}`"></span>
   </div>
   <div class="topbar-right">
+    <a class="btn" href="/stats" target="_blank" rel="noopener">📊 Stats</a>
+    <a class="btn" href="/taxonomy" target="_blank" rel="noopener">📋 Taxonomy</a>
     <button class="btn" @click="toggleTheme()" x-text="isDark ? '☀ Light' : '🌙 Dark'"></button>
     <button class="btn" @click="reloadSources()" :disabled="reloading" x-text="reloading ? 'Reloading…' : '↺ Reload'"></button>
     <button class="btn btn-primary" @click="exportData()">↓ Export Accepted</button>
@@ -160,6 +162,17 @@
                 x-text="`${(currentListPos??0)+1} / ${allItems.length}`"></span>
           <button class="btn btn-icon" @click="navigate(1)">→</button>
         </div>
+      </div>
+      <div class="assign-row">
+        <span class="label" style="white-space:nowrap">Q-ID</span>
+        <select class="select" x-model="assignQid" style="flex:1;min-width:0">
+          <template x-for="qid in sortedQids" :key="qid">
+            <option :value="qid"
+              x-text="`${qid} – ${(QUESTIONS_G[qid]||'').slice(0,52)}${(QUESTIONS_G[qid]||'').length>52?'…':''}`"></option>
+          </template>
+        </select>
+        <button class="btn" @click="saveAssignment()"
+                :disabled="!assignQid || assignQid===pair?.question_id">Save</button>
       </div>
       <textarea class="textarea" x-model="note" placeholder="Optional notes…"></textarea>
       <div class="verify-buttons">
@@ -382,7 +395,7 @@
       allItems:[], currentIndex:null, currentListPos:null, pair:null,
       stats:{accepted:0, rejected:0, pending:0, total:0},
       filterRepo:'', filterQid:'', filterStatus:'', searchQuery:'',
-      repos:[], qids:[], note:'',
+      repos:[], qids:[], note:'', assignQid:'', sortedQids:[],
       isDark: document.documentElement.classList.contains('dark'),
       reloading: false,
       toastMsg:'', toastType:'', toastVisible:false, toastTimer:null,
@@ -417,6 +430,12 @@
         this.qids=qids;
         CATEGORIES_G=tax.categories;
         QUESTIONS_G=tax.questions;
+        this.sortedQids=Object.keys(QUESTIONS_G).sort((a,b)=>{
+          const na=parseInt(a.slice(1)), nb=parseInt(b.slice(1));
+          if (!isNaN(na)&&!isNaN(nb)) return na-nb;
+          if (!isNaN(na)) return -1; if (!isNaN(nb)) return 1;
+          return a.localeCompare(b);
+        });
         await this.loadList();
         await this.loadStats();
       },
@@ -431,7 +450,26 @@
         this.currentListPos=pos;
         this.pair=await fetch(`/api/pairs/${index}`).then(r=>r.json());
         this.note=this.pair.note||'';
+        this.assignQid=this.pair.question_id||'';
         this.$nextTick(()=>document.getElementById('detail-content')?.scrollTo(0,0));
+      },
+
+      async saveAssignment() {
+        if (!this.assignQid||this.currentIndex===null) return;
+        const res=await fetch(`/api/pairs/${this.currentIndex}/assign`,{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({question_id:this.assignQid})
+        });
+        if (res.ok) {
+          const prev=this.pair.question_id;
+          this.pair.question_id=this.assignQid;
+          const item=this.allItems.find(i=>i.index===this.currentIndex);
+          if (item) item.question_id=this.assignQid;
+          this.showToast(`Q-ID: ${prev} → ${this.assignQid}`,'ok');
+        } else {
+          this.showToast('Error saving Q-ID','err');
+        }
       },
 
       async verify(status) {
