@@ -187,7 +187,7 @@ Q12 | Who to assign a code review to? / Who has time for a code review?         
 
 B. CHANGES TO THE CODE (code specific)
 Q13 | What is the evolution of the code?                                            | "How did the rendering pipeline get to this state?"
-Q14 | Why were these changes introduced?                                            | "Why was this config option removed in v2.3?"
+Q14 | Why were these changes introduced?                                            | "Why was this config option removed in v2.3?" / "Is this behavior intentional?" (when answered with design rationale) — NOT for status updates like "fixed in #X" or "dropped in v3" (→ Q48)
 Q15 | Who made a particular change and why?                                         | "Who changed the retry logic and why?"
 Q16 | What classes has my team been working on?                                     | "What files has the infra team touched this week?"
 Q17 | What are the changes on newly resolved work items related to me?              | "What code changed in the issues closed last week that affect the API I own?"
@@ -218,21 +218,21 @@ Q41 | How do recently delivered changes affect changes that I am working on?    
 Q42 | What code is related to a change?                                             | "What files are affected by this PR?"
 Q43 | Where has code been changing this week?                                       | "Where in the repo has activity been this week?"
 Q44 | Which classes have been changed between two builds?                           | "What files were changed between v1.2 and v1.3?"
-Q45 | What is going on in a package?                                                | "What is the current state of the auth/ package?"
+Q45 | What is going on in a package?                                                | "What is currently changing in the auth/ package?" — high-level activity/change summary of a subsystem; NOT "why does this package behave this way?" (→ Q14) and NOT "is this a bug in the package?" (→ Q59/OTHER)
 Q46 | Which changes have been made between these days or after this day?           | "What was committed between May 1 and May 10?"
 Q47 | What classes in this component were modified since version [X]?              | "What changed in the database package since v2.0?"
 
 C. WORK ITEM PROGRESS
-Q48 | What is the recent activity on a plan item?                                   | "What's the latest on issue #4821?"
+Q48 | What is the recent activity on a plan item?                                   | "What's the latest on issue #4821?" / "Is this fixed?" / "Any update on this?" / "Are there plans to fix this?" — use Q48 for ALL single-issue status/progress questions
 Q49 | Which features and functions have been changing?                              | "What parts of the product are being actively developed?"
-Q50 | Has progress been made on blockers in your milestone?                         | "Are the P0 blockers for the v3 release fixed yet?"
+Q50 | Has progress been made on blockers in your milestone?                         | "Are the P0 blockers for the v3 release fixed yet?" — milestone-level blocker tracking across multiple items; for single issue status use Q48
 Q51 | Which work items / plan items are most active?                                | "Which issues have the most activity right now?"
 Q52 | How active is the plan item? (How many comments?)                             | "How busy is this issue — many comments?"
 Q53 | Are there any new comments on interesting work items?                         | "Anything new on the issues I'm watching?"
 Q54 | What work item has recently changed that is related to me?                    | "Which of my issues had activity today?"
 Q55 | What are the emails related to line items and defects that are features?      | "Which emails relate to the open feature defects?"
 Q56 | What are the comments on newly resolved work items that are related to me?    | "What did people say about my recently closed issues?"
-Q57 | Is progress (changes) being made on plan items?                               | "Is anyone making progress on the offline mode feature?"
+Q57 | Is progress (changes) being made on plan items?                               | "Is anyone actively committing to the offline mode feature?" — specifically about whether code changes are landing; for "any plans?" or "is this fixed?" use Q48
 Q58 | What is the activity on a line item (feature)?                                | "What's been happening on the new export feature?"
 
 D. BROKEN BUILDS
@@ -264,6 +264,6 @@ Q77 | Which conversations in work items have I been mentioned in?               
 Q78 | What are people commenting on all work items I am involved with?              | "What's being said on the issues I'm part of?"
 
 EXTRA OPTIONS
-OTHER | A relevant developer information need that does NOT match any F&M question above. Use this when the thread is genuinely about the development process but the question type is not captured by Q1–Q78. These cases need human insight.
-NONE  | The thread does not contain a valid developer information need. Use this for bug reports, feature requests, usage questions, rhetorical questions, or threads where there is no clear question / answer pair about the development process.
+OTHER | The thread contains a clear developer question with a clear answer, but it does not match Q1–Q78. Includes how-to questions, usage questions, instructional answers, and questions about technology post-dating F&M (2010). Be generous: if there is a real question and a real answer, prefer OTHER over NONE.
+NONE  | The thread has no identifiable question-answer pair. Use for pure discussion/opinion threads, boilerplate template fields with no real question, or threads with no substantive answer.
 """

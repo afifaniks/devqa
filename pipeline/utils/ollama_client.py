@@ -7,8 +7,8 @@ import json
 import ollama
 
 # Models to use per stage — change these based on what you have pulled
-STAGE1_MODEL = "qwen3.6:latest"  # broad category classification
-STAGE2_MODEL = "qwen3.6:latest"  # specific question classification
+STAGE1_MODEL = "gpt-oss:120b"  # broad category classification
+STAGE2_MODEL = "gpt-oss:120b"  # specific question classification
 
 
 def is_running():

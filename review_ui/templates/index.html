@@ -114,6 +114,9 @@
         <span class="tax-trigger" style="font-weight:600;color:var(--accent)"
               @click.stop="taxTip($event,'q',pair?.question_id)"
               x-text="pair?.question_id||''"></span>
+        <span x-show="pair?.question_id==='OTHER' && pair?.other_question_type"
+              style="font-size:12px;color:var(--text-muted);font-style:italic"
+              x-text="'→ '+pair?.other_question_type"></span>
         <span x-text="(pair?.created_at||'').slice(0,10)"></span>
         <a :href="pair?.url||'#'" target="_blank" rel="noopener" x-show="pair?.url">Open on GitHub ↗</a>
             <div style="font-size:11px;color:var(--text-muted)"
