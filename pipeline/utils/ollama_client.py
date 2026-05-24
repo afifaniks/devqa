@@ -43,7 +43,7 @@ def generate(prompt, model, system=None, max_tokens=500, retries=3):
                 messages=messages,
                 options={
                     "num_predict": max_tokens,
-                    "temperature": 0.1,
+                    "temperature": 0.5,
                     "top_p": 0.9,
                 },
             )
@@ -79,7 +79,7 @@ def generate_json(prompt, model, system=None, max_tokens=500):
                 format="json",
                 options={
                     # "num_predict": max_tokens,
-                    "temperature": 0.1,
+                    "temperature": 0.5,
                     "top_p": 0.9,
                 },
             )
