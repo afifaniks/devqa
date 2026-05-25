@@ -24,10 +24,10 @@ from tqdm import tqdm
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 from utils.storage import load_jsonl, append_record, load_checkpoint, save_checkpoint
 from utils.ollama_client import generate_json, is_running, STAGE1_MODEL, STAGE2_MODEL
-from utils.taxonomy import CATEGORIES, QUESTIONS, QUESTION_TO_CATEGORY
+from utils.taxonomy import CATEGORIES, PLAIN_TAXONOMY, QUESTIONS, QUESTION_TO_CATEGORY, CATEGORY_TAXONOMY
 from config import REPOS
 
-random.seed(42)
+random.seed(777)
 
 SYSTEM_PROMPT = """You are a research assistant classifying GitHub threads
 for an academic study on developer information needs. Follow instructions
@@ -40,13 +40,15 @@ precisely and return only valid JSON with no extra text."""
 def build_stage1_prompt(thread_text):
     category_list = "\n".join(f"{k} - {v[0]}" for k, v in CATEGORIES.items())
     valid_letters = "/".join(k for k in CATEGORIES.keys())
-    return f"""Read this GitHub thread.
+    return f"""You are an expert software engineer analyzing this thread to determine 
+if it contains a clear developer question and answer.
+    
+Read this GitHub thread.
 
 <thread>
 {thread_text[:50000]}
 </thread>
 
-Task: Does this thread contain a developer information need with a clear answer?
 
 A developer information need is a question about:
 - The team (who is working on what, who owns what, who knows what)
@@ -54,60 +56,43 @@ A developer information need is a question about:
 - Work item status (is this fixed, what is the progress, is this planned)
 - Builds and tests (what is failing, what caused it)
 - Development process (conventions, contribution, team organization)
+- Software issues and failures (what is broken, why, and how to fix it)
 
-CATEGORY A — people/awareness:
-"Who maintains this module?" / "Who should I ask about X?" / "Who is working on this?"
+Given the taxonomy of Fritz & Murphy (2010) and examples of type of questions in each category below, 
+classify the thread into one of these high level categories (A–G, H, N) based on the main 
+developer question being asked and answered in the thread.
 
-CATEGORY B — code changes (answer explains WHY a design decision was made, WHAT changed, or WHO changed it):
-"Why was this behavior changed in v2?" / "Is this behavior intentional?" (answered with design rationale) /
-"Why was X deprecated?" / "What changed between v1 and v2?" / "Who introduced this change?"
-
-CATEGORY C — work item progress (answer is a status update: fixed / closed / planned / won't-fix):
-"Is this fixed?" / "Any updates on this?" / "Was this addressed in v3?" /
-"Will this be in the next release?" / "Are there plans to support X?"
-
-CATEGORY D — broken builds (thread is about why CI/tests/deployments are failing and answer identifies the cause or solution):
-"Build is failing after updating to v2.1 — what changed?" / "CI is red on main — what broke it?"
-
-CATEGORY E — test cases:
-"Who owns this test?" / "Which tests cover this module?"
-
-CATEGORY F — references/web:
-"Where is this documented?" / "Which version of the API supports X?"
-
-CATEGORY G — other F&M questions (team organization, defect activity):
-"How is the team organized?" / "Who has been commenting on this issue?"
+{PLAIN_TAXONOMY}
 
 CATEGORY H — valid developer Q&A outside the F&M taxonomy:
-Use H when there is a clear question and clear informational answer about the
-development process, codebase, or team — but it does not fit A–G. Some example:
-- "What is the migration path from v1 to v2?"
-- "Which version introduced this?"
-- "How do I contribute to this area?"
-- "What is the convention for X here?"
-- "Does this library support Python 3.11?"
+Use H only after confirming the thread does NOT fit A–G.
+H is for questions about the development process or project internals with no A–G match:
+Examples but not limited to:
+- "What is the release timeline for v3?" / "Is this project still actively maintained?"
+- "What is the convention for naming tests in this repo?"
 
-CATEGORY N — not a developer information need. Use N ONLY when:
+CATEGORY N — not a developer information need. Use N when:
 - There is no clear question being asked, you don't need to infer or imply a question
 - A generic bug report with no specific question (e.g. "it doesn't work", "it crashes") and no informational answer
 - Just a bug report with no question being asked in neither the issue body nor the comments
 - Just a generic question from bug template but no real developer issue question being asked in the thread
+- No direct and clear answer to the question
 - No informational answer exists (closed with no response, only "+1" / "me too" comments)
 - The only answer is a code patch or workaround with no explanation of WHY
 - Pure feature request with nobody answering when / whether / why
 - Template boilerplate with no real question being asked
+- The question does not include enough information to be answerable (e.g. "it doesn't work" with no error message, steps, or details) 
+or requires consecutive comments to piece together a question and answer (e.g. "it doesn't work" in one comment and then "here's the error message" in another comment, with no single comment containing a clear question or answer)
 
-IMPORTANT — do NOT use N because the question sounds like a bug report:
-"Is this behavior intentional?" + design rationale answer → B
-"Is this fixed?" + "yes, merged in #1234" → C
-"Why does X fail?" + explanation of root cause → B or H (not N)
-
-Categories:
-{category_list}
+IMPORTANT: You must choose the best fitting category, even if it's not a perfect fit. If you're unsure, choose the category that seems most likely based on the content of the thread.
+Your judgement should be based on the main question being asked in the thread, not on peripheral or minor questions/answers. 
+If the thread contains multiple questions, classify based on the most central or important one.
+A question-answer pair is valid if the question can be answered with information from the code, team, porject, documentation, or development process, and the answer provides that information in a clear way.
 
 Return only this JSON:
-{{"contains_qa": true or false, "category": "{valid_letters}", "confidence": 0.0 to 1.0}}
+{{"contains_qa": true or false, "category": "{valid_letters}", "confidence": "LOW" or "MEDIUM" or "HIGH"}}
 
+confidence meaning: HIGH = clearly fits, MEDIUM = fits but uncertain, LOW = guessing.
 Set contains_qa to true for A–H, false for N."""
 
 
@@ -142,21 +127,24 @@ def build_stage2_prompt(thread_text, category_key):
     if category_key == "H":
         task_block = (
             "Stage 1 flagged this as a valid developer Q&A outside the standard categories.\n"
-            "Choose OTHER if it IS a real developer information need with a clear answer, "
+            "Choose OTHER if it IS a real developer question or information need with a clear answer, "
             "NONE if stage 1 was wrong."
         )
         valid_ids = "OTHER or NONE"
     else:
-        question_list = "\n".join(
-            f"{qid}: {QUESTIONS[qid]}" for qid in question_ids
+        category_detail = CATEGORY_TAXONOMY.get(
+            category_key,
+            "\n".join(f"{qid}: {QUESTIONS[qid]}" for qid in question_ids),
         )
         task_block = (
-            f"Which of these questions best matches the thread?\n\n{question_list}\n\n"
-            f"OTHER: valid developer information need about {category_name.lower()}, "
-            f"but none of the above match exactly.\n"
-            f"NONE: stage 1 was wrong — not a developer information need."
+            f"Which question ID best matches the thread?\n"
+            f"Read each description and example carefully before choosing.\n\n"
+            f"{category_detail}\n\n"
+            f"OTHER: valid developer question or information need about {category_name.lower()}, "
+            f"but none of the Q-IDs above match.\n"
+            f"NONE: stage 1 was wrong — not a clear developer question or information need."
         )
-        valid_ids = "one of the Q-IDs above, OTHER, or NONE"
+        valid_ids = ", ".join(question_ids) + ", OTHER, or NONE"
 
     return f"""Read this GitHub thread.
 
@@ -188,9 +176,11 @@ Return only this JSON:
   "answer_author": "GitHub username or empty string",
   "answer_comment_id": "cN ID of comment containing the answer, or empty string",
   "answer_is_accepted": true or false,
-  "confidence": 0.0 to 1.0,
+  "confidence": "LOW" or "MEDIUM" or "HIGH",
   "reasoning": "one sentence"
-}}"""
+}}
+
+confidence meaning: HIGH = this Q-ID clearly matches, MEDIUM = reasonable match, LOW = uncertain or forced."""
 
 
 # ── Classifier ─────────────────────────────────────────────────────────────────
@@ -220,8 +210,9 @@ def classify(thread, stage1_model, stage2_model):
     if not s1 or not s1.get("contains_qa"):
         return {"contains_qa": False, "question_id": "NONE", "confidence": 0.0}
 
+    _CONF = {"HIGH": 0.95, "MEDIUM": 0.75, "LOW": 0.5}
     category = s1.get("category", "N").upper()
-    s1_confidence = float(s1.get("confidence", 0.0))
+    s1_confidence = _CONF.get(str(s1.get("confidence", "LOW")).upper(), 0.5)
 
     if category == "N" or category not in CATEGORIES:
         return {"contains_qa": False, "question_id": "NONE", "confidence": s1_confidence}
@@ -247,6 +238,9 @@ def classify(thread, stage1_model, stage2_model):
     if not q_comment_id and s2.get("question_source") == "issue_body":
         q_comment_id = "c0"
     a_comment_id = s2.get("answer_comment_id", "")
+    if a_comment_id and a_comment_id not in comment_lookup:
+        print(f"  [warn] answer_comment_id {a_comment_id!r} not in comment_lookup — clearing")
+        a_comment_id = ""
 
     return {
         "contains_qa": True,
@@ -260,7 +254,9 @@ def classify(thread, stage1_model, stage2_model):
         "answer_comment_id": a_comment_id,
         "answer_text": resolve_comment_body(a_comment_id, comment_lookup),
         "answer_is_accepted": s2.get("answer_is_accepted", False),
-        "confidence": s1_confidence * float(s2.get("confidence", 0.0)),
+        "stage1_confidence": str(s1.get("confidence", "LOW")).upper(),
+        "stage2_confidence": str(s2.get("confidence", "LOW")).upper(),
+        "confidence": s1_confidence * _CONF.get(str(s2.get("confidence", "LOW")).upper(), 0.5),
         "reasoning": s2.get("reasoning", ""),
         "stage1_category": category,
     }
@@ -357,6 +353,8 @@ def classify_threads(
             "answer_author": result["answer_author"],
             "answer_comment_id": result.get("answer_comment_id", ""),
             "answer_is_accepted": result.get("answer_is_accepted", False),
+            "stage1_confidence": result.get("stage1_confidence", ""),
+            "stage2_confidence": result.get("stage2_confidence", ""),
             "confidence": result["confidence"],
             "reasoning": result.get("reasoning", ""),
             "thread_text": thread["thread_text"],

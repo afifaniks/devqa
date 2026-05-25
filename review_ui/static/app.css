@@ -83,6 +83,11 @@ a:hover { text-decoration: underline; }
 
 /* ── Topbar ──────────────────────────────────────────────────────────────── */
 #topbar h1 { font-size: 13px; font-weight: 600; white-space: nowrap; margin-right: 4px; }
+.pipeline-badge { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 99px; letter-spacing: .04em; text-transform: uppercase; white-space: nowrap; }
+.pipeline-fm   { background: var(--surface2); color: var(--text-dim); border: 1px solid var(--border); }
+.pipeline-open { background: #e8f4fd; color: #0969da; border: 1px solid #b6d4f7; }
+html.dark .pipeline-open { background: #0d2137; color: #79b8ff; border-color: #1f3866; }
+.pipeline-switch { font-size: 11px; white-space: nowrap; }
 .prog-wrap { width: 120px; height: 4px; background: var(--surface2); border-radius: 99px; overflow: hidden; flex-shrink: 0; }
 .prog-fill { height: 100%; background: var(--green); border-radius: 99px; transition: width .3s; }
 .prog-label { font-size: 11px; color: var(--text-muted); white-space: nowrap; }
@@ -131,6 +136,14 @@ html.dark .badge-purple { border-color: #3d2066; }
 .badge-accepted { background: var(--green-bg);    color: var(--green);  }
 .badge-rejected { background: var(--red-bg);      color: var(--red);    }
 .badge-pending  { background: var(--surface2);    color: var(--text-muted); }
+.badge-open     { background: #e8f4fd; color: #0969da; border-color: #b6d4f7; font-weight: 600; }
+html.dark .badge-open { background: #0d2137; color: #79b8ff; border-color: #1f3866; }
+.badge-verif[x-text="hard"]     { background: var(--green-bg);    color: var(--green); }
+.badge-verif[x-text="soft"]     { background: var(--yellow-bg);   color: var(--yellow); }
+.badge-verif[x-text="judgment"] { background: var(--purple-bg);   color: var(--purple); }
+.badge-verif    { background: var(--surface2); color: var(--text-dim); border-color: var(--border); }
+.badge-role     { background: var(--surface2); color: var(--text-dim); border-color: var(--border); font-style: italic; }
+.badge-artifact { background: var(--accent-muted); color: var(--accent); border-color: #b6d4f7; font-size: 10px; }
 .conf-high      { background: var(--green-bg);    color: var(--green);  }
 .conf-mid       { background: var(--yellow-bg);   color: var(--yellow); }
 .conf-low       { background: var(--red-bg);      color: var(--red);    }
@@ -209,6 +222,8 @@ html.dark .pair-item.active { background: rgba(68,147,248,.1); }
 .accepted-badge { color: var(--green); font-weight: 500; }
 
 .reasoning-card { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 12px; font-size: 12.5px; color: var(--text-dim); line-height: 1.6; }
+.need-summary-card { background: var(--accent-muted); border: 1px solid #b6d4f7; border-radius: var(--radius-lg); padding: 12px 14px; margin-bottom: 2px; }
+html.dark .need-summary-card { background: #0d2137; border-color: #1f3866; }
 
 /* ── Verify panel ────────────────────────────────────────────────────────── */
 #verify-panel {

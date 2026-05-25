@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""FastAPI review UI for validating natural_qa_pairs.jsonl data."""
+"""FastAPI review UI — two separate pipelines.
+
+/          → F&M classified pairs   (natural_qa_pairs_dual_stage.jsonl)
+/open      → Open-coded pairs       (open_qa_pairs.jsonl)
+"""
 
 import json
 import sys
@@ -15,16 +19,23 @@ from pydantic import BaseModel
 
 ROOT = Path(__file__).parent.parent
 OUTPUT_DIR = ROOT / "output"
+
+# ── F&M pipeline files ────────────────────────────────────────────────────────
 VERIFICATION_FILE = ROOT / "verified_state.json"
 EXPORT_FILE = ROOT / "verified_qa_pairs.jsonl"
+
+# ── Open-coding pipeline files ────────────────────────────────────────────────
+OPEN_VERIFICATION_FILE = ROOT / "open_verified_state.json"
+OPEN_EXPORT_FILE = ROOT / "open_verified_qa_pairs.jsonl"
 
 sys.path.insert(0, str(ROOT / "pipeline"))
 from utils.taxonomy import CATEGORIES, QUESTIONS, QUESTION_TO_CATEGORY  # noqa: E402
 
-# ── In-memory data ──────────────────────────────────────────────────────────
+
+# ── F&M pipeline data ─────────────────────────────────────────────────────────
 
 pairs: list[dict] = []
-verification: dict[str, dict] = {}  # key = pair_id (repo/source/number/question_id)
+verification: dict[str, dict] = {}
 
 
 def pair_id(p: dict) -> str:
@@ -39,7 +50,7 @@ def pair_id(p: dict) -> str:
 def load_data() -> None:
     global pairs, verification
     pairs = []
-    for jsonl_file in sorted(OUTPUT_DIR.glob("*/natural_qa_pairs.jsonl")):
+    for jsonl_file in sorted(OUTPUT_DIR.glob("*/natural_qa_pairs_dual_stage.jsonl")):
         with jsonl_file.open() as f:
             for line in f:
                 line = line.strip()
@@ -69,7 +80,41 @@ def save_verification() -> None:
     VERIFICATION_FILE.write_text(json.dumps(verification, indent=2))
 
 
-# ── Models ──────────────────────────────────────────────────────────────────
+# ── Open-coding pipeline data ─────────────────────────────────────────────────
+
+open_pairs: list[dict] = []
+open_verification: dict[str, dict] = {}
+
+
+def open_pair_id(p: dict) -> str:
+    return "{}/{}/{}".format(
+        p.get("repo", "unknown"),
+        p.get("source", "unknown"),
+        p.get("number", "unknown"),
+    )
+
+
+def load_open_data() -> None:
+    global open_pairs, open_verification
+    open_pairs = []
+    for jsonl_file in sorted(OUTPUT_DIR.glob("*/open_qa_pairs.jsonl")):
+        with jsonl_file.open() as f:
+            for line in f:
+                line = line.strip()
+                if line:
+                    open_pairs.append(json.loads(line))
+
+    if OPEN_VERIFICATION_FILE.exists():
+        open_verification = json.loads(OPEN_VERIFICATION_FILE.read_text())
+    else:
+        open_verification = {}
+
+
+def save_open_verification() -> None:
+    OPEN_VERIFICATION_FILE.write_text(json.dumps(open_verification, indent=2))
+
+
+# ── Models ────────────────────────────────────────────────────────────────────
 
 
 class VerifyRequest(BaseModel):
@@ -81,13 +126,14 @@ class AssignRequest(BaseModel):
     question_id: str
 
 
-# ── App ──────────────────────────────────────────────────────────────────────
+# ── App ───────────────────────────────────────────────────────────────────────
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     load_data()
-    print(f"Loaded {len(pairs)} pairs from {OUTPUT_DIR}", file=sys.stderr)
+    load_open_data()
+    print(f"Loaded {len(pairs)} F&M pairs, {len(open_pairs)} open-coded pairs", file=sys.stderr)
     yield
 
 
@@ -101,17 +147,30 @@ app.mount(
 )
 
 
-# ── Routes ──────────────────────────────────────────────────────────────────
-
-
-@app.get("/", response_class=HTMLResponse)
-async def index():
-    return HTMLResponse(_INDEX_HTML.read_text())
+# ── Shared pages ──────────────────────────────────────────────────────────────
 
 
 @app.get("/taxonomy", response_class=HTMLResponse)
 async def taxonomy_page():
     return HTMLResponse(_TAXONOMY_HTML.read_text())
+
+
+@app.get("/api/taxonomy")
+def get_taxonomy():
+    return {
+        "categories": {k: {"name": v[0], "qs": v[1]} for k, v in CATEGORIES.items()},
+        "questions": QUESTIONS,
+    }
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# F&M CLASSIFIED PIPELINE  (/  and  /api/*)
+# ══════════════════════════════════════════════════════════════════════════════
+
+
+@app.get("/", response_class=HTMLResponse)
+async def index():
+    return HTMLResponse(_INDEX_HTML.read_text())
 
 
 @app.get("/stats", response_class=HTMLResponse)
@@ -132,7 +191,6 @@ def get_pairs(
     for i, p in enumerate(pairs):
         v = verification.get(pair_id(p), {})
         vstatus = v.get("status", "pending")
-
         effective_qid = v.get("question_id_override", p.get("question_id"))
 
         if repo and p.get("repo") != repo:
@@ -150,32 +208,24 @@ def get_pairs(
             ):
                 continue
 
-        filtered.append(
-            {
-                "index": i,
-                "repo": p.get("repo"),
-                "question_id": v.get("question_id_override", p.get("question_id")),
-                "number": p.get("number"),
-                "question_text": p.get("question_text", ""),
-                "title": p.get("title"),
-                "confidence": p.get("confidence"),
-                "stage1_category": p.get("stage1_category") or p.get("category"),
-                "source": p.get("source"),
-                "status": vstatus,
-                "note": v.get("note", ""),
-            }
-        )
+        filtered.append({
+            "index": i,
+            "repo": p.get("repo"),
+            "question_id": effective_qid,
+            "number": p.get("number"),
+            "question_text": p.get("question_text", ""),
+            "title": p.get("title"),
+            "confidence": p.get("confidence"),
+            "stage1_category": p.get("stage1_category") or p.get("category"),
+            "source": p.get("source"),
+            "status": vstatus,
+            "note": v.get("note", ""),
+        })
 
     total = len(filtered)
     start = (page - 1) * page_size
-    page_items = filtered[start : start + page_size]
-
-    return {
-        "total": total,
-        "page": page,
-        "page_size": page_size,
-        "items": page_items,
-    }
+    return {"total": total, "page": page, "page_size": page_size,
+            "items": filtered[start: start + page_size]}
 
 
 @app.get("/api/pairs/{index}")
@@ -200,7 +250,6 @@ def verify_pair(index: int, body: VerifyRequest):
         raise HTTPException(status_code=404, detail="Pair not found")
     if body.status not in ("accepted", "rejected", "pending"):
         raise HTTPException(status_code=400, detail="Invalid status")
-
     verification[pair_id(pairs[index])] = {
         "status": body.status,
         "note": body.note or "",
@@ -231,16 +280,12 @@ def get_stats():
     counts = {"accepted": 0, "rejected": 0, "pending": 0}
 
     for p in pairs:
-        repo = p.get("repo", "unknown")
-        repos[repo] = repos.get(repo, 0) + 1
-
+        repos[p.get("repo", "unknown")] = repos.get(p.get("repo", "unknown"), 0) + 1
         v = verification.get(pair_id(p), {})
         status = v.get("status", "pending")
         counts[status] = counts.get(status, 0) + 1
-
         qid = v.get("question_id_override", p.get("question_id", "?"))
         question_ids[qid] = question_ids.get(qid, 0) + 1
-
         cat = QUESTION_TO_CATEGORY.get(qid, "?")
         categories[cat] = categories.get(cat, 0) + 1
         cs = cat_status.setdefault(cat, {"accepted": 0, "rejected": 0, "pending": 0})
@@ -264,9 +309,7 @@ def reload_data():
 
 @app.post("/api/export")
 def export_verified():
-    accepted = [
-        p for p in pairs if verification.get(pair_id(p), {}).get("status") == "accepted"
-    ]
+    accepted = [p for p in pairs if verification.get(pair_id(p), {}).get("status") == "accepted"]
     with EXPORT_FILE.open("w") as f:
         for p in accepted:
             f.write(json.dumps(p) + "\n")
@@ -277,31 +320,185 @@ def export_verified():
 def download_export():
     if not EXPORT_FILE.exists():
         raise HTTPException(status_code=404, detail="No export yet. Run export first.")
-    return FileResponse(
-        EXPORT_FILE,
-        filename="verified_qa_pairs.jsonl",
-        media_type="application/octet-stream",
-    )
-
-
-@app.get("/api/taxonomy")
-def get_taxonomy():
-    return {
-        "categories": {k: {"name": v[0], "qs": v[1]} for k, v in CATEGORIES.items()},
-        "questions": QUESTIONS,
-    }
+    return FileResponse(EXPORT_FILE, filename="verified_qa_pairs.jsonl",
+                        media_type="application/octet-stream")
 
 
 @app.get("/api/repos")
 def get_repos():
-    repos = sorted({p.get("repo", "") for p in pairs})
-    return repos
+    return sorted({p.get("repo", "") for p in pairs})
 
 
 @app.get("/api/question_ids")
 def get_question_ids():
-    qids = sorted({p.get("question_id", "") for p in pairs})
-    return qids
+    return sorted({p.get("question_id", "") for p in pairs})
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# OPEN-CODING PIPELINE  (/open  and  /api/open/*)
+# ══════════════════════════════════════════════════════════════════════════════
+
+
+@app.get("/open", response_class=HTMLResponse)
+async def open_index():
+    return HTMLResponse(_INDEX_HTML.read_text())
+
+
+@app.get("/open/stats", response_class=HTMLResponse)
+async def open_stats_page():
+    return HTMLResponse(_STATS_HTML.read_text())
+
+
+@app.get("/api/open/pairs")
+def get_open_pairs(
+    repo: Optional[str] = None,
+    status: Optional[str] = None,
+    verifiability: Optional[str] = None,
+    answerer_role: Optional[str] = None,
+    q: Optional[str] = None,
+    page: int = 1,
+    page_size: int = 50,
+):
+    filtered = []
+    for i, p in enumerate(open_pairs):
+        v = open_verification.get(open_pair_id(p), {})
+        vstatus = v.get("status", "pending")
+
+        if repo and p.get("repo") != repo:
+            continue
+        if status and vstatus != status:
+            continue
+        if verifiability and p.get("verifiability") != verifiability:
+            continue
+        if answerer_role and p.get("answerer_role") != answerer_role:
+            continue
+        if q:
+            q_lower = q.lower()
+            if (
+                q_lower not in p.get("need_summary", "").lower()
+                and q_lower not in p.get("question_text", "").lower()
+                and q_lower not in p.get("answer_text", "").lower()
+                and q_lower not in p.get("title", "").lower()
+            ):
+                continue
+
+        filtered.append({
+            "index": i,
+            "repo": p.get("repo"),
+            "question_id": "OPEN",
+            "number": p.get("number"),
+            "need_summary": p.get("need_summary", ""),
+            "question_text": p.get("question_text", ""),
+            "title": p.get("title"),
+            "confidence": p.get("confidence"),
+            "verifiability": p.get("verifiability", ""),
+            "answerer_role": p.get("answerer_role", ""),
+            "artifacts_needed": p.get("artifacts_needed", []),
+            "source": p.get("source"),
+            "status": vstatus,
+            "note": v.get("note", ""),
+        })
+
+    total = len(filtered)
+    start = (page - 1) * page_size
+    return {"total": total, "page": page, "page_size": page_size,
+            "items": filtered[start: start + page_size]}
+
+
+@app.get("/api/open/pairs/{index}")
+def get_open_pair(index: int):
+    if index < 0 or index >= len(open_pairs):
+        raise HTTPException(status_code=404, detail="Pair not found")
+    p = dict(open_pairs[index])
+    v = open_verification.get(open_pair_id(p), {})
+    p["index"] = index
+    p["status"] = v.get("status", "pending")
+    p["note"] = v.get("note", "")
+    p["verified_at"] = v.get("verified_at", "")
+    p["question_id"] = "OPEN"
+    return p
+
+
+@app.post("/api/open/pairs/{index}/verify")
+def verify_open_pair(index: int, body: VerifyRequest):
+    if index < 0 or index >= len(open_pairs):
+        raise HTTPException(status_code=404, detail="Pair not found")
+    if body.status not in ("accepted", "rejected", "pending"):
+        raise HTTPException(status_code=400, detail="Invalid status")
+    open_verification[open_pair_id(open_pairs[index])] = {
+        "status": body.status,
+        "note": body.note or "",
+        "verified_at": datetime.utcnow().isoformat() + "Z",
+    }
+    save_open_verification()
+    return {"ok": True}
+
+
+@app.get("/api/open/stats")
+def get_open_stats():
+    repos: dict[str, int] = {}
+    verif_counts: dict[str, int] = {}
+    verif_status: dict[str, dict[str, int]] = {}
+    role_counts: dict[str, int] = {}
+    counts = {"accepted": 0, "rejected": 0, "pending": 0}
+
+    for p in open_pairs:
+        repos[p.get("repo", "unknown")] = repos.get(p.get("repo", "unknown"), 0) + 1
+        v = open_verification.get(open_pair_id(p), {})
+        status = v.get("status", "pending")
+        counts[status] = counts.get(status, 0) + 1
+        verif = p.get("verifiability", "?")
+        verif_counts[verif] = verif_counts.get(verif, 0) + 1
+        vs = verif_status.setdefault(verif, {"accepted": 0, "rejected": 0, "pending": 0})
+        vs[status] = vs.get(status, 0) + 1
+        role = p.get("answerer_role", "?")
+        role_counts[role] = role_counts.get(role, 0) + 1
+
+    return {
+        "total": len(open_pairs),
+        "counts": counts,
+        "repos": repos,
+        "question_ids": {"OPEN": len(open_pairs)},
+        "categories": verif_counts,
+        "cat_status": verif_status,
+        "answerer_roles": role_counts,
+    }
+
+
+@app.post("/api/open/reload")
+def reload_open_data():
+    load_open_data()
+    return {"ok": True, "total": len(open_pairs)}
+
+
+@app.post("/api/open/export")
+def export_open_verified():
+    accepted = [
+        p for p in open_pairs
+        if open_verification.get(open_pair_id(p), {}).get("status") == "accepted"
+    ]
+    with OPEN_EXPORT_FILE.open("w") as f:
+        for p in accepted:
+            f.write(json.dumps(p) + "\n")
+    return {"exported": len(accepted), "file": str(OPEN_EXPORT_FILE)}
+
+
+@app.get("/api/open/export/download")
+def download_open_export():
+    if not OPEN_EXPORT_FILE.exists():
+        raise HTTPException(status_code=404, detail="No export yet. Run export first.")
+    return FileResponse(OPEN_EXPORT_FILE, filename="open_verified_qa_pairs.jsonl",
+                        media_type="application/octet-stream")
+
+
+@app.get("/api/open/repos")
+def get_open_repos():
+    return sorted({p.get("repo", "") for p in open_pairs})
+
+
+@app.get("/api/open/question_ids")
+def get_open_question_ids():
+    return ["OPEN"]
 
 
 if __name__ == "__main__":

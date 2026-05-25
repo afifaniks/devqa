@@ -144,8 +144,10 @@
     '#0550ae','#bf4b8a','#0a7b77','#b35900','#57606a'
   ];
 
+  const API_BASE = location.pathname.startsWith('/open') ? '/api/open' : '/api';
+
   Promise.all([
-    fetch('/api/stats').then(r => r.json()),
+    fetch(API_BASE+'/stats').then(r => r.json()),
     fetch('/api/taxonomy').then(r => r.json()),
   ]).then(([stats, tax]) => {
     document.getElementById('loading').style.display = 'none';

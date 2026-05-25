@@ -13,10 +13,19 @@
   <script>if (localStorage.getItem('theme')==='dark') document.documentElement.classList.add('dark');</script>
 </head>
 
+<script>
+  const IS_OPEN = location.pathname.startsWith('/open');
+  const API_BASE = IS_OPEN ? '/api/open' : '/api';
+</script>
+
 <body x-data="app()" x-init="init()" @keydown.window="handleKey($event)">
 
 <div id="topbar">
   <h1>DevQA Pair Review</h1>
+  <span class="pipeline-badge" :class="IS_OPEN ? 'pipeline-open' : 'pipeline-fm'"
+        x-text="IS_OPEN ? 'Open Coding' : 'F&M Classified'"></span>
+  <a class="btn pipeline-switch" :href="IS_OPEN ? '/' : '/open'"
+     x-text="IS_OPEN ? '← F&M Classified' : 'Open Coding →'"></a>
   <div class="prog-wrap"><div class="prog-fill" :style="`width:${progress}%`"></div></div>
   <span class="prog-label" x-text="`${done} / ${stats.total} reviewed`"></span>
   <div class="topbar-pills">
@@ -45,15 +54,24 @@
         </select>
         <select class="select" x-model="filterQid" @change="loadList()">
           <option value="">All Q-IDs</option>
-          <template x-for="q in qids" :key="q"><option :value="q" x-text="q"></option></template>
+          <option value="OPEN">OPEN (new pipeline)</option>
+          <template x-for="q in qids.filter(q=>q!=='OPEN')" :key="q"><option :value="q" x-text="q"></option></template>
         </select>
       </div>
-      <select class="select" x-model="filterStatus" @change="loadList()">
-        <option value="">All statuses</option>
-        <option value="pending">Pending</option>
-        <option value="accepted">Accepted</option>
-        <option value="rejected">Rejected</option>
-      </select>
+      <div class="filter-row">
+        <select class="select" x-model="filterStatus" @change="loadList()">
+          <option value="">All statuses</option>
+          <option value="pending">Pending</option>
+          <option value="accepted">Accepted</option>
+          <option value="rejected">Rejected</option>
+        </select>
+        <select class="select" x-model="filterVerifiability" @change="loadList()">
+          <option value="">All verifiability</option>
+          <option value="hard">Hard</option>
+          <option value="soft">Soft</option>
+          <option value="judgment">Judgment</option>
+        </select>
+      </div>
     </div>
 
 <div id="pair-list">
@@ -65,19 +83,24 @@
         <div class="pair-qid-row">
           <span class="pair-ref" x-text="`${item.repo}/${item.number}`"></span>
 
-          <span class="badge badge-neutral tax-trigger"
+          <span class="badge badge-neutral tax-trigger" x-show="item.question_id!=='OPEN'"
                 @click.stop="taxTip($event,'cat',item.stage1_category)"
                 x-text="`${item.stage1_category || '?'}`"></span>
 
-          <span class="badge badge-neutral tax-trigger"
+          <span class="badge badge-open" x-show="item.question_id==='OPEN'">OPEN</span>
+          <span class="badge badge-neutral tax-trigger" x-show="item.question_id!=='OPEN'"
                 @click.stop="taxTip($event,'q',item.question_id)"
                 x-text="item.question_id"></span>
+
+          <span class="badge badge-verif" x-show="item.verifiability"
+                x-text="item.verifiability"></span>
 
           <span class="pair-conf" x-text="Math.round((parseFloat(item.confidence)||0)*100)+'%'"></span>
         </div>
 
         <div class="pair-title" x-text="decodeHtml(item.title || '')"></div>
-        <div class="pair-question" x-text="decodeHtml(item.question_text || '')"></div>
+        <div class="pair-question"
+             x-text="decodeHtml((item.question_id==='OPEN' && item.need_summary) ? item.need_summary : (item.question_text || ''))"></div>
 
         <div class="pair-repo">
           <span class="pair-source" x-text="item.source"></span>
@@ -112,16 +135,25 @@
       <div class="meta-row">
         <span x-text="pair?.repo||''"></span>
         <span class="tax-trigger" style="font-weight:600;color:var(--accent)"
+              x-show="pair?.question_id!=='OPEN'"
               @click.stop="taxTip($event,'q',pair?.question_id)"
               x-text="pair?.question_id||''"></span>
+        <span class="badge badge-open" x-show="pair?.question_id==='OPEN'">OPEN</span>
         <span x-show="pair?.question_id==='OTHER' && pair?.other_question_type"
               style="font-size:12px;color:var(--text-muted);font-style:italic"
               x-text="'→ '+pair?.other_question_type"></span>
+        <span class="badge badge-verif" x-show="pair?.verifiability" x-text="pair?.verifiability"></span>
+        <span class="badge badge-role" x-show="pair?.answerer_role" x-text="pair?.answerer_role"></span>
         <span x-text="(pair?.created_at||'').slice(0,10)"></span>
         <a :href="pair?.url||'#'" target="_blank" rel="noopener" x-show="pair?.url">Open on GitHub ↗</a>
-            <div style="font-size:11px;color:var(--text-muted)"
-          x-text="[pair?.stage1_model ? 'Stage 1 LLM: '+pair.stage1_model : null, pair?.stage2_model ? 'Stage 2 LLM: '+pair.stage2_model : null].filter(Boolean).join(' · ')">
+        <div style="font-size:11px;color:var(--text-muted)"
+             x-text="pair?.model ? 'Model: '+pair.model : ''">
+        </div>
       </div>
+
+      <div class="need-summary-card" x-show="pair?.question_id==='OPEN' && pair?.need_summary">
+        <div class="label" style="margin-bottom:4px">Developer Information Need</div>
+        <p style="font-size:13px;margin:0" x-text="decodeHtml(pair?.need_summary||'')"></p>
       </div>
 
       <div class="qa-grid">
@@ -139,9 +171,19 @@
         </div>
       </div>
 
-      <div>
-        <div class="label" style="margin-bottom:6px">Classification Reasoning</div>
+      <div x-show="pair?.reasoning">
+        <div class="label" style="margin-bottom:6px"
+             x-text="pair?.question_id==='OPEN' ? 'Extraction Reasoning' : 'Classification Reasoning'"></div>
         <div class="reasoning-card" x-text="decodeHtml(pair?.reasoning||'')"></div>
+      </div>
+
+      <div x-show="pair?.artifacts_needed?.length">
+        <div class="label" style="margin-bottom:6px">Artifacts Needed to Answer</div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px">
+          <template x-for="a in (pair?.artifacts_needed||[])" :key="a">
+            <span class="badge badge-artifact" x-text="a"></span>
+          </template>
+        </div>
       </div>
 
       <div>
@@ -166,7 +208,7 @@
           <button class="btn btn-icon" @click="navigate(1)">→</button>
         </div>
       </div>
-      <div class="assign-row">
+      <div class="assign-row" x-show="pair?.question_id!=='OPEN'">
         <span class="label" style="white-space:nowrap">Q-ID</span>
         <select class="select" x-model="assignQid" style="flex:1;min-width:0">
           <template x-for="qid in sortedQids" :key="qid">
@@ -397,7 +439,7 @@
     return {
       allItems:[], currentIndex:null, currentListPos:null, pair:null,
       stats:{accepted:0, rejected:0, pending:0, total:0},
-      filterRepo:'', filterQid:'', filterStatus:'', searchQuery:'',
+      filterRepo:'', filterQid:'', filterStatus:'', filterVerifiability:'', searchQuery:'',
       repos:[], qids:[], note:'', assignQid:'', sortedQids:[],
       isDark: document.documentElement.classList.contains('dark'),
       reloading: false,
@@ -425,8 +467,8 @@
 
       async init() {
         const [repos,qids,tax] = await Promise.all([
-          fetch('/api/repos').then(r=>r.json()),
-          fetch('/api/question_ids').then(r=>r.json()),
+          fetch(API_BASE+'/repos').then(r=>r.json()),
+          fetch(API_BASE+'/question_ids').then(r=>r.json()),
           fetch('/api/taxonomy').then(r=>r.json()),
         ]);
         this.repos=repos;
@@ -444,14 +486,14 @@
       },
 
       async loadList() {
-        const p=new URLSearchParams({page:1,page_size:500,repo:this.filterRepo,question_id:this.filterQid,status:this.filterStatus,q:this.searchQuery});
-        this.allItems=(await fetch('/api/pairs?'+p).then(r=>r.json())).items;
+        const p=new URLSearchParams({page:1,page_size:500,repo:this.filterRepo,question_id:this.filterQid,status:this.filterStatus,verifiability:this.filterVerifiability,q:this.searchQuery});
+        this.allItems=(await fetch(API_BASE+'/pairs?'+p).then(r=>r.json())).items;
       },
 
       async selectPair(index, pos) {
         this.currentIndex=index;
         this.currentListPos=pos;
-        this.pair=await fetch(`/api/pairs/${index}`).then(r=>r.json());
+        this.pair=await fetch(`${API_BASE}/pairs/${index}`).then(r=>r.json());
         this.note=this.pair.note||'';
         this.assignQid=this.pair.question_id||'';
         this.$nextTick(()=>document.getElementById('detail-content')?.scrollTo(0,0));
@@ -459,7 +501,7 @@
 
       async saveAssignment() {
         if (!this.assignQid||this.currentIndex===null) return;
-        const res=await fetch(`/api/pairs/${this.currentIndex}/assign`,{
+        const res=await fetch(`${API_BASE}/pairs/${this.currentIndex}/assign`,{
           method:'POST',
           headers:{'Content-Type':'application/json'},
           body:JSON.stringify({question_id:this.assignQid})
@@ -477,7 +519,7 @@
 
       async verify(status) {
         if (this.currentIndex===null) return;
-        const res=await fetch(`/api/pairs/${this.currentIndex}/verify`,{
+        const res=await fetch(`${API_BASE}/pairs/${this.currentIndex}/verify`,{
           method:'POST',
           headers:{'Content-Type':'application/json'},
           body:JSON.stringify({status,note:this.note})
@@ -502,14 +544,14 @@
       },
 
       async loadStats() {
-        const s=await fetch('/api/stats').then(r=>r.json());
+        const s=await fetch(API_BASE+'/stats').then(r=>r.json());
         this.stats={...s.counts,total:s.total};
       },
 
       async reloadSources() {
         this.reloading=true;
         try {
-          const data=await fetch('/api/reload',{method:'POST'}).then(r=>r.json());
+          const data=await fetch(API_BASE+'/reload',{method:'POST'}).then(r=>r.json());
           await Promise.all([this.loadList(),this.loadStats()]);
           this.showToast(`Reloaded — ${data.total} pairs`,'ok');
         } finally {
@@ -518,9 +560,9 @@
       },
 
       async exportData() {
-        const data=await fetch('/api/export',{method:'POST'}).then(r=>r.json());
+        const data=await fetch(API_BASE+'/export',{method:'POST'}).then(r=>r.json());
         this.showToast(`Exported ${data.exported} accepted pairs`,'ok');
-        window.open('/api/export/download','_blank');
+        window.open(API_BASE+'/export/download','_blank');
       },
 
       toggleTheme() {

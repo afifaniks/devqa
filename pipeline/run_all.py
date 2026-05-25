@@ -32,19 +32,19 @@ def run_pipeline(repo: str, skip_ci: bool = False, only_threads: bool = False):
         # Step 1: Issues (most important — run first)
         mine_issues(repo)
 
-        # Step 2: Commits + SZZ (slowest — fetches every commit)
-        mine_commits(repo)
-        run_szz(repo)
+        # # Step 2: Commits + SZZ (slowest — fetches every commit)
+        # mine_commits(repo)
+        # run_szz(repo)
 
-        # Step 3: Pull requests
-        mine_pull_requests(repo)
+        # # Step 3: Pull requests
+        # mine_pull_requests(repo)
 
-        # Step 4: CI runs (optional — can be slow for large repos)
-        if not skip_ci:
-            mine_ci_runs(repo)
+        # # Step 4: CI runs (optional — can be slow for large repos)
+        # if not skip_ci:
+        #     mine_ci_runs(repo)
 
-        # Step 5: Contributors (depends on commits + issues + PRs being done)
-        mine_contributors(repo)
+        # # Step 5: Contributors (depends on commits + issues + PRs being done)
+        # mine_contributors(repo)
 
     # Step 6: Build raw threads from issues + discussions
     mine_threads(repo)

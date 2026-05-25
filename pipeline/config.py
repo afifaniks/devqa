@@ -9,6 +9,7 @@ if not GITHUB_TOKENS and os.getenv("GITHUB_TOKEN"):
 
 # Repositories to mine — add more here as you expand
 REPOS = [
+    "stripe/stripe-node",
     "microsoft/vscode",
     "facebook/react",
     "psf/requests",

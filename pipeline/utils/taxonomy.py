@@ -156,21 +156,7 @@ QUESTIONS: dict[str, str] = {
 
 # ── Reverse map: Q-ID → category letter (auto-derived from CATEGORIES) ────────
 
-QUESTION_TO_CATEGORY: dict[str, str] = {}
-for _cat_key, (_, _qids) in CATEGORIES.items():
-    for _qid in _qids:
-        QUESTION_TO_CATEGORY[_qid] = _cat_key
-
-# ── LLM prompt string (derived from the dicts above) ─────────────────────────
-
-TAXONOMY_FOR_PROMPT = """
-You must classify the thread into exactly one of these question IDs. Use OTHER
-if the thread contains a relevant developer information need that does not
-match any F&M question, and NONE if the thread does not contain a valid
-developer information need at all.
-
-Each entry shows: ID | F&M question text | example phrasing
-
+PLAIN_TAXONOMY = """
 A. WHO IS WORKING ON WHAT (people specific)
 Q1  | Who is working on what?                                                       | "Who's currently looking into the auth bug?"
 Q2  | What are they (coworkers) working on right now?                               | "What is @jsmith working on this sprint?"
@@ -223,16 +209,16 @@ Q46 | Which changes have been made between these days or after this day?        
 Q47 | What classes in this component were modified since version [X]?              | "What changed in the database package since v2.0?"
 
 C. WORK ITEM PROGRESS
-Q48 | What is the recent activity on a plan item?                                   | "What's the latest on issue #4821?" / "Is this fixed?" / "Any update on this?" / "Are there plans to fix this?" — use Q48 for ALL single-issue status/progress questions
+Q48 | What is the recent activity on a plan item?                                   | "What's the latest on issue #4821?" / "Is this fixed?" / "Any update on this?"
 Q49 | Which features and functions have been changing?                              | "What parts of the product are being actively developed?"
-Q50 | Has progress been made on blockers in your milestone?                         | "Are the P0 blockers for the v3 release fixed yet?" — milestone-level blocker tracking across multiple items; for single issue status use Q48
+Q50 | Has progress been made on blockers in your milestone?                         | "Are the P0 blockers for the v3 release fixed yet?" — milestone-level blocker tracking across multiple items
 Q51 | Which work items / plan items are most active?                                | "Which issues have the most activity right now?"
 Q52 | How active is the plan item? (How many comments?)                             | "How busy is this issue — many comments?"
 Q53 | Are there any new comments on interesting work items?                         | "Anything new on the issues I'm watching?"
 Q54 | What work item has recently changed that is related to me?                    | "Which of my issues had activity today?"
 Q55 | What are the emails related to line items and defects that are features?      | "Which emails relate to the open feature defects?"
 Q56 | What are the comments on newly resolved work items that are related to me?    | "What did people say about my recently closed issues?"
-Q57 | Is progress (changes) being made on plan items?                               | "Is anyone actively committing to the offline mode feature?" — specifically about whether code changes are landing; for "any plans?" or "is this fixed?" use Q48
+Q57 | Is progress (changes) being made on plan items?                               | "Is anyone actively committing to the offline mode feature?" — specifically about whether code changes are landing
 Q58 | What is the activity on a line item (feature)?                                | "What's been happening on the new export feature?"
 
 D. BROKEN BUILDS
@@ -255,7 +241,7 @@ Q70 | What is coming up next week for my team? / What is my team doing?         
 Q71 | What am I supposed to work on? (plan on wiki)                                 | "What's on my plate per the roadmap?"
 Q72 | Who has to do what? (team activity)                                           | "Who's responsible for which milestone item?"
 
-G. OTHER QUESTIONS
+G. MISCELLANEOUS QUESTIONS
 Q73 | How is the team organized?                                                    | "How is the frontend team organized?"
 Q74 | Who has made changes to a defect?                                             | "Who's worked on this bug?"
 Q75 | Who has made comments in a defect?                                            | "Who has been involved in this bug discussion?"
@@ -267,3 +253,45 @@ EXTRA OPTIONS
 OTHER | The thread contains a clear developer question with a clear answer, but it does not match Q1–Q78. Includes how-to questions, usage questions, instructional answers, and questions about technology post-dating F&M (2010). Be generous: if there is a real question and a real answer, prefer OTHER over NONE.
 NONE  | The thread has no identifiable question-answer pair. Use for pure discussion/opinion threads, boilerplate template fields with no real question, or threads with no substantive answer.
 """
+
+QUESTION_TO_CATEGORY: dict[str, str] = {}
+for _cat_key, (_, _qids) in CATEGORIES.items():
+    for _qid in _qids:
+        QUESTION_TO_CATEGORY[_qid] = _cat_key
+
+# ── LLM prompt string (derived from the dicts above) ─────────────────────────
+
+TAXONOMY_FOR_PROMPT = f"""
+You must classify the thread into exactly one of these question IDs. Use OTHER
+if the thread contains a relevant developer information need that does not
+match any F&M question, and NONE if the thread does not contain a valid
+developer information need at all.
+
+Each entry shows: ID | F&M question text | example phrasing
+
+{PLAIN_TAXONOMY}
+"""
+
+
+def _parse_category_sections() -> dict[str, str]:
+    """Extract per-category question sections from TAXONOMY_FOR_PROMPT."""
+    import re
+    sections: dict[str, str] = {}
+    pattern = re.compile(r'^([A-G])\. ')
+    current_cat: str | None = None
+    current_lines: list[str] = []
+    for line in TAXONOMY_FOR_PROMPT.split('\n'):
+        m = pattern.match(line)
+        if m:
+            if current_cat:
+                sections[current_cat] = '\n'.join(current_lines).strip()
+            current_cat = m.group(1)
+            current_lines = [line]
+        elif current_cat:
+            current_lines.append(line)
+    if current_cat and current_lines:
+        sections[current_cat] = '\n'.join(current_lines).strip()
+    return sections
+
+
+CATEGORY_TAXONOMY: dict[str, str] = _parse_category_sections()
