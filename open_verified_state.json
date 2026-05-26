@@ -1,0 +1,992 @@
+{
+  "astral-sh/ruff/issue/25150": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-25T18:57:22.420324Z"
+  },
+  "astral-sh/ruff/issue/25140": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-25T18:58:53.235738Z"
+  },
+  "astral-sh/ruff/issue/24979": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-25T19:02:38.101945Z"
+  },
+  "astral-sh/ruff/issue/24827": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-25T19:02:51.415556Z"
+  },
+  "astral-sh/ruff/issue/24559": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-25T19:03:44.248276Z"
+  },
+  "astral-sh/ruff/issue/24548": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-25T19:06:32.146914Z"
+  },
+  "astral-sh/ruff/issue/24528": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-25T19:06:47.046807Z"
+  },
+  "astral-sh/ruff/issue/24447": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-25T19:08:39.219820Z"
+  },
+  "astral-sh/ruff/issue/24408": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-25T19:17:05.783322Z"
+  },
+  "astral-sh/ruff/issue/24358": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-25T19:19:55.591998Z"
+  },
+  "astral-sh/ruff/issue/24342": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-25T19:23:16.399845Z"
+  },
+  "astral-sh/ruff/issue/24305": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-25T19:23:53.755041Z"
+  },
+  "astral-sh/ruff/issue/24158": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-25T19:43:21.153261Z"
+  },
+  "astral-sh/ruff/issue/24083": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-25T19:43:35.783930Z"
+  },
+  "astral-sh/ruff/issue/24072": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-25T19:44:11.064457Z"
+  },
+  "astral-sh/ruff/issue/24059": {
+    "status": "accepted",
+    "note": "deduplication",
+    "verified_at": "2026-05-25T19:44:53.017532Z"
+  },
+  "astral-sh/ruff/issue/24041": {
+    "status": "accepted",
+    "note": "similar issues",
+    "verified_at": "2026-05-25T19:45:30.406449Z"
+  },
+  "astral-sh/ruff/issue/24022": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-25T19:45:43.475673Z"
+  },
+  "astral-sh/ruff/issue/24004": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-25T19:45:49.930884Z"
+  },
+  "astral-sh/ruff/issue/23906": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-25T19:46:23.414409Z"
+  },
+  "astral-sh/ruff/issue/23887": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-25T19:46:37.518924Z"
+  },
+  "astral-sh/ruff/discussion/23853": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-25T19:48:00.434070Z"
+  },
+  "astral-sh/ruff/issue/23810": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-25T19:48:22.671005Z"
+  },
+  "astral-sh/ruff/issue/23759": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-25T19:48:49.270024Z"
+  },
+  "astral-sh/ruff/discussion/23734": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-25T19:49:02.229658Z"
+  },
+  "astral-sh/ruff/issue/23636": {
+    "status": "accepted",
+    "note": "No question, it is just a bug report",
+    "verified_at": "2026-05-25T19:51:39.619045Z"
+  },
+  "astral-sh/ruff/issue/23594": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-25T19:51:53.508420Z"
+  },
+  "astral-sh/ruff/issue/23587": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-25T19:52:00.649776Z"
+  },
+  "astral-sh/ruff/issue/23570": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-25T19:52:12.368578Z"
+  },
+  "astral-sh/ruff/issue/23539": {
+    "status": "accepted",
+    "note": "duplicate issue",
+    "verified_at": "2026-05-25T19:52:56.999782Z"
+  },
+  "astral-sh/ruff/issue/23532": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-25T19:54:29.487796Z"
+  },
+  "astral-sh/ruff/issue/23467": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-25T19:54:43.767225Z"
+  },
+  "astral-sh/ruff/discussion/23463": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-25T19:55:00.975061Z"
+  },
+  "facebook/react/issue/36167": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-25T19:55:20.663037Z"
+  },
+  "facebook/react/issue/36162": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-25T19:55:44.924636Z"
+  },
+  "facebook/react/issue/36040": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-25T19:55:56.833445Z"
+  },
+  "facebook/react/issue/36036": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-25T19:56:21.196715Z"
+  },
+  "facebook/react/issue/36016": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-25T19:57:26.568191Z"
+  },
+  "facebook/react/issue/36003": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-25T19:57:58.938613Z"
+  },
+  "facebook/react/issue/35910": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-25T19:58:10.508818Z"
+  },
+  "facebook/react/issue/35903": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-25T19:58:57.020799Z"
+  },
+  "facebook/react/issue/35575": {
+    "status": "rejected",
+    "note": "no answer",
+    "verified_at": "2026-05-25T20:02:32.454473Z"
+  },
+  "facebook/react/issue/35569": {
+    "status": "accepted",
+    "note": "duplicate",
+    "verified_at": "2026-05-25T20:03:03.854020Z"
+  },
+  "facebook/react/issue/35399": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-25T20:04:52.958421Z"
+  },
+  "facebook/react/issue/35397": {
+    "status": "accepted",
+    "note": "regression issue",
+    "verified_at": "2026-05-25T20:05:29.302604Z"
+  },
+  "facebook/react/issue/35729": {
+    "status": "accepted",
+    "note": "regular bug",
+    "verified_at": "2026-05-25T20:18:05.586503Z"
+  },
+  "vuejs/core/discussion/14829": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-25T20:21:55.319362Z"
+  },
+  "vuejs/core/issue/14771": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-25T20:26:29.519177Z"
+  },
+  "vuejs/core/discussion/14750": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-25T20:26:42.417912Z"
+  },
+  "vuejs/core/issue/14787": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-25T20:27:28.519037Z"
+  },
+  "vuejs/core/issue/14746": {
+    "status": "accepted",
+    "note": "includes external links to artifacts related to the bug. But I am keeping this as an example",
+    "verified_at": "2026-05-25T20:28:16.498257Z"
+  },
+  "vuejs/core/issue/14745": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-25T20:28:34.298562Z"
+  },
+  "vuejs/core/issue/14741": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-25T20:28:48.081817Z"
+  },
+  "vuejs/core/issue/14729": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-25T20:29:38.185457Z"
+  },
+  "vuejs/core/issue/14728": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-25T20:29:40.847364Z"
+  },
+  "vuejs/core/issue/14692": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-25T20:30:03.438591Z"
+  },
+  "vuejs/core/discussion/14665": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-25T20:30:34.974363Z"
+  },
+  "vuejs/core/issue/14635": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-25T20:32:23.304499Z"
+  },
+  "vuejs/core/issue/14627": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-25T20:32:34.201489Z"
+  },
+  "vuejs/core/discussion/14617": {
+    "status": "accepted",
+    "note": "This bug report has image artifacts which we cant support at the moment",
+    "verified_at": "2026-05-25T20:33:10.086484Z"
+  },
+  "vuejs/core/issue/14533": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-25T20:33:18.126480Z"
+  },
+  "vuejs/core/issue/14531": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-25T20:34:03.016103Z"
+  },
+  "vuejs/core/issue/14509": {
+    "status": "accepted",
+    "note": "This issue has external commit links and require cross validation, hence I am keeping it",
+    "verified_at": "2026-05-25T20:34:59.187640Z"
+  },
+  "vuejs/core/issue/14508": {
+    "status": "rejected",
+    "note": "image artifacts",
+    "verified_at": "2026-05-25T20:35:14.152360Z"
+  },
+  "vuejs/core/issue/14454": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-25T20:35:46.743555Z"
+  },
+  "vuejs/core/discussion/14453": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-25T20:35:56.475059Z"
+  },
+  "vuejs/core/issue/14452": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-25T20:37:08.372044Z"
+  },
+  "vuejs/core/issue/14446": {
+    "status": "accepted",
+    "note": "bug report with image",
+    "verified_at": "2026-05-25T20:37:51.575573Z"
+  },
+  "vuejs/core/issue/14436": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-25T20:37:58.992623Z"
+  },
+  "vuejs/core/issue/14425": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-25T20:38:35.173083Z"
+  },
+  "vuejs/core/issue/14401": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-25T20:39:09.874682Z"
+  },
+  "vuejs/core/issue/14399": {
+    "status": "rejected",
+    "note": "Has image answers",
+    "verified_at": "2026-05-25T20:39:56.127315Z"
+  },
+  "vuejs/core/issue/14303": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-25T22:30:05.600165Z"
+  },
+  "vuejs/core/issue/14288": {
+    "status": "rejected",
+    "note": "includes image asset",
+    "verified_at": "2026-05-25T22:31:16.941290Z"
+  },
+  "vuejs/core/issue/14270": {
+    "status": "rejected",
+    "note": "Chinese lang",
+    "verified_at": "2026-05-25T22:31:27.852162Z"
+  },
+  "vuejs/core/issue/14264": {
+    "status": "rejected",
+    "note": "image asset",
+    "verified_at": "2026-05-25T22:31:43.900356Z"
+  },
+  "vuejs/core/issue/14174": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-25T22:32:39.398939Z"
+  },
+  "vuejs/core/issue/14149": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-25T22:32:52.994427Z"
+  },
+  "stripe/stripe-node/issue/2705": {
+    "status": "rejected",
+    "note": "image asset",
+    "verified_at": "2026-05-25T22:33:28.831126Z"
+  },
+  "stripe/stripe-node/issue/2692": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-25T22:39:48.970926Z"
+  },
+  "stripe/stripe-node/issue/2684": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-25T22:40:31.536945Z"
+  },
+  "stripe/stripe-node/issue/2683": {
+    "status": "accepted",
+    "note": "Interesting case where the fix on an issue has already started",
+    "verified_at": "2026-05-25T22:42:10.073218Z"
+  },
+  "stripe/stripe-node/issue/2668": {
+    "status": "accepted",
+    "note": "intentional breaking change, seems interesting",
+    "verified_at": "2026-05-25T22:43:09.656137Z"
+  },
+  "stripe/stripe-node/issue/2665": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-25T22:43:37.524368Z"
+  },
+  "stripe/stripe-node/issue/2662": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-25T22:45:09.431878Z"
+  },
+  "stripe/stripe-node/issue/2661": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-25T22:45:13.169363Z"
+  },
+  "stripe/stripe-node/issue/2660": {
+    "status": "accepted",
+    "note": "This is a case where issue appears after upgrading to a new version and maintainer replies with new release where they patch",
+    "verified_at": "2026-05-25T22:46:53.761532Z"
+  },
+  "stripe/stripe-node/issue/2658": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-25T22:47:36.676397Z"
+  },
+  "stripe/stripe-node/issue/2632": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-25T22:48:50.455295Z"
+  },
+  "stripe/stripe-node/issue/2625": {
+    "status": "accepted",
+    "note": "upgarde issue",
+    "verified_at": "2026-05-25T22:58:47.924876Z"
+  },
+  "stripe/stripe-node/issue/2614": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-25T22:59:41.779138Z"
+  },
+  "stripe/stripe-node/issue/2595": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-25T23:00:27.589504Z"
+  },
+  "stripe/stripe-node/issue/2538": {
+    "status": "rejected",
+    "note": "The question already has answer",
+    "verified_at": "2026-05-25T23:02:30.501261Z"
+  },
+  "stripe/stripe-node/issue/2534": {
+    "status": "accepted",
+    "note": "CVE",
+    "verified_at": "2026-05-25T23:03:00.171753Z"
+  },
+  "stripe/stripe-node/issue/2530": {
+    "status": "accepted",
+    "note": "CVE",
+    "verified_at": "2026-05-25T23:03:46.044938Z"
+  },
+  "stripe/stripe-node/issue/2523": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-25T23:03:58.951868Z"
+  },
+  "stripe/stripe-node/issue/2521": {
+    "status": "accepted",
+    "note": "The user reports a bug which is expected behavior. Would be interesting to see how llm responds to this",
+    "verified_at": "2026-05-25T23:04:49.677540Z"
+  },
+  "stripe/stripe-node/issue/2513": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-25T23:05:20.938631Z"
+  },
+  "fastapi/fastapi/discussion/15547": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-26T00:41:17.709107Z"
+  },
+  "fastapi/fastapi/discussion/15542": {
+    "status": "rejected",
+    "note": "image artifact",
+    "verified_at": "2026-05-26T00:41:40.906979Z"
+  },
+  "fastapi/fastapi/discussion/15498": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T01:09:37.809954Z"
+  },
+  "fastapi/fastapi/discussion/15494": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-26T01:10:00.045245Z"
+  },
+  "fastapi/fastapi/discussion/15469": {
+    "status": "accepted",
+    "note": "A question towards fellow developers on a topic",
+    "verified_at": "2026-05-26T01:11:02.164735Z"
+  },
+  "fastapi/fastapi/discussion/15455": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-26T01:11:37.337173Z"
+  },
+  "fastapi/fastapi/discussion/15450": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-26T01:11:55.102121Z"
+  },
+  "fastapi/fastapi/discussion/15361": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T01:15:34.939638Z"
+  },
+  "fastapi/fastapi/discussion/15353": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-26T01:16:10.907722Z"
+  },
+  "fastapi/fastapi/discussion/15339": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-26T01:16:49.723639Z"
+  },
+  "fastapi/fastapi/discussion/15330": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T01:17:00.510487Z"
+  },
+  "fastapi/fastapi/discussion/15312": {
+    "status": "accepted",
+    "note": "The question also includes a fix that is accepted. We may remove this and check",
+    "verified_at": "2026-05-26T01:18:51.066095Z"
+  },
+  "fastapi/fastapi/discussion/15287": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-26T01:19:32.117897Z"
+  },
+  "fastapi/fastapi/discussion/15278": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-26T01:19:54.638479Z"
+  },
+  "fastapi/fastapi/discussion/15240": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T01:20:10.251087Z"
+  },
+  "fastapi/fastapi/discussion/15219": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-26T01:21:20.439965Z"
+  },
+  "fastapi/fastapi/discussion/15204": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-26T01:22:04.930704Z"
+  },
+  "fastapi/fastapi/discussion/15193": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-26T01:23:46.643298Z"
+  },
+  "fastapi/fastapi/discussion/15192": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-26T01:25:48.828628Z"
+  },
+  "fastapi/fastapi/discussion/15133": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-26T01:26:12.669551Z"
+  },
+  "fastapi/fastapi/discussion/15082": {
+    "status": "rejected",
+    "note": "image artifact",
+    "verified_at": "2026-05-26T01:27:25.641703Z"
+  },
+  "fastapi/fastapi/discussion/15066": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T01:28:39.496667Z"
+  },
+  "fastapi/fastapi/discussion/15065": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T01:28:50.930553Z"
+  },
+  "fastapi/fastapi/discussion/15044": {
+    "status": "accepted",
+    "note": "duplicate issue",
+    "verified_at": "2026-05-26T01:29:13.152017Z"
+  },
+  "fastapi/fastapi/discussion/14975": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-26T01:42:26.083396Z"
+  },
+  "fastapi/fastapi/discussion/14941": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-26T01:42:58.075857Z"
+  },
+  "fastapi/fastapi/discussion/14788": {
+    "status": "accepted",
+    "note": "This is an interesting case where the maintainer (?) referenced with the doc URL. I was thinking how could LLM map web URLs?",
+    "verified_at": "2026-05-26T01:44:59.341327Z"
+  },
+  "fastapi/fastapi/discussion/14742": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T01:45:09.618564Z"
+  },
+  "fastapi/fastapi/discussion/14712": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T01:45:31.009846Z"
+  },
+  "fastapi/fastapi/issue/14680": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-26T01:46:09.427814Z"
+  },
+  "fastapi/fastapi/issue/14508": {
+    "status": "accepted",
+    "note": "Asks if it is a known issue",
+    "verified_at": "2026-05-26T01:47:23.634837Z"
+  },
+  "fastapi/fastapi/issue/14484": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-26T01:47:47.292620Z"
+  },
+  "fastapi/fastapi/issue/14483": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T01:48:03.010078Z"
+  },
+  "fastapi/fastapi/issue/14454": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T01:49:00.466777Z"
+  },
+  "fastapi/fastapi/issue/14444": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-26T01:49:26.634186Z"
+  },
+  "fastapi/fastapi/discussion/14433": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T01:49:51.800524Z"
+  },
+  "fastapi/fastapi/issue/14431": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-26T01:50:01.974256Z"
+  },
+  "fastapi/fastapi/issue/14271": {
+    "status": "accepted",
+    "note": "has images, but still worth keeping it",
+    "verified_at": "2026-05-26T01:50:57.736361Z"
+  },
+  "fastapi/fastapi/issue/14247": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-26T01:51:38.962965Z"
+  },
+  "fastapi/fastapi/discussion/14172": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T01:51:51.249038Z"
+  },
+  "fastapi/fastapi/issue/14128": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T01:52:23.457551Z"
+  },
+  "fastapi/fastapi/issue/13880": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-26T01:53:01.461808Z"
+  },
+  "fastapi/fastapi/issue/12459": {
+    "status": "accepted",
+    "note": "has images but worth keeping",
+    "verified_at": "2026-05-26T01:54:16.327465Z"
+  },
+  "fastapi/fastapi/issue/12426": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-26T01:55:01.249855Z"
+  },
+  "fastapi/fastapi/issue/12419": {
+    "status": "rejected",
+    "note": "has images",
+    "verified_at": "2026-05-26T01:55:41.726227Z"
+  },
+  "fastapi/fastapi/issue/12402": {
+    "status": "accepted",
+    "note": "has images but worth keeping",
+    "verified_at": "2026-05-26T01:56:27.617062Z"
+  },
+  "fastapi/fastapi/discussion/12400": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-26T01:57:04.589266Z"
+  },
+  "fastapi/fastapi/issue/11251": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-26T01:59:01.747393Z"
+  },
+  "fastapi/fastapi/issue/11215": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T01:59:06.744449Z"
+  },
+  "fastapi/fastapi/issue/11104": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-26T02:01:27.007118Z"
+  },
+  "microsoft/vscode/issue/312123": {
+    "status": "accepted",
+    "note": "dup",
+    "verified_at": "2026-05-26T02:02:25.002370Z"
+  },
+  "microsoft/vscode/issue/313307": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-26T02:03:04.811205Z"
+  },
+  "microsoft/vscode/issue/313300": {
+    "status": "rejected",
+    "note": "image artifact",
+    "verified_at": "2026-05-26T02:03:35.419282Z"
+  },
+  "microsoft/vscode/issue/313290": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T02:06:03.099924Z"
+  },
+  "microsoft/vscode/issue/313253": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T02:06:06.540712Z"
+  },
+  "microsoft/vscode/issue/313248": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T02:06:46.219013Z"
+  },
+  "microsoft/vscode/issue/313057": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-26T02:07:45.833240Z"
+  },
+  "microsoft/vscode/issue/313035": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T02:08:12.581756Z"
+  },
+  "microsoft/vscode/issue/313025": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T02:08:14.671828Z"
+  },
+  "microsoft/vscode/issue/313022": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T02:08:15.786527Z"
+  },
+  "microsoft/vscode/issue/312985": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T02:08:16.830120Z"
+  },
+  "microsoft/vscode/issue/312960": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T02:08:38.896839Z"
+  },
+  "microsoft/vscode/issue/312897": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T02:09:30.823020Z"
+  },
+  "microsoft/vscode/issue/312896": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T02:10:46.674704Z"
+  },
+  "microsoft/vscode/issue/312866": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-26T02:11:00.845509Z"
+  },
+  "microsoft/vscode/issue/312818": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T02:12:05.595678Z"
+  },
+  "microsoft/vscode/issue/312816": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T02:14:01.278049Z"
+  },
+  "microsoft/vscode/issue/312809": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T02:14:23.376965Z"
+  },
+  "microsoft/vscode/issue/312805": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T02:14:31.219872Z"
+  },
+  "microsoft/vscode/issue/312804": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T02:14:38.945636Z"
+  },
+  "microsoft/vscode/issue/312802": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T02:14:50.253847Z"
+  },
+  "microsoft/vscode/issue/312792": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T02:16:05.562010Z"
+  },
+  "microsoft/vscode/issue/312791": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T02:16:10.055035Z"
+  },
+  "microsoft/vscode/issue/312774": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T02:16:24.022390Z"
+  },
+  "microsoft/vscode/issue/312713": {
+    "status": "accepted",
+    "note": "a real question but has image artifact",
+    "verified_at": "2026-05-26T02:17:29.090137Z"
+  },
+  "microsoft/vscode/issue/312680": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T02:17:32.756870Z"
+  },
+  "microsoft/vscode/issue/312671": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T02:18:16.561637Z"
+  },
+  "microsoft/vscode/issue/312658": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T02:18:50.192854Z"
+  },
+  "microsoft/vscode/issue/312643": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T02:19:07.618861Z"
+  },
+  "microsoft/vscode/issue/312609": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T02:19:26.305398Z"
+  },
+  "microsoft/vscode/issue/312606": {
+    "status": "accepted",
+    "note": "agentic issue, maybe worth keeping",
+    "verified_at": "2026-05-26T02:20:12.183613Z"
+  },
+  "microsoft/vscode/issue/312554": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T02:21:11.458722Z"
+  },
+  "microsoft/vscode/issue/312522": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T02:21:15.846497Z"
+  },
+  "microsoft/vscode/issue/312445": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T02:21:23.761367Z"
+  },
+  "microsoft/vscode/issue/312425": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T02:21:26.769411Z"
+  },
+  "microsoft/vscode/issue/312413": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-26T02:21:53.562802Z"
+  },
+  "microsoft/vscode/issue/312400": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T02:21:55.869111Z"
+  },
+  "microsoft/vscode/issue/312371": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T02:22:10.216911Z"
+  },
+  "microsoft/vscode/issue/312361": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T02:22:36.564887Z"
+  },
+  "microsoft/vscode/issue/312320": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T02:23:20.093401Z"
+  },
+  "microsoft/vscode/issue/312305": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-26T02:23:45.797679Z"
+  },
+  "microsoft/vscode/issue/312290": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T02:23:52.189722Z"
+  },
+  "microsoft/vscode/issue/312233": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T02:24:21.428163Z"
+  },
+  "microsoft/vscode/issue/312221": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-26T02:24:45.362572Z"
+  },
+  "microsoft/vscode/issue/312195": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T02:25:04.564273Z"
+  },
+  "microsoft/vscode/issue/312086": {
+    "status": "accepted",
+    "note": "dup",
+    "verified_at": "2026-05-26T02:25:45.379873Z"
+  },
+  "microsoft/vscode/issue/312009": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T02:25:49.316447Z"
+  },
+  "microsoft/vscode/issue/311971": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T02:25:50.254311Z"
+  },
+  "microsoft/vscode/issue/311946": {
+    "status": "accepted",
+    "note": "Work item progress related question, might be useful to map F&M",
+    "verified_at": "2026-05-26T02:26:44.572230Z"
+  },
+  "microsoft/vscode/issue/311935": {
+    "status": "accepted",
+    "note": "instructs to upgrade to the latest version of the software",
+    "verified_at": "2026-05-26T02:27:30.740914Z"
+  }
+}
