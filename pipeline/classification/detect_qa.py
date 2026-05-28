@@ -245,7 +245,7 @@ def detect_and_extract(thread, model):
 # ── Main runner ───────────────────────────────────────────────────────────────
 
 
-def run(repo, model=STAGE1_MODEL, confidence_threshold=0.5, limit=None, max_pairs=None, force=False):
+def run(repo, model=STAGE1_MODEL, confidence_threshold=0.5, limit=None, max_pairs=None, force=False, state_filter=None):
     if not is_running():
         print("  [error] Ollama not running — start with: ollama serve")
         return
@@ -253,6 +253,8 @@ def run(repo, model=STAGE1_MODEL, confidence_threshold=0.5, limit=None, max_pair
     print(f"\n[detect_qa] {repo}")
     print(f"  model:      {model}")
     print(f"  threshold:  {confidence_threshold}")
+    if state_filter:
+        print(f"  state:      {state_filter}")
 
     if max_pairs and not force:
         existing = load_jsonl(repo, "open_qa_pairs")
@@ -269,6 +271,8 @@ def run(repo, model=STAGE1_MODEL, confidence_threshold=0.5, limit=None, max_pair
     done = set() if force else load_checkpoint(repo, checkpoint_key)
 
     threads_to_do = [t for t in threads if t["number"] not in done]
+    if state_filter:
+        threads_to_do = [t for t in threads_to_do if t.get("state", "").lower() == state_filter]
     threads_to_do.sort(key=lambda t: t["number"], reverse=True)
     if limit:
         # threads_to_do = random.sample(threads_to_do, min(limit, len(threads_to_do)))
@@ -317,6 +321,7 @@ def run(repo, model=STAGE1_MODEL, confidence_threshold=0.5, limit=None, max_pair
             "number": thread["number"],
             "title": thread.get("title", ""),
             "url": thread.get("url", ""),
+            "state": thread.get("state", ""),
             "created_at": thread.get("created_at", ""),
             "question_id": "OPEN",
             "need_summary": result["need_summary"],
@@ -374,6 +379,8 @@ if __name__ == "__main__":
                         help="Stop after extracting N valid pairs")
     parser.add_argument("--force", action="store_true",
                         help="Re-process all threads from scratch")
+    parser.add_argument("--state", choices=["open", "closed"], default=None,
+                        help="Filter threads by issue state (open or closed; default: all)")
     args = parser.parse_args()
 
     repos = [args.repo] if args.repo else REPOS
@@ -385,4 +392,5 @@ if __name__ == "__main__":
             limit=args.limit,
             max_pairs=args.max_pairs,
             force=args.force,
+            state_filter=args.state,
         )

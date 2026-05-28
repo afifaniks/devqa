@@ -14,18 +14,26 @@
 </head>
 
 <script>
-  const IS_OPEN = location.pathname.startsWith('/open');
-  const API_BASE = IS_OPEN ? '/api/open' : '/api';
+  const IS_OPEN     = location.pathname.startsWith('/open');
+  const IS_SECURITY = location.pathname.startsWith('/security');
+  const API_BASE    = IS_SECURITY ? '/api/security' : IS_OPEN ? '/api/open' : '/api';
 </script>
 
 <body x-data="app()" x-init="init()" @keydown.window="handleKey($event)">
 
 <div id="topbar">
   <h1>DevQA Pair Review</h1>
-  <span class="pipeline-badge" :class="IS_OPEN ? 'pipeline-open' : 'pipeline-fm'"
-        x-text="IS_OPEN ? 'Open Coding' : 'F&M Classified'"></span>
-  <a class="btn pipeline-switch" :href="IS_OPEN ? '/' : '/open'"
-     x-text="IS_OPEN ? '← F&M Classified' : 'Open Coding →'"></a>
+  <span class="pipeline-badge"
+        :class="IS_SECURITY ? 'pipeline-security' : IS_OPEN ? 'pipeline-open' : 'pipeline-fm'"
+        x-text="IS_SECURITY ? 'Security QA' : IS_OPEN ? 'Open Coding' : 'F&M Classified'"></span>
+  <div style="display:flex;gap:4px">
+    <a class="btn pipeline-switch" x-show="!IS_OPEN && !IS_SECURITY" href="/open">Open →</a>
+    <a class="btn pipeline-switch" x-show="!IS_OPEN && !IS_SECURITY" href="/security">Security →</a>
+    <a class="btn pipeline-switch" x-show="IS_OPEN" href="/">← F&M</a>
+    <a class="btn pipeline-switch" x-show="IS_OPEN" href="/security">Security →</a>
+    <a class="btn pipeline-switch" x-show="IS_SECURITY" href="/">← F&M</a>
+    <a class="btn pipeline-switch" x-show="IS_SECURITY" href="/open">← Open</a>
+  </div>
   <div class="prog-wrap"><div class="prog-fill" :style="`width:${progress}%`"></div></div>
   <span class="prog-label" x-text="`${done} / ${stats.total} reviewed`"></span>
   <div class="topbar-pills">
@@ -83,12 +91,15 @@
         <div class="pair-qid-row">
           <span class="pair-ref" x-text="`${item.repo}/${item.number}`"></span>
 
-          <span class="badge badge-neutral tax-trigger" x-show="item.question_id!=='OPEN'"
+          <span class="badge badge-neutral tax-trigger"
+                x-show="item.question_id!=='OPEN' && item.question_id!=='SECURITY_OPEN'"
                 @click.stop="taxTip($event,'cat',item.stage1_category)"
                 x-text="`${item.stage1_category || '?'}`"></span>
 
-          <span class="badge badge-open" x-show="item.question_id==='OPEN'">OPEN</span>
-          <span class="badge badge-neutral tax-trigger" x-show="item.question_id!=='OPEN'"
+          <span class="badge badge-open" x-show="item.question_id==='OPEN'">OC</span>
+          <span class="badge badge-security" x-show="item.question_id==='SECURITY_OPEN'">SEC</span>
+          <span class="badge badge-neutral tax-trigger"
+                x-show="item.question_id!=='OPEN' && item.question_id!=='SECURITY_OPEN'"
                 @click.stop="taxTip($event,'q',item.question_id)"
                 x-text="item.question_id"></span>
 
@@ -100,10 +111,13 @@
 
         <div class="pair-title" x-text="decodeHtml(item.title || '')"></div>
         <div class="pair-question"
-             x-text="decodeHtml((item.question_id==='OPEN' && item.need_summary) ? item.need_summary : (item.question_text || ''))"></div>
+             x-text="decodeHtml(((item.question_id==='OPEN'||item.question_id==='SECURITY_OPEN') && item.need_summary) ? item.need_summary : (item.question_text || ''))"></div>
 
         <div class="pair-repo">
           <span class="pair-source" x-text="item.source"></span>
+          <span class="badge" x-show="item.state"
+                :class="item.state==='open' ? 'badge-green' : 'badge-neutral'"
+                x-text="item.state"></span>
         </div>
       </div>
     </div>
@@ -126,7 +140,9 @@
       <div class="detail-header">
         <h2 x-text="decodeHtml(pair?.title||'(no title)')"></h2>
         <span class="badge src-badge" :class="'src-'+(pair?.source||'')" x-text="(pair?.source||'').charAt(0).toUpperCase()+(pair?.source||'').slice(1)"></span>
-        <span class="badge badge-neutral tax-trigger" @click.stop="taxTip($event,'cat',pair?.stage1_category)"
+        <span class="badge badge-neutral tax-trigger"
+              x-show="pair?.question_id!=='OPEN' && pair?.question_id!=='SECURITY_OPEN'"
+              @click.stop="taxTip($event,'cat',pair?.stage1_category)"
               x-text="`Category: ${pair?.stage1_category||'?'}`"></span>
         <span class="badge" :class="confClass"
               x-text="`Confidence: ${Math.round((parseFloat(pair?.confidence)||0)*100)}%`"></span>
@@ -135,25 +151,35 @@
       <div class="meta-row">
         <span x-text="pair?.repo||''"></span>
         <span class="tax-trigger" style="font-weight:600;color:var(--accent)"
-              x-show="pair?.question_id!=='OPEN'"
+              x-show="pair?.question_id!=='OPEN' && pair?.question_id!=='SECURITY_OPEN'"
               @click.stop="taxTip($event,'q',pair?.question_id)"
               x-text="pair?.question_id||''"></span>
-        <span class="badge badge-open" x-show="pair?.question_id==='OPEN'">OPEN</span>
+        <span class="badge badge-open" x-show="pair?.question_id==='OPEN'">OC</span>
+        <span class="badge badge-security" x-show="pair?.question_id==='SECURITY_OPEN'">SEC</span>
         <span x-show="pair?.question_id==='OTHER' && pair?.other_question_type"
               style="font-size:12px;color:var(--text-muted);font-style:italic"
               x-text="'→ '+pair?.other_question_type"></span>
         <span class="badge badge-verif" x-show="pair?.verifiability" x-text="pair?.verifiability"></span>
         <span class="badge badge-role" x-show="pair?.answerer_role" x-text="pair?.answerer_role"></span>
         <span x-text="(pair?.created_at||'').slice(0,10)"></span>
+        <span class="badge" x-show="pair?.state"
+              :class="pair?.state==='open' ? 'badge-green' : 'badge-neutral'"
+              x-text="pair?.state"></span>
         <a :href="pair?.url||'#'" target="_blank" rel="noopener" x-show="pair?.url">Open on GitHub ↗</a>
         <div style="font-size:11px;color:var(--text-muted)"
              x-text="pair?.model ? 'Model: '+pair.model : ''">
         </div>
       </div>
 
-      <div class="need-summary-card" x-show="pair?.question_id==='OPEN' && pair?.need_summary">
+      <div class="need-summary-card" x-show="(pair?.question_id==='OPEN'||pair?.question_id==='SECURITY_OPEN') && pair?.need_summary">
         <div class="label" style="margin-bottom:4px">Developer Information Need</div>
         <p style="font-size:13px;margin:0" x-text="decodeHtml(pair?.need_summary||'')"></p>
+      </div>
+
+      <div class="need-summary-card" x-show="pair?.question_id==='SECURITY_OPEN' && pair?.security_topic"
+           style="border-left-color: var(--badge-security, #cf222e)">
+        <div class="label" style="margin-bottom:4px">Security Topic</div>
+        <p style="font-size:13px;margin:0" x-text="decodeHtml(pair?.security_topic||'')"></p>
       </div>
 
       <div class="qa-grid">
@@ -208,7 +234,7 @@
           <button class="btn btn-icon" @click="navigate(1)">→</button>
         </div>
       </div>
-      <div class="assign-row" x-show="pair?.question_id!=='OPEN'">
+      <div class="assign-row" x-show="pair?.question_id!=='OPEN' && pair?.question_id!=='SECURITY_OPEN'">
         <span class="label" style="white-space:nowrap">Q-ID</span>
         <select class="select" x-model="assignQid" style="flex:1;min-width:0">
           <template x-for="qid in sortedQids" :key="qid">

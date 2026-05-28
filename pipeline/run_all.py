@@ -14,7 +14,7 @@ import os
 
 sys.path.insert(0, os.path.dirname(__file__))
 
-from config import REPOS
+# from config import REPOS
 from miners.issues import mine_issues
 from miners.commits import mine_commits, run_szz
 from miners.pull_requests import mine_pull_requests
@@ -22,7 +22,7 @@ from miners.ci_runs import mine_ci_runs
 from miners.contributors import mine_contributors
 from miners.mine_threads import mine_threads
 
-
+REPOS = ["urllib3/urllib3", "pyca/cryptography", "axios/axios", "auth0/node-jsonwebtoken", "python-pillow/Pillow", "django/django", "expressjs/express"]
 def run_pipeline(repo: str, skip_ci: bool = False, only_threads: bool = False):
     print(f"\n{'='*60}")
     print(f"  PIPELINE: {repo}")
@@ -32,19 +32,19 @@ def run_pipeline(repo: str, skip_ci: bool = False, only_threads: bool = False):
         # Step 1: Issues (most important — run first)
         mine_issues(repo)
 
-        # # Step 2: Commits + SZZ (slowest — fetches every commit)
-        # mine_commits(repo)
-        # run_szz(repo)
+        # Step 2: Commits + SZZ (slowest — fetches every commit)
+        mine_commits(repo)
+        run_szz(repo)
 
-        # # Step 3: Pull requests
-        # mine_pull_requests(repo)
+        # Step 3: Pull requests
+        mine_pull_requests(repo)
 
-        # # Step 4: CI runs (optional — can be slow for large repos)
-        # if not skip_ci:
-        #     mine_ci_runs(repo)
+        # Step 4: CI runs (optional — can be slow for large repos)
+        if not skip_ci:
+            mine_ci_runs(repo)
 
-        # # Step 5: Contributors (depends on commits + issues + PRs being done)
-        # mine_contributors(repo)
+        # Step 5: Contributors (depends on commits + issues + PRs being done)
+        mine_contributors(repo)
 
     # Step 6: Build raw threads from issues + discussions
     mine_threads(repo)
