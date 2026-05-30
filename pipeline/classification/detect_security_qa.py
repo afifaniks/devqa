@@ -12,7 +12,7 @@ Stage 1: Detect whether thread contains a valid security-related developer
 Stage 2: Extract verbatim Q, verbatim A, artifacts needed (including
          security-specific artifact types), references (CVE/GHSA/CWE IDs and
          advisory URLs mentioned in the answer), a free-text security_topic
-         phrase, answerer role, and verifiability tag (hard/soft/judgment).
+         phrase.
 
 Output: output/<owner>__<repo>/security_qa_pairs.jsonl
 
@@ -22,16 +22,18 @@ Usage:
   python detect_security_qa.py --repo psf/requests --max-pairs 50 --force
 """
 
-import sys
+import argparse
 import os
 import random
-import argparse
+import sys
+
 from tqdm import tqdm
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-from utils.storage import load_jsonl, append_record, load_checkpoint, save_checkpoint
-from utils.ollama_client import generate_json, is_running, STAGE1_MODEL
-from config import REPOS
+
+from utils.ollama_client import STAGE1_MODEL, generate_json, is_running
+from utils.storage import (append_record, load_checkpoint, load_jsonl,
+                           save_checkpoint)
 
 random.seed(777)
 
@@ -66,16 +68,12 @@ ARTIFACT_OPTIONS = [
 # ── Stage 0: Sanity pre-filter (NO security keywords) ────────────────────────
 
 
-def prefilter(thread) -> bool:
-    """Drop threads that cannot contain any valid Q&A. Not security-specific —
-    just a sanity check for substantive non-bot participation. The LLM decides
-    whether the content is security-relevant."""
+def prefilter(thread) -> bool:    
     comments = thread.get("comments", [])
 
     non_bot = [
         c for c in comments
-        if not any(sig in (c.get("author") or "") for sig in ("[bot]", "-bot"))
-        and len((c.get("body") or "").strip()) > 20
+        if len((c.get("body") or "").strip()) > 20
     ]
     return len(non_bot) >= 2
 
@@ -90,30 +88,43 @@ def build_detection_prompt(thread_text):
 {thread_text[:50000]}
 </thread>
 
-INCLUDE the thread if ANY of the following are plausibly true:
-- The thread discusses a vulnerability, advisory, CVE, GHSA, CWE, exploit, weakness, or security risk that may affect this project, its dependencies, or its users.
-- The thread discusses whether a fix, patch, mitigation, or workaround addresses a security concern in this project — even partially.
-- The thread discusses sensitive-data handling (tokens, secrets, credentials, PII, keys), redaction, logging, sanitization, or leakage in this project.
-- The thread discusses auth, authz, sessions, cookies, CSRF, XSS, SSRF, RCE, injection (SQL/command/template), deserialization, path traversal, ReDoS, TOCTOU, or similar security-relevant behaviour in this project's code.
-- The thread discusses dependency vulnerabilities, transitive risk, supply-chain concerns, SBOM, or scanner findings (CodeQL, dependabot, trivy, semgrep, bandit, etc.) for this project.
-- The thread discusses security-relevant configuration, defaults, deprecations, or backward-compatibility tradeoffs.
-- The thread discusses the disclosure, triage, embargo, or coordinated-release process for a possible vulnerability in this project.
-- The thread otherwise raises a question about this project's security posture and receives ANY informational response — even partial, even indirect, even a one-line pointer to a commit, PR, version, or advisory.
+The core test: does the thread contain a QUESTION (explicit or implicit) about a security property, risk, or vulnerability of THIS project, and does AT LEAST ONE comment provide some informational response — even partial, even a one-line pointer to a commit, PR, version, or advisory?
 
-EXCLUDE only the clearest non-cases:
-- The thread has NO response at all (only the original post, no substantive comments).
-- The thread is purely a general "how do I use this library" usage question with NO security angle whatsoever.
-- The thread is purely a generic security tutorial unrelated to this project (e.g. asking the maintainers to explain XSS in general).
+INCLUDE the thread if ANY of the following are plausibly true:
+- Someone asks whether a CVE, GHSA, CWE, exploit, advisory, or known weakness affects this project, its dependencies, or its users — and someone responds.
+- Someone asks whether a fix, patch, mitigation, or workaround addresses a security concern in this project — and someone responds.
+- Someone raises a concern about sensitive-data handling (tokens, secrets, credentials, PII, keys), redaction, logging, sanitization, or leakage in this project's code or defaults — and someone responds.
+- Someone questions auth, authz, sessions, cookies, CSRF, XSS, SSRF, RCE, injection, deserialization, path traversal, ReDoS, TOCTOU, or similar security-relevant behavior in THIS project — and someone responds.
+- Someone asks about dependency vulnerabilities, transitive risk, supply-chain concerns, or scanner findings (CodeQL, dependabot, trivy, semgrep, bandit, etc.) against this project — and someone responds.
+- Someone asks about security-relevant configuration, file/data permissions, defaults, or backward-compatibility tradeoffs with a security implication — and someone responds.
+- Someone discloses or triages a possible vulnerability in this project and receives any substantive response.
+
+EXCLUDE the following cases:
+- The thread has NO substantive response — only the original post, or only bot/automated replies.
+- The thread is a pure regression bug or crash report where security words appear only incidentally (e.g. a path containing "token", a method named "private", a type called "Permission") but no one is asking about a security risk.
+- The thread is a pure type error, compiler error, or API usage question — even if it touches something security-named — where the actual question is "why does this code not compile / run" rather than "is there a security risk here."
+- The thread is a feature request for new security capability (add 2FA, support OAuth, etc.) with no question about the CURRENT security behavior or posture of the project.
+- The thread is a routine dependency version bump where no one discusses vulnerability impact or affected users.
+- The thread is purely a general "how do I use this library" usage question with no security risk angle (e.g. "how do I set a header correctly").
+- The thread is a generic security tutorial unrelated to this project.
+- Security-adjacent words ("secure", "safe", "trusted", "private") appear only in passing with no actual security concern raised.
 
 If you are uncertain whether the thread is security-related, or whether the answer is "substantive enough," INCLUDE it. A human will review and filter false positives.
 
-If you include, write ONE SENTENCE summarizing what security information the developer needed to know, grounded in this project.
+If you include, write ONE SENTENCE summarizing what security information the developer needed to know, grounded in THIS project's specific behavior or codebase.
 
 Good summaries:
 - "Whether CVE-2023-32681 is exploitable when the application disables redirect following."
 - "Which commit in the urllib3 dependency upgrade closed the SSRF window the advisory describes."
 - "Whether the new error message redaction logic still leaks the Authorization header under chunked encoding."
-- "Whether the missing same-site cookie default is intentional and what the documented threat model assumes."
+- "Whether the default 600 permissions on ruff cache files are an intentional security decision or an unintended restriction."
+- "Whether hardcoding the JWT salt in source code creates a real exploitable risk and how to fix it."
+
+BAD summaries (these are FPs — do not include):
+- "Developer asks why backslashes appear in RECORD file paths" — pure regression bug, no security risk.
+- "Developer wants to know how to suppress a React warning about document.body" — pure usage question.
+- "Developer asks where to enforce RBAC in their system" — architecture preference, not a security risk in THIS project.
+- "Developer gets a type error calling generateTestHeaderString" — type/API usage error, not a security concern.
 
 Return only this JSON:
 {{"contains_qa": true or false, "need_summary": "one sentence or empty string", "confidence": "HIGH" or "MEDIUM" or "LOW"}}
@@ -153,7 +164,7 @@ Your task:
    - "prior_incident" — a linked past advisory or related earlier security issue
    If a non-listed artifact is needed, use "other-{{type}}". If the answer is fully self-contained in the thread, use "none".
 
-4. REFERENCES — list every CVE ID, GHSA ID, CWE ID, OSV ID, or advisory URL that appears in the ANSWER. Examples of valid items: "CVE-2023-32681", "GHSA-j8r2-6x86-q33q", "CWE-79", "https://github.com/.../security/advisories/GHSA-...". Empty list if none. These are the externally-checkable identifiers we will use for hard-verifiability grading later.
+4. REFERENCES — list every CVE ID, GHSA ID, CWE ID, OSV ID, or advisory URL that appears in the ANSWER. Examples: "CVE-2023-32681", "GHSA-j8r2-6x86-q33q", "CWE-79", "https://github.com/.../security/advisories/GHSA-...". Empty list if none.
 
 5. SECURITY_TOPIC — one short free-text phrase describing what the question is about, for downstream open / axial coding. Do not use a fixed taxonomy. Examples:
    - "applicability of CVE to specific configuration"
@@ -162,17 +173,6 @@ Your task:
    - "transitive-dependency vulnerability impact"
    - "design rationale of CSRF mitigation"
    - "severity assessment for chained exploit"
-
-6. ANSWERER ROLE:
-   - "maintainer" = commit rights or core contributor
-   - "contributor" = has contributed before but not core
-   - "commenter" = community member with no known contribution
-   - "bot" = automated response
-
-7. VERIFIABILITY of the answer:
-   - "hard" = the answer is a specific externally-checkable fact: CVE/GHSA/CWE ID, specific fixed-version number, commit SHA, a named affected component, a specific dependency version range. An LLM could be graded right/wrong objectively against external sources.
-   - "soft" = a general statement about behaviour, policy, or convention that is verifiable against documentation, the issue trail, or scan output but not a single deterministic artifact.
-   - "judgment" = severity opinion, design rationale, risk-model interpretation, or "we don't consider this exploitable" — not objectively verifiable.
 
 Return only this JSON:
 {{
@@ -185,8 +185,6 @@ Return only this JSON:
   "artifacts_needed": ["list", "of", "artifact", "types"],
   "references": ["CVE-...", "GHSA-...", "https://..."],
   "security_topic": "short free-text phrase",
-  "answerer_role": "maintainer or contributor or commenter or bot",
-  "verifiability": "hard or soft or judgment",
   "confidence": "HIGH or MEDIUM or LOW"
 }}"""
 
@@ -267,8 +265,6 @@ def detect_and_extract(thread, model):
         "artifacts_needed": artifacts,
         "references": refs,
         "security_topic": s2.get("security_topic", "").strip(),
-        "answerer_role": s2.get("answerer_role", "commenter"),
-        "verifiability": s2.get("verifiability", "judgment"),
         "stage1_confidence": str(s1.get("confidence", "LOW")).upper(),
         "stage2_confidence": str(s2.get("confidence", "LOW")).upper(),
         "confidence": s1_conf * s2_conf,
@@ -368,8 +364,6 @@ def run(repo, model=STAGE1_MODEL, confidence_threshold=0.3, limit=None,
             "answer_text": result["answer_text"],
             "artifacts_needed": result["artifacts_needed"],
             "references": result["references"],
-            "answerer_role": result["answerer_role"],
-            "verifiability": result["verifiability"],
             "stage1_confidence": result["stage1_confidence"],
             "stage2_confidence": result["stage2_confidence"],
             "confidence": result["confidence"],
@@ -419,7 +413,15 @@ if __name__ == "__main__":
                         help="Filter threads by issue state (default: all)")
     args = parser.parse_args()
 
-    repos = [args.repo] if args.repo else REPOS
+    if args.repo:
+        repos = [args.repo]
+    else:
+        output_dir = os.path.join(os.path.dirname(__file__), "..", "..", "output")
+        repos = sorted(
+            os.path.basename(d).replace("__", "/", 1)
+            for d in os.scandir(output_dir)
+            if d.is_dir() and os.path.exists(os.path.join(d.path, "raw_threads.jsonl"))
+        )
     for repo in repos:
         run(
             repo,
