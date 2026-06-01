@@ -1,5 +1,9 @@
 .env
 output/*
+!output/*/
+output/*/*
+!output/*/security_qa_pairs.jsonl
 .conda-env
 __pycache__
 *.pyc
+backup/*
