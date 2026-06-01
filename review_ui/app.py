@@ -63,7 +63,7 @@ def load_data() -> None:
                     pairs.append(json.loads(line))
 
     if VERIFICATION_FILE.exists():
-        verification = json.loads(VERIFICATION_FILE.read_text())
+        verification = json.loads(VERIFICATION_FILE.read_text(encoding="utf-8"))
     else:
         verification = {}
 
@@ -110,7 +110,7 @@ def load_open_data() -> None:
                     open_pairs.append(json.loads(line))
 
     if OPEN_VERIFICATION_FILE.exists():
-        open_verification = json.loads(OPEN_VERIFICATION_FILE.read_text())
+        open_verification = json.loads(OPEN_VERIFICATION_FILE.read_text(encoding="utf-8"))
     else:
         open_verification = {}
 
@@ -144,7 +144,7 @@ def load_security_data() -> None:
                     security_pairs.append(json.loads(line))
 
     if SECURITY_VERIFICATION_FILE.exists():
-        security_verification = json.loads(SECURITY_VERIFICATION_FILE.read_text())
+        security_verification = json.loads(SECURITY_VERIFICATION_FILE.read_text(encoding="utf-8"))
     else:
         security_verification = {}
 
@@ -196,7 +196,7 @@ app.mount(
 
 @app.get("/taxonomy", response_class=HTMLResponse)
 async def taxonomy_page():
-    return HTMLResponse(_TAXONOMY_HTML.read_text())
+    return HTMLResponse(_TAXONOMY_HTML.read_text(encoding="utf-8"))
 
 
 @app.get("/api/taxonomy")
@@ -214,12 +214,12 @@ def get_taxonomy():
 
 @app.get("/", response_class=HTMLResponse)
 async def index():
-    return HTMLResponse(_INDEX_HTML.read_text())
+    return HTMLResponse(_INDEX_HTML.read_text(encoding="utf-8"))
 
 
 @app.get("/stats", response_class=HTMLResponse)
 async def stats_page():
-    return HTMLResponse(_STATS_HTML.read_text())
+    return HTMLResponse(_STATS_HTML.read_text(encoding="utf-8"))
 
 
 @app.get("/api/pairs")
@@ -385,12 +385,12 @@ def get_question_ids():
 
 @app.get("/open", response_class=HTMLResponse)
 async def open_index():
-    return HTMLResponse(_INDEX_HTML.read_text())
+    return HTMLResponse(_INDEX_HTML.read_text(encoding="utf-8"))
 
 
 @app.get("/open/stats", response_class=HTMLResponse)
 async def open_stats_page():
-    return HTMLResponse(_STATS_HTML.read_text())
+    return HTMLResponse(_STATS_HTML.read_text(encoding="utf-8"))
 
 
 @app.get("/api/open/pairs")
@@ -553,12 +553,12 @@ def get_open_question_ids():
 
 @app.get("/security", response_class=HTMLResponse)
 async def security_index():
-    return HTMLResponse(_INDEX_HTML.read_text())
+    return HTMLResponse(_INDEX_HTML.read_text(encoding="utf-8"))
 
 
 @app.get("/security/stats", response_class=HTMLResponse)
 async def security_stats_page():
-    return HTMLResponse(_STATS_HTML.read_text())
+    return HTMLResponse(_STATS_HTML.read_text(encoding="utf-8"))
 
 
 @app.get("/api/security/pairs")
