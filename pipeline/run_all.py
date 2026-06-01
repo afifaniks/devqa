@@ -22,7 +22,9 @@ from miners.ci_runs import mine_ci_runs
 from miners.contributors import mine_contributors
 from miners.mine_threads import mine_threads
 
-REPOS = ["urllib3/urllib3", "pyca/cryptography", "axios/axios", "auth0/node-jsonwebtoken", "python-pillow/Pillow", "django/django", "expressjs/express"]
+# REPOS = ["urllib3/urllib3", "pyca/cryptography", "axios/axios", "auth0/node-jsonwebtoken", "python-pillow/Pillow", "django/django", "expressjs/express"]
+REPOS = ["rails/rails"]
+
 def run_pipeline(repo: str, skip_ci: bool = False, only_threads: bool = False):
     print(f"\n{'='*60}")
     print(f"  PIPELINE: {repo}")

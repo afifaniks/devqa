@@ -161,6 +161,18 @@
               x-text="'→ '+pair?.other_question_type"></span>
         <span class="badge badge-verif" x-show="pair?.verifiability" x-text="pair?.verifiability"></span>
         <span class="badge badge-role" x-show="pair?.answerer_role" x-text="pair?.answerer_role"></span>
+        <span x-show="pair?.question_id==='SECURITY_OPEN' && pair?.stage1_confidence"
+              style="display:inline-flex;align-items:center;gap:3px;font-size:11px;color:var(--text-muted)">
+          <span>S1:</span>
+          <span class="badge" :class="`conf-level-${(pair?.stage1_confidence||'').toLowerCase()}`"
+                x-text="pair?.stage1_confidence"></span>
+          <span x-show="pair?.stage1_n_samples"
+                x-text="`(${pair?.stage1_n_yes}/${pair?.stage1_n_samples})`"
+                style="font-size:10px"></span>
+          <span>S2:</span>
+          <span class="badge" :class="`conf-level-${(pair?.stage2_confidence||'').toLowerCase()}`"
+                x-text="pair?.stage2_confidence"></span>
+        </span>
         <span x-text="(pair?.created_at||'').slice(0,10)"></span>
         <span class="badge" x-show="pair?.state"
               :class="pair?.state==='open' ? 'badge-green' : 'badge-neutral'"
@@ -182,10 +194,46 @@
         <p style="font-size:13px;margin:0" x-text="decodeHtml(pair?.security_topic||'')"></p>
       </div>
 
+      <div class="hard-facts-block" x-show="pair?.question_id==='SECURITY_OPEN' && hasHardFacts(pair?.hard_facts)">
+        <div class="label" style="margin-bottom:4px">Security Hard Facts</div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px;align-items:center">
+          <template x-for="id in (pair?.hard_facts?.cve_ids||[])" :key="'cve'+id">
+            <a :href="`https://nvd.nist.gov/vuln/detail/${id}`" target="_blank" rel="noopener"
+               class="badge badge-cve" x-text="id"></a>
+          </template>
+          <template x-for="id in (pair?.hard_facts?.ghsa_ids||[])" :key="'ghsa'+id">
+            <a :href="`https://github.com/advisories/${id}`" target="_blank" rel="noopener"
+               class="badge badge-ghsa" x-text="id"></a>
+          </template>
+          <template x-for="id in (pair?.hard_facts?.cwe_ids||[])" :key="'cwe'+id">
+            <a :href="`https://cwe.mitre.org/data/definitions/${id.replace('CWE-','')}.html`" target="_blank" rel="noopener"
+               class="badge badge-cwe" x-text="id"></a>
+          </template>
+          <template x-for="v in (pair?.hard_facts?.fixed_versions||[])" :key="'fix'+v">
+            <span class="badge badge-fixed-version" x-text="'Fixed: '+v"></span>
+          </template>
+          <template x-for="sha in (pair?.hard_facts?.fix_commits||[])" :key="'commit'+sha">
+            <a :href="`https://github.com/${pair?.repo}/commit/${sha}`" target="_blank" rel="noopener"
+               class="badge badge-commit" x-text="sha.slice(0,8)+'…'"></a>
+          </template>
+        </div>
+        <div x-show="pair?.hard_facts?.advisory_urls?.length" style="margin-top:4px">
+          <div class="label" style="margin-bottom:4px;font-size:11px">Advisory URLs</div>
+          <div style="display:flex;flex-direction:column;gap:3px">
+            <template x-for="url in (pair?.hard_facts?.advisory_urls||[])" :key="url">
+              <a :href="url" target="_blank" rel="noopener" class="ref-link" x-text="url"></a>
+            </template>
+          </div>
+        </div>
+      </div>
+
       <div class="qa-grid">
         <div class="card card-q">
           <div class="label" style="margin-bottom:8px">Extracted Question</div>
           <p style="font-size:13px" x-text="decodeHtml(pair?.question_text||'')"></p>
+          <div class="author-line" x-show="pair?.question_author">
+            <span x-text="pair?.question_author?'@'+pair.question_author:''"></span>
+          </div>
         </div>
         <div class="card card-a">
           <div class="label" style="margin-bottom:8px">Extracted Answer</div>
@@ -473,6 +521,10 @@
 
       decodeHtml,
       taxTip,
+      hasHardFacts(hf) {
+        if (!hf) return false;
+        return ['cve_ids','ghsa_ids','cwe_ids','fixed_versions','fix_commits','advisory_urls'].some(k=>hf[k]?.length>0);
+      },
 
       get done()      { return this.stats.accepted+this.stats.rejected; },
       get progress()  { return this.stats.total ? Math.round(this.done/this.stats.total*100) : 0; },

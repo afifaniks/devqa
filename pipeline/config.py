@@ -1,4 +1,5 @@
 import os
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -10,13 +11,16 @@ if not GITHUB_TOKENS and os.getenv("GITHUB_TOKEN"):
 # Repositories to mine — add more here as you expand
 REPOS = [
     "stripe/stripe-node",
-    "microsoft/vscode",
-    "facebook/react",
-    "psf/requests",
-    "astral-sh/ruff",
     "psf/requests",
     "fastapi/fastapi",
-    "vuejs/core"
+    "auth0/node-jsonwebtoken",
+    "axios/axios",
+    "django/django",
+    "rails/rails",
+    "python-pillow/Pillow",
+    "pyca/cryptography",
+    "expressjs/express",
+    "urllib3/urllib3",
 ]
 
 # How many items to fetch per page (max 100 for GitHub API)

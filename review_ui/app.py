@@ -565,8 +565,6 @@ async def security_stats_page():
 def get_security_pairs(
     repo: Optional[str] = None,
     status: Optional[str] = None,
-    verifiability: Optional[str] = None,
-    answerer_role: Optional[str] = None,
     security_topic: Optional[str] = None,
     q: Optional[str] = None,
     page: int = 1,
@@ -580,10 +578,6 @@ def get_security_pairs(
         if repo and p.get("repo") != repo:
             continue
         if status and vstatus != status:
-            continue
-        if verifiability and p.get("verifiability") != verifiability:
-            continue
-        if answerer_role and p.get("answerer_role") != answerer_role:
             continue
         if security_topic and p.get("security_topic") != security_topic:
             continue
@@ -608,8 +602,6 @@ def get_security_pairs(
             "question_text": p.get("question_text", ""),
             "title": p.get("title"),
             "confidence": p.get("confidence"),
-            "verifiability": p.get("verifiability", ""),
-            "answerer_role": p.get("answerer_role", ""),
             "artifacts_needed": p.get("artifacts_needed", []),
             "source": p.get("source"),
             "state": p.get("state", ""),
@@ -657,8 +649,6 @@ def get_security_stats():
     repos: dict[str, int] = {}
     topic_counts: dict[str, int] = {}
     topic_status: dict[str, dict[str, int]] = {}
-    role_counts: dict[str, int] = {}
-    verif_counts: dict[str, int] = {}
     counts = {"accepted": 0, "rejected": 0, "pending": 0}
 
     for p in security_pairs:
@@ -670,10 +660,6 @@ def get_security_stats():
         topic_counts[topic] = topic_counts.get(topic, 0) + 1
         ts = topic_status.setdefault(topic, {"accepted": 0, "rejected": 0, "pending": 0})
         ts[status] = ts.get(status, 0) + 1
-        role = p.get("answerer_role", "?")
-        role_counts[role] = role_counts.get(role, 0) + 1
-        verif = p.get("verifiability", "?")
-        verif_counts[verif] = verif_counts.get(verif, 0) + 1
 
     return {
         "total": len(security_pairs),
@@ -682,8 +668,6 @@ def get_security_stats():
         "question_ids": {"SECURITY_OPEN": len(security_pairs)},
         "categories": topic_counts,
         "cat_status": topic_status,
-        "answerer_roles": role_counts,
-        "verifiability": verif_counts,
     }
 
 
