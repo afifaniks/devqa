@@ -114,6 +114,10 @@ html.dark .btn-accept { border-color: #2d5a38; }
 html.dark .btn-accept:hover { background: #21392a; }
 html.dark .btn-reject { border-color: #5a2020; }
 html.dark .btn-reject:hover { background: #3d1616; }
+.btn-discuss { background: var(--purple-bg); color: var(--purple); border-color: #d0b8f5; text-decoration: none; }
+.btn-discuss:hover { background: #f0e4ff; }
+html.dark .btn-discuss { border-color: #4a2d7a; }
+html.dark .btn-discuss:hover { background: #2a1a40; }
 .btn-icon { padding: 4px 7px; }
 
 /* ── Badges ──────────────────────────────────────────────────────────────── */

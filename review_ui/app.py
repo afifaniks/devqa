@@ -11,10 +11,10 @@ import sys
 from contextlib import asynccontextmanager
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
+from typing import AsyncIterator, Optional
 
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
@@ -133,6 +133,18 @@ def security_pair_id(p: dict) -> str:
     )
 
 
+def _security_chat_id(p: dict) -> str:
+    repo = (p.get("repo") or "unknown").replace("/", "__")
+    return f"{repo}__{p.get('source', 'unknown')}__{p.get('number', 'unknown')}"
+
+
+def _find_by_chat_id(chat_id: str):
+    for i, p in enumerate(security_pairs):
+        if _security_chat_id(p) == chat_id:
+            return i, p
+    return None, None
+
+
 def load_security_data() -> None:
     global security_pairs, security_verification
     security_pairs = []
@@ -165,6 +177,16 @@ class AssignRequest(BaseModel):
     question_id: str
 
 
+class ChatMessage(BaseModel):
+    role: str   # "user" or "assistant"
+    content: str
+
+
+class ChatRequest(BaseModel):
+    messages: list[ChatMessage]
+    model: Optional[str] = None
+
+
 # ── App ───────────────────────────────────────────────────────────────────────
 
 
@@ -184,6 +206,7 @@ async def lifespan(app: FastAPI):
 _INDEX_HTML = Path(__file__).parent / "templates" / "index.html"
 _TAXONOMY_HTML = Path(__file__).parent / "templates" / "taxonomy.html"
 _STATS_HTML = Path(__file__).parent / "templates" / "stats.html"
+_CHAT_HTML = Path(__file__).parent / "templates" / "chat.html"
 
 app = FastAPI(title="DevQA – Pair Review Tool", lifespan=lifespan)
 app.mount(
@@ -594,6 +617,7 @@ def get_security_pairs(
 
         filtered.append({
             "index": i,
+            "chat_id": _security_chat_id(p),
             "repo": p.get("repo"),
             "question_id": "SECURITY_OPEN",
             "number": p.get("number"),
@@ -622,6 +646,7 @@ def get_security_pair(index: int):
     p = dict(security_pairs[index])
     v = security_verification.get(security_pair_id(p), {})
     p["index"] = index
+    p["chat_id"] = _security_chat_id(p)
     p["status"] = v.get("status", "pending")
     p["note"] = v.get("note", "")
     p["verified_at"] = v.get("verified_at", "")
@@ -705,6 +730,141 @@ def get_security_repos():
 @app.get("/api/security/question_ids")
 def get_security_question_ids():
     return ["SECURITY_OPEN"]
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# SECURITY CHAT  (/security/chat  and  /api/security/chat/*)
+# ══════════════════════════════════════════════════════════════════════════════
+
+
+def _build_security_system_prompt(p: dict) -> str:
+    hf = p.get("hard_facts") or {}
+
+    def fmt_list(lst):
+        return ", ".join(lst) if lst else "none"
+
+    hard_facts_block = "\n".join([
+        f"  CVE IDs:           {fmt_list(hf.get('cve_ids', []))}",
+        f"  GHSA IDs:          {fmt_list(hf.get('ghsa_ids', []))}",
+        f"  CWE IDs:           {fmt_list(hf.get('cwe_ids', []))}",
+        f"  OSV IDs:           {fmt_list(hf.get('osv_ids', []))}",
+        f"  Fixed versions:    {fmt_list(hf.get('fixed_versions', []))}",
+        f"  Affected versions: {fmt_list(hf.get('affected_versions', []))}",
+        f"  Fix PRs:           {fmt_list(hf.get('fix_prs', []))}",
+        f"  Fix commits:       {fmt_list(hf.get('fix_commits', []))}",
+        f"  Advisory URLs:     {fmt_list(hf.get('advisory_urls', []))}",
+    ])
+
+    artifacts = ", ".join(p.get("artifacts_needed") or []) or "none"
+    thread_text = (p.get("thread_text") or "")[:10000]
+
+    return f"""You are a security research assistant helping a human reviewer decide whether a Q&A pair extracted from a public GitHub issue thread is a valid, high-quality developer security information need.
+
+== EXTRACTED PAIR ==
+Repository:      {p.get("repo", "")}
+Source:          {p.get("source", "")} #{p.get("number", "")}
+Title:           {p.get("title", "")}
+URL:             {p.get("url", "")}
+
+Security topic:  {p.get("security_topic", "")}
+Need summary:    {p.get("need_summary", "")}
+
+QUESTION:
+{p.get("question_text", "")}
+
+ANSWER:
+{p.get("answer_text", "")}
+
+Answerer role:   {p.get("answerer_role", "")}
+Artifacts needed: {artifacts}
+Stage-1 confidence: {p.get("stage1_confidence", "")} ({p.get("stage1_n_yes", "?")}/{p.get("stage1_n_samples", "?")} votes)
+Stage-2 confidence: {p.get("stage2_confidence", "")}
+
+HARD FACTS:
+{hard_facts_block}
+
+Current label:   {p.get("status", "pending")}
+Reviewer note:   {p.get("note", "") or "(none)"}
+
+== ORIGINAL THREAD ==
+{thread_text}
+
+== YOUR ROLE ==
+Help the reviewer decide if this pair should be accepted or rejected. Answer questions about the thread, the extracted Q&A, the hard facts, or the security topic. You may suggest a better security_topic phrase if the current one is inaccurate. Be concise and direct. When referencing comments, use their [cN] tag from the thread."""
+
+
+@app.get("/security/chat", response_class=HTMLResponse)
+async def security_chat_page():
+    return HTMLResponse(_CHAT_HTML.read_text(encoding="utf-8"))
+
+
+@app.get("/api/security/chat/models")
+def get_chat_models():
+    import urllib.request
+    try:
+        with urllib.request.urlopen("http://localhost:11434/api/tags", timeout=3) as r:
+            data = json.loads(r.read())
+        names = [m["name"] for m in data.get("models", [])]
+        return {"models": sorted(names)}
+    except Exception:
+        return {"models": []}
+
+
+@app.get("/api/security/chat/context")
+def get_security_chat_context(id: str):
+    idx, p = _find_by_chat_id(id)
+    if p is None:
+        raise HTTPException(status_code=404, detail=f"Pair not found: {id}")
+    p = dict(p)
+    v = security_verification.get(security_pair_id(p), {})
+    p["status"] = v.get("status", "pending")
+    p["note"] = v.get("note", "")
+    p["chat_id"] = id
+    p.pop("thread_text", None)
+    p.pop("comments", None)
+    return p
+
+
+@app.post("/api/security/chat/stream")
+async def security_chat_stream(id: str, body: ChatRequest):
+    idx, p = _find_by_chat_id(id)
+    if p is None:
+        raise HTTPException(status_code=404, detail=f"Pair not found: {id}")
+
+    p = dict(p)
+    v = security_verification.get(security_pair_id(p), {})
+    p["status"] = v.get("status", "pending")
+    p["note"] = v.get("note", "")
+
+    try:
+        from langchain_ollama import ChatOllama
+        from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
+    except ImportError:
+        raise HTTPException(status_code=500,
+                            detail="langchain-ollama not installed. Run: pip install langchain-ollama")
+
+    system_prompt = _build_security_system_prompt(p)
+
+    lc_messages = [SystemMessage(content=system_prompt)]
+    for m in body.messages:
+        if m.role == "user":
+            lc_messages.append(HumanMessage(content=m.content))
+        elif m.role == "assistant":
+            lc_messages.append(AIMessage(content=m.content))
+
+    from utils.ollama_client import STAGE1_MODEL
+    model_name = body.model or STAGE1_MODEL
+
+    async def token_stream() -> AsyncIterator[str]:
+        llm = ChatOllama(model=model_name, temperature=0.3)
+        async for chunk in llm.astream(lc_messages):
+            token = chunk.content
+            if token:
+                yield f"data: {json.dumps({'token': token})}\n\n"
+        yield "data: [DONE]\n\n"
+
+    return StreamingResponse(token_stream(), media_type="text/event-stream",
+                             headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
 
 
 if __name__ == "__main__":

@@ -298,6 +298,10 @@
         <button class="btn btn-accept" @click="verify('accepted')">✓ Accept</button>
         <button class="btn btn-reject" @click="verify('rejected')">✗ Reject</button>
         <button class="btn" @click="verify('pending')">↩ Reset</button>
+        <a class="btn btn-discuss"
+           x-show="IS_SECURITY && pair?.chat_id"
+           :href="`/security/chat?id=${pair?.chat_id}`"
+           target="_blank" rel="noopener">💬 Discuss</a>
       </div>
     </div>
   </div>
