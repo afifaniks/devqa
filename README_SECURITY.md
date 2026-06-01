@@ -185,7 +185,9 @@ Progress is checkpointed automatically in `output/owner__repo/.checkpoint_detect
 
 ---
 
-## Reviewing and labelling pairs
+## Labelling pairs
+
+This is the human-in-the-loop step. Each pair produced by the detector has `status: pending`. You read the thread, judge quality, and mark it accepted or rejected. The `note` field is also where you record your open-coding label (your own security topic phrase) when the LLM-generated `security_topic` is wrong or too coarse.
 
 ### Start the review UI
 
@@ -196,26 +198,79 @@ cd review_ui
 
 Open **http://localhost:8765/security** in a browser.
 
-The main review UI at `/` covers the taxonomy (natural_qa_pairs). The security UI is at `/security`.
+The main review UI at `/` covers the taxonomy pipeline. Security pairs are at `/security`.
 
-### UI workflow
+### Labelling workflow
 
-1. Browse the list — filter by repo, confidence level, security topic, or free text.
-2. Click a pair to see:
-   - `security_topic` (free-text phrase)
-   - `need_summary` (one sentence from Stage 1)
-   - verbatim question and answer
-   - `hard_facts` (CVE/GHSA/CWE IDs, versions, PRs, commits, advisory URLs)
-   - `artifacts_needed`
-   - `answerer_role`
-   - original thread
-3. Accept or reject with an optional note.
+**1. Filter the queue**
 
-Keyboard shortcuts: `j`/`k` navigate, `a` accept, `r` reject, `u` reset to pending.
+Use the sidebar filters to scope your session:
+- **Repo** — focus on one repo at a time
+- **Status** — set to `pending` to see only unlabelled pairs
+- **Confidence** — start with `HIGH` to process the clearest cases first
+- **Search** — free text across question, answer, and security topic
 
-Decisions are saved immediately to `security_verified_state.json` in the project root.
+**2. Read each pair**
+
+The detail pane shows:
+- **Security Topic** — LLM-generated free-text phrase (what Stage 2 thought the pair is about)
+- **Need Summary** — one sentence from Stage 1 describing the security need and its grading anchor
+- **Hard Facts** — CVE/GHSA/CWE/OSV IDs, fixed/affected versions, fix PRs, fix commits, advisory URLs
+- **Extracted Question** — verbatim text copied from the thread
+- **Extracted Answer** — verbatim text; check it actually answers the question and rests on a concrete anchor
+- **Artifacts Needed** — what an LLM agent would need to answer this
+- **Answerer Role** — `maintainer`, `contributor`, `commenter`, `op_self`, or `bot`
+- **Original Thread** — full thread with comments labelled `[c0]`, `[c1]`, etc.
+
+**3. Decide: accept or reject**
+
+| Decision | When |
+|---|---|
+| **Accept** | The question is a genuine security information need; the answer is concrete (has an identifier or citable source); the extracted Q and A text accurately reflect what the thread says. |
+| **Reject** | False positive (not actually security); answer is deflection / pure opinion / unanchored; extracted Q or A text is garbled or wrong; thread is a config question with no risk angle. |
+
+Controls (bottom of the detail pane):
+- **✓ Accept** button — or press `a`
+- **✗ Reject** button — or press `r`
+- **↩ Reset** button — or press `u` — returns to `pending`
+- `j` / `k` — navigate to next/previous pair
+
+Decisions save immediately to `security_verified_state.json`. No submit needed.
+
+**4. Write a note (open coding)**
+
+The **Notes** textarea (above the buttons) is for your open-coding label. Use it to:
+- Correct a wrong `security_topic` — write your own phrase
+- Record why you rejected (e.g. "deflection — maintainer said ask Stripe support")
+- Flag borderline pairs for discussion (e.g. "borderline: config Q but risk angle exists")
+- Note grading difficulty (e.g. "hard_facts present but fixed_version is a range, not exact")
+
+The note is stored in `security_verified_state.json` and exported with accepted pairs.
+
+**5. What makes a good accept / reject decision**
+
+Accept when ALL of these hold:
+- The question is clearly about a security risk, vulnerability, or security-relevant behaviour in *this project* (not just using a security-named API)
+- The answer rests on a concrete anchor: a CVE/GHSA/version string/commit SHA/advisory URL, or a citable source (project docs, RFC, scanner rule, linked prior incident)
+- The verbatim Q and A text in the pair accurately represent the thread (check against the original thread below)
+- The pair would be useful to someone building or evaluating an LLM security assistant for this repo
+
+Reject when ANY of these hold:
+- PEM/key file-format usage error whose answer is just "your file is malformed"
+- Browser-storage or cross-site cookie deflection ("browser behaviour, not our library")
+- Config question that touches a security-named flag but asks no security question
+- "Wrong forum / ask Discord / ask Stripe support" deflection with no security content
+- Pure regression bug whose only security link is a method name containing "auth" or "sign"
+- Answer is opinion without a source: "we don't consider this exploitable" with nothing further
+- Extracted Q or A is truncated, garbled, or pulled from the wrong comment
+
+### Progress tracking
+
+The header shows `accepted / rejected / pending` counts. The stats page (`/security/stats`) breaks down counts by repo and security topic.
 
 ### Export accepted pairs
+
+After labelling, export the accepted set:
 
 Via the UI: click **Export** on the `/security` page, then **Download**.
 
@@ -226,7 +281,7 @@ curl -X POST http://localhost:8765/api/security/export
 curl http://localhost:8765/api/security/export/download -o security_verified_qa_pairs.jsonl
 ```
 
-Output goes to `security_verified_qa_pairs.jsonl` in the project root.
+Output: `security_verified_qa_pairs.jsonl` in the project root. Contains full records (including `note`, `verified_at`, all `hard_facts`) for all accepted pairs across all repos.
 
 ---
 
