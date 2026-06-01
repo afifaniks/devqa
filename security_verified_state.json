@@ -128,5 +128,125 @@
     "status": "accepted",
     "note": "QA discusses JWT token revocation and logout security design, including blacklisting strategies and authoritative security references, which directly relates to authentication integrity and session security.",
     "verified_at": "2026-06-01T20:03:38.372158Z"
+  },
+  "axios/axios/issue/10731": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-01T20:46:03.689908Z"
+  },
+  "axios/axios/issue/10707": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-01T20:48:10.555392Z"
+  },
+  "axios/axios/issue/10685": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-01T20:48:41.469775Z"
+  },
+  "axios/axios/issue/10643": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-01T20:59:22.527097Z"
+  },
+  "axios/axios/issue/10642": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-01T21:06:53.051935Z"
+  },
+  "axios/axios/issue/10636": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-01T21:16:51.769898Z"
+  },
+  "axios/axios/issue/10614": {
+    "status": "accepted",
+    "note": "QA discusses a security-relevant redirect handling mechanism in follow-redirects where documentation examples can bypass built-in protections against credential leakage during HTTPS\u2192HTTP downgrades, potentially exposing credentials, and proposes mitigations to enforce safe protocol validation.",
+    "verified_at": "2026-06-01T21:40:15.081469Z"
+  },
+  "axios/axios/issue/10606": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-01T21:41:04.006916Z"
+  },
+  "axios/axios/issue/10604": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-01T21:44:05.550912Z"
+  },
+  "axios/axios/issue/7450": {
+    "status": "rejected",
+    "note": "QA concerns missing documentation and clarification of Axios XSRF-related configuration options (withXSRFToken, withCredentials), without describing a vulnerability, insecure behavior, or security-relevant defect in the library. ",
+    "verified_at": "2026-06-01T21:46:05.030266Z"
+  },
+  "axios/axios/issue/7417": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-01T21:46:49.299388Z"
+  },
+  "axios/axios/issue/7394": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-01T21:49:32.043970Z"
+  },
+  "axios/axios/issue/7383": {
+    "status": "rejected",
+    "note": "QA describes a Cloudflare Workers runtime/bundler issue causing Axios error response metadata loss, which is explicitly attributed to @opennextjs/cloudflare rather than Axios itself, and contains no security vulnerability, CWE/CVE/GHSA references, or security-relevant behavior.",
+    "verified_at": "2026-06-01T21:52:40.100739Z"
+  },
+  "axios/axios/issue/7349": {
+    "status": "rejected",
+    "note": "QA describes a regression in Axios interceptor promise handling where returned retry requests are not properly propagated, resulting in broken retry logic, without any security vulnerability, exploit, or security-relevant behavior, and contains no CVE/CWE/GHSA/OSV or other security references.",
+    "verified_at": "2026-06-01T21:53:50.902351Z"
+  },
+  "axios/axios/issue/7346": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-01T21:54:25.490266Z"
+  },
+  "axios/axios/issue/7338": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-01T21:54:57.893462Z"
+  },
+  "axios/axios/discussion/7302": {
+    "status": "accepted",
+    "note": "QA discusses implementation of CSRF protection in an Express.js backend, including generation and validation of XSRF tokens, secure cookie configuration, and adoption of the csrf-csrf library as a replacement for deprecated csurf, which is directly related to web application security mechanisms.",
+    "verified_at": "2026-06-01T22:09:44.324972Z"
+  },
+  "axios/axios/issue/7233": {
+    "status": "rejected",
+    "note": "QA is a debugging discussion about 403 responses caused by differences in Node.js HTTP/TLS behavior and WAF fingerprinting compared to curl, without any security vulnerability, exploit, or security-relevant behavior in Axios, and it contains no CVE/CWE/GHSA/OSV or other security references.",
+    "verified_at": "2026-06-01T22:30:09.073178Z"
+  },
+  "axios/axios/issue/7228": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-01T22:30:48.578675Z"
+  },
+  "axios/axios/issue/7055": {
+    "status": "accepted",
+    "note": "QA accepted because it discusses securing npm package publishing through 2FA and OIDC trusted publishing, which are supply chain security controls, and includes concrete references to CI workflow configuration.",
+    "verified_at": "2026-06-01T22:33:27.889776Z"
+  },
+  "axios/axios/issue/7053": {
+    "status": "rejected",
+    "note": "Rejected because it concerns CDNJS packaging and missing Subresource Integrity metadata rather than a security vulnerability, exploit, or security-relevant behavior in Axios, and it lacks any concrete security advisory or vulnerability references.",
+    "verified_at": "2026-06-01T22:35:51.579718Z"
+  },
+  "axios/axios/issue/7023": {
+    "status": "accepted",
+    "note": "Accepted because it directly references a confirmed security advisory (GHSA-4hjh-wcwx-xvwj / CVE-2025-58754) and clarifies affected and patched Axios versions (0.30.2), making it a security-relevant vulnerability scope determination with concrete release and advisory links.",
+    "verified_at": "2026-06-01T22:36:45.869835Z"
+  },
+  "axios/axios/issue/6975": {
+    "status": "accepted",
+    "note": "Accepted because it directly addresses remediation of a known security vulnerability (GHSA-fjxv-7rqg-78g4) by updating a dependency to a fixed version, with a concrete reference (#6974) showing the security fix in progress.",
+    "verified_at": "2026-06-01T22:37:38.589457Z"
+  },
+  "axios/axios/issue/6969": {
+    "status": "accepted",
+    "note": "Accepted because it directly mitigates a confirmed transitive dependency security vulnerability (SNYK-JS-FORMDATA-10841150) in Axios by providing a concrete dependency override to a fixed safe version (form-data@4.0.4).",
+    "verified_at": "2026-06-01T22:38:51.686959Z"
   }
 }
