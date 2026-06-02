@@ -368,5 +368,135 @@
     "status": "accepted",
     "note": "",
     "verified_at": "2026-06-02T15:55:08.489690Z"
+  },
+  "expressjs/express/issue/7196": {
+    "status": "accepted",
+    "note": "the question is valid because it concerns CI dependency caching behavior, which directly affects supply-chain integrity and reproducibility, and the answer is acceptable because it cites authoritative GitHub Actions documentation explaining the lockfile requirement and the security-relevant risk (cache key ambiguity leading to potential cache misuse or inconsistency) when enabling caching without a lockfile.",
+    "verified_at": "2026-06-02T19:59:51.165692Z"
+  },
+  "expressjs/express/issue/7143": {
+    "status": "accepted",
+    "note": "the question is valid because it concerns a potentially vulnerable transitive dependency version (path-to-regexp) and its security status, and the answer is acceptable because it provides a concrete version reference (0.1.13), cites authoritative sources (Snyk advisory and Express security blog), and gives actionable remediation steps (npm update / npm audit fix) to resolve or verify the vulnerability status.",
+    "verified_at": "2026-06-02T20:00:43.762030Z"
+  },
+  "expressjs/express/issue/7016": {
+    "status": "accepted",
+    "note": "the question is valid because it concerns a transitive dependency vulnerability (qs pulled in via body-parser) and whether a known vulnerable version range affects Express 4.x, and the answer is acceptable because it provides a concrete vulnerability boundary (qs < 16.4.1), clarifies the security status (vulnerable vs malicious), and references relevant upstream discussion/PR context that helps determine safe upgrade guidance.",
+    "verified_at": "2026-06-02T20:05:33.761405Z"
+  },
+  "expressjs/express/issue/6978": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-02T20:06:55.209877Z"
+  },
+  "expressjs/express/issue/6968": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-02T20:07:20.914416Z"
+  },
+  "expressjs/express/issue/6874": {
+    "status": "accepted",
+    "note": "the question is valid because it concerns a real security-sensitive file serving behavior (exposure of .git repository metadata via Express res.sendFile), and the answer is acceptable because it directly references and applies the documented dotfiles option behavior in Express with a concrete configuration example explaining how file serving rules affect access to hidden directories.",
+    "verified_at": "2026-06-02T20:09:41.402556Z"
+  },
+  "expressjs/express/issue/6751": {
+    "status": "accepted",
+    "note": "the question is valid because it concerns remediation of a live supply-chain security incident (GHSA-8mgj-vmr8-frr6) involving a compromised transitive dependency (debug) affecting Express installations, and the answer is acceptable because it provides a concrete, actionable mitigation (reinstall dependencies to resolve to safe debug@4.4.1 after removal of compromised 4.4.2) tied to a specific safe version and package ecosystem behavior.",
+    "verified_at": "2026-06-02T20:49:41.903866Z"
+  },
+  "expressjs/express/issue/6614": {
+    "status": "accepted",
+    "note": "the question is valid because it raises a legitimate security concern about potential XSS/open-redirect risks from allowing malicious URL schemes (e.g., javascript:) in res.location, and the answer is acceptable because it provides a concrete authoritative reference to the Express threat model clarifying the framework\u2019s security boundary and explicitly explains that validation responsibility belongs to the application while preserving valid non-HTTP use cases.",
+    "verified_at": "2026-06-02T20:50:22.976240Z"
+  },
+  "expressjs/express/issue/6458": {
+    "status": "accepted",
+    "note": "the question is valid because it investigates a breaking route behavior introduced after a security update and seeks the cause of a regression tied to request routing, and the answer is acceptable because it directly connects the issue to the security-driven mitigation for CVE-2024-45296, cites authoritative release notes and technical rationale (ReDoS prevention), and explains why route semantics changed.",
+    "verified_at": "2026-06-02T20:52:37.594598Z"
+  },
+  "expressjs/express/issue/6443": {
+    "status": "accepted",
+    "note": "he question is a viable security question because it asks whether HTTP redirects can preserve or alter request headers in a way that impacts security-sensitive headers (e.g., Authorization, Cookie), and the answer directly addresses redirect security behavior defined in RFC 9110.",
+    "verified_at": "2026-06-02T20:53:53.223477Z"
+  },
+  "expressjs/express/issue/6432": {
+    "status": "rejected",
+    "note": "While the answer references a documented behavior change, the question itself is not a viable security question; it is about a framework behavior/migration difference (req.body being undefined vs {}), not a security vulnerability, mitigation, exploit, or security-sensitive configuration.",
+    "verified_at": "2026-06-02T20:56:09.209970Z"
+  },
+  "expressjs/express/issue/6428": {
+    "status": "rejected",
+    "note": "The question is not security-related because it concerns a routing syntax breaking change and framework upgrade compatibility issue, not a vulnerability, exploit path, or security control.",
+    "verified_at": "2026-06-02T20:56:41.696942Z"
+  },
+  "expressjs/express/issue/6413": {
+    "status": "rejected",
+    "note": "The question does not describe a security vulnerability or exploitable risk, but rather concerns public visibility of open-source project files that are intentionally exposed as part of a public repository.",
+    "verified_at": "2026-06-02T20:57:23.012362Z"
+  },
+  "expressjs/express/issue/6406": {
+    "status": "rejected",
+    "note": "Rejected because it concerns unsupported version clarification and dependency lineage, not a security vulnerability or attack scenario.",
+    "verified_at": "2026-06-02T20:57:51.374728Z"
+  },
+  "expressjs/express/issue/6401": {
+    "status": "rejected",
+    "note": "The question is not a concrete security issue because it is asking for clarification of a vendor scanner\u2019s \u201coperational vulnerability\u201d label rather than describing a specific vulnerability, exploit, or insecure behavior.",
+    "verified_at": "2026-06-02T20:58:18.021398Z"
+  },
+  "expressjs/express/issue/6315": {
+    "status": "rejected",
+    "note": "Rejected because it concerns framework capability and TLS stack access rather than a security issue, exploit, or mitigation.",
+    "verified_at": "2026-06-02T20:59:36.754854Z"
+  },
+  "expressjs/express/issue/6292": {
+    "status": "rejected",
+    "note": "The question does not describe a vulnerability in the framework itself but instead concerns an XSS issue in example/demo code, which is explicitly outside the security boundary of the library.",
+    "verified_at": "2026-06-02T21:43:44.447780Z"
+  },
+  "expressjs/express/issue/6222": {
+    "status": "accepted",
+    "note": "Accepted because it assesses CVE applicability and patch effectiveness across framework versions, which is a legitimate security validation concern.",
+    "verified_at": "2026-06-02T21:44:18.213116Z"
+  },
+  "expressjs/express/issue/6216": {
+    "status": "rejected",
+    "note": "Rejected because it concerns a version mismatch and API breakage in path-to-regexp, not a security issue or vulnerability behavior.",
+    "verified_at": "2026-06-02T21:44:38.633541Z"
+  },
+  "expressjs/express/issue/6215": {
+    "status": "rejected",
+    "note": "Rejected because it concerns HTTPS redirect configuration for a documentation website rather than a security vulnerability or exploit scenario.",
+    "verified_at": "2026-06-02T21:45:00.257400Z"
+  },
+  "expressjs/express/issue/6204": {
+    "status": "accepted",
+    "note": "Accepted because it evaluates whether a vulnerable dependency version must be upgraded to fix a documented security issue.",
+    "verified_at": "2026-06-02T21:45:21.759162Z"
+  },
+  "expressjs/express/issue/6067": {
+    "status": "accepted",
+    "note": "Accepted because it assesses vulnerability applicability to a concrete package version and dependency chain.",
+    "verified_at": "2026-06-02T21:46:57.252506Z"
+  },
+  "expressjs/express/issue/6053": {
+    "status": "accepted",
+    "note": "Accepted because it evaluates CVE status and patch availability in Express 4.x, which is a legitimate dependency security concern.",
+    "verified_at": "2026-06-02T21:47:18.299814Z"
+  },
+  "expressjs/express/issue/6030": {
+    "status": "rejected",
+    "note": "Rejected because it concerns a TypeScript type mismatch issue, not a security vulnerability or security-relevant behavior.",
+    "verified_at": "2026-06-02T21:47:40.240946Z"
+  },
+  "expressjs/express/issue/5970": {
+    "status": "accepted",
+    "note": "Accepted because it evaluates whether a known vulnerable dependency version has been upgraded in a framework release, impacting security exposure.",
+    "verified_at": "2026-06-02T21:48:38.870543Z"
+  },
+  "expressjs/express/issue/5975": {
+    "status": "rejected",
+    "note": "Rejected because it is a router binding regression/debugging issue after an Express update and does not involve a vulnerability, exploit, or security mitigation.",
+    "verified_at": "2026-06-02T21:49:50.665772Z"
   }
 }
