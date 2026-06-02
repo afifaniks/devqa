@@ -248,5 +248,125 @@
     "status": "accepted",
     "note": "Accepted because it directly mitigates a confirmed transitive dependency security vulnerability (SNYK-JS-FORMDATA-10841150) in Axios by providing a concrete dependency override to a fixed safe version (form-data@4.0.4).",
     "verified_at": "2026-06-01T22:38:51.686959Z"
+  },
+  "axios/axios/issue/6931": {
+    "status": "accepted",
+    "note": "Accepted because it concerns a software supply-chain/install-time security risk (developer-only scripts executing during package installation) and includes a concrete remediation reference via PR #6944 for guarded Husky install behavior.",
+    "verified_at": "2026-06-02T15:18:44.773969Z"
+  },
+  "axios/axios/issue/6929": {
+    "status": "accepted",
+    "note": "Accepted because it discusses security-relevant credential handling during redirects (restoring auth only on same-origin redirects while preserving cross-origin credential stripping to prevent leakage) and includes a concrete code reference via PR #10929 and linked prior issue #6929.",
+    "verified_at": "2026-06-02T15:19:55.306592Z"
+  },
+  "axios/axios/discussion/6924": {
+    "status": "accepted",
+    "note": "The answer should be accepted because it directly addresses a security-relevant behavior (redirect handling and credential exposure) and provides concrete technical references (Axios/XHR adapter behavior, fetch adapter workaround, code example, and source-code-backed explanation), making it actionable and verifiable.",
+    "verified_at": "2026-06-02T15:20:46.061680Z"
+  },
+  "axios/axios/issue/6905": {
+    "status": "rejected",
+    "note": "The answer should be rejected because, although it discusses a security-relevant dependency upgrade, it does not provide concrete security references (e.g., CVE/GHSA/advisory/issue links for the vulnerabilities) and mainly gives a general upgrade recommendation rather than a verifiable remediation tied to specific vulnerabilities.",
+    "verified_at": "2026-06-02T15:22:42.624865Z"
+  },
+  "axios/axios/issue/6903": {
+    "status": "rejected",
+    "note": "The answer should be rejected because, although it includes detailed technical debugging and a concrete workaround, the issue is not primarily security-related (it is a networking/runtime regression), and the cited reference is a runtime bug rather than a security artifact like a CVE/GHSA/advisory or security-specific documentation.",
+    "verified_at": "2026-06-02T15:23:30.274610Z"
+  },
+  "axios/axios/issue/6859": {
+    "status": "accepted",
+    "note": "Accepted because it directly references a concrete security artifact (GHSA advisory and PR update) and confirms the patch mapping for a specific vulnerable version, which is necessary for vulnerability tracking and scanner accuracy.",
+    "verified_at": "2026-06-02T15:25:05.747716Z"
+  },
+  "axios/axios/issue/6858": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-02T15:27:28.275127Z"
+  },
+  "axios/axios/issue/6851": {
+    "status": "rejected",
+    "note": "Even though the answer is technically correct and well-referenced (RFC 7231 / RFC 9110), the question itself is not a security-relevant issue but a platform behavior clarification (React Native/iOS/Android networking and header conventions), so it does not meet the security-information-need criteria.",
+    "verified_at": "2026-06-02T15:28:43.699580Z"
+  },
+  "axios/axios/issue/6821": {
+    "status": "accepted",
+    "note": "The question is clearly security-relevant (reported OSS high severity vulnerability in dependency scanning), and the answer provides concrete remediation evidence via a specific patched version (1.8.3) and linked commit/release references, making it a valid security fix confirmation.",
+    "verified_at": "2026-06-02T15:29:46.653404Z"
+  },
+  "axios/axios/issue/6816": {
+    "status": "accepted",
+    "note": "The question is security-relevant because it directly concerns mitigation of a known SSRF vulnerability (CVE-2025-27152) in a specific Axios version, and the answer provides a concrete remediation path tied to a version fix (1.8.3) and configuration exposure (allowAbsoluteUrls in AxiosRequestConfig), making it actionable and security-grounded.",
+    "verified_at": "2026-06-02T15:30:31.729702Z"
+  },
+  "axios/axios/issue/6806": {
+    "status": "accepted",
+    "note": "The question is security-relevant because it identifies a request-handling flaw that can lead to SSRF via ignored allowAbsoluteUrls configuration, and the answer provides concrete code-level references (specific file path, function behavior, and PR #6814) that directly explain and address the vulnerability fix.",
+    "verified_at": "2026-06-02T15:43:52.679335Z"
+  },
+  "axios/axios/issue/6797": {
+    "status": "accepted",
+    "note": "The question is security-relevant because it involves a dependency/runtime break caused by Node.js crypto module resolution in bundled environments (Webpack 5), and the answer provides a concrete mitigation (upgrade to 1.8.1 plus explicit polyfill configuration using crypto-browserify or disabling the module), making it actionable and technically grounded.",
+    "verified_at": "2026-06-02T15:44:29.445657Z"
+  },
+  "axios/axios/issue/6793": {
+    "status": "rejected",
+    "note": "The question is not security-relevant because it concerns a client-side CORS configuration misunderstanding, and the answer is also incorrect/misleading since mode: 'no-cors' does not resolve CORS errors in Axios or Fetch for reading cross-origin responses, making it neither a valid security mitigation nor a correct technical resolution.",
+    "verified_at": "2026-06-02T15:44:58.145691Z"
+  },
+  "axios/axios/issue/6776": {
+    "status": "accepted",
+    "note": "The question is security-relevant because it concerns TLS version and cryptographic deprecation (a core transport-layer security concern), and the answer correctly references authoritative Node.js/OpenSSL TLS documentation to clarify that support depends on the runtime rather than Axios itself, making it technically valid and security-grounded.",
+    "verified_at": "2026-06-02T15:45:23.890246Z"
+  },
+  "axios/axios/issue/6625": {
+    "status": "accepted",
+    "note": "The question is security-relevant because it concerns correct parsing of HTTP response headers (specifically Set-Cookie handling, which can have security implications in session management), and the answer is valid because it references a fixed version (1.8.4) and demonstrates correct behavior of AxiosHeaders.from, making it a concrete and verifiable fix.",
+    "verified_at": "2026-06-02T15:45:52.717658Z"
+  },
+  "axios/axios/issue/6597": {
+    "status": "accepted",
+    "note": "the question is a valid security-relevant developer issue because it concerns correct implementation of auth header rotation in retry logic (a common control point for preventing token leakage and replay issues), and the answer provides a concrete, reproducible fix using a verified Axios version (1.7.7) and a working CodeSandbox reference showing how request mutation is preserved across retries.",
+    "verified_at": "2026-06-02T15:46:59.522303Z"
+  },
+  "axios/axios/issue/6571": {
+    "status": "rejected",
+    "note": "answer is insufficient because it only provides a generic webpack workaround without referencing the actual Axios change (e.g., process/browser import introduced in lib/utils.js as seen in the linked source) or explaining why the change triggers Node/webpack module resolution issues, making it non-authoritative and not tied to the underlying security or dependency context.",
+    "verified_at": "2026-06-02T15:48:57.679511Z"
+  },
+  "axios/axios/issue/6545": {
+    "status": "accepted",
+    "note": "the question is valid because it concerns an actively reported SSRF vulnerability (CVE-2024-39338) affecting Axios versions in production, and the answer is acceptable because it directly references the fixed release version (1.7.4), which is the authoritative remediation path for the security issue.",
+    "verified_at": "2026-06-02T15:49:33.738481Z"
+  },
+  "axios/axios/discussion/6542": {
+    "status": "accepted",
+    "note": "the question is valid because it describes a concrete SSRF risk in Axios URL handling logic, and the answer is acceptable because it clearly maps the issue to a patched release (1.7.4), providing a definitive remediation version for the vulnerability.",
+    "verified_at": "2026-06-02T15:50:08.651617Z"
+  },
+  "axios/axios/issue/6541": {
+    "status": "rejected",
+    "note": "he answer is insufficient because it only points to an unmerged pull request (#6539) without confirming a fixed release version, providing a secure workaround, or referencing an advisory/CVE status update, making it non-actionable for determining whether the vulnerability is actually resolved in a released package.",
+    "verified_at": "2026-06-02T15:50:46.773809Z"
+  },
+  "axios/axios/issue/6497": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-02T15:52:35.554447Z"
+  },
+  "axios/axios/issue/6463": {
+    "status": "accepted",
+    "note": "the question is valid because it concerns remediation of a confirmed SSRF vulnerability (CVE-2024-39338 / GHSA-8hc4-vh64-cxmj) in a specific Axios version range, and the answer is acceptable because it provides a concrete, actionable fix path via npm audit fix and explicitly identifies the patched version (1.7.4) as the resolution target.",
+    "verified_at": "2026-06-02T15:53:07.360368Z"
+  },
+  "axios/axios/issue/6459": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-02T15:54:18.506895Z"
+  },
+  "axios/axios/issue/6452": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-02T15:55:08.489690Z"
   }
 }
