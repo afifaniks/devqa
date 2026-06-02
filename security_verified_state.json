@@ -183,5 +183,250 @@
     "status": "rejected",
     "note": "",
     "verified_at": "2026-06-02T01:33:32.472165Z"
+  },
+  "python-pillow/Pillow/issue/7485": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-02T02:49:28.844360Z"
+  },
+  "python-pillow/Pillow/issue/7454": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-02T02:49:38.414749Z"
+  },
+  "python-pillow/Pillow/issue/7391": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-02T02:52:18.897416Z"
+  },
+  "python-pillow/Pillow/issue/7390": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-02T02:52:33.700213Z"
+  },
+  "python-pillow/Pillow/issue/7361": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-02T02:52:47.327449Z"
+  },
+  "python-pillow/Pillow/issue/7179": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-02T02:53:02.558103Z"
+  },
+  "python-pillow/Pillow/issue/7137": {
+    "status": "accepted",
+    "note": "negative report",
+    "verified_at": "2026-06-02T02:53:39.137902Z"
+  },
+  "python-pillow/Pillow/issue/7042": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-02T02:54:24.892606Z"
+  },
+  "python-pillow/Pillow/issue/7031": {
+    "status": "accepted",
+    "note": "negative report",
+    "verified_at": "2026-06-02T02:55:32.591609Z"
+  },
+  "python-pillow/Pillow/issue/6963": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-02T02:55:53.109334Z"
+  },
+  "python-pillow/Pillow/issue/6955": {
+    "status": "accepted",
+    "note": "negative report",
+    "verified_at": "2026-06-02T02:56:22.355145Z"
+  },
+  "python-pillow/Pillow/issue/6687": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-02T02:58:15.896448Z"
+  },
+  "python-pillow/Pillow/issue/6665": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-02T02:58:31.719953Z"
+  },
+  "python-pillow/Pillow/issue/6495": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-02T02:58:53.920777Z"
+  },
+  "python-pillow/Pillow/issue/6407": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-02T03:01:24.956779Z"
+  },
+  "rails/rails/issue/57474": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-02T03:02:07.375821Z"
+  },
+  "rails/rails/issue/57218": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-02T03:02:10.358890Z"
+  },
+  "rails/rails/issue/56997": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-02T03:02:11.164681Z"
+  },
+  "rails/rails/issue/56869": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-02T03:03:27.636342Z"
+  },
+  "rails/rails/issue/56789": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-02T03:03:52.227183Z"
+  },
+  "rails/rails/issue/56736": {
+    "status": "accepted",
+    "note": "cryptographic downgrade.",
+    "verified_at": "2026-06-02T03:10:29.770185Z"
+  },
+  "rails/rails/issue/56704": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-02T03:11:37.446953Z"
+  },
+  "rails/rails/issue/56684": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-02T03:13:29.907640Z"
+  },
+  "rails/rails/issue/56638": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-02T03:14:15.430015Z"
+  },
+  "rails/rails/issue/56480": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-02T03:14:18.892564Z"
+  },
+  "rails/rails/issue/56452": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-02T03:16:00.188454Z"
+  },
+  "rails/rails/issue/56391": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-02T03:19:29.516128Z"
+  },
+  "rails/rails/issue/56158": {
+    "status": "accepted",
+    "note": " this is a data integrity and atomicity issue",
+    "verified_at": "2026-06-02T03:21:42.303862Z"
+  },
+  "rails/rails/issue/56038": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-02T03:22:52.997216Z"
+  },
+  "rails/rails/issue/55886": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-02T03:24:22.587259Z"
+  },
+  "rails/rails/issue/55881": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-02T03:25:02.491996Z"
+  },
+  "rails/rails/issue/55866": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-02T03:25:30.047809Z"
+  },
+  "rails/rails/issue/55773": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-02T03:27:12.306565Z"
+  },
+  "rails/rails/issue/55764": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-02T03:36:44.405562Z"
+  },
+  "rails/rails/issue/55759": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-02T03:36:52.746815Z"
+  },
+  "rails/rails/issue/55695": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-02T03:37:10.742914Z"
+  },
+  "rails/rails/issue/55528": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-02T03:42:57.473914Z"
+  },
+  "rails/rails/issue/55508": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-02T03:44:31.466905Z"
+  },
+  "rails/rails/issue/55460": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-02T03:45:27.430866Z"
+  },
+  "rails/rails/issue/55438": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-02T03:48:38.807274Z"
+  },
+  "rails/rails/issue/55423": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-02T03:52:46.107891Z"
+  },
+  "rails/rails/issue/55373": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-02T03:54:40.440273Z"
+  },
+  "rails/rails/issue/55245": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-02T03:56:05.647549Z"
+  },
+  "rails/rails/issue/55219": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-02T03:56:53.005354Z"
+  },
+  "rails/rails/issue/55185": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-02T03:57:59.732222Z"
+  },
+  "rails/rails/issue/55132": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-02T03:59:26.198029Z"
+  },
+  "rails/rails/issue/55108": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-02T04:01:11.582957Z"
+  },
+  "rails/rails/issue/55040": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-02T04:01:26.320780Z"
+  },
+  "rails/rails/issue/54926": {
+    "status": "accepted",
+    "note": "The issue identifies a security weakness: the use of SHA-1 ",
+    "verified_at": "2026-06-02T04:02:20.139751Z"
   }
 }
