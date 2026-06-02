@@ -1,0 +1,187 @@
+{
+  "auth0/node-jsonwebtoken/issue/892": {
+    "status": "accepted",
+    "note": "THis is not directly a security breach but I think it is related to json web tokens or authentication",
+    "verified_at": "2026-06-01T16:10:43.744136Z"
+  },
+  "rails/rails/issue/54343": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-01T16:17:37.574655Z"
+  },
+  "pyca/cryptography/issue/14733": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-01T20:36:38.055032Z"
+  },
+  "pyca/cryptography/issue/14709": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-01T20:40:39.443159Z"
+  },
+  "pyca/cryptography/issue/14690": {
+    "status": "accepted",
+    "note": "duplicate issue",
+    "verified_at": "2026-06-01T20:44:14.987555Z"
+  },
+  "pyca/cryptography/issue/14207": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-01T21:16:10.260122Z"
+  },
+  "pyca/cryptography/issue/14073": {
+    "status": "rejected",
+    "note": "not a question, maintainer post",
+    "verified_at": "2026-06-01T21:19:26.743931Z"
+  },
+  "pyca/cryptography/issue/14013": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-01T21:28:38.620853Z"
+  },
+  "pyca/cryptography/issue/13843": {
+    "status": "accepted",
+    "note": "This bug reflects an intended bug with inputs. Somewhat security related?",
+    "verified_at": "2026-06-01T21:34:24.209821Z"
+  },
+  "pyca/cryptography/issue/13700": {
+    "status": "rejected",
+    "note": "Generic bug?",
+    "verified_at": "2026-06-01T21:35:23.324063Z"
+  },
+  "pyca/cryptography/issue/13684": {
+    "status": "rejected",
+    "note": "Seems like a generic issue",
+    "verified_at": "2026-06-01T21:36:29.943313Z"
+  },
+  "pyca/cryptography/issue/13538": {
+    "status": "accepted",
+    "note": "Private key parsing bug, but can we connect it to security?",
+    "verified_at": "2026-06-01T21:38:04.564450Z"
+  },
+  "python-pillow/Pillow/issue/9600": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-02T00:35:11.454850Z"
+  },
+  "python-pillow/Pillow/issue/9579": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-02T00:38:07.039162Z"
+  },
+  "python-pillow/Pillow/issue/9439": {
+    "status": "accepted",
+    "note": "This is a valid security question and the maintainer responds that they only support latest version",
+    "verified_at": "2026-06-02T00:39:25.028016Z"
+  },
+  "python-pillow/Pillow/issue/9361": {
+    "status": "accepted",
+    "note": "NPE/As input trigerred NPE could result in Denial of Service on the server side, it is a security issue, It is also a dup.",
+    "verified_at": "2026-06-02T00:51:55.399783Z"
+  },
+  "python-pillow/Pillow/issue/9295": {
+    "status": "accepted",
+    "note": "security/supply chain related inquiry",
+    "verified_at": "2026-06-02T00:53:51.169310Z"
+  },
+  "python-pillow/Pillow/issue/9178": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-02T00:54:02.694611Z"
+  },
+  "python-pillow/Pillow/issue/9162": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-02T00:55:06.253168Z"
+  },
+  "python-pillow/Pillow/issue/9101": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-02T00:58:39.446056Z"
+  },
+  "python-pillow/Pillow/issue/9079": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-02T00:59:00.604355Z"
+  },
+  "python-pillow/Pillow/issue/8935": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-02T01:00:17.203985Z"
+  },
+  "python-pillow/Pillow/issue/8706": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-02T01:04:05.931978Z"
+  },
+  "python-pillow/Pillow/issue/8669": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-02T01:04:19.919957Z"
+  },
+  "python-pillow/Pillow/issue/8546": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-02T01:05:17.741938Z"
+  },
+  "python-pillow/Pillow/issue/8439": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-02T01:14:41.188371Z"
+  },
+  "python-pillow/Pillow/issue/8405": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-02T01:17:01.546263Z"
+  },
+  "python-pillow/Pillow/issue/8363": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-02T01:17:22.673690Z"
+  },
+  "python-pillow/Pillow/issue/8073": {
+    "status": "accepted",
+    "note": "Code signing and notarization are critical security mechanisms on macOS used to verify the identity of the software author and ensure the integrity of the binary ",
+    "verified_at": "2026-06-02T01:21:57.551012Z"
+  },
+  "python-pillow/Pillow/issue/8047": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-02T01:22:53.036983Z"
+  },
+  "python-pillow/Pillow/issue/7910": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-02T01:26:48.082969Z"
+  },
+  "python-pillow/Pillow/issue/7876": {
+    "status": "accepted",
+    "note": "Denial of Service (DoS) could be trigerred with the first one",
+    "verified_at": "2026-06-02T01:30:15.514207Z"
+  },
+  "python-pillow/Pillow/issue/7873": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-02T01:30:53.592744Z"
+  },
+  "python-pillow/Pillow/issue/7626": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-02T01:31:56.444388Z"
+  },
+  "python-pillow/Pillow/issue/7610": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-02T01:32:10.060184Z"
+  },
+  "python-pillow/Pillow/issue/7518": {
+    "status": "accepted",
+    "note": "Refers to a previous comment",
+    "verified_at": "2026-06-02T01:33:06.246915Z"
+  },
+  "python-pillow/Pillow/issue/7504": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-02T01:33:32.472165Z"
+  }
+}
