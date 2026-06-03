@@ -623,5 +623,175 @@
     "status": "rejected",
     "note": "FastAPI Swagger UI authentication UX misunderstanding (non-security behavior explanation)",
     "verified_at": "2026-06-03T19:00:33.843043Z"
+  },
+  "fastapi/fastapi/issue/11104": {
+    "status": "accepted",
+    "note": "Security patch regression in multipart file upload parsing after GHSA-mitigating dependency upgrade (python-multipart)",
+    "verified_at": "2026-06-03T20:30:08.220033Z"
+  },
+  "fastapi/fastapi/issue/10177": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-03T20:30:31.177912Z"
+  },
+  "fastapi/fastapi/discussion/7176": {
+    "status": "rejected",
+    "note": "ASGI transport-layer limitation discussion (client certificate access), not a security vulnerability or fix-related Q&A",
+    "verified_at": "2026-06-03T20:30:48.095601Z"
+  },
+  "fastapi/fastapi/issue/5926": {
+    "status": "rejected",
+    "note": "Secure deployment/configuration question (WebSockets over TLS), not a security vulnerability or fix-related Q&A",
+    "verified_at": "2026-06-03T20:31:11.548333Z"
+  },
+  "fastapi/fastapi/issue/5899": {
+    "status": "rejected",
+    "note": "Infrastructure / proxy configuration issue (mixed content), not a framework security vulnerability Q&A.",
+    "verified_at": "2026-06-03T20:31:52.320509Z"
+  },
+  "fastapi/fastapi/issue/5837": {
+    "status": "accepted",
+    "note": "Security-relevant cookie configuration rule enforced by browsers (SameSite=None requires Secure).",
+    "verified_at": "2026-06-03T20:32:52.187326Z"
+  },
+  "fastapi/fastapi/issue/5832": {
+    "status": "rejected",
+    "note": "General multi-tenant database architecture guidance (Row-Level Security), not a security vulnerability or framework security behavior issue.",
+    "verified_at": "2026-06-03T20:33:50.081352Z"
+  },
+  "fastapi/fastapi/issue/5831": {
+    "status": "accepted",
+    "note": "Authentication/authorization enforcement for mounted web UI endpoint using middleware and request-based session validation.",
+    "verified_at": "2026-06-03T20:34:14.433254Z"
+  },
+  "fastapi/fastapi/issue/5818": {
+    "status": "accepted",
+    "note": "Host header validation behavior in TrustedHostMiddleware and correct handling of ports in allowed host configuration.",
+    "verified_at": "2026-06-03T20:34:33.757491Z"
+  },
+  "fastapi/fastapi/issue/5786": {
+    "status": "rejected",
+    "note": "General CORS/redirect behavior debugging issue, not a security vulnerability or security-relevant framework behavior.",
+    "verified_at": "2026-06-03T20:34:58.166980Z"
+  },
+  "fastapi/fastapi/issue/5778": {
+    "status": "rejected",
+    "note": "Deployment/routing configuration issue involving OAuth2 URL generation, not a security vulnerability or security-relevant behavior.",
+    "verified_at": "2026-06-03T20:35:26.635188Z"
+  },
+  "fastapi/fastapi/issue/5773": {
+    "status": "rejected",
+    "note": "Browser/Fetch API constraint on forbidden headers, not a project security vulnerability or security-relevant framework behavior.",
+    "verified_at": "2026-06-03T20:37:03.340240Z"
+  },
+  "fastapi/fastapi/issue/5756": {
+    "status": "rejected",
+    "note": "a runtime attribute bug in FastAPI\u2019s OpenAPI generator, not a security issue.",
+    "verified_at": "2026-06-03T20:38:11.133459Z"
+  },
+  "fastapi/fastapi/issue/5723": {
+    "status": "accepted",
+    "note": "Security-relevant dependency injection caching behavior where OAuth2 scopes affect FastAPI dependency resolution keys.",
+    "verified_at": "2026-06-03T20:39:03.933513Z"
+  },
+  "fastapi/fastapi/issue/5717": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T20:39:21.887780Z"
+  },
+  "fastapi/fastapi/issue/5676": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T20:39:32.084150Z"
+  },
+  "fastapi/fastapi/issue/5493": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T20:39:43.414739Z"
+  },
+  "fastapi/fastapi/issue/5484": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T20:40:03.267868Z"
+  },
+  "fastapi/fastapi/issue/5476": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T20:40:14.484142Z"
+  },
+  "fastapi/fastapi/issue/5386": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-03T20:40:30.755948Z"
+  },
+  "fastapi/fastapi/issue/5382": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T20:40:41.528857Z"
+  },
+  "fastapi/fastapi/issue/5334": {
+    "status": "accepted",
+    "note": "Accepted because the question is security-relevant (cookie storage failure caused by SameSite/Secure browser enforcement) and the answer is correctly grounded in MDN documentation with a concrete, accurate explanation of the SameSite=None + Secure requirement, making the Q/A pair both valid and useful for understanding real browser-enforced security behavior.",
+    "verified_at": "2026-06-03T20:41:35.748816Z"
+  },
+  "fastapi/fastapi/issue/5263": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T20:41:53.025651Z"
+  },
+  "fastapi/fastapi/issue/5229": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T20:42:05.753017Z"
+  },
+  "fastapi/fastapi/issue/5177": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-03T20:42:21.567150Z"
+  },
+  "fastapi/fastapi/issue/5086": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T20:42:48.505930Z"
+  },
+  "fastapi/fastapi/issue/5017": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-03T20:43:12.382622Z"
+  },
+  "fastapi/fastapi/issue/4990": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-03T20:43:33.884585Z"
+  },
+  "fastapi/fastapi/issue/4962": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-03T20:43:53.466214Z"
+  },
+  "fastapi/fastapi/issue/4946": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-03T20:44:09.300914Z"
+  },
+  "fastapi/fastapi/issue/4882": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T20:44:24.520523Z"
+  },
+  "fastapi/fastapi/issue/4845": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T20:44:35.731904Z"
+  },
+  "fastapi/fastapi/issue/4833": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-03T20:44:49.436748Z"
+  },
+  "fastapi/fastapi/issue/4768": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-03T20:45:20.700259Z"
   }
 }
