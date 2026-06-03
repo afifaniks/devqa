@@ -428,5 +428,10 @@
     "status": "accepted",
     "note": "The issue identifies a security weakness: the use of SHA-1 ",
     "verified_at": "2026-06-02T04:02:20.139751Z"
+  },
+  "stripe/stripe-node/issue/2534": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-02T19:54:25.533527Z"
   }
 }
