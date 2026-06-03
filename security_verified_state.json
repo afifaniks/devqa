@@ -498,5 +498,130 @@
     "status": "rejected",
     "note": "Rejected because it is a router binding regression/debugging issue after an Express update and does not involve a vulnerability, exploit, or security mitigation.",
     "verified_at": "2026-06-02T21:49:50.665772Z"
+  },
+  "expressjs/express/issue/5968": {
+    "status": "accepted",
+    "note": "Accepted because the question is about a known security advisory (GHSA-9wv6-86v2-598j) and asks which path-to-regexp versions are safe, directly impacting vulnerability remediation.",
+    "verified_at": "2026-06-03T18:48:42.348714Z"
+  },
+  "expressjs/express/issue/5965": {
+    "status": "rejected",
+    "note": "Rejected because this is primarily a CORS configuration/debugging issue causing a missing JWT header, not a security vulnerability, exploit, or mitigation question.",
+    "verified_at": "2026-06-03T18:49:01.265288Z"
+  },
+  "expressjs/express/issue/5955": {
+    "status": "rejected",
+    "note": "Rejected because although the question references upgrading for CVEs, the actual issue is a runtime regression/crash in path-to-regexp route handling, not a security vulnerability or mitigation question.",
+    "verified_at": "2026-06-03T18:49:27.518787Z"
+  },
+  "expressjs/express/issue/5948": {
+    "status": "accepted",
+    "note": "Accepted because the question explicitly asks whether a security advisory/ReDoS issue (GHSA-9wv6-86v2-598j) motivated a breaking change in Express 5 route handling. The answer is valid since it explains the DoS/ReDoS security rationale for removing regex route support and points to safer alternatives and documentation.",
+    "verified_at": "2026-06-03T18:49:56.298522Z"
+  },
+  "expressjs/express/issue/5947": {
+    "status": "accepted",
+    "note": "Accepted because the question concerns a known transitive dependency vulnerability (send <0.19.0, GHSA-m6fv-jmcg-4jfg) causing npm audit failures in Express 4.20.0 and asks for remediation.",
+    "verified_at": "2026-06-03T18:50:21.240790Z"
+  },
+  "expressjs/express/issue/5943": {
+    "status": "accepted",
+    "note": "Accepted because the question is about dependency pinning strategy in Express and its security implications, which is a valid ecosystem/security design concern. The answer is valid because it correctly explains the historical reason for strict pinning and the transition toward looser semver ranges in Express v5, which directly addresses the maintenance/security rationale.",
+    "verified_at": "2026-06-03T18:50:43.611793Z"
+  },
+  "expressjs/express/discussion/5852": {
+    "status": "accepted",
+    "note": "Accepted because the question is about a real CORS preflight behavior issue in browsers/Express integration, which is a valid security-relevant web behavior (same-origin policy enforcement). The answer is valid since it correctly explains OPTIONS preflight behavior and provides proper Express CORS middleware and manual handling patterns, which are standard and correct mitigations.",
+    "verified_at": "2026-06-03T18:51:11.062156Z"
+  },
+  "expressjs/express/issue/5698": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-03T18:51:28.538396Z"
+  },
+  "expressjs/express/issue/5688": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-03T18:51:40.168405Z"
+  },
+  "expressjs/express/issue/5651": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-03T18:51:57.748357Z"
+  },
+  "expressjs/express/issue/5626": {
+    "status": "pending",
+    "note": "Rejected because although it is framed as a security upgrade request, the underlying issue is a false vulnerability report caused by confusing two different cookie packages (Rust vs JS ecosystem), not an actionable Express/Node security fix.",
+    "verified_at": "2026-06-03T18:52:28.456182Z"
+  },
+  "expressjs/express/issue/5516": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-03T18:52:50.215632Z"
+  },
+  "expressjs/express/issue/5459": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-03T18:53:16.887597Z"
+  },
+  "expressjs/express/issue/5449": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-03T18:53:31.261719Z"
+  },
+  "expressjs/express/issue/5353": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-03T18:53:46.332315Z"
+  },
+  "expressjs/express/issue/5344": {
+    "status": "accepted",
+    "note": "Accepted because the question is about header typing and runtime behavior in Express/Node, which is valid framework-level behavior. The answer is valid since it correctly states that Express does not transform headers (they come from Node.js), and accurately identifies that set-cookie is the only header that Node may represent as an array in req.headers, while also correctly noting it is primarily a response header rather than a request header.",
+    "verified_at": "2026-06-03T18:54:12.069710Z"
+  },
+  "expressjs/express/issue/5292": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-03T18:54:31.718477Z"
+  },
+  "expressjs/express/issue/5275": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-03T18:55:12.743630Z"
+  },
+  "expressjs/express/issue/5177": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T18:55:41.065383Z"
+  },
+  "fastapi/fastapi/issue/14454": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T18:58:13.923862Z"
+  },
+  "fastapi/fastapi/issue/14271": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T18:58:29.041288Z"
+  },
+  "fastapi/fastapi/issue/13533": {
+    "status": "rejected",
+    "note": "FastAPI form parsing regression (non-security framework bug, CVE mentioned but not central to issue)",
+    "verified_at": "2026-06-03T18:59:13.647568Z"
+  },
+  "fastapi/fastapi/issue/13471": {
+    "status": "accepted",
+    "note": "Standards interpretation issue affecting HTTP Basic authentication behavior (realm optionality, RFC 7235 vs RFC 7617 evolution)",
+    "verified_at": "2026-06-03T18:59:41.579431Z"
+  },
+  "fastapi/fastapi/issue/12459": {
+    "status": "rejected",
+    "note": "FastAPI Swagger UI limitation (non-security documentation/tooling behavior)",
+    "verified_at": "2026-06-03T19:00:06.034803Z"
+  },
+  "fastapi/fastapi/issue/11759": {
+    "status": "rejected",
+    "note": "FastAPI Swagger UI authentication UX misunderstanding (non-security behavior explanation)",
+    "verified_at": "2026-06-03T19:00:33.843043Z"
   }
 }
