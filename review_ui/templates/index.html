@@ -44,6 +44,11 @@
   <div class="topbar-right">
     <a class="btn" href="/stats" target="_blank" rel="noopener">📊 Stats</a>
     <a class="btn" href="/taxonomy" target="_blank" rel="noopener">📋 Taxonomy</a>
+    <button class="btn" x-show="IS_SECURITY"
+            :class="autoDiscuss ? 'btn-discuss' : ''"
+            @click="autoDiscuss=!autoDiscuss; localStorage.setItem('autoDiscuss', autoDiscuss?'1':'0')"
+            :title="autoDiscuss ? 'Auto-discuss ON — click to disable' : 'Auto-discuss OFF — click to enable'"
+            x-text="autoDiscuss ? '💬 Auto-discuss ON' : '💬 Auto-discuss OFF'"></button>
     <button class="btn" @click="toggleTheme()" x-text="isDark ? '☀ Light' : '🌙 Dark'"></button>
     <button class="btn" @click="reloadSources()" :disabled="reloading" x-text="reloading ? 'Reloading…' : '↺ Reload'"></button>
     <button class="btn btn-primary" @click="exportData()">↓ Export Accepted</button>
@@ -520,6 +525,7 @@
       filterRepo:'', filterQid:'', filterStatus:'', filterVerifiability:'', searchQuery:'',
       repos:[], qids:[], note:'', assignQid:'', sortedQids:[],
       isDark: document.documentElement.classList.contains('dark'),
+      autoDiscuss: localStorage.getItem('autoDiscuss') === '1',
       reloading: false,
       toastMsg:'', toastType:'', toastVisible:false, toastTimer:null,
 
@@ -579,6 +585,9 @@
         this.note=this.pair.note||'';
         this.assignQid=this.pair.question_id||'';
         this.$nextTick(()=>document.getElementById('detail-content')?.scrollTo(0,0));
+        if (IS_SECURITY && this.autoDiscuss && this.pair?.chat_id) {
+          window.open(`/security/chat?id=${this.pair.chat_id}&autorun=1`, '_blank');
+        }
       },
 
       async saveAssignment() {

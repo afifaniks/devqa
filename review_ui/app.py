@@ -800,14 +800,19 @@ async def security_chat_page():
 
 @app.get("/api/security/chat/models")
 def get_chat_models():
+    from utils.ollama_client import STAGE1_MODEL
     import urllib.request
+    default = STAGE1_MODEL
     try:
         with urllib.request.urlopen("http://localhost:11434/api/tags", timeout=3) as r:
             data = json.loads(r.read())
-        names = [m["name"] for m in data.get("models", [])]
-        return {"models": sorted(names)}
+        names = sorted([m["name"] for m in data.get("models", [])])
+        # Put the default model first regardless of sort order
+        if default in names:
+            names = [default] + [n for n in names if n != default]
+        return {"models": names, "default": default}
     except Exception:
-        return {"models": []}
+        return {"models": [], "default": default}
 
 
 @app.get("/api/security/chat/context")

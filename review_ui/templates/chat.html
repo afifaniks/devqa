@@ -208,8 +208,7 @@
   <div id="input-row">
     <textarea id="user-input" x-ref="input" x-model="draft"
               placeholder="Ask about this pair… (Enter to send, Shift+Enter for newline)"
-              @keydown.enter.exact.prevent="send()"
-              @keydown.enter.shift.exact="/* allow newline */"
+              @keydown="if($event.key==='Enter'&&!$event.shiftKey){$event.preventDefault();send()}"
               @input="autoResize($event.target)"
               rows="1"></textarea>
     <button id="send-btn" class="btn btn-primary" @click="send()"
@@ -225,13 +224,14 @@
   }
 
   function chat() {
-    const CHAT_ID = new URLSearchParams(location.search).get('id') || '';
+    const CHAT_ID  = new URLSearchParams(location.search).get('id') || '';
+    const AUTORUN  = new URLSearchParams(location.search).get('autorun') === '1';
 
     return {
       CHAT_ID,
       pair: null,
       messages: [],
-      draft: '',
+      draft: 'Does this thread have any actual security related QA pair?',
       loading: false,
       error: '',
       ctxOpen: true,
@@ -245,6 +245,9 @@
           return;
         }
         await Promise.all([this.loadPair(), this.loadModels()]);
+        if (AUTORUN && this.pair && this.draft.trim()) {
+          this.send();
+        }
       },
 
       async loadPair() {
@@ -262,9 +265,7 @@
         try {
           const data = await fetch('/api/security/chat/models').then(r => r.json());
           this.availableModels = data.models || [];
-          if (this.availableModels.length > 0 && !this.selectedModel) {
-            this.selectedModel = this.availableModels[0];
-          }
+          this.selectedModel = data.default || (this.availableModels[0] ?? '');
         } catch {}
       },
 
