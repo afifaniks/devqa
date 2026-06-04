@@ -793,5 +793,165 @@
     "status": "accepted",
     "note": "",
     "verified_at": "2026-06-03T20:45:20.700259Z"
+  },
+  "psf/requests/issue/7335": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T18:34:45.054021Z"
+  },
+  "psf/requests/issue/7247": {
+    "status": "accepted",
+    "note": "Accepted because the question raises a legitimate software supply-chain/security concern and the answer provides source-backed evidence of reproducibility and auditability.",
+    "verified_at": "2026-06-04T18:35:52.418202Z"
+  },
+  "psf/requests/issue/7209": {
+    "status": "accepted",
+    "note": "Accepted because the question concerns TLS/SNI-related behavior and the answer provides protocol-backed reasoning with concrete upstream references.",
+    "verified_at": "2026-06-04T18:36:16.940298Z"
+  },
+  "psf/requests/issue/7085": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T18:36:37.707873Z"
+  },
+  "psf/requests/issue/7035": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T18:37:02.366065Z"
+  },
+  "psf/requests/issue/7014": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T18:37:19.820108Z"
+  },
+  "psf/requests/issue/7013": {
+    "status": "accepted",
+    "note": "Accepted because the question involves a supply-chain integrity concern and the answer confirms resolution with a concrete fixed release version.",
+    "verified_at": "2026-06-04T18:37:35.595338Z"
+  },
+  "psf/requests/issue/6981": {
+    "status": "accepted",
+    "note": "Accepted because the question involves a security-relevant proxy leakage scenario and the answer provides correct, documented mitigation strategies grounded in Requests session proxy handling.",
+    "verified_at": "2026-06-04T18:38:33.578555Z"
+  },
+  "psf/requests/issue/6978": {
+    "status": "accepted",
+    "note": "Accepted because the question addresses TLS certificate chain validation and the answer provides a correct, implementation-level fix grounded in Python SSL security controls.",
+    "verified_at": "2026-06-04T18:38:59.597259Z"
+  },
+  "psf/requests/issue/6976": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T18:39:28.298269Z"
+  },
+  "psf/requests/issue/6974": {
+    "status": "accepted",
+    "note": "Accepted because the issue is a TLS certificate validation regression and the answer correctly anchors it to a CPython/OpenSSL change with a concrete reproduction path.",
+    "verified_at": "2026-06-04T18:40:05.963607Z"
+  },
+  "psf/requests/issue/6969": {
+    "status": "accepted",
+    "note": "Accepted because the question is about TLS hostname verification and the answer correctly identifies certificate misconfiguration with a concrete reference to correct implementation practices.",
+    "verified_at": "2026-06-04T18:47:30.925282Z"
+  },
+  "psf/requests/issue/6964": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T18:47:45.226877Z"
+  },
+  "psf/requests/issue/6952": {
+    "status": "accepted",
+    "note": "Accepted because the question is about CVE applicability to current versions and the answer correctly resolves it using explicit fixed-version references and authoritative clarification.",
+    "verified_at": "2026-06-04T18:48:00.433734Z"
+  },
+  "psf/requests/issue/6947": {
+    "status": "accepted",
+    "note": "Accepted because the issue is about TLS verification behavior and the answer gives a concrete, implementation-level fix tied to urllib3 handling.",
+    "verified_at": "2026-06-04T18:48:19.764016Z"
+  },
+  "psf/requests/issue/6946": {
+    "status": "accepted",
+    "note": "Accepted because the question is about CVE applicability and the answer clearly resolves scope using version-based security policy and historical patch context.",
+    "verified_at": "2026-06-04T18:48:42.315140Z"
+  },
+  "psf/requests/issue/6945": {
+    "status": "accepted",
+    "note": "Accepted because the question concerns TLS verification inconsistency and the answer correctly identifies strict certificate validation rules with authoritative upstream references.",
+    "verified_at": "2026-06-04T18:49:04.984006Z"
+  },
+  "psf/requests/issue/6934": {
+    "status": "accepted",
+    "note": "Accepted because the issue is a dependency-induced TLS regression and the answer correctly confirms resolution via a specific patched release.",
+    "verified_at": "2026-06-04T18:49:33.692682Z"
+  },
+  "psf/requests/issue/6928": {
+    "status": "accepted",
+    "note": "Accepted because the issue is a credential-handling regression and the answer correctly traces the root cause and points to an upstream fix with a concrete patch.",
+    "verified_at": "2026-06-04T18:49:56.024070Z"
+  },
+  "psf/requests/issue/6877": {
+    "status": "accepted",
+    "note": "Accepted because the question concerns exception lifecycle/security API design and the answer provides explicit deprecation and documentation changes with concrete PRs.",
+    "verified_at": "2026-06-04T18:50:22.107423Z"
+  },
+  "psf/requests/issue/6872": {
+    "status": "accepted",
+    "note": "Accepted because the issue is a real multithreaded SSLContext safety problem and the answer provides a correct, practical isolation-based fix supported by SSL threading semantics.",
+    "verified_at": "2026-06-04T18:50:40.123913Z"
+  },
+  "psf/requests/issue/6868": {
+    "status": "accepted",
+    "note": "Accepted because the question concerns SSL verification failure diagnostics and the answer correctly identifies it as a resolved regression with a fixed release.",
+    "verified_at": "2026-06-04T18:51:09.032319Z"
+  },
+  "psf/requests/issue/6859": {
+    "status": "accepted",
+    "note": "Accepted because the issue is a valid documentation/security-configuration clarification and the answer provides an explicit PR-based fix.",
+    "verified_at": "2026-06-04T18:51:56.495827Z"
+  },
+  "psf/requests/issue/6831": {
+    "status": "accepted",
+    "note": "Accepted because the issue is a valid TLS cipher regression after dependency upgrade and the answer correctly attributes it to urllib3 2.x removal of DEFAULT_CIPHERS.",
+    "verified_at": "2026-06-04T18:52:36.341684Z"
+  },
+  "psf/requests/issue/6815": {
+    "status": "accepted",
+    "note": "Accepted because the issue is environment-triggered SSL key logging behavior and the answer correctly identifies and resolves the root cause via configuration.",
+    "verified_at": "2026-06-04T18:53:09.981039Z"
+  },
+  "psf/requests/issue/6810": {
+    "status": "accepted",
+    "note": "Accepted because the question is a valid FIPS/MD5 compatibility issue and the answer correctly provides the standard usedforsecurity=False workaround used to restore HTTP Digest Auth functionality under FIPS constraints.",
+    "verified_at": "2026-06-04T18:54:13.629003Z"
+  },
+  "psf/requests/issue/6790": {
+    "status": "accepted",
+    "note": "Accepted because the issue is a valid SSLContext initialization concern and the answer correctly anchors the resolution in an upstream PR addressing the behavior.",
+    "verified_at": "2026-06-04T18:54:39.971739Z"
+  },
+  "psf/requests/issue/6784": {
+    "status": "accepted",
+    "note": "Accepted because the issue is a valid URL normalization regression affecting auth flows and the answer correctly attributes it to an upstream fix in urllib3.",
+    "verified_at": "2026-06-04T18:55:39.856799Z"
+  },
+  "psf/requests/issue/6764": {
+    "status": "accepted",
+    "note": "Accepted because the question concerns a valid permission/security regression and the answer correctly identifies its removal in Requests 2.32.5 as the fix.",
+    "verified_at": "2026-06-04T18:57:01.554397Z"
+  },
+  "psf/requests/issue/6745": {
+    "status": "accepted",
+    "note": "Accepted because the issue is a valid TLS-related segmentation fault and the answer correctly identifies the fixing PR as resolution evidence.",
+    "verified_at": "2026-06-04T18:58:34.853649Z"
+  },
+  "psf/requests/issue/6736": {
+    "status": "accepted",
+    "note": "Accepted because the issue is a valid TLS CA-loading regression and the answer correctly provides version-based and explicit CA-loading fixes.",
+    "verified_at": "2026-06-04T18:58:53.283638Z"
+  },
+  "psf/requests/issue/6733": {
+    "status": "accepted",
+    "note": "Accepted because the issue is a valid security-driven API regression and the answer correctly links it to the CVE fix and its compatibility workaround.",
+    "verified_at": "2026-06-04T18:59:09.878636Z"
   }
 }
