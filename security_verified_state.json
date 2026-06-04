@@ -433,5 +433,160 @@
     "status": "accepted",
     "note": "",
     "verified_at": "2026-06-02T19:54:25.533527Z"
+  },
+  "stripe/stripe-node/issue/2684": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T22:18:05.403347Z"
+  },
+  "stripe/stripe-node/issue/2651": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T22:19:34.316833Z"
+  },
+  "stripe/stripe-node/issue/2530": {
+    "status": "accepted",
+    "note": "dup of 2534",
+    "verified_at": "2026-06-03T22:20:22.908420Z"
+  },
+  "stripe/stripe-node/issue/2207": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T22:20:56.762702Z"
+  },
+  "stripe/stripe-node/issue/2006": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T22:23:02.971739Z"
+  },
+  "stripe/stripe-node/issue/1886": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T22:23:51.973354Z"
+  },
+  "stripe/stripe-node/issue/1784": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-03T22:25:29.078190Z"
+  },
+  "stripe/stripe-node/issue/1778": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T22:26:10.177105Z"
+  },
+  "stripe/stripe-node/issue/1768": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T22:27:41.302157Z"
+  },
+  "stripe/stripe-node/issue/1490": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T22:28:57.806949Z"
+  },
+  "stripe/stripe-node/issue/1285": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T22:29:13.604225Z"
+  },
+  "stripe/stripe-node/issue/1264": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T22:29:44.797985Z"
+  },
+  "stripe/stripe-node/issue/1224": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T22:31:11.505273Z"
+  },
+  "stripe/stripe-node/issue/1214": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T22:32:07.110363Z"
+  },
+  "stripe/stripe-node/issue/1161": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T22:32:21.551064Z"
+  },
+  "stripe/stripe-node/issue/1085": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T22:32:27.002833Z"
+  },
+  "stripe/stripe-node/issue/1067": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T22:32:37.615463Z"
+  },
+  "stripe/stripe-node/issue/877": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-03T22:40:49.270563Z"
+  },
+  "stripe/stripe-node/issue/844": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-03T22:41:44.088756Z"
+  },
+  "stripe/stripe-node/issue/831": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T22:42:03.298015Z"
+  },
+  "stripe/stripe-node/issue/811": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T22:43:16.516834Z"
+  },
+  "stripe/stripe-node/issue/796": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T22:43:27.155097Z"
+  },
+  "stripe/stripe-node/issue/786": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T22:43:39.218166Z"
+  },
+  "stripe/stripe-node/issue/761": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T22:43:53.972173Z"
+  },
+  "stripe/stripe-node/issue/676": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T22:44:54.876410Z"
+  },
+  "stripe/stripe-node/issue/654": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T22:46:00.198774Z"
+  },
+  "urllib3/urllib3/issue/4945": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T22:46:40.177472Z"
+  },
+  "urllib3/urllib3/issue/3734": {
+    "status": "accepted",
+    "note": "security related regression",
+    "verified_at": "2026-06-03T22:47:54.722351Z"
+  },
+  "urllib3/urllib3/issue/3675": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T22:47:58.488708Z"
+  },
+  "urllib3/urllib3/issue/3640": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-03T22:50:09.094955Z"
+  },
+  "urllib3/urllib3/issue/3619": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T22:50:25.797057Z"
   }
 }
