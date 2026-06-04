@@ -1238,5 +1238,195 @@
     "status": "accepted",
     "note": "",
     "verified_at": "2026-06-04T21:19:40.954951Z"
+  },
+  "python-pillow/Pillow/issue/9600": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:23:58.129033Z"
+  },
+  "python-pillow/Pillow/issue/9579": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T21:24:12.253822Z"
+  },
+  "python-pillow/Pillow/issue/9439": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:24:21.208373Z"
+  },
+  "python-pillow/Pillow/issue/9361": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:24:29.754091Z"
+  },
+  "python-pillow/Pillow/issue/9295": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T21:24:40.755392Z"
+  },
+  "python-pillow/Pillow/issue/9178": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T21:25:08.456058Z"
+  },
+  "python-pillow/Pillow/issue/9162": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T21:25:26.483126Z"
+  },
+  "python-pillow/Pillow/issue/9079": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T21:25:45.310501Z"
+  },
+  "python-pillow/Pillow/issue/8935": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:25:59.641721Z"
+  },
+  "python-pillow/Pillow/issue/8706": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:26:09.329443Z"
+  },
+  "python-pillow/Pillow/issue/8669": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:26:19.869449Z"
+  },
+  "python-pillow/Pillow/issue/8546": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:26:28.938684Z"
+  },
+  "python-pillow/Pillow/issue/8439": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:26:48.250024Z"
+  },
+  "python-pillow/Pillow/issue/8405": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T21:26:59.025157Z"
+  },
+  "python-pillow/Pillow/issue/8363": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:27:09.536216Z"
+  },
+  "python-pillow/Pillow/issue/8073": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T21:27:22.731860Z"
+  },
+  "python-pillow/Pillow/issue/8047": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T21:27:32.957537Z"
+  },
+  "python-pillow/Pillow/issue/7910": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T21:27:50.478522Z"
+  },
+  "python-pillow/Pillow/issue/7876": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:28:04.994577Z"
+  },
+  "python-pillow/Pillow/issue/7873": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T21:28:15.393226Z"
+  },
+  "python-pillow/Pillow/issue/7626": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:28:23.989130Z"
+  },
+  "python-pillow/Pillow/issue/7518": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:28:41.484864Z"
+  },
+  "python-pillow/Pillow/issue/7504": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:28:54.293526Z"
+  },
+  "python-pillow/Pillow/issue/7485": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:29:05.065500Z"
+  },
+  "python-pillow/Pillow/issue/7454": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T21:29:17.364347Z"
+  },
+  "python-pillow/Pillow/issue/7391": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:29:43.962724Z"
+  },
+  "python-pillow/Pillow/issue/7390": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:29:54.569092Z"
+  },
+  "python-pillow/Pillow/issue/7361": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T21:30:41.745993Z"
+  },
+  "python-pillow/Pillow/issue/7179": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:30:57.151617Z"
+  },
+  "python-pillow/Pillow/issue/7137": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:31:22.667394Z"
+  },
+  "python-pillow/Pillow/issue/7042": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:31:38.479842Z"
+  },
+  "python-pillow/Pillow/issue/7031": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T21:32:19.433180Z"
+  },
+  "python-pillow/Pillow/issue/6963": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:32:30.754974Z"
+  },
+  "python-pillow/Pillow/issue/6955": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:33:40.709204Z"
+  },
+  "python-pillow/Pillow/issue/6687": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:34:04.842014Z"
+  },
+  "python-pillow/Pillow/issue/6665": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:34:19.320287Z"
+  },
+  "python-pillow/Pillow/issue/6495": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T21:34:31.225106Z"
+  },
+  "python-pillow/Pillow/issue/6407": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T21:34:55.679088Z"
   }
 }
