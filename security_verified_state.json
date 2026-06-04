@@ -953,5 +953,290 @@
     "status": "accepted",
     "note": "Accepted because the issue is a valid security-driven API regression and the answer correctly links it to the CVE fix and its compatibility workaround.",
     "verified_at": "2026-06-04T18:59:09.878636Z"
+  },
+  "psf/requests/issue/6726": {
+    "status": "accepted",
+    "note": "Accepted because the issue is a valid SSL context isolation/security regression and the answer provides a concrete fix commit addressing the certificate handling bug.",
+    "verified_at": "2026-06-04T19:44:44.069168Z"
+  },
+  "psf/requests/issue/6717": {
+    "status": "accepted",
+    "note": "Accepted because the question concerns a legitimate SSLContext behavior change and the answer provides a correct adapter-based fix aligned with Requests internals.",
+    "verified_at": "2026-06-04T19:45:06.184991Z"
+  },
+  "psf/requests/issue/6715": {
+    "status": "accepted",
+    "note": "Accepted because the question is about TLS adapter compatibility after a security-related upgrade and the answer confirms stable behavior in 2.32.3 with correct migration guidance.",
+    "verified_at": "2026-06-04T19:45:38.699379Z"
+  },
+  "psf/requests/issue/6707": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:45:54.296197Z"
+  },
+  "psf/requests/issue/6706": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:46:03.070283Z"
+  },
+  "psf/requests/issue/6690": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:46:13.629293Z"
+  },
+  "psf/requests/issue/6669": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:46:25.619382Z"
+  },
+  "psf/requests/issue/6660": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:46:41.393622Z"
+  },
+  "psf/requests/issue/6628": {
+    "status": "rejected",
+    "note": "Rejected because although the question is valid, the answer only references a PR without confirming a fix or providing technical validation or resolution status.",
+    "verified_at": "2026-06-04T19:47:02.673615Z"
+  },
+  "psf/requests/issue/6616": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:47:16.483956Z"
+  },
+  "psf/requests/issue/6569": {
+    "status": "rejected",
+    "note": "Rejected because the answer is off-topic relative to the SSL error and does not establish a clear technical connection or resolution.",
+    "verified_at": "2026-06-04T19:47:33.846968Z"
+  },
+  "pyca/cryptography/issue/14733": {
+    "status": "rejected",
+    "note": "Rejected because although the workaround is relevant, the answer lacks clear causal explanation and direct validation of the ARM/OpenSSL/Docker interaction causing the crash.",
+    "verified_at": "2026-06-04T19:50:02.633186Z"
+  },
+  "pyca/cryptography/issue/14709": {
+    "status": "rejected",
+    "note": "Rejected because the answer is only a doc link and does not provide actionable guidance or explain how to perform the requested hashing/signing task.",
+    "verified_at": "2026-06-04T19:50:31.878565Z"
+  },
+  "pyca/cryptography/issue/14690": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:50:49.411322Z"
+  },
+  "pyca/cryptography/issue/14592": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:50:58.245749Z"
+  },
+  "pyca/cryptography/issue/14477": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:51:07.311314Z"
+  },
+  "pyca/cryptography/issue/14334": {
+    "status": "accepted",
+    "note": "Accepted because the question is a valid ECC compatibility regression and the answer correctly redirects to the upstream fix PR.",
+    "verified_at": "2026-06-04T19:51:42.464718Z"
+  },
+  "pyca/cryptography/issue/14207": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:51:53.586377Z"
+  },
+  "pyca/cryptography/issue/14173": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:52:08.733939Z"
+  },
+  "pyca/cryptography/issue/14073": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T19:52:18.477257Z"
+  },
+  "pyca/cryptography/issue/14048": {
+    "status": "accepted",
+    "note": "Accepted because the question is a valid TLS/DH performance/security issue and the answer correctly links it to a known fix in LibreSSL.",
+    "verified_at": "2026-06-04T19:52:35.365138Z"
+  },
+  "pyca/cryptography/issue/14013": {
+    "status": "accepted",
+    "note": "Accepted because the question is a valid ASN.1/RSA key parsing issue and the answer correctly points to the upstream fix commit.",
+    "verified_at": "2026-06-04T19:52:53.913953Z"
+  },
+  "pyca/cryptography/issue/13843": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:53:10.276336Z"
+  },
+  "pyca/cryptography/issue/13700": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:53:27.653663Z"
+  },
+  "pyca/cryptography/issue/13684": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:53:37.132799Z"
+  },
+  "pyca/cryptography/issue/13538": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:53:46.112233Z"
+  },
+  "pyca/cryptography/issue/13525": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T19:53:54.061682Z"
+  },
+  "pyca/cryptography/issue/13475": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:54:03.206634Z"
+  },
+  "pyca/cryptography/issue/13468": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:54:15.962201Z"
+  },
+  "pyca/cryptography/issue/13349": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:54:28.027008Z"
+  },
+  "pyca/cryptography/issue/13287": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:54:37.523874Z"
+  },
+  "pyca/cryptography/issue/13219": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:54:46.402764Z"
+  },
+  "pyca/cryptography/issue/13125": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:54:55.043945Z"
+  },
+  "pyca/cryptography/issue/13109": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:55:04.772901Z"
+  },
+  "pyca/cryptography/issue/13051": {
+    "status": "accepted",
+    "note": "Accepted because the question is a valid RFC 5280 compliance concern and the answer correctly analyzes the specification to confirm no explicit violation.",
+    "verified_at": "2026-06-04T19:55:49.505686Z"
+  },
+  "pyca/cryptography/issue/13034": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:56:04.516921Z"
+  },
+  "pyca/cryptography/issue/13030": {
+    "status": "accepted",
+    "note": "Accepted because the question is a valid cryptographic configuration issue and the answer correctly provides the appropriate lower-level API workaround.",
+    "verified_at": "2026-06-04T19:56:26.509110Z"
+  },
+  "pyca/cryptography/issue/13002": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:56:41.781543Z"
+  },
+  "pyca/cryptography/issue/12999": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:56:51.066727Z"
+  },
+  "pyca/cryptography/issue/12969": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:57:13.853408Z"
+  },
+  "pyca/cryptography/issue/12963": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:57:21.970970Z"
+  },
+  "pyca/cryptography/issue/12949": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:57:36.186064Z"
+  },
+  "pyca/cryptography/issue/12920": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:57:55.105379Z"
+  },
+  "pyca/cryptography/issue/12824": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:58:08.808813Z"
+  },
+  "pyca/cryptography/issue/12822": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:58:23.840329Z"
+  },
+  "pyca/cryptography/issue/12780": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:15:25.065509Z"
+  },
+  "pyca/cryptography/issue/12748": {
+    "status": "accepted",
+    "note": "Accepted because the question is a valid standards compliance concern and the answer clearly explains intentional leniency in parsing behavior.",
+    "verified_at": "2026-06-04T21:15:42.365823Z"
+  },
+  "pyca/cryptography/issue/12612": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:16:08.750297Z"
+  },
+  "pyca/cryptography/issue/12610": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:16:17.844349Z"
+  },
+  "pyca/cryptography/issue/12554": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:16:32.537683Z"
+  },
+  "pyca/cryptography/issue/12464": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:16:44.598157Z"
+  },
+  "pyca/cryptography/issue/12406": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:16:56.122575Z"
+  },
+  "pyca/cryptography/issue/12361": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:17:05.647891Z"
+  },
+  "pyca/cryptography/issue/12359": {
+    "status": "accepted",
+    "note": "Accepted because the question is a valid TLS/PKI workflow question and the answer correctly points to the appropriate standard library interface.",
+    "verified_at": "2026-06-04T21:18:05.912445Z"
+  },
+  "pyca/cryptography/issue/12332": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:18:41.390188Z"
+  },
+  "pyca/cryptography/issue/12301": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:19:26.591105Z"
+  },
+  "pyca/cryptography/issue/12258": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:19:40.954951Z"
   }
 }
