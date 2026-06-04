@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""FastAPI review UI — three separate pipelines.
+"""FastAPI review UI — three separate pipelines + benchmark browser.
 
 /          → F&M classified pairs   (natural_qa_pairs_dual_stage.jsonl)
 /open      → Open-coded pairs       (open_qa_pairs.jsonl)
 /security  → Security QA pairs      (security_qa_pairs.jsonl)
+/benchmark → Security benchmark     (dataset/security_benchmark.jsonl)
 """
 
 import json
@@ -32,6 +33,9 @@ OPEN_EXPORT_FILE = ROOT / "open_verified_qa_pairs.jsonl"
 # ── Security QA pipeline files ─────────────────────────────────────────────────
 SECURITY_VERIFICATION_FILE = ROOT / "security_verified_state.json"
 SECURITY_EXPORT_FILE = ROOT / "security_verified_qa_pairs.jsonl"
+
+# ── Benchmark dataset files ────────────────────────────────────────────────────
+BENCHMARK_FILE = ROOT / "dataset" / "security_benchmark.jsonl"
 
 sys.path.insert(0, str(ROOT / "pipeline"))
 from utils.taxonomy import CATEGORIES, QUESTIONS, QUESTION_TO_CATEGORY  # noqa: E402
@@ -187,6 +191,40 @@ class ChatRequest(BaseModel):
     model: Optional[str] = None
 
 
+class BenchmarkEditRequest(BaseModel):
+    qa_summary: Optional[str] = None
+    security_topic: Optional[str] = None
+    human_note: Optional[str] = None
+    question_comment_id: Optional[str] = None
+    answer_comment_id: Optional[str] = None
+    answerer_role: Optional[str] = None
+    artifacts_needed: Optional[list[str]] = None
+    hard_facts: Optional[dict] = None
+
+
+# ── Benchmark data ─────────────────────────────────────────────────────────────
+
+benchmark_records: list[dict] = []
+
+
+def load_benchmark_data() -> None:
+    global benchmark_records
+    benchmark_records = []
+    if BENCHMARK_FILE.exists():
+        with BENCHMARK_FILE.open(encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if line:
+                    benchmark_records.append(json.loads(line))
+
+
+def save_benchmark_data() -> None:
+    BENCHMARK_FILE.parent.mkdir(parents=True, exist_ok=True)
+    with BENCHMARK_FILE.open("w", encoding="utf-8") as f:
+        for record in benchmark_records:
+            f.write(json.dumps(record) + "\n")
+
+
 # ── App ───────────────────────────────────────────────────────────────────────
 
 
@@ -195,9 +233,10 @@ async def lifespan(app: FastAPI):
     load_data()
     load_open_data()
     load_security_data()
+    load_benchmark_data()
     print(
         f"Loaded {len(pairs)} F&M pairs, {len(open_pairs)} open-coded pairs, "
-        f"{len(security_pairs)} security pairs",
+        f"{len(security_pairs)} security pairs, {len(benchmark_records)} benchmark records",
         file=sys.stderr,
     )
     yield
@@ -207,6 +246,7 @@ _INDEX_HTML = Path(__file__).parent / "templates" / "index.html"
 _TAXONOMY_HTML = Path(__file__).parent / "templates" / "taxonomy.html"
 _STATS_HTML = Path(__file__).parent / "templates" / "stats.html"
 _CHAT_HTML = Path(__file__).parent / "templates" / "chat.html"
+_BENCHMARK_HTML = Path(__file__).parent / "templates" / "benchmark.html"
 
 app = FastAPI(title="DevQA – Pair Review Tool", lifespan=lifespan)
 app.mount(
@@ -870,6 +910,103 @@ async def security_chat_stream(id: str, body: ChatRequest):
 
     return StreamingResponse(token_stream(), media_type="text/event-stream",
                              headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# BENCHMARK BROWSER  (/benchmark  and  /api/benchmark/*)
+# ══════════════════════════════════════════════════════════════════════════════
+
+
+@app.get("/benchmark", response_class=HTMLResponse)
+async def benchmark_index():
+    return HTMLResponse(_BENCHMARK_HTML.read_text(encoding="utf-8"))
+
+
+@app.get("/api/benchmark/records")
+def get_benchmark_records(
+    repo: Optional[str] = None,
+    q: Optional[str] = None,
+    page: int = 1,
+    page_size: int = 50,
+):
+    filtered = []
+    for i, r in enumerate(benchmark_records):
+        if repo and r.get("repo") != repo:
+            continue
+        if q:
+            ql = q.lower()
+            searchable = " ".join([
+                r.get("title", ""),
+                r.get("security_topic", ""),
+                r.get("qa_summary", ""),
+                r.get("human_note", ""),
+            ]).lower()
+            if ql not in searchable:
+                continue
+        hf = r.get("hard_facts", {})
+        filtered.append({
+            "index": i,
+            "id": r["id"],
+            "repo": r.get("repo"),
+            "number": r.get("number"),
+            "title": r.get("title"),
+            "security_topic": r.get("security_topic"),
+            "qa_summary": r.get("qa_summary"),
+            "answerer_role": r.get("answerer_role"),
+            "llm_confidence": r.get("llm_confidence"),
+            "has_cve": bool(hf.get("cve_ids")),
+            "has_fix": bool(hf.get("fix_prs") or hf.get("fix_commits")),
+            "human_note": r.get("human_note", ""),
+        })
+    total = len(filtered)
+    start = (page - 1) * page_size
+    return {"total": total, "page": page, "page_size": page_size,
+            "items": filtered[start: start + page_size]}
+
+
+@app.get("/api/benchmark/records/{index}")
+def get_benchmark_record(index: int):
+    if index < 0 or index >= len(benchmark_records):
+        raise HTTPException(status_code=404, detail="Record not found")
+    return dict(benchmark_records[index]) | {"index": index}
+
+
+@app.patch("/api/benchmark/records/{index}")
+def update_benchmark_record(index: int, body: BenchmarkEditRequest):
+    if index < 0 or index >= len(benchmark_records):
+        raise HTTPException(status_code=404, detail="Record not found")
+    r = benchmark_records[index]
+    if body.qa_summary is not None:
+        r["qa_summary"] = body.qa_summary
+    if body.security_topic is not None:
+        r["security_topic"] = body.security_topic
+    if body.human_note is not None:
+        r["human_note"] = body.human_note
+    if body.question_comment_id is not None:
+        r["question_comment_id"] = body.question_comment_id
+    if body.answer_comment_id is not None:
+        r["answer_comment_id"] = body.answer_comment_id
+    if body.answerer_role is not None:
+        r["answerer_role"] = body.answerer_role
+    if body.artifacts_needed is not None:
+        r["artifacts_needed"] = body.artifacts_needed
+    if body.hard_facts is not None:
+        existing = r.get("hard_facts", {})
+        existing.update(body.hard_facts)
+        r["hard_facts"] = existing
+    save_benchmark_data()
+    return {"ok": True}
+
+
+@app.get("/api/benchmark/repos")
+def get_benchmark_repos():
+    return sorted({r.get("repo", "") for r in benchmark_records})
+
+
+@app.post("/api/benchmark/reload")
+def reload_benchmark():
+    load_benchmark_data()
+    return {"ok": True, "total": len(benchmark_records)}
 
 
 if __name__ == "__main__":

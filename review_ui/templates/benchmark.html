@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Security Benchmark Browser</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22https://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><text y=%221.2em%22 font-size=%2220%22>🔒</text></svg>">
+  <link rel="stylesheet" href="/static/app.css" />
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3/dist/cdn.min.js"></script>
+  <style>
+    [x-cloak] { display: none !important; }
+
+    /* ── layout ────────────────────────────────────────────────── */
+    #bm-layout {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      height: calc(100vh - 52px);
+      overflow: hidden;
+    }
+    #bm-sidebar {
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    #bm-sidebar-filters {
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      border-bottom: 1px solid var(--border);
+    }
+    #bm-list {
+      overflow-y: auto;
+      flex: 1;
+    }
+    .bm-item {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+    .bm-item:hover { background: var(--hover-bg); }
+    .bm-item.active { background: var(--active-bg); border-left: 3px solid var(--accent); }
+    .bm-item-repo { font-size: 11px; color: var(--muted); font-family: monospace; margin-bottom: 2px; }
+    .bm-item-title { font-size: 13px; font-weight: 600; line-height: 1.3; margin-bottom: 4px; }
+    .bm-item-topic { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .bm-item-badges { display: flex; gap: 4px; margin-top: 4px; flex-wrap: wrap; }
+
+    /* ── detail pane ───────────────────────────────────────────── */
+    #bm-detail {
+      overflow-y: auto;
+      padding: 20px 24px;
+    }
+    .bm-empty {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    /* ── sections ──────────────────────────────────────────────── */
+    .bm-section { margin-bottom: 20px; }
+    .bm-section-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ── meta grid ─────────────────────────────────────────────── */
+    .bm-meta-grid {
+      display: grid;
+      grid-template-columns: 130px 1fr;
+      gap: 4px 12px;
+      font-size: 13px;
+    }
+    .bm-meta-label { color: var(--muted); font-weight: 500; }
+    .bm-meta-value { word-break: break-word; }
+    .bm-meta-value a { color: var(--accent); text-decoration: none; }
+    .bm-meta-value a:hover { text-decoration: underline; }
+
+    /* ── text blocks ───────────────────────────────────────────── */
+    .bm-text-block {
+      font-size: 13px;
+      line-height: 1.6;
+      background: var(--code-bg);
+      border-radius: 6px;
+      padding: 10px 12px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    /* ── hard facts ────────────────────────────────────────────── */
+    .bm-facts-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      font-size: 13px;
+    }
+    .bm-fact-item { display: flex; flex-direction: column; gap: 2px; }
+    .bm-fact-label { font-size: 11px; color: var(--muted); font-weight: 600; }
+    .bm-fact-value { font-family: monospace; font-size: 12px; }
+    .bm-fact-empty { color: var(--muted); font-style: italic; }
+
+    /* ── artifact tags ─────────────────────────────────────────── */
+    .bm-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+    .bm-tag {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 12px;
+      background: var(--tag-bg, #e8f0fe);
+      color: var(--tag-fg, #1a56db);
+      font-weight: 500;
+    }
+    .dark .bm-tag { background: #1e3a5f; color: #90caf9; }
+
+    /* ── comments thread ───────────────────────────────────────── */
+    .bm-thread-toggle {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      user-select: none;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 6px 0;
+      color: var(--fg);
+    }
+    .bm-thread-toggle:hover { color: var(--accent); }
+    .bm-thread-arrow { transition: transform 0.2s; font-size: 11px; }
+    .bm-thread-arrow.open { transform: rotate(90deg); }
+
+    .bm-comment {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      margin-bottom: 8px;
+      overflow: hidden;
+    }
+    .bm-comment.is-question { border-color: #3b82f6; }
+    .bm-comment.is-answer   { border-color: #10b981; }
+    .bm-comment-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      background: var(--code-bg);
+      font-size: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .bm-comment.is-question .bm-comment-header { background: #eff6ff; }
+    .bm-comment.is-answer   .bm-comment-header { background: #ecfdf5; }
+    .dark .bm-comment.is-question .bm-comment-header { background: #1e3a5f; }
+    .dark .bm-comment.is-answer   .bm-comment-header { background: #064e3b; }
+    .bm-comment-id { font-family: monospace; font-weight: 700; color: var(--muted); }
+    .bm-comment-author { font-weight: 600; }
+    .bm-comment-ts { color: var(--muted); margin-left: auto; }
+    .bm-comment-role-badge {
+      font-size: 10px;
+      padding: 1px 6px;
+      border-radius: 10px;
+      font-weight: 600;
+    }
+    .role-question { background: #bfdbfe; color: #1e40af; }
+    .role-answer   { background: #a7f3d0; color: #065f46; }
+    .dark .role-question { background: #1e3a5f; color: #93c5fd; }
+    .dark .role-answer   { background: #064e3b; color: #6ee7b7; }
+    .bm-comment-body {
+      padding: 10px 12px;
+      font-size: 13px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    /* ── edit mode ─────────────────────────────────────────────── */
+    .edit-field {
+      width: 100%;
+      font-size: 13px;
+      padding: 6px 8px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      background: var(--input-bg, #fff);
+      color: var(--fg);
+      box-sizing: border-box;
+      font-family: inherit;
+    }
+    .dark .edit-field { background: #1e1e2e; border-color: #444; }
+    textarea.edit-field { resize: vertical; min-height: 70px; }
+    .edit-row { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
+    .edit-row label { font-size: 12px; font-weight: 600; color: var(--muted); }
+    .edit-actions { display: flex; gap: 8px; margin-top: 4px; }
+
+    .bm-artifact-check { display: flex; flex-wrap: wrap; gap: 8px; }
+    .bm-artifact-check label {
+      display: flex; align-items: center; gap: 4px;
+      font-size: 12px; cursor: pointer;
+    }
+
+    /* ── topbar additions ──────────────────────────────────────── */
+    .bm-topbar-count {
+      font-size: 13px;
+      color: var(--muted);
+      margin-left: 8px;
+    }
+    .btn-edit-active { background: var(--accent) !important; color: #fff !important; }
+  </style>
+</head>
+
+<body x-data="app()" x-init="init()">
+
+<div id="topbar">
+  <h1>Security Benchmark</h1>
+  <span class="pipeline-badge pipeline-security">Benchmark</span>
+  <span class="bm-topbar-count" x-text="`${total} records`"></span>
+  <div class="topbar-right">
+    <a class="btn" href="/">← Review UI</a>
+    <button class="btn" @click="toggleTheme()" x-text="isDark ? '☀ Light' : '🌙 Dark'"></button>
+    <button class="btn" @click="reload()" x-text="reloading ? 'Reloading…' : '↺ Reload'"></button>
+  </div>
+</div>
+
+<div id="bm-layout">
+
+  <!-- ── Sidebar ─────────────────────────────────────────── -->
+  <div id="bm-sidebar">
+    <div id="bm-sidebar-filters">
+      <input class="input" type="text" x-model="searchQ"
+             @input.debounce.300ms="loadList()"
+             placeholder="Search title, topic, summary…" />
+      <select class="select" x-model="filterRepo" @change="loadList()">
+        <option value="">All repos</option>
+        <template x-for="r in repos" :key="r">
+          <option :value="r" x-text="r.replace('/','/​')"></option>
+        </template>
+      </select>
+    </div>
+    <div id="bm-list">
+      <template x-for="item in items" :key="item.index">
+        <div class="bm-item" :class="{ active: selected && selected.index === item.index }"
+             @click="selectRecord(item.index)">
+          <div class="bm-item-repo" x-text="item.repo"></div>
+          <div class="bm-item-title" x-text="`#${item.number} ${item.title}`"></div>
+          <div class="bm-item-topic" x-text="item.security_topic"></div>
+          <div class="bm-item-badges">
+            <span x-show="item.has_cve" class="badge" style="background:#fee2e2;color:#991b1b;font-size:10px;padding:1px 6px">CVE</span>
+            <span x-show="item.has_fix" class="badge" style="background:#d1fae5;color:#065f46;font-size:10px;padding:1px 6px">Fix PR</span>
+            <span x-show="item.human_note" class="badge" style="background:#fef3c7;color:#92400e;font-size:10px;padding:1px 6px">Note</span>
+          </div>
+        </div>
+      </template>
+      <div x-show="items.length === 0" style="padding:20px;text-align:center;color:var(--muted);font-size:13px">
+        No records match
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Detail pane ─────────────────────────────────────── -->
+  <div id="bm-detail">
+    <div class="bm-empty" x-show="!selected">Select a record from the list</div>
+
+    <template x-if="selected">
+      <div>
+
+        <!-- Header -->
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;gap:12px">
+          <div>
+            <div style="font-size:12px;color:var(--muted);font-family:monospace;margin-bottom:4px"
+                 x-text="selected.id"></div>
+            <h2 style="margin:0;font-size:18px;line-height:1.3" x-text="selected.title"></h2>
+          </div>
+          <div style="display:flex;gap:6px;flex-shrink:0">
+            <button class="btn" :class="editMode ? 'btn-edit-active' : ''"
+                    @click="toggleEdit()">
+              <span x-text="editMode ? '✎ Editing' : '✎ Edit'"></span>
+            </button>
+            <a class="btn" :href="selected.url" target="_blank" rel="noopener">↗ GitHub</a>
+          </div>
+        </div>
+
+        <!-- Metadata -->
+        <div class="bm-section">
+          <div class="bm-section-title">Metadata</div>
+          <div class="bm-meta-grid">
+            <span class="bm-meta-label">Repo</span>
+            <span class="bm-meta-value" x-text="selected.repo"></span>
+            <span class="bm-meta-label">State</span>
+            <span class="bm-meta-value" x-text="selected.state"></span>
+            <span class="bm-meta-label">Created</span>
+            <span class="bm-meta-value" x-text="fmtDate(selected.created_at)"></span>
+            <span class="bm-meta-label">Closed</span>
+            <span class="bm-meta-value" x-text="selected.closed_at ? fmtDate(selected.closed_at) : '—'"></span>
+            <span class="bm-meta-label">Reporter</span>
+            <span class="bm-meta-value" x-text="selected.reporter || '—'"></span>
+            <span class="bm-meta-label">Labels</span>
+            <span class="bm-meta-value">
+              <template x-if="selected.labels && selected.labels.length">
+                <span x-text="selected.labels.join(', ')"></span>
+              </template>
+              <template x-if="!selected.labels || !selected.labels.length">
+                <span style="color:var(--muted)">—</span>
+              </template>
+            </span>
+            <span class="bm-meta-label">Answerer role</span>
+            <span class="bm-meta-value" x-show="!editMode" x-text="selected.answerer_role"></span>
+            <span x-show="editMode">
+              <select class="edit-field" x-model="edit.answerer_role" style="width:auto">
+                <option value="maintainer">maintainer</option>
+                <option value="contributor">contributor</option>
+                <option value="commenter">commenter</option>
+                <option value="op_self">op_self</option>
+                <option value="other">other</option>
+              </select>
+            </span>
+            <span class="bm-meta-label">LLM confidence</span>
+            <span class="bm-meta-value" x-text="selected.llm_confidence ? selected.llm_confidence.toFixed(3) : '—'"></span>
+          </div>
+        </div>
+
+        <!-- Security topic -->
+        <div class="bm-section">
+          <div class="bm-section-title">Security Topic</div>
+          <template x-if="!editMode">
+            <div class="bm-text-block" x-text="selected.security_topic || '—'"></div>
+          </template>
+          <template x-if="editMode">
+            <input class="edit-field" type="text" x-model="edit.security_topic" />
+          </template>
+        </div>
+
+        <!-- QA summary -->
+        <div class="bm-section">
+          <div class="bm-section-title">QA Summary</div>
+          <template x-if="!editMode">
+            <div class="bm-text-block" x-text="selected.qa_summary || '—'"></div>
+          </template>
+          <template x-if="editMode">
+            <textarea class="edit-field" x-model="edit.qa_summary" rows="4"></textarea>
+          </template>
+        </div>
+
+        <!-- Hard facts -->
+        <div class="bm-section">
+          <div class="bm-section-title">Hard Facts</div>
+          <template x-if="!editMode">
+            <div class="bm-facts-grid">
+              <template x-for="[key, label] in hardFactFields" :key="key">
+                <div class="bm-fact-item">
+                  <span class="bm-fact-label" x-text="label"></span>
+                  <span class="bm-fact-value"
+                        x-text="(selected.hard_facts[key] && selected.hard_facts[key].length) ? selected.hard_facts[key].join(', ') : '—'"
+                        :class="(!selected.hard_facts[key] || !selected.hard_facts[key].length) ? 'bm-fact-empty' : ''">
+                  </span>
+                </div>
+              </template>
+            </div>
+          </template>
+          <template x-if="editMode">
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <template x-for="[key, label] in hardFactFields" :key="key">
+                <div class="edit-row">
+                  <label x-text="`${label} (comma-separated)`"></label>
+                  <input class="edit-field" type="text"
+                         :value="(edit.hard_facts[key] || []).join(', ')"
+                         @input="edit.hard_facts[key] = $event.target.value.split(',').map(s=>s.trim()).filter(Boolean)" />
+                </div>
+              </template>
+            </div>
+          </template>
+        </div>
+
+        <!-- Artifacts needed -->
+        <div class="bm-section">
+          <div class="bm-section-title">Artifacts Needed</div>
+          <template x-if="!editMode">
+            <div class="bm-tags">
+              <template x-for="a in selected.artifacts_needed" :key="a">
+                <span class="bm-tag" x-text="a"></span>
+              </template>
+              <span x-show="!selected.artifacts_needed || !selected.artifacts_needed.length"
+                    style="color:var(--muted);font-size:13px">—</span>
+            </div>
+          </template>
+          <template x-if="editMode">
+            <div class="bm-artifact-check">
+              <template x-for="a in allArtifacts" :key="a">
+                <label>
+                  <input type="checkbox" :value="a" :checked="edit.artifacts_needed.includes(a)"
+                         @change="toggleArtifact(a)" />
+                  <span x-text="a"></span>
+                </label>
+              </template>
+            </div>
+          </template>
+        </div>
+
+        <!-- Q/A comments (highlighted) -->
+        <div class="bm-section">
+          <div class="bm-section-title">Question &amp; Answer</div>
+          <template x-if="editMode">
+            <div style="display:flex;gap:12px;margin-bottom:10px">
+              <div class="edit-row" style="flex:1">
+                <label>Question comment ID</label>
+                <select class="edit-field" x-model="edit.question_comment_id">
+                  <template x-for="c in selected.comments" :key="c.id">
+                    <option :value="c.id" x-text="`${c.id} — ${c.author}`"></option>
+                  </template>
+                </select>
+              </div>
+              <div class="edit-row" style="flex:1">
+                <label>Answer comment ID</label>
+                <select class="edit-field" x-model="edit.answer_comment_id">
+                  <template x-for="c in selected.comments" :key="c.id">
+                    <option :value="c.id" x-text="`${c.id} — ${c.author}`"></option>
+                  </template>
+                </select>
+              </div>
+            </div>
+          </template>
+          <template x-for="c in qaComments()" :key="c.id">
+            <div class="bm-comment" :class="commentClass(c)">
+              <div class="bm-comment-header">
+                <span class="bm-comment-id" x-text="c.id"></span>
+                <span class="bm-comment-author" x-text="c.author"></span>
+                <span x-show="isQuestion(c)" class="bm-comment-role-badge role-question">question</span>
+                <span x-show="isAnswer(c)"   class="bm-comment-role-badge role-answer">answer</span>
+                <span class="bm-comment-ts" x-text="fmtDate(c.timestamp)"></span>
+              </div>
+              <div class="bm-comment-body" x-text="c.body"></div>
+            </div>
+          </template>
+        </div>
+
+        <!-- Full thread (collapsible) -->
+        <div class="bm-section">
+          <div class="bm-thread-toggle" @click="threadOpen = !threadOpen">
+            <span class="bm-thread-arrow" :class="{ open: threadOpen }">▶</span>
+            <span x-text="`Full Thread (${selected.comments.length} comments)`"></span>
+          </div>
+          <template x-if="threadOpen">
+            <div>
+              <template x-for="c in selected.comments" :key="c.id">
+                <div class="bm-comment" :class="commentClass(c)">
+                  <div class="bm-comment-header">
+                    <span class="bm-comment-id" x-text="c.id"></span>
+                    <span class="bm-comment-author" x-text="c.author"></span>
+                    <span x-show="isQuestion(c)" class="bm-comment-role-badge role-question">question</span>
+                    <span x-show="isAnswer(c)"   class="bm-comment-role-badge role-answer">answer</span>
+                    <span class="bm-comment-ts" x-text="fmtDate(c.timestamp)"></span>
+                  </div>
+                  <div class="bm-comment-body" x-text="c.body"></div>
+                </div>
+              </template>
+            </div>
+          </template>
+        </div>
+
+        <!-- Human note -->
+        <div class="bm-section">
+          <div class="bm-section-title">Human Note</div>
+          <template x-if="!editMode">
+            <div class="bm-text-block"
+                 x-text="selected.human_note || ''"
+                 :style="!selected.human_note ? 'color:var(--muted);font-style:italic' : ''">
+            </div>
+          </template>
+          <template x-if="editMode">
+            <textarea class="edit-field" x-model="edit.human_note" rows="3"></textarea>
+          </template>
+        </div>
+
+        <!-- Save / Cancel -->
+        <template x-if="editMode">
+          <div class="edit-actions" style="margin-bottom:32px">
+            <button class="btn btn-primary" @click="saveEdits()" :disabled="saving"
+                    x-text="saving ? 'Saving…' : 'Save changes'"></button>
+            <button class="btn" @click="cancelEdit()">Cancel</button>
+            <span x-show="saveMsg" x-text="saveMsg" style="font-size:13px;color:var(--muted);margin-left:4px"></span>
+          </div>
+        </template>
+
+      </div>
+    </template>
+  </div><!-- /bm-detail -->
+
+</div><!-- /bm-layout -->
+
+<script>
+function app() {
+  return {
+    // list state
+    items: [],
+    total: 0,
+    repos: [],
+    searchQ: '',
+    filterRepo: '',
+
+    // detail state
+    selected: null,
+    threadOpen: false,
+    editMode: false,
+    edit: {},
+    saving: false,
+    saveMsg: '',
+    reloading: false,
+
+    // theme
+    isDark: document.documentElement.classList.contains('dark'),
+
+    hardFactFields: [
+      ['cve_ids',        'CVE IDs'],
+      ['ghsa_ids',       'GHSA IDs'],
+      ['cwe_ids',        'CWE IDs'],
+      ['osv_ids',        'OSV IDs'],
+      ['fixed_versions', 'Fixed versions'],
+      ['fix_prs',        'Fix PRs'],
+      ['fix_commits',    'Fix commits'],
+      ['advisory_urls',  'Advisory URLs'],
+    ],
+
+    allArtifacts: [
+      'code', 'documentation', 'cve_cwe_db', 'pr_data',
+      'dependency_manifest', 'external_reference', 'commit_history',
+      'advisory', 'issue_tracker', 'prior_incident', 'ci_logs',
+    ],
+
+    async init() {
+      this.repos = await fetch('/api/benchmark/repos').then(r => r.json());
+      await this.loadList();
+    },
+
+    async loadList() {
+      const params = new URLSearchParams({ page_size: 200 });
+      if (this.filterRepo) params.set('repo', this.filterRepo);
+      if (this.searchQ)    params.set('q', this.searchQ);
+      const data = await fetch(`/api/benchmark/records?${params}`).then(r => r.json());
+      this.items = data.items;
+      this.total = data.total;
+    },
+
+    async selectRecord(index) {
+      this.editMode = false;
+      this.threadOpen = false;
+      this.saveMsg = '';
+      const data = await fetch(`/api/benchmark/records/${index}`).then(r => r.json());
+      this.selected = data;
+    },
+
+    toggleEdit() {
+      if (!this.editMode) {
+        // clone editable fields into edit buffer
+        const s = this.selected;
+        this.edit = {
+          qa_summary:          s.qa_summary || '',
+          security_topic:      s.security_topic || '',
+          human_note:          s.human_note || '',
+          question_comment_id: s.question_comment_id || '',
+          answer_comment_id:   s.answer_comment_id || '',
+          answerer_role:       s.answerer_role || 'maintainer',
+          artifacts_needed:    [...(s.artifacts_needed || [])],
+          hard_facts:          JSON.parse(JSON.stringify(s.hard_facts || {})),
+        };
+      }
+      this.editMode = !this.editMode;
+      this.saveMsg = '';
+    },
+
+    cancelEdit() {
+      this.editMode = false;
+      this.saveMsg = '';
+    },
+
+    async saveEdits() {
+      this.saving = true;
+      this.saveMsg = '';
+      try {
+        const resp = await fetch(`/api/benchmark/records/${this.selected.index}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(this.edit),
+        });
+        if (!resp.ok) throw new Error(await resp.text());
+        // refresh selected record
+        const updated = await fetch(`/api/benchmark/records/${this.selected.index}`).then(r => r.json());
+        this.selected = updated;
+        // refresh list item
+        await this.loadList();
+        this.editMode = false;
+        this.saveMsg = 'Saved';
+        setTimeout(() => { this.saveMsg = ''; }, 2000);
+      } catch (e) {
+        this.saveMsg = `Error: ${e.message}`;
+      } finally {
+        this.saving = false;
+      }
+    },
+
+    toggleArtifact(a) {
+      const idx = this.edit.artifacts_needed.indexOf(a);
+      if (idx === -1) this.edit.artifacts_needed.push(a);
+      else this.edit.artifacts_needed.splice(idx, 1);
+    },
+
+    async reload() {
+      this.reloading = true;
+      await fetch('/api/benchmark/reload', { method: 'POST' });
+      await this.loadList();
+      if (this.selected) await this.selectRecord(this.selected.index);
+      this.reloading = false;
+    },
+
+    toggleTheme() {
+      this.isDark = !this.isDark;
+      document.documentElement.classList.toggle('dark', this.isDark);
+      localStorage.setItem('theme', this.isDark ? 'dark' : 'light');
+    },
+
+    fmtDate(iso) {
+      if (!iso) return '—';
+      const d = new Date(iso);
+      return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) +
+             ' ' + d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+    },
+
+    // return only the question + answer comments for the compact view
+    qaComments() {
+      if (!this.selected) return [];
+      const qid = this.editMode ? this.edit.question_comment_id : this.selected.question_comment_id;
+      const aid = this.editMode ? this.edit.answer_comment_id   : this.selected.answer_comment_id;
+      return (this.selected.comments || []).filter(c => c.id === qid || c.id === aid);
+    },
+
+    isQuestion(c) {
+      const qid = this.editMode ? this.edit.question_comment_id : this.selected.question_comment_id;
+      return c.id === qid;
+    },
+    isAnswer(c) {
+      const aid = this.editMode ? this.edit.answer_comment_id : this.selected.answer_comment_id;
+      return c.id === aid;
+    },
+    commentClass(c) {
+      if (this.isQuestion(c)) return 'is-question';
+      if (this.isAnswer(c))   return 'is-answer';
+      return '';
+    },
+  };
+}
+</script>
+
+</body>
+</html>
