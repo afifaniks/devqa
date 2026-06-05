@@ -55,7 +55,8 @@ from tqdm import tqdm
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 from config import REPOS
-from utils.ollama_client import STAGE1_MODEL, generate_json, is_running
+# from utils.ollama_client import STAGE1_MODEL, generate_json, is_running
+from utils.openai_client import STAGE1_MODEL, generate_json
 from utils.storage import (append_record, load_checkpoint, load_jsonl,
                            save_checkpoint)
 
@@ -86,6 +87,7 @@ ARTIFACT_OPTIONS = [
     "other",
 ]
 
+MAX_THREAD_TEXT_LENGTH = 100_000  # cap to keep prompts manageable; LLM can still scroll in GitHub UI
 
 # ── Stage 0: Sanity pre-filter (NO security keywords) ────────────────────────
 
@@ -108,68 +110,78 @@ def prefilter(thread) -> bool:
 
 
 def build_detection_prompt(thread_text):
-    return f"""Read this GitHub thread and decide whether it contains a developer information need related to SECURITY in this project, AND whether the thread contains a concrete answer to that need.
-
+    # Cache-optimized layout: every static instruction comes FIRST so the prompt
+    # prefix is byte-identical on every call (KV / prompt-cache hit across all
+    # threads). The only variable input — the thread — is appended LAST, so it is
+    # the first point of divergence and nothing cacheable sits behind it.
+    return f"""You will decide whether ONE GitHub thread contains a developer information need related to SECURITY in this project, AND whether the thread contains a concrete answer to that need. The thread is provided at the very END of this message, after all instructions.
+ 
 Two independent tests must both pass for INCLUDE = true. Apply them with different stances:
-
+ 
   TEST A — Is the question SECURITY/VULNERABILITY-related?  → BE LENIENT.
-  TEST B — Is the answer CONCRETE?            → BE STRICT.
-
+  TEST B — Is the answer CONCRETE?                          → BE STRICT.
+ 
 If A is uncertain → favour inclusion (a human will review borderline security tags). If B is uncertain → favour exclusion (we cannot grade an unanchored answer). Both must hold; do not trade one for the other.
+Both question answer pairs must be in English.
+ 
+TEST A — Security relevance. Mark security-related if ANY of the following are plausibly in play. This list is illustrative, not exhaustive — include anything that bears on the project's security posture:
+- A vulnerability, advisory, CVE, GHSA, CWE, OSV, exploit, weakness, or security risk affecting this project, its dependencies, or its users.
+- Whether a fix, patch, mitigation, or workaround addresses a security concern — even partially.
+- Sensitive-data handling (tokens, secrets, credentials, PII, keys), redaction, logging, sanitization, or leakage.
+- Web/app vuln classes: auth, authz, IDOR / broken object-level authorization, privilege escalation, sessions, cookies (Secure/HttpOnly/SameSite), CSRF, CORS misconfiguration, XSS, SSRF, open redirect, RCE, injection (SQL/NoSQL/command/template/LDAP), deserialization, XXE, path traversal.
+- Crypto & transport security: weak algorithms, IV/nonce reuse, weak randomness, padding-oracle / timing side-channels, and TLS/certificate or hostname VERIFICATION (including whether verification is actually performed or can be bypassed/disabled).
+- Memory-safety & native bugs: buffer/heap overflow, use-after-free, out-of-bounds read/write, integer overflow, null-deref — including crashes on malformed/attacker-controlled input.
+- Denial of service: ReDoS, decompression/zip/XML bombs, algorithmic-complexity or hash-collision DoS, unbounded allocation/resource exhaustion, infinite loops.
+- HTTP-layer attacks: request smuggling / desync, CRLF / header injection, host-header injection, cache poisoning.
+- Authentication-token integrity: JWT signature bypass (alg=none, RS256↔HS256 confusion), missing/incorrect signature verification.
+- Concurrency security: TOCTOU and other race conditions with a security impact.
+- Dependency & supply-chain: dependency/transitive vulnerabilities, SBOM, scanner findings (CodeQL, dependabot, trivy, semgrep, bandit, etc.), dependency confusion, typosquatting, malicious or compromised packages, install/build-script (postinstall) risks, CI / GitHub Actions injection (pwn-request, untrusted checkout).
+- Ecosystem-specific classes: prototype pollution, sandbox escape, insecure temp-file / symlink handling, world-writable permissions.
+- Security-relevant configuration, insecure defaults, deprecations, or backward-compatibility tradeoffs.
+- Disclosure, triage, embargo, or coordinated-release process for a possible vulnerability.
 
-<thread>
-{thread_text[:50000]}
-</thread>
-
-TEST A — Security relevance (LENIENT). Mark security-related if ANY of the following are plausibly true:
-- The thread discusses a vulnerability, advisory, CVE, GHSA, CWE, exploit, weakness, or security risk that may affect this project, its dependencies, or its users.
-- The thread discusses whether a fix, patch, mitigation, or workaround addresses a security concern in this project — even partially.
-- The thread discusses sensitive-data handling (tokens, secrets, credentials, PII, keys), redaction, logging, sanitization, or leakage in this project.
-- The thread discusses auth, authz, sessions, cookies, CSRF, XSS, SSRF, RCE, injection (SQL/command/template), deserialization, path traversal, ReDoS, TOCTOU, or similar security-relevant behaviour in this project's code.
-- The thread discusses dependency vulnerabilities, transitive risk, supply-chain concerns, SBOM, or scanner findings (CodeQL, dependabot, trivy, semgrep, bandit, etc.) for this project.
-- The thread discusses security-relevant configuration, defaults, deprecations, or backward-compatibility tradeoffs.
-- The thread discusses the disclosure, triage, embargo, or coordinated-release process for a possible vulnerability in this project.
-- The thread otherwise raises a question about this project's security posture and receives an informational response with a concrete anchor (a commit, PR, version, advisory, or citable source).
-
-TEST B — Concrete answer (STRICT). The answer must rest on at least one of:
+TEST B — Concrete answer. The answer must rest on at least one of:
   (i)  an external IDENTIFIER — a CVE/GHSA/CWE/OSV ID, a fixed-version string, a commit SHA, a PR reference, or an advisory URL; OR
-  (ii) a citable SOURCE — project docs, an RFC, a named scanner rule, a linked prior incident thread, or a policy doc that the maintainer explicitly references.
-
-A short answer is fine if it carries an anchor (e.g., "fixed in 2.6.3, see GHSA-XXX" is HIGH-quality concrete, update this code). A long answer without an anchor is NOT concrete.
-
+  (ii) a citable SOURCE — project docs, code snippets, an RFC, a named scanner rule, a linked prior incident thread, or a policy doc that the maintainer explicitly references.
+ 
+A short answer is fine if it carries an anchor (e.g., "fixed in 2.6.3, see GHSA-XXX" is HIGH-quality concrete). A long answer without an anchor is NOT concrete.
+ 
 EXCLUDE as not concrete:
 - Pure opinion or judgment without a source: "we don't consider this exploitable" with no further detail, "this is by design" with no doc/RFC reference.
 - Deflections: "wrong forum", "ask in discord", "ask support", "this is browser behaviour".
 - Unanchored speculation: "probably fine," "should be safe."
-
+ 
 Other categorical EXCLUDES (regardless of security-tag confidence — these are confirmed FP patterns):
-
+ 
 - The thread has NO response at all (only the original post, no substantive comments), or only automated-bot replies.
 - The thread is purely a generic security tutorial unrelated to this project (e.g. asking the maintainers to explain XSS in general).
-- **Key/cert FILE-FORMAT usage errors.** The OP cannot load a PEM/DER/JWK because the file is malformed, the wrong type, or in the wrong format, and the answer just explains the correct format. Security-named API surface (PEM, RS256, x5c, JWK) is touched, but no security risk is being assessed. Example BAD include: "PEM_read_bio_ex: bad base64 decode" — answer is "your key file is wrong, use this format."
-- **Browser-storage / cookie deflections.** OP reports a cookie isn't saved by Safari / Chrome / iOS, and the answer is "this is browser behaviour, not our library." No security property of this project is being interrogated. Example BAD include: "JWT cookie not stored in Safari due to cross-site tracking prevention" — answer is "wrong forum, can't change browser behaviour."
-- **Adapter / config questions that touch a security-named API but ask no security question.** The OP wants to know which adapter to use, why a flag like `rejectUnauthorized` isn't honoured in a test environment, why percent-encoding is preserved on a URL parser. The answer explains the configuration, not a security risk. Example BAD include: jsdom not using the http adapter so the user's `rejectUnauthorized: false` isn't applied — answer is "switch adapter."
+- **Adapter / config questions that touch a security-named API but ask no security question.** The OP wants to know which adapter to use, why a flag like `rejectUnauthorized` isn't honoured in a test environment, why percent-encoding is preserved on a URL parser. The answer explains the configuration, not a security risk. Example BAD include: jsdom not using the http adapter so the user's `rejectUnauthorized: false` isn't applied — answer is "switch adapter." EXCEPTION → INCLUDE if TLS/certificate verification is actually being DISABLED or silently ignored in a way that weakens security in production (a real MITM concern), not merely unset for a local test.
 - **"Wrong forum" / "ask Stripe support" / "ask in Discord" deflections.** Maintainer's only informational content is "this isn't a question for this repo." No security information about this project is exchanged.
-- **Pure regression bugs whose only security-flavoured connection is the file/function/class name** (e.g. a method called `signSafely` crashes, an `auth` route returns 500). If the question is "why does this not work" rather than "is there a security risk here," EXCLUDE.
-- **Generic auth misconfig.** OP added authentication to the wrong router, can't reach a public endpoint, etc. — answer is "read the auth docs."
-
+- **Pure regression bugs whose only security-flavoured connection is the file/function/class name** (e.g. a method called `signSafely` crashes, an `auth` route returns 500). If the question is "why does this not work" rather than "is there a security risk here," EXCLUDE. EXCEPTION → INCLUDE if the crash is triggered by malformed or attacker-controlled input, or exploitability is raised (possible DoS / memory-safety).
+- **Generic auth misconfig.** OP added authentication to the wrong router, can't reach a public endpoint, etc. — answer is "read the auth docs." EXCEPTION → INCLUDE if it exposes an access-control weakness (e.g. an endpoint reachable without the intended authorization).
+ 
 If you are uncertain about TEST A (security-relatedness), INCLUDE — a human will review borderline security tags. If you are uncertain about TEST B (concreteness), EXCLUDE — unanchored answers cannot be graded.
-
+ 
 If you include, write ONE SENTENCE summarizing what security information the developer needed to know AND which anchor (identifier or source) the answer rests on. Plain English, no taxonomy labels.
-
+ 
 Good summaries:
 - "Whether CVE-2023-32681 is exploitable when the application disables redirect following."
 - "Which commit in the urllib3 dependency upgrade closed the SSRF window the advisory describes."
 - "Whether the new error message redaction logic still leaks the Authorization header under chunked encoding."
 - "Whether the missing same-site cookie default is intentional and what the documented threat model assumes."
-
+ 
 Return only this JSON:
 {{"contains_qa": true or false, "need_summary": "one sentence or empty string", "confidence": "HIGH" or "MEDIUM" or "LOW"}}
-
+ 
 Confidence is for downstream sorting during manual review, NOT for filtering. (All confidence levels still require a concrete anchor — TEST B is a hard gate, not a confidence slider.)
 - HIGH = clearly security-relevant AND the anchor is unambiguous.
 - MEDIUM = security-relevant; the anchor exists but is partial or indirect (e.g. fix version cited but no CVE).
-- LOW = security relevance is borderline; the anchor exists and is concrete — included for manual security-tag review."""
+- LOW = security relevance is borderline; the anchor exists and is concrete — included for manual security-tag review.
+ 
+==================== THREAD TO ANALYZE (the only variable input — everything below is this thread) ====================
+<thread>
+{thread_text[:MAX_THREAD_TEXT_LENGTH]}
+</thread>"""
 
 
 # ── Stage 1.5: Hard-fact candidate extraction (regex pre-pass) ──────────────
@@ -262,26 +274,22 @@ def format_candidates_for_prompt(candidates):
 
 def build_extraction_prompt(thread_text, candidates_block):
     artifact_list = ", ".join(f'"{a}"' for a in ARTIFACT_OPTIONS)
-    return f"""Read this GitHub thread and extract the core SECURITY question-answer pair.
-
-<thread>
-{thread_text[:50000]}
-</thread>
-
-Each comment is tagged [c0], [c1], [c2], etc. c0 is the issue or PR body.
-
-A regex pre-pass found these candidate identifiers in the thread (CVE/GHSA/CWE IDs, version numbers, PR/issue refs, SHAs, advisory URLs). Use them when assigning roles in HARD_FACTS below. You may add identifiers the regex missed; you should DROP identifiers that are not actually anchoring the maintainer's answer.
-
-<candidates>
-{candidates_block}
-</candidates>
-
+    # Cache-optimized layout: all static instructions first (identical prefix on
+    # every call → prompt-cache hit), and the two variable inputs — the regex
+    # candidate list and the thread — appended LAST so nothing cacheable sits
+    # behind them.
+    return f"""You will extract the core SECURITY question-answer pair from ONE GitHub thread. The candidate-identifier list and the thread itself are provided at the very END of this message, after all instructions.
+ 
+Each comment in the thread is tagged [c0], [c1], [c2], etc. c0 is the issue or PR body.
+ 
+The <candidates> block lists identifiers a regex pre-pass found (CVE/GHSA/CWE IDs, version numbers, PR/issue refs, SHAs, advisory URLs). Use them when assigning roles in HARD_FACTS below. You may add identifiers the regex missed; you should DROP identifiers that are not actually anchoring the maintainer's answer.
+ 
 Your task:
-
+ 
 1. QUESTION TEXT — copy the exact wording of the key security question from the thread. Use the comment ID (cN) to locate it. Prefer the wording that most clearly states the security information need. If c0 is a long bug report or vulnerability disclosure that does not crystallize into a question, and a LATER comment frames the actual question the maintainer answers, use that later comment instead. Do not collapse the question to the issue title.
-
-2. ANSWER TEXT — copy the exact wording of the best answer in the thread. The answer must rest on a concrete anchor: an identifier (CVE/GHSA/CWE/OSV ID, fixed version, commit SHA, PR ref, advisory URL) OR a citable source (project docs, RFC, scanner rule, prior incident thread, policy doc the maintainer references). A short answer is acceptable IF it carries such an anchor (e.g. "fixed in 2.6.3, see GHSA-XXX"). A maintainer's response is preferable to an OP self-answer; if the OP confirms a maintainer-suggested fix, the OP confirmation can be the answer but report answerer_role accordingly. Do NOT extract pure opinion, deflection, or unanchored claims like "we don't consider this exploitable" without further detail — if the thread has no concretely anchored answer, leave answer_text empty and the downstream gate will drop it.
-
+ 
+2. ANSWER TEXT — copy the exact wording of the best answer in the thread. The answer must rest on a concrete anchor: an identifier (CVE/GHSA/CWE/OSV ID, fixed version, commit SHA, PR ref, advisory URL) OR a citable source (project docs, code snippets, an RFC, a named scanner rule, a linked prior incident thread, or a policy doc the maintainer references). A short answer is acceptable IF it carries such an anchor (e.g. "fixed in 2.6.3, see GHSA-XXX"). A maintainer's response is preferable to an OP self-answer; if the OP confirms a maintainer-suggested fix, the OP confirmation can be the answer but report answerer_role accordingly. Do NOT extract pure opinion, deflection, or unanchored claims like "we don't consider this exploitable" without further detail — if the thread has no concretely anchored answer, leave answer_text empty and the downstream gate will drop it.
+ 
 3. ARTIFACTS NEEDED — which project / external artifacts would a tool need to answer this security question? Choose any number from:
    {artifact_list}
    Security-specific options:
@@ -291,7 +299,7 @@ Your task:
    - "security_scan_logs" — CodeQL / dependabot / trivy / bandit / semgrep output
    - "prior_incident" — a linked past advisory or related earlier security issue
    Use "none" ONLY if the answer is purely a definitional or policy statement requiring no external lookup. If the answer cites docs, an RFC, a convention, or a behaviour pattern, prefer "documentation" over "none". If a non-listed artifact is needed, use "other-{{type}}".
-
+ 
 4. HARD_FACTS — the externally-checkable identifiers that anchor the answer. Each field is a list (empty if no such fact appears). Be conservative: include only identifiers that are actually load-bearing in the answer or in the question being answered. Do NOT include incidental environment metadata (Python/OpenSSL/Node version numbers in a bug-report environment block).
    - "cve_ids":           CVE IDs that are the SUBJECT of the Q&A (the question is about them, or the answer cites them as the relevant CVE)
    - "ghsa_ids":          GHSA IDs anchoring the answer
@@ -302,17 +310,17 @@ Your task:
    - "fix_prs":           PR / issue numbers (write as "#3736") that contain or track the fix
    - "fix_commits":       commit SHAs (7+ hex chars) that introduce the fix
    - "advisory_urls":     full URLs to GHSA / NVD / OSV / vendor advisory pages
-
+ 
 5. SECURITY_TOPIC — one short free-text phrase describing what the question is about, for downstream open / axial coding. Do not use a fixed taxonomy.
    Examples: "applicability of CVE to specific configuration", "sufficiency of redaction against token leakage", "regression-localization for known advisory", "transitive-dependency vulnerability impact", "design rationale of CSRF mitigation", "severity assessment for chained exploit".
-
+ 
 6. ANSWERER_ROLE:
    - "maintainer" = commit rights or core contributor of THIS project
    - "contributor" = has contributed before but not core
    - "commenter" = community member with no known contribution
    - "op_self"    = answer_author == question_author (the OP answered themselves)
    - "bot"        = automated response
-
+ 
 Return only this JSON:
 {{
   "question_comment_id": "cN",
@@ -330,7 +338,16 @@ Return only this JSON:
   "security_topic": "short free-text phrase",
   "answerer_role": "maintainer or contributor or commenter or op_self or bot",
   "confidence": "HIGH or MEDIUM or LOW"
-}}"""
+}}
+ 
+==================== INPUT (the only variable part — everything below) ====================
+<candidates>
+{candidates_block}
+</candidates>
+ 
+<thread>
+{thread_text[:MAX_THREAD_TEXT_LENGTH]}
+</thread>"""
 
 
 # ── Core detection function ──────────────────────────────────────────────────
@@ -401,7 +418,7 @@ def _flatten_references(hf):
     return out
 
 
-def _stage1_self_consistent(thread_text, model, n_samples=None):
+def _stage1_self_consistent(thread_text, model, n_samples=None, usage_log=None):
     """Run Stage 1 N times, majority-vote contains_qa. Returns the winning
     decision and the merged confidence/summary. With N=1 this is identical
     to a single call. n_samples=None resolves to the module-level
@@ -415,6 +432,8 @@ def _stage1_self_consistent(thread_text, model, n_samples=None):
             model=model,
             system=SYSTEM_PROMPT,
             max_tokens=512,
+            usage_log=usage_log,
+            stage="stage1"
         )
         if out:
             votes.append(out)
@@ -444,13 +463,13 @@ def _stage1_self_consistent(thread_text, model, n_samples=None):
     }
 
 
-def detect_and_extract(thread, model):
+def detect_and_extract(thread, model, usage_log=None):
     """Run Stage 1 + Stage 2. Returns result dict or None on parse failure."""
     thread_text = thread["thread_text"]
     comment_lookup = {c["id"]: c.get("body", "") for c in thread.get("comments", [])}
 
     # Stage 1 — security detection (self-consistent across N samples)
-    s1 = _stage1_self_consistent(thread_text, model)
+    s1 = _stage1_self_consistent(thread_text, model, usage_log=usage_log)
     print(f"  [s1] {s1}")
 
     if not s1:
@@ -471,6 +490,8 @@ def detect_and_extract(thread, model):
         model=model,
         system=SYSTEM_PROMPT,
         max_tokens=2048,  # raised: hard_facts schema is wider than v1 references
+        usage_log=usage_log,
+        stage="stage2"
     )
     print(f"  [s2] {s2}")
 
@@ -555,10 +576,6 @@ def detect_and_extract(thread, model):
 
 def run(repo, model=STAGE1_MODEL, confidence_threshold=0.3, limit=None,
         max_pairs=None, force=False, state_filter=None):
-    if not is_running():
-        print("  [error] Ollama not running — start with: ollama serve")
-        return
-
     print(f"\n[detect_security_qa] {repo}")
     print(f"  model:      {model}")
     print(f"  threshold:  {confidence_threshold}")
@@ -597,7 +614,7 @@ def run(repo, model=STAGE1_MODEL, confidence_threshold=0.3, limit=None,
         print(f"  max pairs:       {max_pairs}")
 
     if force:
-        out_path = f"output/{repo.replace('/','__')}/security_qa_pairs.jsonl"
+        out_path = f"output_gemma/{repo.replace('/','__')}/security_qa_pairs.jsonl"
         if os.path.exists(out_path):
             os.remove(out_path)
             print("  cleared previous output")
@@ -613,8 +630,17 @@ def run(repo, model=STAGE1_MODEL, confidence_threshold=0.3, limit=None,
         if not prefilter(thread):
             dropped_prefilter += 1
             continue
-
-        result = detect_and_extract(thread, model)
+        
+        usage_log = []
+        result = detect_and_extract(thread, model, usage_log=usage_log)
+        issue_usage = {}
+        for r in usage_log:
+            b = issue_usage.setdefault(r["stage"],
+                                       {"input_tokens": 0, "cached_tokens": 0, "output_tokens": 0})
+            b["input_tokens"]  += r["input_tokens"]
+            b["cached_tokens"] += r["cached_tokens"]
+            b["output_tokens"] += r["output_tokens"]
+        append_record(repo, f"usage_{STAGE1_MODEL}", {f"{repo}/{thread['number']}": issue_usage})
 
         if result is None:
             failed += 1
@@ -693,8 +719,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--repo", default=None)
     parser.add_argument("--model", default=STAGE1_MODEL)
-    parser.add_argument("--confidence", type=float, default=0.3,
-                        help="Min confidence threshold (0–1, default 0.3 — recall-favoring; manual review filters false positives later)")
+    parser.add_argument("--confidence", type=float, default=0.5,
+                        help="Min confidence threshold (0–1, default 0.5 — recall-favoring; manual review filters false positives later)")
     parser.add_argument("--limit", type=int, default=None,
                         help="Cap threads to process (for testing)")
     parser.add_argument("--max-pairs", type=int, default=None,
