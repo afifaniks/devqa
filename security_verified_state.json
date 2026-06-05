@@ -1428,5 +1428,200 @@
     "status": "rejected",
     "note": "",
     "verified_at": "2026-06-04T21:34:55.679088Z"
+  },
+  "rails/rails/issue/57474": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:30:46.296367Z"
+  },
+  "rails/rails/issue/56869": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:31:32.446713Z"
+  },
+  "rails/rails/issue/56789": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-05T15:32:44.150012Z"
+  },
+  "rails/rails/issue/56736": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-05T15:33:11.145812Z"
+  },
+  "rails/rails/issue/56704": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:34:20.808619Z"
+  },
+  "rails/rails/issue/56684": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:34:36.501812Z"
+  },
+  "rails/rails/issue/56638": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:34:53.184123Z"
+  },
+  "rails/rails/issue/56452": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-05T15:35:18.880238Z"
+  },
+  "rails/rails/issue/56391": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:35:33.467175Z"
+  },
+  "rails/rails/issue/56158": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-05T15:35:49.819136Z"
+  },
+  "rails/rails/issue/56038": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-05T15:36:07.588226Z"
+  },
+  "rails/rails/issue/55886": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-05T15:36:25.427476Z"
+  },
+  "rails/rails/issue/55881": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:36:41.547761Z"
+  },
+  "rails/rails/issue/55866": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-05T15:37:04.247267Z"
+  },
+  "rails/rails/issue/55773": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:37:59.121497Z"
+  },
+  "rails/rails/issue/55764": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:38:19.108597Z"
+  },
+  "rails/rails/issue/55759": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:38:50.279644Z"
+  },
+  "rails/rails/issue/55528": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:39:14.741845Z"
+  },
+  "rails/rails/issue/55508": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-05T15:39:39.543322Z"
+  },
+  "rails/rails/issue/55460": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:42:22.108853Z"
+  },
+  "rails/rails/issue/55438": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:42:39.855599Z"
+  },
+  "rails/rails/issue/55423": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:44:20.479960Z"
+  },
+  "rails/rails/issue/55373": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:44:43.054648Z"
+  },
+  "rails/rails/issue/55245": {
+    "status": "accepted",
+    "note": "Addresses XSS risk in i18n interpolation via SafeBuffer-aware escaping and safe HTML output handling",
+    "verified_at": "2026-06-05T15:45:52.147228Z"
+  },
+  "rails/rails/issue/55219": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-05T15:46:12.411408Z"
+  },
+  "rails/rails/issue/55185": {
+    "status": "accepted",
+    "note": "ActiveRecord connection leaks are a resource exhaustion vulnerability affecting application availability, and the answer provides correct mitigation patterns",
+    "verified_at": "2026-06-05T15:46:40.825570Z"
+  },
+  "rails/rails/issue/55108": {
+    "status": "rejected",
+    "note": "interpreter segfault due to Ruby bug is a reliability/stability issue, not a security vulnerability",
+    "verified_at": "2026-06-05T15:47:07.895476Z"
+  },
+  "rails/rails/issue/54838": {
+    "status": "rejected",
+    "note": "CookieOverflow name/value boundary behavior is an implementation detail, not a security vulnerability",
+    "verified_at": "2026-06-05T15:47:40.031638Z"
+  },
+  "rails/rails/issue/54819": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:47:57.845505Z"
+  },
+  "rails/rails/issue/54778": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:48:18.340269Z"
+  },
+  "rails/rails/discussion/54773": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:48:34.783584Z"
+  },
+  "rails/rails/issue/54752": {
+    "status": "accepted",
+    "note": "Modifying ActiveStorage blob keys impacts secure token integrity and storage access safety, making this a security-relevant issue",
+    "verified_at": "2026-06-05T15:49:14.762782Z"
+  },
+  "rails/rails/issue/54595": {
+    "status": "accepted",
+    "note": "Warden failure_app reset affects authentication control flow and is security-relevant due to its impact on authentication handling integrity",
+    "verified_at": "2026-06-05T15:52:00.943215Z"
+  },
+  "rails/rails/issue/54534": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:52:24.857620Z"
+  },
+  "rails/rails/issue/54374": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:52:48.804901Z"
+  },
+  "rails/rails/issue/54357": {
+    "status": "accepted",
+    "note": "MessageVerifier key rotation callbacks are part of cryptographic security lifecycle handling, making this a security-relevant issue",
+    "verified_at": "2026-06-05T15:53:20.844745Z"
+  },
+  "rails/rails/issue/54343": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:53:46.710316Z"
+  },
+  "rails/rails/issue/54277": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:54:09.606574Z"
+  },
+  "rails/rails/issue/54139": {
+    "status": "accepted",
+    "note": "Unintended ActiveStorage initialization during asset precompilation can lead to secret exposure in CI/build environments, making this security-relevant",
+    "verified_at": "2026-06-05T15:54:42.849218Z"
   }
 }
