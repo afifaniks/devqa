@@ -1623,5 +1623,240 @@
     "status": "accepted",
     "note": "Unintended ActiveStorage initialization during asset precompilation can lead to secret exposure in CI/build environments, making this security-relevant",
     "verified_at": "2026-06-05T15:54:42.849218Z"
+  },
+  "stripe/stripe-node/issue/2684": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:21:54.529563Z"
+  },
+  "stripe/stripe-node/issue/2665": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:22:13.683004Z"
+  },
+  "stripe/stripe-node/issue/2651": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:22:31.295899Z"
+  },
+  "stripe/stripe-node/issue/2534": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-05T23:22:51.602558Z"
+  },
+  "stripe/stripe-node/issue/2530": {
+    "status": "accepted",
+    "note": "Confirmed DoS vulnerability in dependency mitigated via patched qs version",
+    "verified_at": "2026-06-05T23:23:22.998295Z"
+  },
+  "stripe/stripe-node/issue/2369": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:23:51.040896Z"
+  },
+  "stripe/stripe-node/issue/2337": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:24:23.554966Z"
+  },
+  "stripe/stripe-node/issue/2223": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:24:41.263633Z"
+  },
+  "stripe/stripe-node/issue/2207": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:25:01.059406Z"
+  },
+  "stripe/stripe-node/issue/2124": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:25:25.617752Z"
+  },
+  "stripe/stripe-node/issue/2117": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:25:42.831452Z"
+  },
+  "stripe/stripe-node/issue/2078": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:25:59.984362Z"
+  },
+  "stripe/stripe-node/issue/2006": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:26:18.256387Z"
+  },
+  "stripe/stripe-node/issue/2004": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:26:55.708208Z"
+  },
+  "stripe/stripe-node/issue/1896": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:27:18.089776Z"
+  },
+  "stripe/stripe-node/issue/1886": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:27:45.908717Z"
+  },
+  "stripe/stripe-node/issue/1784": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:28:02.997089Z"
+  },
+  "stripe/stripe-node/issue/1778": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:28:22.545853Z"
+  },
+  "stripe/stripe-node/issue/1768": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:28:41.529935Z"
+  },
+  "stripe/stripe-node/issue/1645": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:29:02.050137Z"
+  },
+  "stripe/stripe-node/issue/1593": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:29:19.878533Z"
+  },
+  "stripe/stripe-node/issue/1577": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:31:07.442930Z"
+  },
+  "stripe/stripe-node/issue/1536": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:31:26.384269Z"
+  },
+  "stripe/stripe-node/issue/1517": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:31:44.935269Z"
+  },
+  "stripe/stripe-node/issue/1514": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:32:09.838133Z"
+  },
+  "stripe/stripe-node/issue/1504": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:32:31.555833Z"
+  },
+  "stripe/stripe-node/issue/1490": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-05T23:32:51.170695Z"
+  },
+  "stripe/stripe-node/issue/1428": {
+    "status": "accepted",
+    "note": "Security-relevant guidance on correct cryptographic webhook signature verification setup in Deno",
+    "verified_at": "2026-06-05T23:35:35.093850Z"
+  },
+  "stripe/stripe-node/issue/1356": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:36:34.212604Z"
+  },
+  "stripe/stripe-node/issue/1353": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:37:12.773457Z"
+  },
+  "stripe/stripe-node/issue/1294": {
+    "status": "accepted",
+    "note": "Security-relevant guidance on correct raw-body handling for webhook signature verification",
+    "verified_at": "2026-06-05T23:37:44.669618Z"
+  },
+  "stripe/stripe-node/issue/1286": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:38:10.411341Z"
+  },
+  "stripe/stripe-node/issue/1264": {
+    "status": "accepted",
+    "note": "Security-relevant guidance on PCI-driven restrictions for handling raw card data in Stripe SDK",
+    "verified_at": "2026-06-05T23:38:47.191865Z"
+  },
+  "stripe/stripe-node/issue/1254": {
+    "status": "accepted",
+    "note": "Security-relevant raw-body handling issue affecting webhook signature verification integrity",
+    "verified_at": "2026-06-05T23:39:28.168880Z"
+  },
+  "stripe/stripe-node/issue/1224": {
+    "status": "accepted",
+    "note": "security-relevant guidance on preventing sensitive PaymentIntent data exposure to client-side applications",
+    "verified_at": "2026-06-05T23:40:09.504874Z"
+  },
+  "stripe/stripe-node/issue/1214": {
+    "status": "accepted",
+    "note": "clear PCI compliance requirement enforcing tokenization instead of raw card data for Connect accounts",
+    "verified_at": "2026-06-05T23:40:49.093463Z"
+  },
+  "stripe/stripe-node/issue/1161": {
+    "status": "accepted",
+    "note": "security-relevant PCI compliance design decision restricting server-side raw card data handling",
+    "verified_at": "2026-06-05T23:42:12.500021Z"
+  },
+  "stripe/stripe-node/issue/1110": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-06T00:11:05.516805Z"
+  },
+  "stripe/stripe-node/issue/1085": {
+    "status": "accepted",
+    "note": "Security-relevant PCI compliance and secure token usage guidance",
+    "verified_at": "2026-06-06T00:11:34.513286Z"
+  },
+  "stripe/stripe-node/issue/1083": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-06T00:13:42.557530Z"
+  },
+  "stripe/stripe-node/issue/1067": {
+    "status": "accepted",
+    "note": "Security-relevant (webhook signature verification correctness and credential misuse risk)",
+    "verified_at": "2026-06-06T00:14:38.958990Z"
+  },
+  "stripe/stripe-node/issue/1043": {
+    "status": "accepted",
+    "note": "security-relevant (webhook payload integrity and signature verification correctness)",
+    "verified_at": "2026-06-06T00:15:50.118627Z"
+  },
+  "stripe/stripe-node/issue/1006": {
+    "status": "accepted",
+    "note": "Security-relevant (webhook signature verification broken by body parsing middleware)",
+    "verified_at": "2026-06-06T00:16:52.196190Z"
+  },
+  "stripe/stripe-node/issue/997": {
+    "status": "accepted",
+    "note": "Security-relevant (webhook signature verification and raw body handling in edge runtime)",
+    "verified_at": "2026-06-06T00:17:41.905586Z"
+  },
+  "stripe/stripe-node/issue/989": {
+    "status": "accepted",
+    "note": "Security-relevant (webhook signature verification depends on raw request body integrity)",
+    "verified_at": "2026-06-06T00:18:08.050801Z"
+  },
+  "stripe/stripe-node/issue/935": {
+    "status": "accepted",
+    "note": "security-relevant (OAuth credential misuse involving authorization code handling)",
+    "verified_at": "2026-06-06T00:18:31.792903Z"
+  },
+  "stripe/stripe-node/issue/932": {
+    "status": "accepted",
+    "note": "Security-relevant (webhook signature verification integrity depends on raw request body preservation)",
+    "verified_at": "2026-06-06T00:19:25.895335Z"
   }
 }
