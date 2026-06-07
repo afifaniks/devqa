@@ -1858,5 +1858,25 @@
     "status": "accepted",
     "note": "Security-relevant (webhook signature verification integrity depends on raw request body preservation)",
     "verified_at": "2026-06-06T00:19:25.895335Z"
+  },
+  "urllib3/urllib3/issue/3745": {
+    "status": "accepted",
+    "note": "Confirmed security vulnerability with advisory and fix (redirect draining + attacker-controlled decompression).",
+    "verified_at": "2026-06-07T00:06:38.452373Z"
+  },
+  "urllib3/urllib3/issue/3734": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-07T00:07:00.482997Z"
+  },
+  "urllib3/urllib3/issue/3665": {
+    "status": "accepted",
+    "note": "Security-relevant (TLS certificate validation / X.509 verification behavior), with a mitigation tied to Python 3.13 verification changes.",
+    "verified_at": "2026-06-07T00:07:33.802914Z"
+  },
+  "urllib3/urllib3/issue/3640": {
+    "status": "accepted",
+    "note": "Directly addresses CVE applicability and mitigation/patchability for urllib3 2.2.0, which is clearly security-relevant.",
+    "verified_at": "2026-06-07T00:10:43.653850Z"
   }
 }
