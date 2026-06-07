@@ -1878,5 +1878,205 @@
     "status": "accepted",
     "note": "Directly addresses CVE applicability and mitigation/patchability for urllib3 2.2.0, which is clearly security-relevant.",
     "verified_at": "2026-06-07T00:10:43.653850Z"
+  },
+  "urllib3/urllib3/issue/3632": {
+    "status": "accepted",
+    "note": "security-relevant due to HTTPS proxy TLS/SSL configuration and SSLContext handling, even though it is primarily a configuration issue rather than a vulnerability.",
+    "verified_at": "2026-06-07T17:10:53.686976Z"
+  },
+  "urllib3/urllib3/issue/3609": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-07T17:11:08.851577Z"
+  },
+  "urllib3/urllib3/issue/3608": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:11:30.961951Z"
+  },
+  "urllib3/urllib3/issue/3571": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-07T17:11:39.760848Z"
+  },
+  "urllib3/urllib3/issue/3542": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:12:10.500943Z"
+  },
+  "urllib3/urllib3/issue/3511": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:12:22.340156Z"
+  },
+  "urllib3/urllib3/issue/3465": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:12:32.111407Z"
+  },
+  "urllib3/urllib3/issue/3439": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-07T17:12:45.738762Z"
+  },
+  "urllib3/urllib3/issue/3432": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:12:56.071885Z"
+  },
+  "urllib3/urllib3/issue/3418": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:13:17.577296Z"
+  },
+  "urllib3/urllib3/issue/3374": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-07T17:13:27.534373Z"
+  },
+  "urllib3/urllib3/issue/3366": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:13:38.417370Z"
+  },
+  "urllib3/urllib3/issue/3352": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-07T17:14:15.961601Z"
+  },
+  "urllib3/urllib3/issue/3268": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:14:32.261722Z"
+  },
+  "urllib3/urllib3/issue/3201": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:14:44.577451Z"
+  },
+  "urllib3/urllib3/issue/3133": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:15:00.292678Z"
+  },
+  "urllib3/urllib3/issue/3111": {
+    "status": "accepted",
+    "note": "high-confidence security relevance due to TLS hardening bypass (DH parameter enforcement, cipher suite restrictions, and certificate verification weakening).",
+    "verified_at": "2026-06-07T17:15:27.016538Z"
+  },
+  "urllib3/urllib3/issue/3102": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:16:04.201562Z"
+  },
+  "urllib3/urllib3/issue/3081": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-07T17:17:20.652453Z"
+  },
+  "urllib3/urllib3/issue/3062": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:17:31.809536Z"
+  },
+  "urllib3/urllib3/issue/3053": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:17:42.742997Z"
+  },
+  "urllib3/urllib3/issue/3031": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:17:53.324153Z"
+  },
+  "urllib3/urllib3/issue/3020": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:18:05.534397Z"
+  },
+  "urllib3/urllib3/issue/3017": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-07T17:18:34.764206Z"
+  },
+  "urllib3/urllib3/issue/3016": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:20:47.435745Z"
+  },
+  "urllib3/urllib3/issue/3015": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:20:58.607703Z"
+  },
+  "urllib3/urllib3/issue/2982": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:21:11.513219Z"
+  },
+  "urllib3/urllib3/issue/2957": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:21:23.870983Z"
+  },
+  "urllib3/urllib3/issue/2955": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:21:35.797896Z"
+  },
+  "urllib3/urllib3/issue/2920": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:21:50.409207Z"
+  },
+  "urllib3/urllib3/issue/2915": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:22:02.019681Z"
+  },
+  "urllib3/urllib3/issue/2893": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:22:14.178448Z"
+  },
+  "urllib3/urllib3/issue/2886": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:22:26.999403Z"
+  },
+  "urllib3/urllib3/issue/2876": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-07T17:22:37.916053Z"
+  },
+  "urllib3/urllib3/issue/2867": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-07T17:22:51.318544Z"
+  },
+  "urllib3/urllib3/issue/2809": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:23:02.449436Z"
+  },
+  "urllib3/urllib3/issue/2802": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:23:16.038023Z"
+  },
+  "urllib3/urllib3/issue/2775": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:23:39.672144Z"
+  },
+  "urllib3/urllib3/issue/2700": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:23:59.655114Z"
+  },
+  "urllib3/urllib3/issue/2680": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:24:23.570933Z"
   }
 }
