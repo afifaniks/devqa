@@ -1,0 +1,345 @@
+repo,ecosystem,language,stars,months_since_push,total_ghsa,fixed_ghsa,fix_coverage_pct,packages
+FriendsOfPHP/security-advisories,"Maven, NuGet, RubyGems, npm, packagist, pypi",PHP,2121,0.0,1109,1100,99,"3f/pygmentize, PyNaCl, adodb/adodb-php, alterphp/easyadmin-extension-bundle, amphp/artax, amphp/http, amphp/http-client, api-platform/core, api-platform/graphql, asymmetricrypt/asymmetricrypt, aws/aws"
+rubysec/ruby-advisory-db,"Dart/pub, Elixir/hex, Go, Maven, NuGet, RubyGems, crates.io, npm, packagist, pypi, swifturl",Ruby,1063,0.0,830,780,94,"@openc3/tool-common, @turbo-boost/commands, Bootstrap.Less, MPXJ.Net, Pubnub, RedCloth, action_text-trix, actionmailer, actionpack, actiontext, actionview, active_attr, activeadmin, activejob, activem"
+openclaw/openclaw,"NuGet, npm",TypeScript,376642,0.0,663,609,92,"@clawdbot/voice-call, @openclaw/bluebubbles, @openclaw/nextcloud-talk, @openclaw/voice-call, OpenClaw, clawdbot, moltbot, openclaw"
+tensorflow/tensorflow,pypi,C++,195396,0.0,434,434,100,"tensorflow, tensorflow-cpu, tensorflow-gpu"
+moodle/moodle,packagist,PHP,7138,0.3,416,407,98,"moodle/moodle, typo3/cms"
+magento/magento2,packagist,PHP,12121,0.1,322,319,99,"magento/community-edition, magento/core, magento/magento1ce, magento/magento1ee, magento/product-community-edition, magento/project-community-edition, magneto/core"
+liferay/liferay-portal,"Maven, npm",Java,2249,0.0,297,279,94,"ccom.liferay:com.liferay.dynamic.data.mapping.web, com.liferay.commerce:com.liferay.commerce.account.web, com.liferay.commerce:com.liferay.commerce.address.content.web, com.liferay.commerce:com.lifera"
+mattermost/mattermost,"Go, npm",TypeScript,36980,0.0,277,275,99,"github.com/mattermost/mattermost, github.com/mattermost/mattermost-plugin-calls, github.com/mattermost/mattermost-plugin-github, github.com/mattermost/mattermost-plugin-jira, github.com/mattermost/mat"
+xwiki/xwiki-platform,Maven,Java,1258,0.0,235,233,99,"com.xpn.xwiki.platform.plugins:xwiki-plugin-scheduler, com.xpn.xwiki.platform:xwiki-core-rest-server, com.xpn.xwiki.platform:xwiki-rest, org.xwiki.commons:xwiki-commons-core, org.xwiki.contrib:applica"
+chakra-core/ChakraCore,NuGet,JavaScript,9253,3.4,223,219,98,Microsoft.ChakraCore
+jenkinsci/jenkins,Maven,Java,25325,0.0,219,218,100,"org.jenkins-ci.main:cli, org.jenkins-ci.main:jenkins-core, org.jenkins-ci.main:remoting, org.kohsuke.stapler:stapler-parent"
+apache/tomcat,"Go, Maven, swifturl",Java,8179,0.0,183,179,98,"com.typesafe.akka:akka-http-core, com.typesafe.akka:akka-http-core_2.11, com.typesafe.akka:akka-http-core_2.12, com.typesafe.akka:akka-http-core_2.13, commons-fileupload:commons-fileupload, github.com"
+keycloak/keycloak,"Go, Maven, npm",Java,34728,0.0,176,138,78,"@keycloak/keycloak-admin-client, github.com/keycloak/keycloak-gatekeeper, org.keycloak:keycloak-account-ui, org.keycloak:keycloak-adapter-core, org.keycloak:keycloak-admin-ui, org.keycloak:keycloak-au"
+TYPO3/typo3,"npm, packagist",PHP,1190,0.0,165,162,98,"ckeditor-wordcount-plugin, derhansen/fe_change_pwd, typo3/cms, typo3/cms-backend, typo3/cms-belog, typo3/cms-beuser, typo3/cms-core, typo3/cms-dashboard, typo3/cms-extensionmanager, typo3/cms-fluid, t"
+django/django,"Maven, NuGet, RubyGems, npm, packagist, pypi",Python,87632,0.0,152,151,99,"Django, django, jQuery, jquery, jquery-rails, maximebf/debugbar, org.webjars.npm:jquery"
+apache/airflow,pypi,Python,45684,0.0,150,150,100,"airflow, apache-airflow, apache-airflow-core, apache-airflow-providers-amazon, apache-airflow-providers-apache-drill, apache-airflow-providers-apache-hdfs, apache-airflow-providers-apache-hive, apache"
+WWBN/AVideo,packagist,JavaScript,2095,0.0,149,13,9,"WWBN/AVideo, wwbn/avideo"
+pimcore/pimcore,packagist,PHP,3772,0.0,142,138,97,"pimcore/admin-ui-classic-bundle, pimcore/customer-data-framework, pimcore/customer-management-framework-bundle, pimcore/data-importer, pimcore/pimcore, pimcore/web2print-tools-bundle"
+ImageMagick/ImageMagick,"Go, NuGet, crates.io, npm, pypi",C,16606,0.0,126,124,98,"Magick.NET-Q16-AnyCPU, Magick.NET-Q16-HDRI-AnyCPU, Magick.NET-Q16-HDRI-OpenMP-arm64, Magick.NET-Q16-HDRI-OpenMP-x64, Magick.NET-Q16-HDRI-arm64, Magick.NET-Q16-HDRI-x64, Magick.NET-Q16-HDRI-x86, Magick"
+parse-community/parse-server,npm,JavaScript,21396,0.0,109,109,100,parse-server
+Dolibarr/dolibarr,packagist,PHP,7280,0.0,109,67,61,dolibarr/dolibarr
+rails/rails,"RubyGems, npm",Ruby,58477,0.0,108,107,99,"actionmailer, actionpack, actiontext, actionview, activejob, activemodel, activerecord, activeresource, activestorage, activesupport, decidim, decidim-core, rails, trix"
+microweber/microweber,packagist,HTML,3416,0.0,105,75,71,microweber/microweber
+craftcms/cms,packagist,PHP,3575,0.0,104,98,94,"craftcms/cms, craftcms/craft"
+librenms/librenms,packagist,PHP,4745,0.0,96,90,94,librenms/librenms
+open-webui/open-webui,"npm, pypi",Python,139914,0.0,96,73,76,"open-webu, open-webui"
+symfony/symfony,packagist,PHP,31058,0.0,95,95,100,"drupal/core, drupal/drupal, lexik/jwt-authentication-bundle, symfony/cache, symfony/dependency-injection, symfony/dom-crawler, symfony/error-handler, symfony/form, symfony/framework-bundle, symfony/ht"
+FlowiseAI/Flowise,npm,TypeScript,53323,0.0,93,76,82,"Flowise, flowise, flowise-components, flowise-embed, flowise-ui"
+dlemstra/Magick.NET,"Go, NuGet, crates.io, npm, pypi",C#,3938,0.0,86,86,100,"Magick.NET-Q16-AnyCPU, Magick.NET-Q16-HDRI-AnyCPU, Magick.NET-Q16-HDRI-OpenMP-arm64, Magick.NET-Q16-HDRI-OpenMP-x64, Magick.NET-Q16-HDRI-arm64, Magick.NET-Q16-HDRI-x64, Magick.NET-Q16-HDRI-x86, Magick"
+github/advisory-database,"Go, Maven, NuGet, RubyGems, crates.io, npm, packagist, pypi",,2312,0.0,83,68,82,"@cypress/request, @nubosoftware/node-static, Microsoft.AspNetCore.All, Microsoft.AspNetCore.App, Microsoft.AspNetCore.App.Runtime.linux-arm, Microsoft.AspNetCore.App.Runtime.linux-arm64, Microsoft.Asp"
+MervinPraison/PraisonAI,pypi,Python,8039,0.0,81,81,100,"PraisonAI, praisonai, praisonai-platform, praisonaiagents"
+n8n-io/n8n,npm,TypeScript,190991,0.0,81,80,99,"@n8n/n8n-nodes-langchain, n8n, n8n-nodes-base"
+kubernetes/kubernetes,"Go, Maven, NuGet, swifturl",Go,122677,0.0,79,73,92,"KubernetesClient, com.typesafe.akka:akka-http-core, com.typesafe.akka:akka-http-core_2.11, com.typesafe.akka:akka-http-core_2.12, com.typesafe.akka:akka-http-core_2.13, github.com/apple/swift-nio-http"
+usememos/memos,Go,Go,60367,0.0,75,66,88,github.com/usememos/memos
+apache/struts,Maven,Java,1354,0.0,74,69,93,"com.opensymphony:xwork, org.apache.struts.xwork:xwork-core, org.apache.struts:struts-core, org.apache.struts:struts-extras, org.apache.struts:struts-parent, org.apache.struts:struts2-convention-plugin"
+FasterXML/jackson-databind,Maven,Java,3724,0.1,72,72,100,"com.fasterxml.jackson.core:jackson-databind, io.apiman:apiman-manager-api-impl, org.springframework.security:spring-security-core"
+mlflow/mlflow,pypi,Python,26287,0.0,72,54,75,mlflow
+ansible/ansible,pypi,Python,68736,0.0,71,68,96,"ansible, ansible-core"
+getgrav/grav,packagist,PHP,15509,0.0,70,64,91,"getgrav/grav, getgrav/grav-plugin-api, getgrav/grav-plugin-form"
+apache/superset,pypi,TypeScript,73155,0.0,68,53,78,"apache-superset, superset"
+saltstack/salt,pypi,Python,15475,0.0,65,65,100,salt
+mantisbt/mantisbt,packagist,PHP,1777,0.1,64,63,98,mantisbt/mantisbt
+grafana/grafana,"Go, npm",TypeScript,74138,0.0,63,61,97,"@grafana/data, github.com/grafana/grafana, github.com/grafana/grafana/pkg/web"
+python-pillow/Pillow,"Go, NuGet, crates.io, npm, pypi",Python,13597,0.0,62,62,100,"Pillow, SkiaSharp, electron, github.com/chai2010/webp, libwebp-sys, libwebp-sys2, magick.net-q16-anycpu, magick.net-q16-hdri-anycpu, magick.net-q16-x64, magick.net-q8-anycpu, magick.net-q8-openmp-x64,"
+spring-projects/spring-framework,Maven,Java,60008,0.0,62,62,100,"org.springframework.boot:spring-boot-starter-web, org.springframework.boot:spring-boot-starter-webflux, org.springframework.security:spring-security-core, org.springframework:spring, org.springframewo"
+directus/directus,npm,TypeScript,36075,0.0,60,58,97,"@directus/api, @directus/app, @directus/env, @directus/storage-driver-s3, @directus/types, directus"
+rancher/rancher,Go,Go,25636,0.0,59,58,98,"github.com/rancher/rancher, github.com/rancher/rke2, github.com/rancher/wrangler"
+vercel/next.js,npm,JavaScript,139668,0.0,57,56,98,"@vitejs/plugin-rsc, next, postiz, react-server-dom-parcel, react-server-dom-turbopack, react-server-dom-webpack"
+phpmyadmin/phpmyadmin,packagist,PHP,7878,0.0,56,56,100,phpmyadmin/phpmyadmin
+gogs/gogs,"Go, npm",Go,47588,0.0,56,47,84,"code.gitea.io/gitea, github.com/gogits/gogs, github.com/gogs/gogs, gogs.io/gogs, pdfjs-dist"
+argoproj/argo-cd,Go,Go,23046,0.0,55,54,98,"github.com/argoproj/argo-cd, github.com/argoproj/argo-cd/v2, github.com/argoproj/argo-cd/v2/server, github.com/argoproj/argo-cd/v3, github.com/argoproj/gitops-engine, github.com/redhat-developer/gitop"
+hashicorp/vault,Go,Go,35715,0.0,54,49,91,"github.com/hashicorp/vault, github.com/hashicorp/vault-plugin-secrets-gcp, github.com/openbao/openbao"
+siyuan-note/siyuan,Go,TypeScript,44252,0.0,54,29,54,"github.com/siyuan-note/siyuan, github.com/siyuan-note/siyuan/kernel, siyuan"
+octobercms/october,packagist,PHP,11142,0.0,53,49,92,"october/backend, october/cms, october/october, october/rain, october/system"
+mautic/mautic,packagist,PHP,9784,0.0,52,51,98,"mautic/core, mautic/core-lib, mautic/grapes-js-builder-bundle"
+go-gitea/gitea,Go,Go,56103,0.0,52,51,98,"code.gitea.io/gitea, github.com/go-gitea/gitea, gogs.io/gogs"
+umbraco/Umbraco-CMS,"NuGet, npm",C#,5193,0.0,51,45,88,"@umbraco-cms/backoffice, Umbraco.CMS, Umbraco.Cms, Umbraco.Cms.Api.Delivery, Umbraco.Cms.Api.Management, Umbraco.Cms.Core, Umbraco.Cms.Infrastructure, Umbraco.Cms.StaticAssets, Umbraco.Cms.Web.BackOff"
+gradio-app/gradio,pypi,Python,42798,0.0,51,39,76,"Gradio, gradio"
+rack/rack,RubyGems,Ruby,5121,0.8,50,50,100,"rack, rack-session"
+shopware/shopware,packagist,PHP,3359,0.0,50,48,96,"shopware/core, shopware/platform, shopware/shopware, shopware/storefront"
+traefik/traefik,Go,Go,63430,0.0,49,49,100,"github.com/containous/traefik, github.com/containous/traefik/api, github.com/containous/traefik/v2, github.com/containous/traefik/v2/pkg/api, github.com/traefik/traefik, github.com/traefik/traefik/api"
+sparklemotion/nokogiri,RubyGems,C,6267,0.9,49,47,96,"loofah, nokogiri, rexical"
+pyload/pyload,pypi,Python,3789,0.0,48,30,62,pyload-ng
+electron/electron,"Go, NuGet, crates.io, npm, pypi",C++,121530,0.0,47,47,100,"Pillow, SkiaSharp, electron, github.com/chai2010/webp, libwebp-sys, libwebp-sys2, magick.net-q16-anycpu, magick.net-q16-hdri-anycpu, magick.net-q16-x64, magick.net-q8-anycpu, magick.net-q8-openmp-x64,"
+dotnet/runtime,NuGet,C#,17924,0.0,47,47,100,"Microsoft.AspNetCore.App.Runtime.linux-arm, Microsoft.AspNetCore.App.Runtime.linux-arm64, Microsoft.AspNetCore.App.Runtime.linux-musl-arm, Microsoft.AspNetCore.App.Runtime.linux-musl-arm64, Microsoft."
+netty/netty,"Go, Maven, swifturl",Java,34970,0.0,47,46,98,"com.typesafe.akka:akka-http-core, com.typesafe.akka:akka-http-core_2.11, com.typesafe.akka:akka-http-core_2.12, com.typesafe.akka:akka-http-core_2.13, github.com/apple/swift-nio-http2, golang.org/x/ne"
+patriksimek/vm2,npm,JavaScript,4072,0.5,47,45,96,"@budibase/server, @soketi/soketi, directus, safe-eval, vm2"
+vllm-project/vllm,pypi,Python,81891,0.0,46,42,91,"vllm, xgrammar"
+shopware/platform,packagist,PHP,3359,0.0,45,45,100,"shopware/core, shopware/platform, shopware/production, shopware/storefront"
+uutils/coreutils,crates.io,Rust,23424,0.0,45,24,53,"coreutils, uu_od"
+getkirby/kirby,packagist,PHP,1508,0.0,44,41,93,"getkirby/cms, getkirby/kirby, getkirby/panel"
+vyperlang/vyper,pypi,Python,5185,0.1,44,39,89,vyper
+free5gc/free5gc,Go,Go,2300,0.2,44,23,52,"github.com/free5gc/amf, github.com/free5gc/ausf, github.com/free5gc/bsf, github.com/free5gc/chf, github.com/free5gc/free5gc, github.com/free5gc/nef, github.com/free5gc/nrf, github.com/free5gc/nssf, gi"
+openstack/nova,pypi,Python,3201,0.0,43,40,93,"Nova, cinder, glance, nova, python-keystoneclient"
+strapi/strapi,npm,TypeScript,72305,0.0,42,37,88,"@strapi/admin, @strapi/content-type-builder, @strapi/core, @strapi/database, @strapi/plugin-content-manager, @strapi/plugin-content-type-builder, @strapi/plugin-email, @strapi/plugin-upload, @strapi/p"
+star7th/showdoc,packagist,PHP,12821,0.0,42,35,83,showdoc/showdoc
+apache/activemq,Maven,Java,2432,0.0,41,41,100,"org.apache.activemq:activemq-all, org.apache.activemq:activemq-broker, org.apache.activemq:activemq-client, org.apache.activemq:activemq-core, org.apache.activemq:activemq-jaas, org.apache.activemq:ac"
+bytecodealliance/wasmtime,"crates.io, pypi",Rust,18126,0.0,41,41,100,"cranelift-codegen, wasmtime, wasmtime-jit-debug, wasmtime-wasi"
+zitadel/zitadel,Go,Go,13939,0.0,40,40,100,"github.com/zitadel/zitadel, github.com/zitadel/zitadel/v2"
+langchain-ai/langchain,pypi,Python,138453,0.0,40,37,92,"langchain, langchain-community, langchain-core, langchain-experimental, langchain-openai, langchain-text-splitters, numexpr"
+froxlor/froxlor,packagist,PHP,1739,0.2,39,39,100,froxlor/froxlor
+apache/camel,Maven,Java,6218,0.0,37,37,100,"org.apache.camel:camel, org.apache.camel:camel-ahc, org.apache.camel:camel-cassandraql, org.apache.camel:camel-castor, org.apache.camel:camel-coap, org.apache.camel:camel-consul, org.apache.camel:came"
+cilium/cilium,Go,Go,24442,0.0,37,37,100,"Ciliumgithub.com/cilium/cilium, github.com/cilium/cilium, github.com/cilium/hubble, github.com/edgelesssys/constellation/v2"
+moby/moby,Go,Go,71619,0.0,36,36,100,"github.com/containerd/containerd, github.com/docker/docker, github.com/moby/moby, github.com/moby/moby/v2, github.com/vbatts/tar-split"
+aio-libs/aiohttp,pypi,Python,16440,0.0,36,35,97,aiohttp
+dnnsoftware/Dnn.Platform,NuGet,C#,1131,0.0,36,34,94,"DNN.PLATFORM, Dnn.Platform, DotNetNuke.Core, DotNetNuke.SiteExportImport, DotNetNuke.Web"
+snipe/snipe-it,"npm, packagist",PHP,13882,0.0,36,31,86,"select2, snipe/snipe-it"
+WeblateOrg/weblate,"RubyGems, pypi",Python,5897,0.0,35,35,100,"Weblate, csv-safe, weblate"
+bcgit/bc-java,"Maven, NuGet",Java,2648,0.0,35,34,97,"BouncyCastle, BouncyCastle.Cryptography, bouncycastle:bcprov-jdk14, bouncycastle:bcprov-jdk15, bouncycastle:bcprov-jdk16, org.bouncycastle:bc-fips, org.bouncycastle:bcpg-jdk12, org.bouncycastle:bcpg-j"
+answerdev/answer,Go,Go,15543,0.0,34,34,100,github.com/answerdev/answer
+opencv/opencv-python,pypi,Python,5275,3.9,34,32,94,"opencv-contrib-python, opencv-contrib-python-headless, opencv-python, opencv-python-headless"
+spring-projects/spring-security,Maven,Java,9525,0.0,33,33,100,"org.springframework.security:spring-security-aspects, org.springframework.security:spring-security-bom, org.springframework.security:spring-security-config, org.springframework.security:spring-securit"
+apache/nifi,Maven,Java,6108,0.0,33,33,100,"org.apache.nifi.registry:nifi-registry-core, org.apache.nifi:nifi, org.apache.nifi:nifi-asana-processors, org.apache.nifi:nifi-ccda-processors, org.apache.nifi:nifi-cdc-mysql-bundle, org.apache.nifi:n"
+axios/axios,"npm, packagist",JavaScript,109092,0.0,33,33,100,"@lightdash/cli, @usebruno/cli, axios, solspace/craft-freeform"
+hashicorp/consul,Go,Go,29907,0.0,33,33,100,"github.com/hashicorp/consul, github.com/hashicorp/consul-template"
+opencv/opencv,pypi,C++,87761,0.0,33,32,97,"opencv-contrib-python, opencv-contrib-python-headless, opencv-python, opencv-python-headless"
+undertow-io/undertow,Maven,Java,3748,0.2,33,29,88,"io.undertow:undertow-core, io.undertow:undertow-parent, io.undertow:undertow-servlet, org.wildfly:wildfly-undertow"
+nocodb/nocodb,npm,TypeScript,63249,0.0,33,25,76,nocodb
+go-vikunja/vikunja,Go,Go,4445,0.0,33,23,70,code.vikunja.io/api
+honojs/hono,npm,TypeScript,30793,0.0,32,32,100,"@fastify/static, hono"
+PrestaShop/PrestaShop,packagist,PHP,9093,0.0,32,31,97,prestashop/prestashop
+apache/inlong,Maven,Java,1492,0.0,32,30,94,"org.apache.inlong:inlong, org.apache.inlong:inlong-common, org.apache.inlong:inlong-manager, org.apache.inlong:manager-common, org.apache.inlong:manager-dao, org.apache.inlong:manager-pojo, org.apache"
+PaddlePaddle/Paddle,pypi,C++,23935,0.0,32,27,84,"PaddlePaddle, paddlepaddle"
+nats-io/nats-server,Go,Go,19952,0.0,31,31,100,"github.com/nats-io/jwt, github.com/nats-io/jwt/v2, github.com/nats-io/nats-server, github.com/nats-io/nats-server/v2, github.com/nats-io/nats-streaming-server"
+backstage/backstage,npm,TypeScript,33514,0.0,31,31,100,"@backstage/backend-app-api, @backstage/backend-common, @backstage/backend-defaults, @backstage/catalog-model, @backstage/cli-common, @backstage/core-components, @backstage/integration, @backstage/plug"
+denoland/deno,crates.io,Rust,106938,0.0,31,31,100,"Deno, deno, deno_doc, deno_fetch, deno_node, deno_runtime, serde_v8"
+statamic/cms,packagist,PHP,4817,0.0,31,31,100,statamic/cms
+helm/helm,Go,Go,29842,0.0,31,30,97,"github.com/fluxcd/flux2, github.com/fluxcd/helm-controller, github.com/go-vela/compiler, github.com/helm/helm, golang.org/x/crypto, helm.sh/helm, helm.sh/helm/v3, helm.sh/helm/v4"
+geoserver/geoserver,Maven,Java,4362,0.0,31,29,94,"org.geoserver.community:gs-jdbcconfig, org.geoserver.extension:gs-mapml, org.geoserver.extension:gs-wps-core, org.geoserver.main:gs-main, org.geoserver.web:gs-app, org.geoserver.web:gs-web-app, org.ge"
+pmmp/PocketMine-MP,packagist,PHP,3526,0.1,30,30,100,pocketmine/pocketmine-mp
+filebrowser/filebrowser,Go,Go,34949,0.0,30,23,77,"github.com/filebrowser/filebrowser, github.com/filebrowser/filebrowser/v2, https://github.com/filebrowser/filebrowser"
+PHPOffice/PhpSpreadsheet,packagist,PHP,13934,0.1,29,29,100,"kimai/kimai, phpoffice/phpexcel, phpoffice/phpspreadsheet, solspace/craft-freeform"
+eclipse/jetty.project,"Go, Maven, swifturl",Java,4076,0.0,28,28,100,"com.typesafe.akka:akka-http-core, com.typesafe.akka:akka-http-core_2.11, com.typesafe.akka:akka-http-core_2.12, com.typesafe.akka:akka-http-core_2.13, github.com/apple/swift-nio-http2, golang.org/x/ne"
+elastic/elasticsearch,"Go, Maven",Java,76827,0.0,28,28,100,"github.com/elastic/beats, github.com/elastic/beats/v7, org.elasticsearch.client:elasticsearch-rest-client, org.elasticsearch.plugin:x-pack-core, org.elasticsearch.plugin:x-pack-security, org.elasticse"
+pgadmin-org/pgadmin4,pypi,Python,3645,0.0,28,28,100,"pgAdmin4, pgadmin4"
+wikimedia/mediawiki,packagist,PHP,5075,0.0,28,27,96,"mediawiki/core, wikibase/wikibase"
+surrealdb/surrealdb,crates.io,Rust,32329,0.2,28,27,96,"SurrealDB, surrealdb, surrealdb-core"
+hashicorp/nomad,Go,Go,16539,0.0,28,26,93,github.com/hashicorp/nomad
+simplesamlphp/simplesamlphp,packagist,PHP,1139,0.0,27,27,100,"simplesamlphp/saml2, simplesamlphp/simplesamlphp, simplesamlphp/simplesamlphp-module-infocard"
+nilsteampassnet/TeamPass,packagist,PHP,1790,0.0,27,16,59,nilsteampassnet/teampass
+py-pdf/pypdf,pypi,Python,10025,0.0,26,26,100,"PyPDF2, pypdf"
+withastro/astro,npm,TypeScript,59815,0.0,26,26,100,"@astrojs/cloudflare, @astrojs/node, @astrojs/vercel, astro"
+laravel/framework,packagist,PHP,34741,0.0,26,25,96,"illuminate/auth, illuminate/database, illuminate/view, laravel/framework, laravel/laravel, macropay-solutions/laravel-crud-wizard-free"
+run-llama/llama_index,pypi,Python,49895,0.0,26,24,92,"llama-index, llama-index-cli, llama-index-core, llama-index-llms-rungpt, llama-index-packs-finchat, llama-index-readers-docugami, llama-index-readers-obsidian, llama-index-readers-papers, llama-index-"
+fleetdm/fleet,Go,Go,6430,0.0,25,25,100,"github.com/fleetdm/fleet, github.com/fleetdm/fleet/v4"
+anthropics/claude-code,npm,Python,129938,0.0,25,25,100,@anthropic-ai/claude-code
+ethereum/go-ethereum,Go,Go,51070,0.0,25,20,80,"github.com/ethereum/go-ethereum, github.com/holiman/uint256"
+langflow-ai/langflow,pypi,Python,149203,0.0,25,16,64,"langflow, langflow-base"
+frangoteam/FUXA,npm,TypeScript,4560,0.1,25,14,56,"@frangoteam/fuxa, fuxa-server"
+TYPO3/TYPO3.CMS,packagist,PHP,1190,0.0,24,24,100,"typo3/cms, typo3/cms-backend, typo3/cms-core, typo3/cms-form"
+apache/dolphinscheduler,"Maven, pypi",Java,14292,0.0,24,24,100,"apache-dolphinscheduler, org.apache.dolphinscheduler:dolphinscheduler, org.apache.dolphinscheduler:dolphinscheduler-alert-plugins, org.apache.dolphinscheduler:dolphinscheduler-api, org.apache.dolphins"
+openbao/openbao,Go,Go,6242,0.0,24,24,100,"github.com/hashicorp/vault, github.com/openbao/openbao, github.com/openbao/openbao/sdk/v2"
+firefly-iii/firefly-iii,packagist,PHP,23591,0.0,24,22,92,grumpydictator/firefly-iii
+TryGhost/Ghost,npm,JavaScript,53782,0.0,24,21,88,"@tryghost/members-csv, @tryghost/portal, ghost"
+golang/go,"Go, Maven, swifturl",Go,134259,0.0,23,23,100,"com.typesafe.akka:akka-http-core, com.typesafe.akka:akka-http-core_2.11, com.typesafe.akka:akka-http-core_2.12, com.typesafe.akka:akka-http-core_2.13, github.com/apple/swift-nio-http2, github.com/cert"
+opencontainers/runc,"Go, crates.io",Go,13249,0.0,23,23,100,"github.com/apptainer/apptainer, github.com/cri-o/cri-o, github.com/opencontainers/runc, github.com/opencontainers/selinux, github.com/sylabs/singularity/v4, libcontainer, youki"
+dotnet/aspnetcore,NuGet,C#,37962,0.0,23,23,100,"Microsoft.AspNet.Identity.Owin, Microsoft.AspNetCore.App, Microsoft.AspNetCore.App.Runtime.linux-arm, Microsoft.AspNetCore.App.Runtime.linux-arm64, Microsoft.AspNetCore.App.Runtime.linux-musl-arm, Mic"
+nodejs/undici,npm,JavaScript,7603,0.0,23,23,100,"@hapi/wreck, undici"
+openfga/openfga,Go,Go,5237,0.0,23,23,100,github.com/openfga/openfga
+goharbor/harbor,Go,Go,28631,0.0,23,22,96,"github.com/goharbor/harbor, github.com/goharbor/harbor/src"
+juju/juju,Go,Go,2632,0.0,23,21,91,github.com/juju/juju
+Froxlor/Froxlor,packagist,PHP,1739,0.2,23,20,87,froxlor/froxlor
+kyverno/kyverno,Go,Go,7803,0.0,23,19,83,"github.com/kyverno/kyverno, github.com/kyverno/policy-reporter-ui"
+livehelperchat/livehelperchat,packagist,PHP,2211,0.1,23,18,78,"livehelperchat/livehelperchat, remdex/livehelperchat"
+OpenZeppelin/openzeppelin-contracts,npm,Solidity,27122,0.0,22,22,100,"@openzeppelin/contracts, @openzeppelin/contracts-upgradeable, openzeppelin-eth, openzeppelin-solidity"
+quarkusio/quarkus,Maven,Java,15700,0.0,22,21,95,"io.quarkus.resteasy.reactive:resteasy-reactive, io.quarkus.resteasy.reactive:resteasy-reactive-common, io.quarkus:quarkus-cache, io.quarkus:quarkus-core, io.quarkus:quarkus-core-parent, io.quarkus:qua"
+nervosnetwork/ckb,crates.io,Rust,1210,0.0,22,21,95,ckb
+drupal/drupal,packagist,PHP,4268,0.0,22,21,95,"drupal/core, drupal/core-recommended, drupal/drupal"
+BerriAI/litellm,"Go, github actions, pypi",Python,49218,0.0,22,17,77,"aquasecurity/setup-trivy, aquasecurity/trivy-action, github.com/aquasecurity/trivy, litellm"
+mindsdb/mindsdb,pypi,Python,39234,0.0,22,15,68,"MindsDB, mindsdb"
+puppetlabs/puppet,RubyGems,Ruby,7867,2.6,21,21,100,puppet
+rubygems/rubygems,"Maven, RubyGems",Ruby,3929,0.0,21,21,100,"bundler, org.jruby:jruby-stdlib, rubygems-update"
+twigphp/Twig,packagist,PHP,8359,0.0,21,21,100,"craftcms/cms, getgrav/grav, twig/cssinliner-extra, twig/intl-extra, twig/markdown-extra, twig/twig"
+cloudfoundry/uaa,Maven,Java,1630,0.0,21,21,100,org.cloudfoundry.identity:cloudfoundry-identity-server
+etcd-io/etcd,"Go, Maven, swifturl",Go,51761,0.0,21,20,95,"com.typesafe.akka:akka-http-core, com.typesafe.akka:akka-http-core_2.11, com.typesafe.akka:akka-http-core_2.12, com.typesafe.akka:akka-http-core_2.13, github.com/apple/swift-nio-http2, github.com/etcd"
+lxc/incus,Go,Go,5480,0.0,21,16,76,"github.com/canonical/lxd, github.com/lxc/incus, github.com/lxc/incus/v6, github.com/lxc/incus/v6/client, github.com/lxc/incus/v6/cmd/incus, github.com/lxc/incus/v6/cmd/incusd"
+pyca/cryptography,"crates.io, pypi",Python,7612,0.0,20,20,100,"cryptography, openssl-src"
+wagtail/wagtail,pypi,Python,20338,0.0,20,20,100,wagtail
+cure53/DOMPurify,"npm, pypi",JavaScript,17071,0.0,20,20,100,"dompurify, mermaid"
+containerd/containerd,Go,Go,20794,0.0,20,20,100,"github.com/containerd/containerd, github.com/containerd/containerd/v2"
+vitejs/vite,npm,TypeScript,80981,0.0,20,20,100,"@nuxt/vite-builder, vite"
+huggingface/transformers,pypi,Python,161258,0.0,20,20,100,transformers
+apache/zeppelin,Maven,Java,6621,0.0,20,19,95,"org.apache.zeppelin:sap, org.apache.zeppelin:zeppelin, org.apache.zeppelin:zeppelin-interpreter, org.apache.zeppelin:zeppelin-jdbc, org.apache.zeppelin:zeppelin-server, org.apache.zeppelin:zeppelin-sh"
+bagisto/bagisto,packagist,PHP,26985,0.0,20,18,90,bagisto/bagisto
+Sylius/Sylius,packagist,PHP,8483,0.0,20,18,90,sylius/sylius
+tinymce/tinymce,"NuGet, npm, packagist, pypi",TypeScript,16202,0.0,20,18,90,"TinyMCE, django-tinymce, tinymce, tinymce/tinymce"
+OpenNMS/opennms,Maven,Java,1160,0.0,20,18,90,"org.opennms.core:org.opennms.core.daemon, org.opennms.core:org.opennms.core.xml, org.opennms.features:org.opennms.features.measurements, org.opennms:opennms, org.opennms:opennms-base-assembly, org.ope"
+Budibase/budibase,npm,TypeScript,27983,0.0,20,18,90,"@budibase/backend-core, @budibase/bbui, @budibase/builder, @budibase/server, @budibase/worker, budibase"
+keras-team/keras,pypi,Python,64085,0.0,20,18,90,"Keras, keras, tensorflow, tensorflow-cpu"
+containers/podman,"Go, crates.io",Go,31926,0.0,20,17,85,"github.com/containers/buildah, github.com/containers/libpod, github.com/containers/podman, github.com/containers/podman/v2, github.com/containers/podman/v3, github.com/containers/podman/v4, github.com"
+0xJacky/nginx-ui,Go,Go,11184,0.0,20,12,60,"github.com/0xJacky/Nginx-UI, github.com/0xJacky/nginx-ui, github.com/uozi-tech/cosy"
+aspnet/Announcements,NuGet,,1662,4.1,19,19,100,"DisCatSharp, MessagePack, MessagePack.ImmutableCollection, MessagePack.ReactiveProperty, MessagePack.Unity, MessagePack.UnityShims, Microsoft.AspNetCore.All, Microsoft.AspNetCore.App, Microsoft.AspNet"
+urllib3/urllib3,pypi,Python,4028,0.0,19,19,100,urllib3
+nilsteampassnet/teampass,packagist,PHP,1790,0.0,19,19,100,nilsteampassnet/teampass
+google/security-research,"Go, Maven, NuGet, crates.io, npm, pypi",C,4505,0.0,19,18,95,"Azure.Storage.Blobs, Azure.Storage.Queues, angular, astral-tokio-tar, aws-encryption-sdk, azure-storage-blob, azure-storage-queue, com.amazonaws:aws-encryption-sdk-java, com.azure:azure-storage-blob, "
+argoproj/argo-workflows,Go,Go,16739,0.0,19,18,95,"github.com/argoproj/argo-workflows, github.com/argoproj/argo-workflows/v3, github.com/argoproj/argo-workflows/v4"
+kimai/kimai,packagist,PHP,4703,0.0,19,18,95,kimai/kimai
+cosmos/cosmos-sdk,Go,Go,7002,0.0,19,17,89,"cosmossdk.io/math, cosmossdk.io/x/tx, github.com/babylonlabs-io/babylon, github.com/babylonlabs-io/babylon/v2, github.com/cheqd/cheqd-node, github.com/cosmos/cosmos-sdk"
+rustsec/advisory-db,crates.io,,1121,0.0,19,12,63,"array-macro, bigint, dyn-future, enum-map, fruity, gix-attributes, libyml, mail-internals, ntpd, oneshot, openssl-src, ouch, pleaser, scaly, serde_yml, xcb, zerovec-derive"
+gotenberg/gotenberg,Go,Go,12300,0.2,19,12,63,"github.com/gotenberg/gotenberg/v7, github.com/gotenberg/gotenberg/v8"
+sequelize/sequelize,npm,TypeScript,30350,0.1,18,18,100,"@sequelize/core, sequelize"
+OPCFoundation/UA-.NETStandard,NuGet,C#,2307,0.0,18,18,100,"OPCFoundation.NetStandard.Opc.Ua, OPCFoundation.NetStandard.Opc.Ua.Bindings.Https, OPCFoundation.NetStandard.Opc.Ua.Core, OPCFoundation.NetStandard.Opc.Ua.Server"
+apache/kylin,Maven,Java,3765,0.2,18,18,100,"org.apache.kylin:kylin, org.apache.kylin:kylin-common-server, org.apache.kylin:kylin-common-service, org.apache.kylin:kylin-core-common, org.apache.kylin:kylin-core-metadata, org.apache.kylin:kylin-op"
+pterodactyl/panel,"Go, packagist",PHP,8932,0.1,18,18,100,"github.com/pterodactyl/wings, pterodactyl/panel"
+apache/pulsar,"Maven, pypi",Java,15265,0.0,18,18,100,"org.apache.pulsar:pulsar, org.apache.pulsar:pulsar-broker, org.apache.pulsar:pulsar-broker-auth-sasl, org.apache.pulsar:pulsar-client, org.apache.pulsar:pulsar-functions-worker, org.apache.pulsar:puls"
+decidim/decidim,RubyGems,Ruby,1761,0.0,18,18,100,"decidim, decidim-admin, decidim-core, decidim-meetings, decidim-system, decidim-templates, devise_invitable"
+caddyserver/caddy,"Go, Maven, swifturl",Go,72993,0.0,18,17,94,"com.typesafe.akka:akka-http-core, com.typesafe.akka:akka-http-core_2.11, com.typesafe.akka:akka-http-core_2.12, com.typesafe.akka:akka-http-core_2.13, github.com/apple/swift-nio-http2, github.com/cadd"
+MobSF/Mobile-Security-Framework-MobSF,pypi,JavaScript,21139,0.5,18,17,94,"mobsf, mobsfscan"
+dgtlmoon/changedetection.io,pypi,Python,31866,0.0,18,17,94,changedetection.io
+forkcms/forkcms,packagist,PHP,1172,10.2,18,16,89,forkcms/forkcms
+cobbler/cobbler,pypi,Python,2761,0.0,18,16,89,cobbler
+1Panel-dev/1Panel,Go,Go,35743,0.0,18,15,83,"github.com/1Panel-dev/1Panel, github.com/1Panel-dev/1Panel/agent, github.com/1Panel-dev/1Panel/core"
+envoyproxy/envoy,"Go, Maven, swifturl",C++,28314,0.0,18,14,78,"com.typesafe.akka:akka-http-core, com.typesafe.akka:akka-http-core_2.11, com.typesafe.akka:akka-http-core_2.12, com.typesafe.akka:akka-http-core_2.13, github.com/apple/swift-nio-http2, github.com/dadr"
+janeczku/calibre-web,pypi,Fluent,17263,0.3,18,14,78,calibreweb
+twisted/twisted,pypi,Python,5969,0.3,17,17,100,"Twisted, matrix-synapse, twisted"
+cakephp/cakephp,packagist,PHP,8795,0.0,17,17,100,"cakephp/cakephp, cakephp/database"
+ckeditor/ckeditor4,"npm, packagist",Rich Text Format,5814,1.8,17,17,100,"ckeditor/ckeditor, ckeditor4, ckeditor4-dev, drupal/core, drupal/drupal"
+rusqlite/rusqlite,crates.io,Rust,4228,0.1,17,17,100,"libsqlite3-sys, rusqlite"
+spring-projects/spring-boot,Maven,Java,80764,0.0,17,17,100,"org.springframework.boot:spring-boot, org.springframework.boot:spring-boot-actuator, org.springframework.boot:spring-boot-actuator-autoconfigure, org.springframework.boot:spring-boot-autoconfigure, or"
+apache/linkis,Maven,Java,3409,0.0,17,17,100,"org.apache.linkis:linkis, org.apache.linkis:linkis-datasource, org.apache.linkis:linkis-engineconn, org.apache.linkis:linkis-engineplugin-spark, org.apache.linkis:linkis-metadata, org.apache.linkis:li"
+nautobot/nautobot,pypi,Python,1515,0.0,17,17,100,nautobot
+zauberzeug/nicegui,pypi,Python,15886,0.0,17,17,100,nicegui
+lin-snow/Ech0,Go,Go,1990,0.0,17,17,100,"github.com/lin-snow/Ech0, github.com/lin-snow/ech0"
+yiisoft/yii2,packagist,PHP,14301,0.0,17,16,94,"yiisoft/yii2, yiisoft/yii2-dev, yiisoft/yii2-elasticsearch"
+scrapy/scrapy,pypi,Python,62095,0.0,17,16,94,"Scrapy, brotli, scrapy"
+OneUptime/oneuptime,npm,TypeScript,7103,0.0,17,16,94,"@oneuptime/common, @oneuptime/common-server, @oneuptime/model, oneuptime"
+coredns/coredns,Go,Go,14087,0.0,17,14,82,"github.com/coredns/coredns, github.com/miekg/dns"
+apostrophecms/apostrophe,npm,JavaScript,4562,0.0,17,13,76,"@apostrophecms/cli, @apostrophecms/import-export, apostrophe, sanitize-html"
+apache/lucene-solr,Maven,,4360,0.6,16,16,100,"org.apache.solr:solr-core, org.apache.solr:solr-parent, org.apache.solr:solr-solrj, org.apache.solr:solr-solrj-streaming"
+facebook/react,npm,JavaScript,245434,0.0,16,16,100,"@vitejs/plugin-rsc, next, react, react-devtools-core, react-server-dom-parcel, react-server-dom-turbopack, react-server-dom-webpack"
+nicolargo/glances,pypi,Python,32725,0.0,16,16,100,"Glances, glances"
+wallabag/wallabag,packagist,PHP,12757,0.1,16,15,94,wallabag/wallabag
+owen2345/camaleon-cms,RubyGems,Ruby,1236,0.0,16,13,81,camaleon_cms
+bentoml/BentoML,pypi,Python,8664,0.0,16,12,75,bentoml
+kubevirt/kubevirt,Go,Go,6882,0.0,16,11,69,kubevirt.io/kubevirt
+RustSec/advisory-db,"crates.io, pypi",,1121,0.0,16,10,62,"binary_vec_io, cranelift-codegen, crossbeam-channel, failure, lettre, ncurses, pancurses, raw-cpuid, syncpool, wasmtime, xcb"
+swagger-api/swagger-ui,"Maven, NuGet, npm",JavaScript,28826,0.0,15,15,100,"Swashbuckle.AspNetCore.SwaggerUI, io.springfox:springfox-swagger-ui, org.webjars.npm:swagger-ui, org.webjars:swagger-ui, swagger-ui, swagger-ui-dist, swagger-ui-react"
+PHPMailer/PHPMailer,packagist,PHP,22172,0.5,15,15,100,"phpmailer/phpmailer, phpservermon/phpservermon"
+digitalbazaar/forge,npm,JavaScript,5305,2.3,15,15,100,node-forge
+smarty-php/smarty,packagist,PHP,2349,0.5,15,15,100,smarty/smarty
+gofiber/fiber,Go,Go,39807,0.0,15,15,100,"github.com/gofiber/fiber, github.com/gofiber/fiber/v2, github.com/gofiber/fiber/v2/middleware/session, github.com/gofiber/fiber/v3, github.com/rs/cors"
+publify/publify,RubyGems,Less,1856,0.0,15,15,100,publify_core
+ckan/ckan,pypi,Python,5041,0.0,15,15,100,ckan
+authzed/spicedb,Go,Go,6753,0.0,15,15,100,github.com/authzed/spicedb
+dompdf/dompdf,packagist,PHP,11136,0.9,15,15,100,"dompdf/dompdf, phenx/php-svg-lib"
+openstack/neutron,pypi,Python,1462,0.0,15,15,100,"cinder, keystone, neutron, python-keystoneclient"
+AcademySoftwareFoundation/openexr,pypi,C,1808,0.0,15,15,100,"OpenEXR, openexr"
+modoboa/modoboa,pypi,Python,3498,0.0,15,15,100,modoboa
+sveltejs/kit,npm,JavaScript,20551,0.0,15,15,100,"@sveltejs/adapter-node, @sveltejs/adapter-vercel, @sveltejs/kit"
+jetty/jetty.project,Maven,Java,4076,0.0,15,15,100,"org.eclipse.jetty.ee10:jetty-ee10, org.eclipse.jetty.ee10:jetty-ee10-jaspi, org.eclipse.jetty.ee10:jetty-ee10-servlets, org.eclipse.jetty.ee11:jetty-ee11-jaspi, org.eclipse.jetty.ee8:jetty-ee8-jaspi, "
+laurent22/joplin,npm,TypeScript,55076,0.0,15,14,93,"@joplin/onenote-converter, joplin"
+Studio-42/elFinder,packagist,JavaScript,4789,0.9,15,14,93,studio-42/elfinder
+GitoxideLabs/gitoxide,crates.io,Rust,11513,0.0,15,14,93,"gitoxide, gitoxide-core, gix, gix-archive, gix-attributes, gix-blame, gix-commitgraph, gix-config, gix-date, gix-diff, gix-dir, gix-discover, gix-features, gix-filter, gix-fs, gix-fsck, gix-index, gix"
+canonical/lxd,Go,Go,4771,0.0,15,12,80,"github.com/canonical/lxd, github.com/lxc/lxd"
+jupyter/notebook,"npm, pypi",Jupyter Notebook,13178,0.0,14,14,100,"@jupyter-notebook/help-extension, @jupyterlab/help-extension, ipython, jupyter-notebook, jupyterhub, jupyterlab, notebook"
+handlebars-lang/handlebars.js,"Maven, RubyGems, npm",JavaScript,18641,1.4,14,14,100,"bootstrap-wysihtml5-rails, handlebars, org.webjars.bowergithub.wycats:handlebars.js, org.webjars.npm:handlebars, org.webjars:handlebars"
+kjur/jsrsasign,npm,HTML,3373,1.5,14,14,100,jsrsasign
+sulu/sulu,packagist,PHP,1333,0.0,14,14,100,sulu/sulu
+apache/shiro,Maven,Java,4433,0.0,14,14,100,"org.apache.shiro:shiro-all, org.apache.shiro:shiro-core, org.apache.shiro:shiro-root, org.apache.shiro:shiro-spring, org.apache.shiro:shiro-spring-boot-starter, org.apache.shiro:shiro-web"
+dpgaspar/Flask-AppBuilder,pypi,Python,4953,0.2,14,14,100,"Flask-AppBuilder, flask-appbuilder"
+parallax/jsPDF,npm,JavaScript,31220,0.3,14,14,100,"jspdf, survey-pdf"
+Graylog2/graylog2-server,Maven,Java,8048,0.0,14,14,100,"org.graylog2:graylog2-server, org.graylog:graylog-parent"
+giampaolo/pyftpdlib,pypi,Python,1812,1.3,14,14,100,pyftpdlib
+OctoPrint/OctoPrint,pypi,Python,9001,0.2,14,14,100,"OctoPrint, octoprint"
+sveltejs/svelte,npm,JavaScript,86685,0.0,14,14,100,svelte
+apache/iotdb,"Maven, pypi",Java,6338,0.0,14,14,100,"apache-iotdb, org.apache.iotdb:flink-tsfile-connector, org.apache.iotdb:iotdb-confignode, org.apache.iotdb:iotdb-core, org.apache.iotdb:iotdb-grafana-connector, org.apache.iotdb:iotdb-jdbc, org.apache"
+better-auth/better-auth,npm,TypeScript,28592,0.0,14,14,100,"@better-auth/oauth-provider, @better-auth/passkey, better-auth"
+remix-run/react-router,npm,TypeScript,56440,0.0,14,14,100,"@react-router/express, @react-router/node, @remix-run/deno, @remix-run/express, @remix-run/node, @remix-run/react, @remix-run/router, @remix-run/server-runtime, react-router"
+spring-projects/spring-ai,Maven,Java,8855,0.0,14,14,100,"org.springframework.ai:spring-ai-advisors-vector-store, org.springframework.ai:spring-ai-azure-cosmos-db-store, org.springframework.ai:spring-ai-bedrock-converse, org.springframework.ai:spring-ai-clie"
+keystonejs/keystone,npm,TypeScript,9881,0.0,14,13,93,"@keystone-6/auth, @keystone-6/core, @keystone-next/auth, keystone"
+NodeBB/NodeBB,npm,JavaScript,15106,0.0,14,13,93,"nodebb, nodebb-plugin-markdown"
+getsentry/sentry,pypi,Python,44036,0.0,14,13,93,sentry
+zenml-io/zenml,pypi,Python,5431,0.0,14,13,93,zenml
+modxcms/revolution,packagist,PHP,1397,0.7,14,12,86,modx/revolution
+cri-o/cri-o,Go,Go,5613,0.0,14,12,86,"github.com/cri-o/cri-o, github.com/opencontainers/runc"
+apache/tika,Maven,Java,3790,0.0,13,13,100,"org.apache.tika:tika, org.apache.tika:tika-core, org.apache.tika:tika-parser-pdf-module, org.apache.tika:tika-parsers, org.apache.tika:tika-server"
+apache/hadoop,Maven,Java,15559,0.0,13,13,100,"org.apache.hadoop:hadoop-client, org.apache.hadoop:hadoop-common, org.apache.hadoop:hadoop-hdfs-native-client, org.apache.hadoop:hadoop-main, org.apache.hadoop:hadoop-yarn-project, org.apache.hadoop:h"
+pallets/werkzeug,pypi,Python,6865,1.0,13,13,100,"Quart, Werkzeug, werkzeug"
+sebhildebrandt/systeminformation,npm,JavaScript,3114,0.2,13,13,100,systeminformation
+composer/composer,"github actions, packagist",PHP,29443,0.0,13,13,100,"composer/composer, shivammathur/setup-php"
+payloadcms/payload,npm,TypeScript,42784,0.0,13,13,100,"@payloadcms/drizzle, @payloadcms/graphql, @payloadcms/next, @payloadcms/storage-azure, @payloadcms/storage-gcs, @payloadcms/storage-r2, @payloadcms/storage-s3, payload"
+OpenRefine/OpenRefine,Maven,Java,11847,0.1,13,13,100,"org.openrefine:database, org.openrefine:extensions, org.openrefine:main, org.openrefine:openrefine"
+protobufjs/protobuf.js,npm,JavaScript,10554,0.0,13,13,100,"@protobufjs/utf8, protobufjs, protobufjs-cli"
+saltcorn/saltcorn,npm,JavaScript,2015,0.0,13,13,100,"@saltcorn/cli, @saltcorn/data, @saltcorn/plugins-loader, @saltcorn/server"
+dragonflyoss/dragonfly,Go,Go,3185,0.0,13,13,100,"d7y.io/dragonfly/v2, github.com/dragonflyoss/dragonfly"
+codeigniter4/CodeIgniter4,packagist,PHP,5913,0.0,13,12,92,codeigniter4/framework
+Leantime/leantime,packagist,PHP,9975,0.0,13,12,92,leantime/leantime
+OliveTin/OliveTin,Go,Go,3611,0.1,13,12,92,github.com/OliveTin/OliveTin
+osrg/gobgp,Go,Go,4061,0.0,13,11,85,"github.com/osrg/gobgp, github.com/osrg/gobgp/v3, github.com/osrg/gobgp/v4"
+rustfs/rustfs,crates.io,Rust,28362,0.0,13,11,85,rustfs
+spree/spree,RubyGems,Ruby,15456,0.0,12,12,100,"rd_searchlogic, spree, spree_api, spree_core, spree_storefront"
+jquery/jquery,"Maven, NuGet, RubyGems, npm, packagist, pypi",JavaScript,59832,0.0,12,12,100,"angular, athlon1600/youtube-downloader, components/jquery, django, jQuery, jQuery.UI.Combined, jquery, jquery-rails, jquery-ui, jquery-ui-rails, maximebf/debugbar, org.webjars.npm:jquery, org.webjars."
+phusion/passenger,RubyGems,C++,5080,0.0,12,12,100,passenger
+DSpace/DSpace,Maven,Java,1068,0.0,12,12,100,"org.dspace:dspace-api, org.dspace:dspace-jspui, org.dspace:dspace-server-webapp, org.dspace:dspace-xmlui"
+apache/ranger,Maven,Java,1050,0.0,12,12,100,"org.apache.ranger:ranger, org.apache.ranger:ranger-hive-plugin, org.apache.ranger:ranger-nifi-registry-plugin, org.apache.ranger:ranger-plugins-common, org.apache.ranger:security-admin-web"
+igniterealtime/Openfire,Maven,Java,3029,0.0,12,12,100,"org.igniterealtime.openfire:openfire, org.igniterealtime.openfire:parent, org.igniterealtime.openfire:xmppserver"
+indico/indico,pypi,Python,2074,0.0,12,12,100,indico
+puma/puma,RubyGems,Ruby,7895,0.2,12,12,100,puma
+phpseclib/phpseclib,packagist,PHP,5573,0.2,12,12,100,phpseclib/phpseclib
+oauth2-proxy/oauth2-proxy,Go,Go,14479,0.1,12,12,100,"github.com/oauth2-proxy/oauth2-proxy, github.com/oauth2-proxy/oauth2-proxy/v7"
+resteasy/Resteasy,Maven,Java,1141,0.0,12,12,100,"org.jboss.resteasy:resteasy-bom, org.jboss.resteasy:resteasy-client, org.jboss.resteasy:resteasy-client-microprofile, org.jboss.resteasy:resteasy-core, org.jboss.resteasy:resteasy-jaxb-provider, org.j"
+beego/beego,Go,Go,32392,1.8,12,12,100,"github.com/astaxie/beego, github.com/beego/beego, github.com/beego/beego/v2"
+matrix-org/matrix-js-sdk,npm,TypeScript,2125,0.0,12,12,100,matrix-js-sdk
+apache/kafka,Maven,Java,32707,0.0,12,12,100,"org.apache.kafka:connect, org.apache.kafka:kafka, org.apache.kafka:kafka-clients, org.apache.kafka:kafka-metadata, org.apache.kafka:kafka_2.10, org.apache.kafka:kafka_2.11, org.apache.kafka:kafka_2.12"
+mermaid-js/mermaid,"Go, npm",TypeScript,88414,0.0,12,12,100,"@excalidraw/excalidraw, @excalidraw/mermaid-to-excalidraw, gogs.io/gogs, mermaid"
+apache/solr,Maven,Java,1621,0.0,12,12,100,"org.apache.solr:solr, org.apache.solr:solr-core, org.apache.solr:solr-parent, org.apache.solr:solr-solrj, org.apache.solr:solr-solrj-streaming"
+pgjdbc/pgjdbc,Maven,Java,1716,0.0,12,12,100,"com.amazon.redshift:redshift-jdbc42, org.postgresql:postgresql"
+pnpm/pnpm,npm,Rust,35358,0.0,12,12,100,"@pnpm/cafs, @pnpm/exe, @pnpm/linux-arm64, @pnpm/linux-x64, @pnpm/linuxstatic-arm64, @pnpm/macos-arm64, @pnpm/macos-x64, @pnpm/win-x64, pnpm"
+NaturalIntelligence/fast-xml-parser,npm,JavaScript,3097,0.0,12,12,100,"fast-xml-builder, fast-xml-parser"
+nuxt/nuxt,npm,TypeScript,60323,0.0,12,12,100,"@nuxt/devtools, @nuxt/nitro-server, @nuxt/rspack-builder, @nuxt/vite-builder, @nuxt/webpack-builder, nuxt"
+9001/copyparty,pypi,Python,45109,0.3,12,12,100,copyparty
+go-git/go-git,Go,Go,7496,0.0,12,12,100,"github.com/go-git/go-git, github.com/go-git/go-git/v5, github.com/go-git/go-git/v6, gopkg.in/src-d/go-git.v4"
+scriban/scriban,NuGet,C#,3896,0.1,12,12,100,"Scriban, scriban"
+fatfreecrm/fat_free_crm,RubyGems,Ruby,3625,1.3,12,11,92,fat_free_crm
+onionshare/onionshare,pypi,Python,6985,0.0,12,11,92,onionshare-cli
+dolibarr/dolibarr,packagist,PHP,7280,0.0,12,11,92,dolibarr/dolibarr
+HumanSignal/label-studio,pypi,TypeScript,27510,0.0,12,11,92,"label-studio, label-studio-sdk"
+louislam/uptime-kuma,npm,JavaScript,87620,0.0,12,10,83,uptime-kuma
+markedjs/marked,npm,JavaScript,36864,0.0,11,11,100,marked
+debug-js/debug,npm,JavaScript,11441,2.1,11,11,100,"backslash, color, color-convert, color-name, color-string, debug, error-ex, is-arrayish, simple-swizzle"
+apollographql/apollo-server,"crates.io, npm",TypeScript,13939,0.0,11,11,100,"@apollo/gateway, @apollo/server, apollo-router, apollo-server, apollo-server-azure-functions, apollo-server-cache-memcached, apollo-server-cloud-functions, apollo-server-cloudflare, apollo-server-core"
+renovatebot/renovate,npm,TypeScript,21684,0.0,11,11,100,renovate
+Pylons/waitress,pypi,Python,1583,2.5,11,11,100,waitress
+vega/vega,npm,JavaScript,11883,0.3,11,11,100,"vega, vega-expression, vega-functions, vega-interpreter, vega-selections, vega-util"
+nextauthjs/next-auth,npm,TypeScript,28267,1.6,11,11,100,"@next-auth/upstash-redis-adapter, next-auth"
+pomerium/pomerium,Go,Go,4826,0.0,11,11,100,github.com/pomerium/pomerium
+pypa/pip,pypi,Python,10191,0.1,11,11,100,"dbt-common, pip"
+sfackler/rust-openssl,crates.io,Rust,1622,0.3,11,11,100,openssl
+treeverse/lakeFS,Go,Go,5389,0.1,11,11,100,github.com/treeverse/lakefs
+kevinpapst/kimai2,packagist,PHP,4703,0.0,11,11,100,"kevinpapst/kimai2, kimai/kimai"
+gravitl/netmaker,Go,Go,11595,0.0,11,11,100,github.com/gravitl/netmaker
+jruby/jruby,"Maven, RubyGems",Ruby,3901,0.0,11,11,100,"org.fusesource.hawtjni:hawtjni-runtime, org.jruby:jruby, org.jruby:jruby-core, org.jruby:jruby-parent, org.jruby:jruby-stdlib, rubygems-update"
+tornadoweb/tornado,pypi,Python,22182,0.0,11,11,100,tornado
+onnx/onnx,pypi,Python,20932,0.0,11,11,100,onnx
+tinacms/tinacms,npm,TypeScript,13383,0.0,11,11,100,"@tinacms/cli, @tinacms/graphql, tinacms"
+element-hq/synapse,pypi,Python,4256,0.0,11,11,100,matrix-synapse
+SillyTavern/SillyTavern,npm,JavaScript,28835,0.5,11,11,100,sillytavern
+h3js/h3,npm,TypeScript,5342,0.0,11,11,100,"h3, srvx"
+apache/logging-log4j2,Maven,Java,3604,0.0,11,10,91,"com.guicedee.services:log4j-core, log4j:log4j, org.apache.logging.log4j:log4j, org.apache.logging.log4j:log4j-1.2-api, org.apache.logging.log4j:log4j-core, org.apache.logging.log4j:log4j-layout-templa"
+protocolbuffers/protobuf,"Go, Maven, NuGet, RubyGems, packagist, pypi",C++,71313,0.0,11,10,91,"Google.Protobuf, com.google.protobuf:protobuf-java, com.google.protobuf:protobuf-javalite, com.google.protobuf:protobuf-kotlin, com.google.protobuf:protobuf-kotlin-lite, github.com/protocolbuffers/pro"
+navidrome/navidrome,Go,Go,21437,0.0,11,10,91,github.com/navidrome/navidrome
+flarum/framework,packagist,PHP,6727,0.0,11,10,91,"flarum/core, flarum/framework, flarum/mentions, flarum/nicknames"
+grokability/snipe-it,packagist,PHP,13882,0.0,11,10,91,snipe/snipe-it
+paperclipai/paperclip,npm,TypeScript,68980,0.0,11,10,91,"@paperclipai/server, @paperclipai/shared, @paperclipai/ui, paperclipai"
+lodash/lodash,"RubyGems, npm",JavaScript,61231,0.9,10,10,100,"lodash, lodash-amd, lodash-es, lodash-rails, lodash-template, lodash.defaultsdeep, lodash.pick, lodash.set, lodash.setwith, lodash.template, lodash.trim, lodash.trimend, lodash.unset, lodash.update, l"
+fastify/fastify,npm,JavaScript,36363,0.0,10,10,100,fastify
+FasterXML/jackson,Maven,,9728,0.2,10,10,100,com.fasterxml.jackson.core:jackson-databind
+istio/istio,Go,Go,38206,0.0,10,10,100,"github.com/istio/istio, istio.io/istio"
+actix/actix-web,crates.io,Rust,24661,0.0,10,10,100,"actix-files, actix-http, actix-web, perseus-actix-web"
+crossbeam-rs/crossbeam,crates.io,Rust,8464,3.3,10,10,100,"crossbeam, crossbeam-channel, crossbeam-deque, crossbeam-queue, crossbeam-utils"
+apache/dubbo,Maven,Java,41517,0.0,10,10,100,"com.alibaba:hessian-lite, org.apache.dubbo:dubbo, org.apache.dubbo:dubbo-parent, org.apache.dubbo:dubbo-rpc-http-invoker"
+mattermost/mattermost-server,Go,TypeScript,36980,0.0,10,10,100,"github.com/mattermost/mattermost-server, github.com/mattermost/mattermost-server/v5, github.com/mattermost/mattermost-server/v6"
+psf/requests,"npm, pypi",Python,54021,0.0,10,10,100,"fluture-node, follow-redirects, poetry-plugin-tweak-dependencies-version, pyquest, requests"
+hashicorp/go-getter,Go,Go,1820,0.0,10,10,100,"github.com/hashicorp/go-getter, github.com/hashicorp/go-getter/gcs/v2, github.com/hashicorp/go-getter/s3/v2, github.com/hashicorp/go-getter/v2"
+apache/atlas,Maven,Java,2107,0.0,10,10,100,"org.apache.atlas:apache-atlas, org.apache.atlas:atlas-common"
+openstack/horizon,pypi,Python,1401,0.0,10,10,100,horizon
+gitpython-developers/GitPython,pypi,Python,5122,0.0,10,10,100,GitPython
+quic-go/quic-go,Go,Go,11622,0.1,10,10,100,"github.com/coredns/coredns, github.com/libp2p/go-libp2p, github.com/quic-go/quic-go"
+charmbracelet/soft-serve,Go,Go,7016,0.1,10,10,100,github.com/charmbracelet/soft-serve
+Forceu/Gokapi,Go,Go,2749,0.5,10,10,100,github.com/forceu/gokapi
+roundcube/roundcubemail,packagist,PHP,7000,0.1,10,10,100,roundcube/roundcubemail
+authlib/authlib,pypi,Python,5329,0.5,10,10,100,authlib
+vitejs/vite-plugin-react,npm,TypeScript,1088,0.0,10,10,100,"@vitejs/plugin-rsc, next, react-server-dom-parcel, react-server-dom-turbopack, react-server-dom-webpack"
+Tencent/WeKnora,Go,Go,15969,0.0,10,10,100,github.com/Tencent/WeKnora
