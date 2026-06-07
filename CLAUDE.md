@@ -2,19 +2,32 @@
 
 ## What this project is
 
-A research pipeline that mines GitHub repositories and produces a labelled dataset of **developer information needs** — questions developers ask about their own codebase during software development. Each question is mapped to one of 78 question types (Q1–Q78) in a taxonomy covering 11 categories. The dataset is intended for training or evaluating LLM-based developer tools (e.g. a "ask your repo" assistant).
+**SecDevQA** — a research benchmark and evaluation harness for developer security questions. The benchmark contains real Q&A pairs mined from GitHub security issues, filtered to pairs where the maintainer's answer contains at least one externally verifiable hard fact (CVE/GHSA ID, fixed version, fix commit/PR, advisory URL). The paper studies (a) a taxonomy of developer security question categories, (b) which artifact types maintainers draw on to answer each category, and (c) how well frontier LLMs and coding agents answer these questions under controlled context conditions.
+
+Target venue: ICSE 2027.
 
 ## Environment
 
 - **Conda env**: `/local/home/amamun/envs/devqa` — always use this Python
 - **Python binary**: `/local/home/amamun/envs/devqa/bin/python`
 - **Shell**: tcsh (not bash); activate env with full path, not `conda activate`
-- **`.env`** at project root holds `GITHUB_TOKEN` / `GITHUB_TOKENS`
-- **Ollama** must be running locally (`ollama serve`) for LLM classification
+- **`.env`** at project root holds `GITHUB_TOKEN` / `GITHUB_TOKENS` and `OPENAI_API_KEY` / `ANTHROPIC_API_KEY`
+- **Ollama** must be running locally (`ollama serve`) for local LLM use
 
 ## Repository structure
 
 ```
+dataset/
+  security_benchmark.jsonl  — 125 hard-verifiable security Q&A pairs (primary artifact)
+  open_codes.jsonl           — LLM-assigned open codes (output of open_coding/open_code.py)
+  open_codes_verified.json   — human-verified codes (state file, keyed by record id)
+  open_codes_verified.jsonl  — accepted codes export
+  build.py                   — builds security_benchmark.jsonl from verified pairs + raw output
+  repo_selector.py           — selects repos from GitHub Advisory Database for mining
+
+open_coding/
+  open_code.py               — LiteLLM-based open coding pipeline (any provider)
+
 pipeline/
   config.py              — repos list, token loading, constants
   run_all.py             — master runner, orchestrates all miners
@@ -31,114 +44,160 @@ pipeline/
   utils/
     github_client.py     — rate-limit-aware REST + GraphQL wrapper
     ollama_client.py     — Ollama client, JSON mode, STAGE1/STAGE2_MODEL constants
+    openai_client.py     — OpenAI Responses API client with token-usage capture
     storage.py           — load_jsonl, save_jsonl, append_record, checkpoints
-    taxonomy.py          — full 78-question taxonomy string for LLM prompts
+    taxonomy.py          — full 78-question taxonomy (legacy; not used for benchmark)
 
-output/<owner>__<repo>/  — one folder per repo, named with / → __
-  raw_threads.jsonl      — issue+discussion threads as flat text (mine_threads.py)
-  natural_qa_pairs.jsonl — LLM-classified Q&A pairs (classify.py)
-  qa_pairs.jsonl         — deterministic ground-truth pairs (qa_builder.py)
+output/<owner>__<repo>/    — one folder per repo (/ → __)
+  security_qa_pairs.jsonl  — extracted security pairs (input to build.py)
+  raw_threads.jsonl        — issue+discussion threads as flat text
   issues.jsonl, pull_requests.jsonl, commits.jsonl, ...
-  .checkpoint_*.json     — incremental progress checkpoints (hidden files)
+  .checkpoint_*.json       — incremental progress checkpoints (hidden files)
+
+eval/
+  run.py                   — CLI dispatch (normalize, answer, grade)
+  normalize_questions.py   — drafts eval_questions.jsonl from benchmark
+  generate.py              — runs models against eval questions
+  data.py                  — shared data loading helpers
+  data/
+    eval_questions.jsonl   — normalized questions for evaluation
+  output/
+    answers_*.jsonl        — model responses per run
 
 review_ui/
-  app.py                 — FastAPI app, serves on port 8765
-  templates/index.html   — single-page review UI (vanilla JS)
+  app.py                   — FastAPI app, port 8765
+  templates/
+    benchmark.html         — /benchmark  — browse/edit security_benchmark.jsonl
+    open_coding.html       — /open-coding — verify/edit LLM open codes
+    index.html             — /           — F&M classified pairs review
+    chat.html              — /security/chat — LLM-assisted pair review
+    stats.html             — /stats
+    taxonomy.html          — /taxonomy
 
-summarize_qa_pairs.py    — CLI: counts question instances across all repos
-verified_state.json      — human verification decisions, keyed by pair index
-verified_qa_pairs.jsonl  — accepted pairs exported from the review UI
+advisory-database/         — local clone of github/advisory-database (for repo_selector.py)
+repo_candidates.csv        — repos passing the selection filter (output of repo_selector.py)
 ```
 
-## The two output types
+## The benchmark: security_benchmark.jsonl
 
-**natural_qa_pairs.jsonl** — produced by `classify.py` using a local LLM. Each record is a verbatim Q&A exchange extracted from a real GitHub thread, tagged with `question_id`, `confidence` (product of two stages), `reasoning`, and the full `thread_text`. These need human review via the UI.
+Each record has:
+- `id` — unique string: `owner/repo/issue/number`
+- `repo`, `number`, `url`, `title`, `state`, `created_at`, `closed_at`, `labels`, `reporter`
+- `question_comment_id`, `answer_comment_id` — IDs into the `comments` array
+- `question_author`, `answer_author`, `answerer_role` — maintainer / contributor / commenter / op_self
+- `artifacts_needed` — list: code, commit_history, pr_data, dependency_manifest, advisory, cve_cwe_db, documentation, external_reference
+- `hard_facts` — dict: cve_ids, ghsa_ids, cwe_ids, osv_ids, fixed_versions, fix_prs, fix_commits, advisory_urls
+- `qa_summary` — one-sentence LLM summary of the Q&A
+- `security_topic` — short phrase naming the security concern
+- `human_note` — first-author annotation explaining why the pair was accepted
+- `llm_confidence` — extraction confidence score
+- `comments` — full comment array with id, author, timestamp, body
 
-**qa_pairs.jsonl** — produced by `qa_builder.py` from structured JSONL. Each record has a deterministic `ground_truth` (e.g. exact SHA, login) and `artifacts_needed`. Used for automatic evaluation.
+## Open coding pipeline
 
-## Classification pipeline
+Assigns inductive codes (noun phrases, 1–2 per pair) to each Q&A pair to build a security question taxonomy.
 
-Two-stage LLM approach in `classification/classify.py`:
-1. **Stage 1**: broad category (A–K or N) + contains_qa boolean
-2. **Stage 2**: specific question ID within the category + extract verbatim Q&A
+```bash
+# Run with any LiteLLM provider
+/local/home/amamun/envs/devqa/bin/python open_coding/open_code.py \
+  --model openai/gpt-5.4-mini
 
-Both stages use Ollama's JSON format mode. Models are set in `utils/ollama_client.py` as `STAGE1_MODEL` and `STAGE2_MODEL` (currently `qwen3.6:latest`). Confidence is the product of both stage scores; default threshold is 0.55 (CLI default is 0.7).
+/local/home/amamun/envs/devqa/bin/python open_coding/open_code.py \
+  --model anthropic/claude-sonnet-4-6
 
-Classification is resumable via `.checkpoint_classify_*.json` files. `--force` re-classifies from scratch.
+/local/home/amamun/envs/devqa/bin/python open_coding/open_code.py \
+  --model ollama/qwen3.6:latest --api-base http://localhost:11434
 
-## Taxonomy
+# Test first 5 records
+/local/home/amamun/envs/devqa/bin/python open_coding/open_code.py \
+  --model openai/gpt-5.4-mini --limit 5
 
-78 questions, Q1–Q78, grouped A–K. Full descriptions in `utils/taxonomy.py` and `classification/classify.py`. Key categories:
-- **A** People & awareness (Q1–Q7)
-- **B** Code changes (Q8–Q27)
-- **C** Work item progress (Q28–Q31)
-- **F** Pull requests (Q47–Q52)
-- **G** Bug management (Q53–Q60)
-- **J** Onboarding (Q69–Q72)
+# Force re-run
+/local/home/amamun/envs/devqa/bin/python open_coding/open_code.py \
+  --model openai/gpt-5.4-mini --force
+```
 
-Note: Q38–Q46 exist in `taxonomy.py` but are not in the active `CATEGORIES` dict in `classify.py` — they are considered obsolete or organisational and not currently classified.
+Output: `dataset/open_codes.jsonl` (resumable — skips already-coded IDs).
+Each record: `{id, repo, codes: [...], rationale, model}`.
+
+Prompt feeds the LLM: issue title, issue body (c0), QA summary, artifacts needed, hard facts, full thread, and the focal Q&A exchange. `security_topic` is intentionally excluded to avoid anchoring.
 
 ## Review UI
 
-FastAPI app at `review_ui/app.py`, running on port 8765.
+FastAPI app on port 8765. Run from `review_ui/`:
 
 ```bash
 cd review_ui
 /local/home/amamun/envs/devqa/bin/python app.py
 ```
 
-Key API endpoints:
-- `GET /api/pairs` — filtered/paginated list (repo, question_id, status, text search)
-- `GET /api/pairs/{index}` — full record including thread_text
-- `POST /api/pairs/{index}/verify` — `{"status": "accepted"|"rejected"|"pending", "note": "..."}`
-- `GET /api/stats` — counts and breakdown
-- `POST /api/export` + `GET /api/export/download` — write and download verified_qa_pairs.jsonl
+### Pages
 
-Verification state is persisted to `verified_state.json` (project root) after every decision.
+| URL | Purpose |
+|---|---|
+| `/benchmark` | Browse and edit `security_benchmark.jsonl` records |
+| `/open-coding` | Verify/edit LLM open codes; accept/reject each pair |
+| `/` | F&M classified pairs review (legacy pipeline) |
+| `/security/chat` | LLM-assisted review chat for security pairs |
+| `/taxonomy` | Taxonomy reference |
 
-The HTML is served directly as a static string (no Jinja2 template variables used) — the newer Starlette version changed the `TemplateResponse` API.
+### Key API endpoints
 
-## Common tasks
+**Benchmark browser (`/api/benchmark/*`):**
+- `GET /api/benchmark/records` — filtered/paginated list
+- `GET /api/benchmark/records/{index}` — full record with comments
+- `PATCH /api/benchmark/records/{index}` — edit qa_summary, security_topic, human_note, answerer_role, artifacts_needed, hard_facts, question/answer comment IDs
 
-**Summarise current output:**
+**Open coding review (`/api/oc/*`):**
+- `GET /api/oc/records` — list with filter (repo, status, text search)
+- `GET /api/oc/records/{index}` — full record (benchmark context merged with LLM codes)
+- `POST /api/oc/records/{index}/save` — `{status, codes: [...], rationale, note}`
+- `GET /api/oc/stats` — counts by status
+- `POST /api/oc/export` + `GET /api/oc/export/download`
+- `POST /api/oc/reload` — reload open_codes.jsonl without restart
+
+State: `dataset/open_codes_verified.json` (keyed by record id string).
+Export: `dataset/open_codes_verified.jsonl`.
+
+## Mining pipeline (for expanding the benchmark)
+
 ```bash
-/local/home/amamun/envs/devqa/bin/python summarize_qa_pairs.py
-```
-
-**Mine a new repo:**
-```bash
+# Mine a new repo
 cd pipeline
 /local/home/amamun/envs/devqa/bin/python run_all.py --repo owner/repo
+
+# Run the security QA classifier
 /local/home/amamun/envs/devqa/bin/python classification/classify.py --repo owner/repo
 ```
 
-**Re-classify with different model:**
+Output lands in `output/owner__repo/`. Then verify pairs in the review UI (`/security` pipeline) and rebuild the benchmark:
+
 ```bash
-/local/home/amamun/envs/devqa/bin/python classification/classify.py \
-  --repo psf/requests --stage1-model mistral:7b --force
+/local/home/amamun/envs/devqa/bin/python dataset/build.py
 ```
 
-**Start review UI:**
+## Evaluation harness
+
 ```bash
-cd review_ui
-/local/home/amamun/envs/devqa/bin/python app.py
-# open http://localhost:8765
+# Normalize benchmark to eval questions
+/local/home/amamun/envs/devqa/bin/python -m eval.run normalize \
+  --benchmark dataset/security_benchmark.jsonl
+
+# Run a model
+/local/home/amamun/envs/devqa/bin/python -m eval.run answer \
+  --model openai/gpt-4.1
+
+# Grade responses
+/local/home/amamun/envs/devqa/bin/python -m eval.run grade
 ```
-
-## Currently mined repos
-
-| Repo | Output folder |
-|---|---|
-| `fastapi/fastapi` | `output/fastapi__fastapi/` |
-| `psf/requests` | `output/psf__requests/` |
-| `microsoft/vscode` | `output/microsoft__vscode/` (issues only so far) |
-
-`config.py` currently has only `microsoft/vscode` in the `REPOS` list — the fastapi and requests data was mined earlier. Update `REPOS` to add new targets.
 
 ## Things to be aware of
 
-- All JSONL files use `repo` field as `"owner/repo"` (slash), but output folder names use `owner__repo` (double underscore).
+- `security_benchmark.jsonl` is the source of truth — edit records via the `/benchmark` UI, not by hand.
+- `open_codes.jsonl` output filename is model-specific (`open_codes_gpt-5.4-mini.jsonl`) when using `--output`; default is `open_codes.jsonl`. The review UI always reads `dataset/open_codes.jsonl`.
+- All JSONL files use `repo` as `"owner/repo"` (slash); output folder names use `owner__repo` (double underscore).
 - Checkpoints are hidden `.checkpoint_*.json` files inside each output folder. Delete them (or use `--force`) to re-run a miner from scratch.
-- The `qa_builder.py` produces pairs for a specific subset of questions (Q18, Q19, Q32, Q33, Q50, Q53, Q54, Q56) — questions that have deterministic ground truth from structured data. The remaining questions are covered only by the LLM classifier path.
-- `mine_threads.py` must run before `classify.py` — it reads from `issues.jsonl` and the GitHub Discussions GraphQL API.
+- `mine_threads.py` must run before `classify.py`.
 - `contributors.py` must run after `commits.py`, `issues.py`, and `pull_requests.py`.
+- The `human_note` field is the first-author's verification rationale — do NOT include it in open coding prompts (would anchor/bias the codes).
+- `litellm` is installed in the devqa env; `anthropic` was added alongside it.

@@ -37,6 +37,11 @@ SECURITY_EXPORT_FILE = ROOT / "security_verified_qa_pairs.jsonl"
 # ── Benchmark dataset files ────────────────────────────────────────────────────
 BENCHMARK_FILE = ROOT / "dataset" / "security_benchmark.jsonl"
 
+# ── Open-coding review files ───────────────────────────────────────────────────
+OC_CODES_FILE = ROOT / "dataset" / "open_codes.jsonl"
+OC_VERIFIED_FILE = ROOT / "dataset" / "open_codes_verified.json"
+OC_EXPORT_FILE = ROOT / "dataset" / "open_codes_verified.jsonl"
+
 sys.path.insert(0, str(ROOT / "pipeline"))
 from utils.taxonomy import CATEGORIES, QUESTIONS, QUESTION_TO_CATEGORY  # noqa: E402
 
@@ -202,6 +207,53 @@ class BenchmarkEditRequest(BaseModel):
     hard_facts: Optional[dict] = None
 
 
+class OCSaveRequest(BaseModel):
+    status: str           # "accepted" | "rejected" | "pending"
+    codes: list[str]      # edited codes list
+    rationale: Optional[str] = ""
+    note: Optional[str] = ""
+
+
+# ── Open-coding data ───────────────────────────────────────────────────────────
+
+oc_records: list[dict] = []          # merged: LLM codes + benchmark context
+oc_verified: dict[str, dict] = {}    # keyed by record id string
+
+
+def load_oc_data() -> None:
+    global oc_records, oc_verified
+    oc_records = []
+
+    # Index benchmark by id for fast join
+    bm_by_id: dict[str, dict] = {}
+    if BENCHMARK_FILE.exists():
+        with BENCHMARK_FILE.open(encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if line:
+                    r = json.loads(line)
+                    bm_by_id[r["id"]] = r
+
+    if OC_CODES_FILE.exists():
+        with OC_CODES_FILE.open(encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                oc = json.loads(line)
+                bm = bm_by_id.get(oc["id"], {})
+                oc_records.append({**bm, **oc})   # bm first, oc fields win
+
+    if OC_VERIFIED_FILE.exists():
+        oc_verified = json.loads(OC_VERIFIED_FILE.read_text(encoding="utf-8"))
+    else:
+        oc_verified = {}
+
+
+def save_oc_verified() -> None:
+    OC_VERIFIED_FILE.write_text(json.dumps(oc_verified, indent=2), encoding="utf-8")
+
+
 # ── Benchmark data ─────────────────────────────────────────────────────────────
 
 benchmark_records: list[dict] = []
@@ -234,9 +286,11 @@ async def lifespan(app: FastAPI):
     load_open_data()
     load_security_data()
     load_benchmark_data()
+    load_oc_data()
     print(
         f"Loaded {len(pairs)} F&M pairs, {len(open_pairs)} open-coded pairs, "
-        f"{len(security_pairs)} security pairs, {len(benchmark_records)} benchmark records",
+        f"{len(security_pairs)} security pairs, {len(benchmark_records)} benchmark records, "
+        f"{len(oc_records)} open-coding records",
         file=sys.stderr,
     )
     yield
@@ -247,6 +301,7 @@ _TAXONOMY_HTML = Path(__file__).parent / "templates" / "taxonomy.html"
 _STATS_HTML = Path(__file__).parent / "templates" / "stats.html"
 _CHAT_HTML = Path(__file__).parent / "templates" / "chat.html"
 _BENCHMARK_HTML = Path(__file__).parent / "templates" / "benchmark.html"
+_OC_HTML = Path(__file__).parent / "templates" / "open_coding.html"
 
 app = FastAPI(title="DevQA – Pair Review Tool", lifespan=lifespan)
 app.mount(
@@ -1007,6 +1062,146 @@ def get_benchmark_repos():
 def reload_benchmark():
     load_benchmark_data()
     return {"ok": True, "total": len(benchmark_records)}
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# OPEN-CODING REVIEW  (/open-coding  and  /api/oc/*)
+# ══════════════════════════════════════════════════════════════════════════════
+
+
+@app.get("/open-coding", response_class=HTMLResponse)
+async def oc_index():
+    return HTMLResponse(_OC_HTML.read_text(encoding="utf-8"))
+
+
+@app.get("/api/oc/records")
+def get_oc_records(
+    repo: Optional[str] = None,
+    status: Optional[str] = None,
+    q: Optional[str] = None,
+    page: int = 1,
+    page_size: int = 200,
+):
+    filtered = []
+    for i, r in enumerate(oc_records):
+        v = oc_verified.get(r["id"], {})
+        vstatus = v.get("status", "pending")
+
+        if repo and r.get("repo") != repo:
+            continue
+        if status and vstatus != status:
+            continue
+        if q:
+            ql = q.lower()
+            searchable = " ".join([
+                r.get("title", ""),
+                r.get("qa_summary", ""),
+                " ".join(v.get("codes", r.get("codes", []))),
+            ]).lower()
+            if ql not in searchable:
+                continue
+
+        codes = v.get("codes", r.get("codes", []))
+        filtered.append({
+            "index": i,
+            "id": r["id"],
+            "repo": r.get("repo"),
+            "number": r.get("number"),
+            "title": r.get("title"),
+            "codes": codes,
+            "model": r.get("model"),
+            "status": vstatus,
+            "note": v.get("note", ""),
+        })
+
+    total = len(filtered)
+    start = (page - 1) * page_size
+    return {"total": total, "page": page, "page_size": page_size,
+            "items": filtered[start: start + page_size]}
+
+
+@app.get("/api/oc/records/{index}")
+def get_oc_record(index: int):
+    if index < 0 or index >= len(oc_records):
+        raise HTTPException(status_code=404, detail="Record not found")
+    r = dict(oc_records[index])
+    v = oc_verified.get(r["id"], {})
+    r["index"] = index
+    r["status"] = v.get("status", "pending")
+    r["codes"] = v.get("codes", r.get("codes", []))
+    r["rationale"] = v.get("rationale", r.get("rationale", ""))
+    r["note"] = v.get("note", "")
+    r["verified_at"] = v.get("verified_at", "")
+    r["llm_codes"] = oc_records[index].get("codes", [])   # original LLM output
+    return r
+
+
+@app.post("/api/oc/records/{index}/save")
+def save_oc_record(index: int, body: OCSaveRequest):
+    if index < 0 or index >= len(oc_records):
+        raise HTTPException(status_code=404, detail="Record not found")
+    if body.status not in ("accepted", "rejected", "pending"):
+        raise HTTPException(status_code=400, detail="Invalid status")
+    rec_id = oc_records[index]["id"]
+    oc_verified[rec_id] = {
+        "status": body.status,
+        "codes": [c.strip() for c in body.codes if c.strip()],
+        "rationale": body.rationale or "",
+        "note": body.note or "",
+        "verified_at": datetime.utcnow().isoformat() + "Z",
+    }
+    save_oc_verified()
+    return {"ok": True}
+
+
+@app.get("/api/oc/stats")
+def get_oc_stats():
+    counts = {"accepted": 0, "rejected": 0, "pending": 0}
+    repos: dict[str, int] = {}
+    for r in oc_records:
+        v = oc_verified.get(r["id"], {})
+        s = v.get("status", "pending")
+        counts[s] = counts.get(s, 0) + 1
+        repo = r.get("repo", "unknown")
+        repos[repo] = repos.get(repo, 0) + 1
+    return {"total": len(oc_records), "counts": counts, "repos": repos}
+
+
+@app.post("/api/oc/reload")
+def reload_oc():
+    load_oc_data()
+    return {"ok": True, "total": len(oc_records)}
+
+
+@app.post("/api/oc/export")
+def export_oc():
+    accepted = []
+    for r in oc_records:
+        v = oc_verified.get(r["id"], {})
+        if v.get("status") == "accepted":
+            out = dict(r)
+            out["codes"] = v["codes"]
+            out["rationale"] = v.get("rationale", "")
+            out["note"] = v.get("note", "")
+            out.pop("comments", None)   # strip raw thread to keep file lean
+            accepted.append(out)
+    with OC_EXPORT_FILE.open("w", encoding="utf-8") as f:
+        for rec in accepted:
+            f.write(json.dumps(rec) + "\n")
+    return {"exported": len(accepted), "file": str(OC_EXPORT_FILE)}
+
+
+@app.get("/api/oc/export/download")
+def download_oc_export():
+    if not OC_EXPORT_FILE.exists():
+        raise HTTPException(status_code=404, detail="No export yet. Run export first.")
+    return FileResponse(OC_EXPORT_FILE, filename="open_codes_verified.jsonl",
+                        media_type="application/octet-stream")
+
+
+@app.get("/api/oc/repos")
+def get_oc_repos():
+    return sorted({r.get("repo", "") for r in oc_records})
 
 
 if __name__ == "__main__":
