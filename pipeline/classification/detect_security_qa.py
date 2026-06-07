@@ -47,6 +47,7 @@ Usage:
 """
 
 import argparse
+import json
 import os
 import re
 import sys
@@ -57,8 +58,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 from config import REPOS
 # from utils.ollama_client import STAGE1_MODEL, generate_json, is_running
 from utils.openai_client import STAGE1_MODEL, generate_json
-from utils.storage import (append_record, load_checkpoint, load_jsonl,
-                           save_checkpoint)
+from utils.storage import append_record, load_jsonl, repo_dir
 
 SYSTEM_PROMPT = """You are a research assistant analyzing GitHub threads
 for an academic study on real developer security information needs in
@@ -574,6 +574,33 @@ def detect_and_extract(thread, model, usage_log=None):
 # ── Main runner ──────────────────────────────────────────────────────────────
 
 
+def _responses_path(repo):
+    return os.path.join(repo_dir(repo), "security_qa_responses.jsonl")
+
+
+def _load_done(repo):
+    """Return set of thread numbers already recorded in security_qa_responses."""
+    path = _responses_path(repo)
+    if not os.path.exists(path):
+        return set()
+    done = set()
+    with open(path) as f:
+        for line in f:
+            line = line.strip()
+            if line:
+                try:
+                    done.add(int(json.loads(line)["number"]))
+                except (KeyError, ValueError, json.JSONDecodeError):
+                    pass
+    return done
+
+
+def _save_response(repo, entry):
+    path = _responses_path(repo)
+    with open(path, "a") as f:
+        f.write(json.dumps(entry) + "\n")
+
+
 def run(repo, model=STAGE1_MODEL, confidence_threshold=0.3, limit=None,
         max_pairs=None, force=False, state_filter=None):
     print(f"\n[detect_security_qa] {repo}")
@@ -586,6 +613,13 @@ def run(repo, model=STAGE1_MODEL, confidence_threshold=0.3, limit=None,
     if max_pairs:
         print(f"  cap/repo:   {max_pairs}")
 
+    if force:
+        for name in ("security_qa_pairs", "security_qa_responses"):
+            p = os.path.join(repo_dir(repo), f"{name}.jsonl")
+            if os.path.exists(p):
+                os.remove(p)
+                print(f"  cleared {name}.jsonl")
+
     if max_pairs and not force:
         existing = load_jsonl(repo, "security_qa_pairs")
         if existing and len(existing) >= max_pairs:
@@ -597,8 +631,7 @@ def run(repo, model=STAGE1_MODEL, confidence_threshold=0.3, limit=None,
         print("  [error] no raw_threads.jsonl — run mine_threads.py first")
         return
 
-    checkpoint_key = f"detect_security_qa_{model}".replace(":", "_").replace("/", "_")
-    done = set() if force else load_checkpoint(repo, checkpoint_key)
+    done = _load_done(repo)
 
     threads_to_do = [t for t in threads if t["number"] not in done]
     if state_filter:
@@ -613,24 +646,19 @@ def run(repo, model=STAGE1_MODEL, confidence_threshold=0.3, limit=None,
     if max_pairs:
         print(f"  max pairs:       {max_pairs}")
 
-    if force:
-        out_path = f"output_gemma/{repo.replace('/','__')}/security_qa_pairs.jsonl"
-        if os.path.exists(out_path):
-            os.remove(out_path)
-            print("  cleared previous output")
-
-    existing_count = 0 if force else len(load_jsonl(repo, "security_qa_pairs") or [])
+    existing_count = len(load_jsonl(repo, "security_qa_pairs") or [])
     accepted = existing_count
     dropped_prefilter = dropped_conf = failed = 0
     dropped_by_reason: dict = {}
 
     for thread in tqdm(threads_to_do, desc="  detecting"):
-        done.add(thread["number"])
+        num = thread["number"]
 
         if not prefilter(thread):
+            _save_response(repo, {"number": num, "status": "prefilter"})
             dropped_prefilter += 1
             continue
-        
+
         usage_log = []
         result = detect_and_extract(thread, model, usage_log=usage_log)
         issue_usage = {}
@@ -640,26 +668,31 @@ def run(repo, model=STAGE1_MODEL, confidence_threshold=0.3, limit=None,
             b["input_tokens"]  += r["input_tokens"]
             b["cached_tokens"] += r["cached_tokens"]
             b["output_tokens"] += r["output_tokens"]
-        append_record(repo, f"usage_{STAGE1_MODEL}", {f"{repo}/{thread['number']}": issue_usage})
+        append_record(repo, f"usage_{STAGE1_MODEL}", {f"{repo}/{num}": issue_usage})
 
         if result is None:
+            _save_response(repo, {"number": num, "status": "failed"})
             failed += 1
             continue
 
         if not result.get("contains_qa"):
             reason = result.get("drop_reason", "unknown")
             dropped_by_reason[reason] = dropped_by_reason.get(reason, 0) + 1
+            _save_response(repo, {"number": num, "status": "dropped", "drop_reason": reason})
             continue
 
         if result.get("confidence", 0) < confidence_threshold:
-            print(f"  [drop] confidence {result.get('confidence', 0):.2f} < {confidence_threshold}")
+            conf = result.get("confidence", 0)
+            print(f"  [drop] confidence {conf:.2f} < {confidence_threshold}")
             dropped_conf += 1
+            _save_response(repo, {"number": num, "status": "dropped",
+                                  "drop_reason": "low_confidence", "confidence": conf})
             continue
 
         record = {
             "source": thread["source"],
             "repo": repo,
-            "number": thread["number"],
+            "number": num,
             "title": thread.get("title", ""),
             "url": thread.get("url", ""),
             "state": thread.get("state", ""),
@@ -675,7 +708,7 @@ def run(repo, model=STAGE1_MODEL, confidence_threshold=0.3, limit=None,
             "answer_text": result["answer_text"],
             "artifacts_needed": result["artifacts_needed"],
             "hard_facts": result["hard_facts"],
-            "references": result["references"],  # backward-compat flat list
+            "references": result["references"],
             "answerer_role": result["answerer_role"],
             "stage1_confidence": result["stage1_confidence"],
             "stage1_n_yes": result["stage1_n_yes"],
@@ -689,16 +722,11 @@ def run(repo, model=STAGE1_MODEL, confidence_threshold=0.3, limit=None,
 
         accepted += 1
         append_record(repo, "security_qa_pairs", record)
+        _save_response(repo, {"number": num, "status": "accepted", **record})
 
         if max_pairs and accepted >= max_pairs:
-            done.add(thread["number"])
             print(f"  [stop] reached max_pairs={max_pairs}")
             break
-
-        if len(done) % 10 == 0:
-            save_checkpoint(repo, checkpoint_key, done)
-
-    save_checkpoint(repo, checkpoint_key, done)
 
     new_accepted = accepted - existing_count
     total_dropped = sum(dropped_by_reason.values())
@@ -729,7 +757,7 @@ if __name__ == "__main__":
                         help="Re-process all threads from scratch")
     parser.add_argument("--state", choices=["open", "closed"], default=None,
                         help="Filter threads by issue state (default: all)")
-    parser.add_argument("--stage1-samples", type=int, default=None,
+    parser.add_argument("--stage1-samples", type=int, default=1,
                         help=f"Stage-1 self-consistency sample count (default {STAGE1_SAMPLES}; set 1 to disable)")
     args = parser.parse_args()
 
