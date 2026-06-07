@@ -1,0 +1,484 @@
+{
+  "auth0/node-jsonwebtoken/issue/957": {
+    "status": "accepted",
+    "codes": [
+      "SM2 key algorithm mismatch"
+    ],
+    "rationale": "The exchange centers on using an SM2 private key with the ES256 JWS algorithm and the maintainer explains that SM2 keys are not supported for JOSE/ES256.",
+    "note": "",
+    "verified_at": "2026-06-07T19:24:53.892269Z"
+  },
+  "auth0/node-jsonwebtoken/issue/921": {
+    "status": "accepted",
+    "codes": [
+      "transitive dependency CVE"
+    ],
+    "rationale": "The question identifies a vulnerability in the semver dependency and asks which project release contains the fix.",
+    "note": "",
+    "verified_at": "2026-06-07T19:25:05.466954Z"
+  },
+  "auth0/node-jsonwebtoken/issue/914": {
+    "status": "accepted",
+    "codes": [
+      "transitive dependency vulnerability"
+    ],
+    "rationale": "The exchange is about a vulnerable semver transitive dependency and recommends a package.json overrides entry as a temporary mitigation.",
+    "note": "",
+    "verified_at": "2026-06-07T19:25:27.548034Z"
+  },
+  "auth0/node-jsonwebtoken/issue/739": {
+    "status": "accepted",
+    "codes": [
+      "RSA key length requirement"
+    ],
+    "rationale": "The exchange is about the minimum RSA modulus size needed for RS256/RS512 signing and whether the chosen algorithm must match the key length.",
+    "note": "",
+    "verified_at": "2026-06-07T19:26:04.418472Z"
+  },
+  "auth0/node-jsonwebtoken/issue/728": {
+    "status": "accepted",
+    "codes": [
+      "cryptographic algorithm default mismatch"
+    ],
+    "rationale": "The exchange focuses on verify and sign using different default algorithms, and on whether the insecure 'none' algorithm must be explicitly allowed.",
+    "note": "",
+    "verified_at": "2026-06-07T19:27:51.024471Z"
+  },
+  "auth0/node-jsonwebtoken/issue/711": {
+    "status": "accepted",
+    "codes": [
+      "unsigned JWT handling"
+    ],
+    "rationale": "The exchange is about whether JWTs signed with the \"none\" algorithm are accepted by default and whether that unsigned-token behavior is intentional.",
+    "note": "We may have to remove this as there is no concrete answer and it needs a human to answer for future plans",
+    "verified_at": "2026-06-07T19:31:54.486976Z"
+  },
+  "auth0/node-jsonwebtoken/issue/706": {
+    "status": "accepted",
+    "codes": [
+      "question regarding jwt signing"
+    ],
+    "rationale": "The exchange centers on whether a JWT can be decoded without a secret and clarifies that jwt.sign provides integrity via signing, not confidentiality through encryption.",
+    "note": "",
+    "verified_at": "2026-06-07T19:33:28.813493Z"
+  },
+  "auth0/node-jsonwebtoken/issue/665": {
+    "status": "accepted",
+    "codes": [
+      "signature verification bypass"
+    ],
+    "rationale": "The exchange centers on adding an option to bypass JWT signature checks in `verify()` for dev/test use, and discusses alternative testing workarounds like mocking the token provider or using `decode()`.",
+    "note": "This is a very interesting case where a human actually answers by ignoring the suggestion which LLMs typically dont do",
+    "verified_at": "2026-06-07T19:35:05.221682Z"
+  },
+  "auth0/node-jsonwebtoken/issue/656": {
+    "status": "accepted",
+    "codes": [
+      "token blacklist",
+      "JWT logout invalidation"
+    ],
+    "rationale": "The question is about how to destroy or invalidate a JWT on logout, and the answer points to keeping a blacklist of tokens as the solution.",
+    "note": "",
+    "verified_at": "2026-06-07T19:40:00.859382Z"
+  },
+  "axios/axios/issue/10731": {
+    "status": "accepted",
+    "codes": [
+      "false vulnerability report",
+      "vulnerability database error"
+    ],
+    "rationale": "The exchange is about a security scanner flagging axios 1.15.0 as vulnerable even though the cited advisory says it is fixed, indicating a false alarm caused by an incorrect vulnerability database entry.",
+    "note": "ANother case where LLM may have to consider while the report is actually valid or not",
+    "verified_at": "2026-06-07T19:41:05.784455Z"
+  },
+  "axios/axios/issue/10707": {
+    "status": "accepted",
+    "codes": [
+      "scanner false positive",
+      "advisory database update"
+    ],
+    "rationale": "The exchange is about security scanners still flagging a fixed release as vulnerable and the maintainer explains that the advisory database has not yet been updated with the fix.",
+    "note": "",
+    "verified_at": "2026-06-07T19:42:21.434147Z"
+  },
+  "axios/axios/issue/10685": {
+    "status": "accepted",
+    "codes": [
+      "SSRF vulnerability backport"
+    ],
+    "rationale": "The exchange concerns backporting a Server-Side Request Forgery fix to the 0.x branch and updating the advisory to mark 0.31.0 as a safe version.",
+    "note": "",
+    "verified_at": "2026-06-07T19:43:29.976044Z"
+  },
+  "axios/axios/issue/10642": {
+    "status": "rejected",
+    "codes": [
+      "infection status check",
+      "safe after timestamp"
+    ],
+    "rationale": "The question asks whether the user is infected, and the answer determines safety based on whether dependencies were installed after a specific date and time.",
+    "note": "Needs image analysis",
+    "verified_at": "2026-06-07T19:44:38.133482Z"
+  },
+  "axios/axios/issue/10643": {
+    "status": "accepted",
+    "codes": [
+      "compromised package versions",
+      "safe version guidance"
+    ],
+    "rationale": "The exchange is about identifying which Axios releases were maliciously compromised and which specific versions are safe to install.",
+    "note": "",
+    "verified_at": "2026-06-07T19:46:04.665497Z"
+  },
+  "axios/axios/issue/10636": {
+    "status": "accepted",
+    "codes": [
+      "RAT on machine",
+      "2FA bypass via session"
+    ],
+    "rationale": "The answer says the attacker had full control once a RAT was installed on the maintainer\u2019s machine and that 2FA was enabled, pointing to device compromise and post-authentication takeover rather than password-only account access.",
+    "note": "The answer is provided in the issue but it's an important one",
+    "verified_at": "2026-06-07T19:47:38.078706Z"
+  },
+  "axios/axios/issue/10614": {
+    "status": "accepted",
+    "codes": [
+      "credential leakage on redirect"
+    ],
+    "rationale": "The exchange is about preventing credentials from being re-injected during redirect handling and correcting a documentation example that could teach an unsafe pattern.",
+    "note": "Answer is both on the issue and comment",
+    "verified_at": "2026-06-07T19:49:03.539580Z"
+  },
+  "axios/axios/issue/7417": {
+    "status": "accepted",
+    "codes": [
+      "scanner false positive"
+    ],
+    "rationale": "The question is about Snyk still flagging v0.30.3 as vulnerable, and the maintainer \u10de\u10d0\u10e1\u10e3\u10ees that they adjusted the CVE metadata to clear the alert.",
+    "note": "The problem is fixed but it doesn't state where ",
+    "verified_at": "2026-06-07T19:52:29.573196Z"
+  },
+  "axios/axios/discussion/7302": {
+    "status": "accepted",
+    "codes": [
+      "CSRF token generation",
+      "double submit cookie"
+    ],
+    "rationale": "The exchange is about how to generate and seed a CSRF token on the backend for Axios to read, using the double submit cookie pattern to populate the X-XSRF-TOKEN header.",
+    "note": "",
+    "verified_at": "2026-06-07T19:54:28.021432Z"
+  },
+  "axios/axios/issue/7228": {
+    "status": "accepted",
+    "codes": [
+      "deprecated URL parsing"
+    ],
+    "rationale": "The exchange focuses on Axios triggering Node\u2019s DEP0169 warning from `url.parse()` in proxy resolution, and on the fact that the problem comes from the transitive `proxy-from-env` dependency rather than Axios itself.",
+    "note": "Answer is also suggested in the issue",
+    "verified_at": "2026-06-07T20:03:23.576664Z"
+  },
+  "axios/axios/issue/7055": {
+    "status": "rejected",
+    "codes": [
+      "npm trusted publishing",
+      "package publishing security"
+    ],
+    "rationale": "The exchange is about adopting npm trusted publishing to reduce token-based supply chain risk in package publication.",
+    "note": "The answer needs context on human planning/team plans for workaround",
+    "verified_at": "2026-06-07T20:04:29.874830Z"
+  },
+  "axios/axios/issue/7023": {
+    "status": "rejected",
+    "codes": [
+      "version-specific vulnerability impact",
+      "patched release availability"
+    ],
+    "rationale": "The question asks whether the CVE affects the 0.x.x line and when a fixed release is available, and the answer identifies version 0.30.2 as the patch.",
+    "note": "Needs team plans to answer the question",
+    "verified_at": "2026-06-07T20:09:17.366786Z"
+  },
+  "axios/axios/issue/6975": {
+    "status": "accepted",
+    "codes": [
+      "unsafe boundary generation",
+      "dependency version update"
+    ],
+    "rationale": "The post reports a vulnerability in form-data\u2019s boundary randomization and asks to update axios to the fixed dependency version.",
+    "note": "",
+    "verified_at": "2026-06-07T20:11:06.891388Z"
+  },
+  "axios/axios/issue/6969": {
+    "status": "accepted",
+    "codes": [
+      "transitive dependency vulnerability"
+    ],
+    "rationale": "The exchange centers on a claimed security issue in a transitive dependency and a maintainer response disputing whether the dependency version is actually vulnerable.",
+    "note": "",
+    "verified_at": "2026-06-07T20:11:31.878876Z"
+  },
+  "axios/axios/issue/6931": {
+    "status": "accepted",
+    "codes": [
+      "prepare script install failure"
+    ],
+    "rationale": "The exchange centers on a Husky prepare/postinstall script causing installation to fail when a published package is installed without a .git directory, especially in monorepos or CI.",
+    "note": "",
+    "verified_at": "2026-06-07T20:32:35.735030Z"
+  },
+  "axios/axios/issue/6929": {
+    "status": "rejected",
+    "codes": [
+      "auth dropped on redirects",
+      "same-origin redirect credentials"
+    ],
+    "rationale": "The exchange centers on authentication credentials being lost during 303 redirects after a follow-redirects update, with the fix restoring auth only for same-origin redirects.",
+    "note": "Looks like a generic bug to me",
+    "verified_at": "2026-06-07T20:37:44.140716Z"
+  },
+  "axios/axios/discussion/6924": {
+    "status": "accepted",
+    "codes": [
+      "automatic redirect handling"
+    ],
+    "rationale": "The exchange is about Axios following redirects automatically in SPA authentication flows and clarifies that redirect control differs by adapter, with XHR ignoring maxRedirects.",
+    "note": "",
+    "verified_at": "2026-06-07T20:40:57.144042Z"
+  },
+  "axios/axios/issue/6859": {
+    "status": "accepted",
+    "codes": [
+      "patched version marking"
+    ],
+    "rationale": "The exchange is about marking release 0.30.0 as a patched version for a GHSA/CVE and updating the repository advisory to match the global advisory.",
+    "note": "",
+    "verified_at": "2026-06-07T20:42:00.341232Z"
+  },
+  "axios/axios/issue/6816": {
+    "status": "accepted",
+    "codes": [
+      "opt-in security setting",
+      "missing config types"
+    ],
+    "rationale": "The question asks how to enable the CVE fix in 1.8.2, and the answer explains that the needed `allowAbsoluteUrls` security option exists in AxiosRequestConfig but is absent from the 1.8.2 type definitions.",
+    "note": "",
+    "verified_at": "2026-06-07T20:49:42.197312Z"
+  },
+  "axios/axios/issue/6806": {
+    "status": "accepted",
+    "codes": [
+      "absolute URL bypass",
+      "SSRF risk"
+    ],
+    "rationale": "The issue describes a configuration being ignored so requests can still go to absolute URLs, creating a server-side request forgery risk.",
+    "note": "",
+    "verified_at": "2026-06-07T20:51:35.618859Z"
+  },
+  "axios/axios/issue/6797": {
+    "status": "rejected",
+    "codes": [
+      "missing crypto module",
+      "webpack polyfill fallback"
+    ],
+    "rationale": "The exchange centers on a failed import of Node's crypto module and the need to fix it by adding a webpack fallback/polyfill or upgrading to the fixed version.",
+    "note": "Doesn't look like a sec question",
+    "verified_at": "2026-06-07T20:52:37.725226Z"
+  },
+  "axios/axios/issue/6776": {
+    "status": "accepted",
+    "codes": [
+      "TLS deprecation support"
+    ],
+    "rationale": "The question asks about deprecating TLS 1.1 and older encryption algorithms, and the answer says this is governed by the runtime/Node.js TLS settings rather than axios itself.",
+    "note": "External resource",
+    "verified_at": "2026-06-07T20:55:55.841257Z"
+  },
+  "axios/axios/issue/6625": {
+    "status": "accepted",
+    "codes": [
+      "header parsing failure"
+    ],
+    "rationale": "The question is about AxiosHeaders.from failing to parse a Node fetch Headers instance and producing an incorrect header key representation.",
+    "note": "",
+    "verified_at": "2026-06-07T20:58:51.680512Z"
+  },
+  "axios/axios/issue/6597": {
+    "status": "accepted",
+    "codes": [
+      "authorization header refresh"
+    ],
+    "rationale": "The exchange is about updating the Authorization header on a retried Axios request after refreshing a token, and whether the new header value is preserved.",
+    "note": "",
+    "verified_at": "2026-06-07T20:59:41.633188Z"
+  },
+  "axios/axios/issue/6545": {
+    "status": "accepted",
+    "codes": [
+      "SSRF vulnerability report"
+    ],
+    "rationale": "The exchange centers on a reported SSRF/CVE issue in Axios and the maintainer\u2019s confirmation that it was resolved in version 1.7.4.",
+    "note": "",
+    "verified_at": "2026-06-07T21:01:41.245673Z"
+  },
+  "axios/axios/discussion/6542": {
+    "status": "accepted",
+    "codes": [
+      "SSRF vulnerability"
+    ],
+    "rationale": "The question reports an SSRF issue in axios 1.7.2 and asks whether a patch exists, while the answer identifies version 1.7.4 as the fix.",
+    "note": "",
+    "verified_at": "2026-06-07T21:02:07.021723Z"
+  },
+  "axios/axios/issue/6497": {
+    "status": "accepted",
+    "codes": [
+      "android network security config"
+    ],
+    "rationale": "The exchange centers on Android requests failing because of certificate and network security configuration, with commenters identifying SSL pinning and certificate-chain setup as the cause.",
+    "note": "",
+    "verified_at": "2026-06-07T21:02:58.500153Z"
+  },
+  "axios/axios/issue/6463": {
+    "status": "accepted",
+    "codes": [
+      "SSRF fix availability"
+    ],
+    "rationale": "The question asks whether a patch is available, and the answer points to the release version that resolves the vulnerability.",
+    "note": "There are several reports on this. Example: axios/axios/issue/6545",
+    "verified_at": "2026-06-07T21:04:46.655529Z"
+  },
+  "axios/axios/issue/6459": {
+    "status": "rejected",
+    "codes": [
+      "Azure WAF blocking",
+      "pending requests after block"
+    ],
+    "rationale": "The exchange centers on Azure WAF rejecting a POST request and the resulting behavior where later axios requests remain stuck in a pending state.",
+    "note": "Doesnt seem to be sec issue",
+    "verified_at": "2026-06-07T21:06:03.367432Z"
+  },
+  "axios/axios/issue/6452": {
+    "status": "rejected",
+    "codes": [
+      "unsupported syntax error",
+      "version downgrade recommendation"
+    ],
+    "rationale": "The post reports a browser syntax failure from unsupported async generator syntax, and the answer recommends downgrading to an older Axios version to avoid it.",
+    "note": "",
+    "verified_at": "2026-06-07T21:07:24.591666Z"
+  },
+  "expressjs/express/issue/7196": {
+    "status": "rejected",
+    "codes": [
+      "dependency cache pollution",
+      "lockfile-required caching"
+    ],
+    "rationale": "The exchange focuses on whether npm CI caching could be abused through cache pollution and on the fact that setup-node caching should be disabled without a lockfile.",
+    "note": "Not sec issue",
+    "verified_at": "2026-06-07T21:09:07.724148Z"
+  },
+  "expressjs/express/issue/7143": {
+    "status": "accepted",
+    "codes": [
+      "false positive dependency vulnerability"
+    ],
+    "rationale": "The exchange is about whether the bundled path-to-regexp dependency is actually vulnerable and whether the npm audit report is a real issue or a scanner false alarm.",
+    "note": "A false positive vulnerability report. Would be interesting to see how LLM answers this",
+    "verified_at": "2026-06-07T21:10:53.055821Z"
+  },
+  "expressjs/express/issue/7016": {
+    "status": "accepted",
+    "codes": [
+      "transitive dependency vulnerability"
+    ],
+    "rationale": "The exchange concerns a vulnerable transitive qs dependency in body-parser and whether updating the pinned dependency version is needed to address it.",
+    "note": "",
+    "verified_at": "2026-06-07T21:11:53.200106Z"
+  },
+  "expressjs/express/issue/6978": {
+    "status": "accepted",
+    "codes": [
+      "typosquatting malware alert",
+      "false positive detection"
+    ],
+    "rationale": "The exchange identifies the reported issue as a malicious typosquatted package rather than the real express package, and the user then suspects the scanner alert may be a false positive.",
+    "note": "A false positive report",
+    "verified_at": "2026-06-07T21:13:40.108355Z"
+  },
+  "expressjs/express/issue/6968": {
+    "status": "accepted",
+    "codes": [
+      "transitive dependency vulnerability",
+      "patched dependency version"
+    ],
+    "rationale": "The exchange is about whether a vulnerability in the qs dependency affects Express and whether the bundled dependency ranges already pull in the fixed release.",
+    "note": "",
+    "verified_at": "2026-06-07T21:14:10.011881Z"
+  },
+  "expressjs/express/issue/6874": {
+    "status": "accepted",
+    "codes": [
+      "dotfiles access control"
+    ],
+    "rationale": "The exchange is about Express blocking or allowing access to dot-prefixed files and directories like .git via sendFile/static.",
+    "note": "",
+    "verified_at": "2026-06-07T21:20:17.532001Z"
+  },
+  "expressjs/express/issue/6751": {
+    "status": "accepted",
+    "codes": [
+      "critical audit finding",
+      "transitive dependency update"
+    ],
+    "rationale": "The exchange centers on a critical security audit alert for a dependency advisory and the need to refresh the lockfile to pull in the fixed debug version.",
+    "note": "",
+    "verified_at": "2026-06-07T21:21:48.910291Z"
+  },
+  "expressjs/express/issue/6614": {
+    "status": "accepted",
+    "codes": [
+      "URL scheme validation"
+    ],
+    "rationale": "The exchange centers on whether res.location() should validate dangerous URL schemes and the maintainer\u2019s response frames the issue as caller-controlled input under the project\u2019s threat model.",
+    "note": "",
+    "verified_at": "2026-06-07T21:22:15.560291Z"
+  },
+  "expressjs/express/issue/6458": {
+    "status": "accepted",
+    "codes": [
+      "security release rationale",
+      "ReDoS vulnerability"
+    ],
+    "rationale": "The exchange explains that the breaking route semantics were introduced because of a security release, specifically to address a ReDoS vulnerability in path-to-regexp.",
+    "note": "",
+    "verified_at": "2026-06-07T21:29:16.207141Z"
+  },
+  "expressjs/express/issue/6443": {
+    "status": "rejected",
+    "codes": [
+      "redirected header preservation",
+      "authorization cookie removal"
+    ],
+    "rationale": "The exchange is about whether custom request headers survive an HTTP redirect and specifically notes that security-sensitive headers like Authorization and Cookie may be removed by the user agent.",
+    "note": "",
+    "verified_at": "2026-06-07T21:29:57.251226Z"
+  },
+  "expressjs/express/issue/6222": {
+    "status": "accepted",
+    "codes": [
+      "SCA tool false positive"
+    ],
+    "rationale": "The exchange clarifies which Express versions are actually affected by CVE-2024-10491 and responds to a vendor scan that appears to be flagging unsupported versions.",
+    "note": "",
+    "verified_at": "2026-06-07T21:31:51.850469Z"
+  },
+  "expressjs/express/issue/6204": {
+    "status": "accepted",
+    "codes": [
+      "outdated dependency version",
+      "backport security fix"
+    ],
+    "rationale": "The exchange focuses on an old debug package version causing a memory-leak security concern and on backporting the fix from v5 to v4.",
+    "note": "",
+    "verified_at": "2026-06-07T21:33:46.226502Z"
+  }
+}
