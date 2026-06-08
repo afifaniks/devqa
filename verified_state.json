@@ -1,0 +1,77 @@
+{
+  "fastapi/fastapi/issue/12554/Q59": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-19T19:13:44.388993Z"
+  },
+  "fastapi/fastapi/issue/12459/OTHER": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-19T19:14:03.018710Z"
+  },
+  "fastapi/fastapi/issue/12055/OTHER": {
+    "status": "accepted",
+    "note": "This questions \"shskdhks\"",
+    "verified_at": "2026-05-19T19:16:23.057185Z"
+  },
+  "fastapi/fastapi/discussion/15441/OTHER": {
+    "status": "accepted",
+    "note": "This is relevant for this particular reason,",
+    "verified_at": "2026-05-19T19:19:05.326640Z"
+  },
+  "astral-sh/ruff/issue/24887/OTHER": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-22T15:54:52.387199Z"
+  },
+  "psf/requests/issue/7284/Q14": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-22T16:02:51.694843Z"
+  },
+  "psf/requests/issue/7271/Q14": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-22T18:47:01.950791Z"
+  },
+  "psf/requests/issue/7247/OTHER": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-22T18:47:14.627275Z"
+  },
+  "psf/requests/issue/7223/OTHER": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-22T19:00:02.040955Z"
+  },
+  "psf/requests/issue/7013/OTHER": {
+    "status": "accepted",
+    "note": "What source do you use to verify artifact hashes?\n",
+    "verified_at": "2026-05-22T19:03:23.687111Z"
+  },
+  "psf/requests/issue/6969/OTHER": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-22T19:04:33.143636Z"
+  },
+  "psf/requests/issue/6952/Q70": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-05-22T19:09:37.870066Z"
+  },
+  "psf/requests/issue/6947/OTHER": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-22T19:10:58.250238Z"
+  },
+  "psf/requests/issue/6938/OTHER": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-22T19:11:04.379315Z"
+  },
+  "microsoft/vscode/issue/275753/OTHER": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-23T06:44:11.089414Z"
+  }
+}

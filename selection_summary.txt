@@ -1,0 +1,59 @@
+SecDevQA Repository Selection Summary
+======================================
+Advisory database snapshot date : 2026-06-04
+Total GHSA advisories parsed    : (see parse output)
+Unique repos in advisory DB     : 9,102
+
+Filter criteria (pre-specified):
+  1. fixed_ghsa >= 10
+  2. GitHub stars >= 1,000
+  3. Last push within 24 months
+
+Repos after advisory filter     : 440
+Repos passing all filters       : 344
+Repos selected (top-5/ecosystem)  : 42
+Ecosystems represented          : 10
+
+Selected repositories:
+  FriendsOfPHP/security-advisories                   ecosystem=Maven, NuGet, RubyGems, npm, packagist, pypi fixed_ghsa=1100  stars=  2,121
+  rubysec/ruby-advisory-db                           ecosystem=Dart/pub, Elixir/hex, Go, Maven, NuGet, RubyGems, crates.io, npm, packagist, pypi, swifturl fixed_ghsa= 780  stars=  1,063
+  openclaw/openclaw                                  ecosystem=NuGet, npm   fixed_ghsa= 609  stars=376,642
+  tensorflow/tensorflow                              ecosystem=pypi         fixed_ghsa= 434  stars=195,396
+  moodle/moodle                                      ecosystem=packagist    fixed_ghsa= 407  stars=  7,138
+  magento/magento2                                   ecosystem=packagist    fixed_ghsa= 319  stars= 12,121
+  liferay/liferay-portal                             ecosystem=Maven, npm   fixed_ghsa= 279  stars=  2,249
+  mattermost/mattermost                              ecosystem=Go, npm      fixed_ghsa= 275  stars= 36,980
+  xwiki/xwiki-platform                               ecosystem=Maven        fixed_ghsa= 233  stars=  1,258
+  chakra-core/ChakraCore                             ecosystem=NuGet        fixed_ghsa= 219  stars=  9,253
+  jenkinsci/jenkins                                  ecosystem=Maven        fixed_ghsa= 218  stars= 25,325
+  apache/tomcat                                      ecosystem=Go, Maven, swifturl fixed_ghsa= 179  stars=  8,179
+  TYPO3/typo3                                        ecosystem=npm, packagist fixed_ghsa= 162  stars=  1,190
+  django/django                                      ecosystem=Maven, NuGet, RubyGems, npm, packagist, pypi fixed_ghsa= 151  stars= 87,632
+  apache/airflow                                     ecosystem=pypi         fixed_ghsa= 150  stars= 45,684
+  keycloak/keycloak                                  ecosystem=Go, Maven, npm fixed_ghsa= 138  stars= 34,728
+  pimcore/pimcore                                    ecosystem=packagist    fixed_ghsa= 138  stars=  3,772
+  ImageMagick/ImageMagick                            ecosystem=Go, NuGet, crates.io, npm, pypi fixed_ghsa= 124  stars= 16,606
+  parse-community/parse-server                       ecosystem=npm          fixed_ghsa= 109  stars= 21,396
+  rails/rails                                        ecosystem=RubyGems, npm fixed_ghsa= 107  stars= 58,477
+  craftcms/cms                                       ecosystem=packagist    fixed_ghsa=  98  stars=  3,575
+  symfony/symfony                                    ecosystem=packagist    fixed_ghsa=  95  stars= 31,058
+  dlemstra/Magick.NET                                ecosystem=Go, NuGet, crates.io, npm, pypi fixed_ghsa=  86  stars=  3,938
+  MervinPraison/PraisonAI                            ecosystem=pypi         fixed_ghsa=  81  stars=  8,039
+  n8n-io/n8n                                         ecosystem=npm          fixed_ghsa=  80  stars=190,991
+  FlowiseAI/Flowise                                  ecosystem=npm          fixed_ghsa=  76  stars= 53,323
+  open-webui/open-webui                              ecosystem=npm, pypi    fixed_ghsa=  73  stars=139,914
+  ansible/ansible                                    ecosystem=pypi         fixed_ghsa=  68  stars= 68,736
+  saltstack/salt                                     ecosystem=pypi         fixed_ghsa=  65  stars= 15,475
+  rack/rack                                          ecosystem=RubyGems     fixed_ghsa=  50  stars=  5,121
+  dotnet/runtime                                     ecosystem=NuGet        fixed_ghsa=  47  stars= 17,924
+  sparklemotion/nokogiri                             ecosystem=RubyGems     fixed_ghsa=  47  stars=  6,267
+  umbraco/Umbraco-CMS                                ecosystem=NuGet, npm   fixed_ghsa=  45  stars=  5,193
+  bytecodealliance/wasmtime                          ecosystem=crates.io, pypi fixed_ghsa=  41  stars= 18,126
+  WeblateOrg/weblate                                 ecosystem=RubyGems, pypi fixed_ghsa=  35  stars=  5,897
+  dnnsoftware/Dnn.Platform                           ecosystem=NuGet        fixed_ghsa=  34  stars=  1,131
+  denoland/deno                                      ecosystem=crates.io    fixed_ghsa=  31  stars=106,938
+  surrealdb/surrealdb                                ecosystem=crates.io    fixed_ghsa=  27  stars= 32,329
+  uutils/coreutils                                   ecosystem=crates.io    fixed_ghsa=  24  stars= 23,424
+  puppetlabs/puppet                                  ecosystem=RubyGems     fixed_ghsa=  21  stars=  7,867
+  nervosnetwork/ckb                                  ecosystem=crates.io    fixed_ghsa=  21  stars=  1,210
+  composer/composer                                  ecosystem=github actions, packagist fixed_ghsa=  13  stars= 29,443

@@ -1,594 +1,4 @@
 {
-  "auth0/node-jsonwebtoken/issue/892": {
-    "status": "rejected",
-    "note": "Question doesn't refer to any security risk or form, rather it is a typical error handling question\n",
-    "verified_at": "2026-06-01T17:59:37.164559Z"
-  },
-  "rails/rails/issue/54343": {
-    "status": "accepted",
-    "note": "",
-    "verified_at": "2026-06-01T16:17:37.574655Z"
-  },
-  "pyca/cryptography/issue/14733": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-01T20:36:38.055032Z"
-  },
-  "pyca/cryptography/issue/14709": {
-    "status": "accepted",
-    "note": "",
-    "verified_at": "2026-06-01T20:40:39.443159Z"
-  },
-  "pyca/cryptography/issue/14690": {
-    "status": "accepted",
-    "note": "duplicate issue",
-    "verified_at": "2026-06-01T20:44:14.987555Z"
-  },
-  "pyca/cryptography/issue/14207": {
-    "status": "accepted",
-    "note": "",
-    "verified_at": "2026-06-01T21:16:10.260122Z"
-  },
-  "pyca/cryptography/issue/14073": {
-    "status": "rejected",
-    "note": "not a question, maintainer post",
-    "verified_at": "2026-06-01T21:19:26.743931Z"
-  },
-  "pyca/cryptography/issue/14013": {
-    "status": "accepted",
-    "note": "",
-    "verified_at": "2026-06-01T21:28:38.620853Z"
-  },
-  "pyca/cryptography/issue/13843": {
-    "status": "accepted",
-    "note": "This bug reflects an intended bug with inputs. Somewhat security related?",
-    "verified_at": "2026-06-01T21:34:24.209821Z"
-  },
-  "pyca/cryptography/issue/13700": {
-    "status": "rejected",
-    "note": "Generic bug?",
-    "verified_at": "2026-06-01T21:35:23.324063Z"
-  },
-  "pyca/cryptography/issue/13684": {
-    "status": "rejected",
-    "note": "Seems like a generic issue",
-    "verified_at": "2026-06-01T21:36:29.943313Z"
-  },
-  "pyca/cryptography/issue/13538": {
-    "status": "accepted",
-    "note": "Private key parsing bug, but can we connect it to security?",
-    "verified_at": "2026-06-01T21:38:04.564450Z"
-  },
-  "python-pillow/Pillow/issue/9600": {
-    "status": "accepted",
-    "note": "",
-    "verified_at": "2026-06-02T00:35:11.454850Z"
-  },
-  "python-pillow/Pillow/issue/9579": {
-    "status": "accepted",
-    "note": "",
-    "verified_at": "2026-06-02T00:38:07.039162Z"
-  },
-  "python-pillow/Pillow/issue/9439": {
-    "status": "accepted",
-    "note": "This is a valid security question and the maintainer responds that they only support latest version",
-    "verified_at": "2026-06-02T00:39:25.028016Z"
-  },
-  "python-pillow/Pillow/issue/9361": {
-    "status": "accepted",
-    "note": "NPE/As input trigerred NPE could result in Denial of Service on the server side, it is a security issue, It is also a dup.",
-    "verified_at": "2026-06-02T00:51:55.399783Z"
-  },
-  "python-pillow/Pillow/issue/9295": {
-    "status": "accepted",
-    "note": "security/supply chain related inquiry",
-    "verified_at": "2026-06-02T00:53:51.169310Z"
-  },
-  "python-pillow/Pillow/issue/9178": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-02T00:54:02.694611Z"
-  },
-  "python-pillow/Pillow/issue/9162": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-02T00:55:06.253168Z"
-  },
-  "python-pillow/Pillow/issue/9101": {
-    "status": "accepted",
-    "note": "",
-    "verified_at": "2026-06-02T00:58:39.446056Z"
-  },
-  "python-pillow/Pillow/issue/9079": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-02T00:59:00.604355Z"
-  },
-  "python-pillow/Pillow/issue/8935": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-02T01:00:17.203985Z"
-  },
-  "python-pillow/Pillow/issue/8706": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-02T01:04:05.931978Z"
-  },
-  "python-pillow/Pillow/issue/8669": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-02T01:04:19.919957Z"
-  },
-  "python-pillow/Pillow/issue/8546": {
-    "status": "accepted",
-    "note": "",
-    "verified_at": "2026-06-02T01:05:17.741938Z"
-  },
-  "python-pillow/Pillow/issue/8439": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-02T01:14:41.188371Z"
-  },
-  "python-pillow/Pillow/issue/8405": {
-    "status": "accepted",
-    "note": "",
-    "verified_at": "2026-06-02T01:17:01.546263Z"
-  },
-  "python-pillow/Pillow/issue/8363": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-02T01:17:22.673690Z"
-  },
-  "python-pillow/Pillow/issue/8073": {
-    "status": "accepted",
-    "note": "Code signing and notarization are critical security mechanisms on macOS used to verify the identity of the software author and ensure the integrity of the binary ",
-    "verified_at": "2026-06-02T01:21:57.551012Z"
-  },
-  "python-pillow/Pillow/issue/8047": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-02T01:22:53.036983Z"
-  },
-  "python-pillow/Pillow/issue/7910": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-02T01:26:48.082969Z"
-  },
-  "python-pillow/Pillow/issue/7876": {
-    "status": "accepted",
-    "note": "Denial of Service (DoS) could be trigerred with the first one",
-    "verified_at": "2026-06-02T01:30:15.514207Z"
-  },
-  "python-pillow/Pillow/issue/7873": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-02T01:30:53.592744Z"
-  },
-  "python-pillow/Pillow/issue/7626": {
-    "status": "accepted",
-    "note": "",
-    "verified_at": "2026-06-02T01:31:56.444388Z"
-  },
-  "python-pillow/Pillow/issue/7610": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-02T01:32:10.060184Z"
-  },
-  "python-pillow/Pillow/issue/7518": {
-    "status": "accepted",
-    "note": "Refers to a previous comment",
-    "verified_at": "2026-06-02T01:33:06.246915Z"
-  },
-  "python-pillow/Pillow/issue/7504": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-02T01:33:32.472165Z"
-  },
-  "python-pillow/Pillow/issue/7485": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-02T02:49:28.844360Z"
-  },
-  "python-pillow/Pillow/issue/7454": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-02T02:49:38.414749Z"
-  },
-  "python-pillow/Pillow/issue/7391": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-02T02:52:18.897416Z"
-  },
-  "python-pillow/Pillow/issue/7390": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-02T02:52:33.700213Z"
-  },
-  "python-pillow/Pillow/issue/7361": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-02T02:52:47.327449Z"
-  },
-  "python-pillow/Pillow/issue/7179": {
-    "status": "accepted",
-    "note": "",
-    "verified_at": "2026-06-02T02:53:02.558103Z"
-  },
-  "python-pillow/Pillow/issue/7137": {
-    "status": "accepted",
-    "note": "negative report",
-    "verified_at": "2026-06-02T02:53:39.137902Z"
-  },
-  "python-pillow/Pillow/issue/7042": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-02T02:54:24.892606Z"
-  },
-  "python-pillow/Pillow/issue/7031": {
-    "status": "accepted",
-    "note": "negative report",
-    "verified_at": "2026-06-02T02:55:32.591609Z"
-  },
-  "python-pillow/Pillow/issue/6963": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-02T02:55:53.109334Z"
-  },
-  "python-pillow/Pillow/issue/6955": {
-    "status": "accepted",
-    "note": "negative report",
-    "verified_at": "2026-06-02T02:56:22.355145Z"
-  },
-  "python-pillow/Pillow/issue/6687": {
-    "status": "accepted",
-    "note": "",
-    "verified_at": "2026-06-02T02:58:15.896448Z"
-  },
-  "python-pillow/Pillow/issue/6665": {
-    "status": "accepted",
-    "note": "",
-    "verified_at": "2026-06-02T02:58:31.719953Z"
-  },
-  "python-pillow/Pillow/issue/6495": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-02T02:58:53.920777Z"
-  },
-  "python-pillow/Pillow/issue/6407": {
-    "status": "accepted",
-    "note": "",
-    "verified_at": "2026-06-02T03:01:24.956779Z"
-  },
-  "rails/rails/issue/57474": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-02T03:02:07.375821Z"
-  },
-  "rails/rails/issue/57218": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-02T03:02:10.358890Z"
-  },
-  "rails/rails/issue/56997": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-02T03:02:11.164681Z"
-  },
-  "rails/rails/issue/56869": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-02T03:03:27.636342Z"
-  },
-  "rails/rails/issue/56789": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-02T03:03:52.227183Z"
-  },
-  "rails/rails/issue/56736": {
-    "status": "accepted",
-    "note": "cryptographic downgrade.",
-    "verified_at": "2026-06-02T03:10:29.770185Z"
-  },
-  "rails/rails/issue/56704": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-02T03:11:37.446953Z"
-  },
-  "rails/rails/issue/56684": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-02T03:13:29.907640Z"
-  },
-  "rails/rails/issue/56638": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-02T03:14:15.430015Z"
-  },
-  "rails/rails/issue/56480": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-02T03:14:18.892564Z"
-  },
-  "rails/rails/issue/56452": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-02T03:16:00.188454Z"
-  },
-  "rails/rails/issue/56391": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-02T03:19:29.516128Z"
-  },
-  "rails/rails/issue/56158": {
-    "status": "accepted",
-    "note": " this is a data integrity and atomicity issue",
-    "verified_at": "2026-06-02T03:21:42.303862Z"
-  },
-  "rails/rails/issue/56038": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-02T03:22:52.997216Z"
-  },
-  "rails/rails/issue/55886": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-02T03:24:22.587259Z"
-  },
-  "rails/rails/issue/55881": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-02T03:25:02.491996Z"
-  },
-  "rails/rails/issue/55866": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-02T03:25:30.047809Z"
-  },
-  "rails/rails/issue/55773": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-02T03:27:12.306565Z"
-  },
-  "rails/rails/issue/55764": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-02T03:36:44.405562Z"
-  },
-  "rails/rails/issue/55759": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-02T03:36:52.746815Z"
-  },
-  "rails/rails/issue/55695": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-02T03:37:10.742914Z"
-  },
-  "rails/rails/issue/55528": {
-    "status": "accepted",
-    "note": "",
-    "verified_at": "2026-06-02T03:42:57.473914Z"
-  },
-  "rails/rails/issue/55508": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-02T03:44:31.466905Z"
-  },
-  "rails/rails/issue/55460": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-02T03:45:27.430866Z"
-  },
-  "rails/rails/issue/55438": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-02T03:48:38.807274Z"
-  },
-  "rails/rails/issue/55423": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-02T03:52:46.107891Z"
-  },
-  "rails/rails/issue/55373": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-02T03:54:40.440273Z"
-  },
-  "rails/rails/issue/55245": {
-    "status": "accepted",
-    "note": "",
-    "verified_at": "2026-06-02T03:56:05.647549Z"
-  },
-  "rails/rails/issue/55219": {
-    "status": "accepted",
-    "note": "",
-    "verified_at": "2026-06-02T03:56:53.005354Z"
-  },
-  "rails/rails/issue/55185": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-02T03:57:59.732222Z"
-  },
-  "rails/rails/issue/55132": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-02T03:59:26.198029Z"
-  },
-  "rails/rails/issue/55108": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-02T04:01:11.582957Z"
-  },
-  "rails/rails/issue/55040": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-02T04:01:26.320780Z"
-  },
-  "rails/rails/issue/54926": {
-    "status": "accepted",
-    "note": "The issue identifies a security weakness: the use of SHA-1 ",
-    "verified_at": "2026-06-02T04:02:20.139751Z"
-  },
-  "stripe/stripe-node/issue/2534": {
-    "status": "accepted",
-    "note": "",
-    "verified_at": "2026-06-02T19:54:25.533527Z"
-  },
-  "stripe/stripe-node/issue/2684": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-03T22:18:05.403347Z"
-  },
-  "stripe/stripe-node/issue/2651": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-03T22:19:34.316833Z"
-  },
-  "stripe/stripe-node/issue/2530": {
-    "status": "accepted",
-    "note": "dup of 2534",
-    "verified_at": "2026-06-03T22:20:22.908420Z"
-  },
-  "stripe/stripe-node/issue/2207": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-03T22:20:56.762702Z"
-  },
-  "stripe/stripe-node/issue/2006": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-03T22:23:02.971739Z"
-  },
-  "stripe/stripe-node/issue/1886": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-03T22:23:51.973354Z"
-  },
-  "stripe/stripe-node/issue/1784": {
-    "status": "accepted",
-    "note": "",
-    "verified_at": "2026-06-03T22:25:29.078190Z"
-  },
-  "stripe/stripe-node/issue/1778": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-03T22:26:10.177105Z"
-  },
-  "stripe/stripe-node/issue/1768": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-03T22:27:41.302157Z"
-  },
-  "stripe/stripe-node/issue/1490": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-03T22:28:57.806949Z"
-  },
-  "stripe/stripe-node/issue/1285": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-03T22:29:13.604225Z"
-  },
-  "stripe/stripe-node/issue/1264": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-03T22:29:44.797985Z"
-  },
-  "stripe/stripe-node/issue/1224": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-03T22:31:11.505273Z"
-  },
-  "stripe/stripe-node/issue/1214": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-03T22:32:07.110363Z"
-  },
-  "stripe/stripe-node/issue/1161": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-03T22:32:21.551064Z"
-  },
-  "stripe/stripe-node/issue/1085": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-03T22:32:27.002833Z"
-  },
-  "stripe/stripe-node/issue/1067": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-03T22:32:37.615463Z"
-  },
-  "stripe/stripe-node/issue/877": {
-    "status": "accepted",
-    "note": "",
-    "verified_at": "2026-06-03T22:40:49.270563Z"
-  },
-  "stripe/stripe-node/issue/844": {
-    "status": "accepted",
-    "note": "",
-    "verified_at": "2026-06-03T22:41:44.088756Z"
-  },
-  "stripe/stripe-node/issue/831": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-03T22:42:03.298015Z"
-  },
-  "stripe/stripe-node/issue/811": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-03T22:43:16.516834Z"
-  },
-  "stripe/stripe-node/issue/796": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-03T22:43:27.155097Z"
-  },
-  "stripe/stripe-node/issue/786": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-03T22:43:39.218166Z"
-  },
-  "stripe/stripe-node/issue/761": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-03T22:43:53.972173Z"
-  },
-  "stripe/stripe-node/issue/676": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-03T22:44:54.876410Z"
-  },
-  "stripe/stripe-node/issue/654": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-03T22:46:00.198774Z"
-  },
-  "urllib3/urllib3/issue/4945": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-03T22:46:40.177472Z"
-  },
-  "urllib3/urllib3/issue/3734": {
-    "status": "accepted",
-    "note": "security related regression",
-    "verified_at": "2026-06-03T22:47:54.722351Z"
-  },
-  "urllib3/urllib3/issue/3675": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-03T22:47:58.488708Z"
-  },
-  "urllib3/urllib3/issue/3640": {
-    "status": "accepted",
-    "note": "",
-    "verified_at": "2026-06-03T22:50:09.094955Z"
-  },
-  "urllib3/urllib3/issue/3619": {
-    "status": "rejected",
-    "note": "",
-    "verified_at": "2026-06-03T22:50:25.797057Z"
-  },
   "auth0/node-jsonwebtoken/issue/957": {
     "status": "accepted",
     "note": "",
@@ -603,6 +13,11 @@
     "status": "accepted",
     "note": "",
     "verified_at": "2026-06-01T17:53:29.875261Z"
+  },
+  "auth0/node-jsonwebtoken/issue/892": {
+    "status": "rejected",
+    "note": "Question doesn't refer to any security risk or form, rather it is a typical error handling question\n",
+    "verified_at": "2026-06-01T17:59:37.164559Z"
   },
   "auth0/node-jsonwebtoken/issue/881": {
     "status": "rejected",
@@ -1379,9 +794,1289 @@
     "note": "",
     "verified_at": "2026-06-03T20:45:20.700259Z"
   },
-  "tensorflow/tensorflow/issue/104359": {
+  "psf/requests/issue/7335": {
     "status": "accepted",
     "note": "",
-    "verified_at": "2026-06-06T23:52:47.558275Z"
+    "verified_at": "2026-06-04T18:34:45.054021Z"
+  },
+  "psf/requests/issue/7247": {
+    "status": "accepted",
+    "note": "Accepted because the question raises a legitimate software supply-chain/security concern and the answer provides source-backed evidence of reproducibility and auditability.",
+    "verified_at": "2026-06-04T18:35:52.418202Z"
+  },
+  "psf/requests/issue/7209": {
+    "status": "accepted",
+    "note": "Accepted because the question concerns TLS/SNI-related behavior and the answer provides protocol-backed reasoning with concrete upstream references.",
+    "verified_at": "2026-06-04T18:36:16.940298Z"
+  },
+  "psf/requests/issue/7085": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T18:36:37.707873Z"
+  },
+  "psf/requests/issue/7035": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T18:37:02.366065Z"
+  },
+  "psf/requests/issue/7014": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T18:37:19.820108Z"
+  },
+  "psf/requests/issue/7013": {
+    "status": "accepted",
+    "note": "Accepted because the question involves a supply-chain integrity concern and the answer confirms resolution with a concrete fixed release version.",
+    "verified_at": "2026-06-04T18:37:35.595338Z"
+  },
+  "psf/requests/issue/6981": {
+    "status": "accepted",
+    "note": "Accepted because the question involves a security-relevant proxy leakage scenario and the answer provides correct, documented mitigation strategies grounded in Requests session proxy handling.",
+    "verified_at": "2026-06-04T18:38:33.578555Z"
+  },
+  "psf/requests/issue/6978": {
+    "status": "accepted",
+    "note": "Accepted because the question addresses TLS certificate chain validation and the answer provides a correct, implementation-level fix grounded in Python SSL security controls.",
+    "verified_at": "2026-06-04T18:38:59.597259Z"
+  },
+  "psf/requests/issue/6976": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T18:39:28.298269Z"
+  },
+  "psf/requests/issue/6974": {
+    "status": "accepted",
+    "note": "Accepted because the issue is a TLS certificate validation regression and the answer correctly anchors it to a CPython/OpenSSL change with a concrete reproduction path.",
+    "verified_at": "2026-06-04T18:40:05.963607Z"
+  },
+  "psf/requests/issue/6969": {
+    "status": "accepted",
+    "note": "Accepted because the question is about TLS hostname verification and the answer correctly identifies certificate misconfiguration with a concrete reference to correct implementation practices.",
+    "verified_at": "2026-06-04T18:47:30.925282Z"
+  },
+  "psf/requests/issue/6964": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T18:47:45.226877Z"
+  },
+  "psf/requests/issue/6952": {
+    "status": "accepted",
+    "note": "Accepted because the question is about CVE applicability to current versions and the answer correctly resolves it using explicit fixed-version references and authoritative clarification.",
+    "verified_at": "2026-06-04T18:48:00.433734Z"
+  },
+  "psf/requests/issue/6947": {
+    "status": "accepted",
+    "note": "Accepted because the issue is about TLS verification behavior and the answer gives a concrete, implementation-level fix tied to urllib3 handling.",
+    "verified_at": "2026-06-04T18:48:19.764016Z"
+  },
+  "psf/requests/issue/6946": {
+    "status": "accepted",
+    "note": "Accepted because the question is about CVE applicability and the answer clearly resolves scope using version-based security policy and historical patch context.",
+    "verified_at": "2026-06-04T18:48:42.315140Z"
+  },
+  "psf/requests/issue/6945": {
+    "status": "accepted",
+    "note": "Accepted because the question concerns TLS verification inconsistency and the answer correctly identifies strict certificate validation rules with authoritative upstream references.",
+    "verified_at": "2026-06-04T18:49:04.984006Z"
+  },
+  "psf/requests/issue/6934": {
+    "status": "accepted",
+    "note": "Accepted because the issue is a dependency-induced TLS regression and the answer correctly confirms resolution via a specific patched release.",
+    "verified_at": "2026-06-04T18:49:33.692682Z"
+  },
+  "psf/requests/issue/6928": {
+    "status": "accepted",
+    "note": "Accepted because the issue is a credential-handling regression and the answer correctly traces the root cause and points to an upstream fix with a concrete patch.",
+    "verified_at": "2026-06-04T18:49:56.024070Z"
+  },
+  "psf/requests/issue/6877": {
+    "status": "accepted",
+    "note": "Accepted because the question concerns exception lifecycle/security API design and the answer provides explicit deprecation and documentation changes with concrete PRs.",
+    "verified_at": "2026-06-04T18:50:22.107423Z"
+  },
+  "psf/requests/issue/6872": {
+    "status": "accepted",
+    "note": "Accepted because the issue is a real multithreaded SSLContext safety problem and the answer provides a correct, practical isolation-based fix supported by SSL threading semantics.",
+    "verified_at": "2026-06-04T18:50:40.123913Z"
+  },
+  "psf/requests/issue/6868": {
+    "status": "accepted",
+    "note": "Accepted because the question concerns SSL verification failure diagnostics and the answer correctly identifies it as a resolved regression with a fixed release.",
+    "verified_at": "2026-06-04T18:51:09.032319Z"
+  },
+  "psf/requests/issue/6859": {
+    "status": "accepted",
+    "note": "Accepted because the issue is a valid documentation/security-configuration clarification and the answer provides an explicit PR-based fix.",
+    "verified_at": "2026-06-04T18:51:56.495827Z"
+  },
+  "psf/requests/issue/6831": {
+    "status": "accepted",
+    "note": "Accepted because the issue is a valid TLS cipher regression after dependency upgrade and the answer correctly attributes it to urllib3 2.x removal of DEFAULT_CIPHERS.",
+    "verified_at": "2026-06-04T18:52:36.341684Z"
+  },
+  "psf/requests/issue/6815": {
+    "status": "accepted",
+    "note": "Accepted because the issue is environment-triggered SSL key logging behavior and the answer correctly identifies and resolves the root cause via configuration.",
+    "verified_at": "2026-06-04T18:53:09.981039Z"
+  },
+  "psf/requests/issue/6810": {
+    "status": "accepted",
+    "note": "Accepted because the question is a valid FIPS/MD5 compatibility issue and the answer correctly provides the standard usedforsecurity=False workaround used to restore HTTP Digest Auth functionality under FIPS constraints.",
+    "verified_at": "2026-06-04T18:54:13.629003Z"
+  },
+  "psf/requests/issue/6790": {
+    "status": "accepted",
+    "note": "Accepted because the issue is a valid SSLContext initialization concern and the answer correctly anchors the resolution in an upstream PR addressing the behavior.",
+    "verified_at": "2026-06-04T18:54:39.971739Z"
+  },
+  "psf/requests/issue/6784": {
+    "status": "accepted",
+    "note": "Accepted because the issue is a valid URL normalization regression affecting auth flows and the answer correctly attributes it to an upstream fix in urllib3.",
+    "verified_at": "2026-06-04T18:55:39.856799Z"
+  },
+  "psf/requests/issue/6764": {
+    "status": "accepted",
+    "note": "Accepted because the question concerns a valid permission/security regression and the answer correctly identifies its removal in Requests 2.32.5 as the fix.",
+    "verified_at": "2026-06-04T18:57:01.554397Z"
+  },
+  "psf/requests/issue/6745": {
+    "status": "accepted",
+    "note": "Accepted because the issue is a valid TLS-related segmentation fault and the answer correctly identifies the fixing PR as resolution evidence.",
+    "verified_at": "2026-06-04T18:58:34.853649Z"
+  },
+  "psf/requests/issue/6736": {
+    "status": "accepted",
+    "note": "Accepted because the issue is a valid TLS CA-loading regression and the answer correctly provides version-based and explicit CA-loading fixes.",
+    "verified_at": "2026-06-04T18:58:53.283638Z"
+  },
+  "psf/requests/issue/6733": {
+    "status": "accepted",
+    "note": "Accepted because the issue is a valid security-driven API regression and the answer correctly links it to the CVE fix and its compatibility workaround.",
+    "verified_at": "2026-06-04T18:59:09.878636Z"
+  },
+  "psf/requests/issue/6726": {
+    "status": "accepted",
+    "note": "Accepted because the issue is a valid SSL context isolation/security regression and the answer provides a concrete fix commit addressing the certificate handling bug.",
+    "verified_at": "2026-06-04T19:44:44.069168Z"
+  },
+  "psf/requests/issue/6717": {
+    "status": "accepted",
+    "note": "Accepted because the question concerns a legitimate SSLContext behavior change and the answer provides a correct adapter-based fix aligned with Requests internals.",
+    "verified_at": "2026-06-04T19:45:06.184991Z"
+  },
+  "psf/requests/issue/6715": {
+    "status": "accepted",
+    "note": "Accepted because the question is about TLS adapter compatibility after a security-related upgrade and the answer confirms stable behavior in 2.32.3 with correct migration guidance.",
+    "verified_at": "2026-06-04T19:45:38.699379Z"
+  },
+  "psf/requests/issue/6707": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:45:54.296197Z"
+  },
+  "psf/requests/issue/6706": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:46:03.070283Z"
+  },
+  "psf/requests/issue/6690": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:46:13.629293Z"
+  },
+  "psf/requests/issue/6669": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:46:25.619382Z"
+  },
+  "psf/requests/issue/6660": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:46:41.393622Z"
+  },
+  "psf/requests/issue/6628": {
+    "status": "rejected",
+    "note": "Rejected because although the question is valid, the answer only references a PR without confirming a fix or providing technical validation or resolution status.",
+    "verified_at": "2026-06-04T19:47:02.673615Z"
+  },
+  "psf/requests/issue/6616": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:47:16.483956Z"
+  },
+  "psf/requests/issue/6569": {
+    "status": "rejected",
+    "note": "Rejected because the answer is off-topic relative to the SSL error and does not establish a clear technical connection or resolution.",
+    "verified_at": "2026-06-04T19:47:33.846968Z"
+  },
+  "pyca/cryptography/issue/14733": {
+    "status": "rejected",
+    "note": "Rejected because although the workaround is relevant, the answer lacks clear causal explanation and direct validation of the ARM/OpenSSL/Docker interaction causing the crash.",
+    "verified_at": "2026-06-04T19:50:02.633186Z"
+  },
+  "pyca/cryptography/issue/14709": {
+    "status": "rejected",
+    "note": "Rejected because the answer is only a doc link and does not provide actionable guidance or explain how to perform the requested hashing/signing task.",
+    "verified_at": "2026-06-04T19:50:31.878565Z"
+  },
+  "pyca/cryptography/issue/14690": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:50:49.411322Z"
+  },
+  "pyca/cryptography/issue/14592": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:50:58.245749Z"
+  },
+  "pyca/cryptography/issue/14477": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:51:07.311314Z"
+  },
+  "pyca/cryptography/issue/14334": {
+    "status": "accepted",
+    "note": "Accepted because the question is a valid ECC compatibility regression and the answer correctly redirects to the upstream fix PR.",
+    "verified_at": "2026-06-04T19:51:42.464718Z"
+  },
+  "pyca/cryptography/issue/14207": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:51:53.586377Z"
+  },
+  "pyca/cryptography/issue/14173": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:52:08.733939Z"
+  },
+  "pyca/cryptography/issue/14073": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T19:52:18.477257Z"
+  },
+  "pyca/cryptography/issue/14048": {
+    "status": "accepted",
+    "note": "Accepted because the question is a valid TLS/DH performance/security issue and the answer correctly links it to a known fix in LibreSSL.",
+    "verified_at": "2026-06-04T19:52:35.365138Z"
+  },
+  "pyca/cryptography/issue/14013": {
+    "status": "accepted",
+    "note": "Accepted because the question is a valid ASN.1/RSA key parsing issue and the answer correctly points to the upstream fix commit.",
+    "verified_at": "2026-06-04T19:52:53.913953Z"
+  },
+  "pyca/cryptography/issue/13843": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:53:10.276336Z"
+  },
+  "pyca/cryptography/issue/13700": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:53:27.653663Z"
+  },
+  "pyca/cryptography/issue/13684": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:53:37.132799Z"
+  },
+  "pyca/cryptography/issue/13538": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:53:46.112233Z"
+  },
+  "pyca/cryptography/issue/13525": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T19:53:54.061682Z"
+  },
+  "pyca/cryptography/issue/13475": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:54:03.206634Z"
+  },
+  "pyca/cryptography/issue/13468": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:54:15.962201Z"
+  },
+  "pyca/cryptography/issue/13349": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:54:28.027008Z"
+  },
+  "pyca/cryptography/issue/13287": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:54:37.523874Z"
+  },
+  "pyca/cryptography/issue/13219": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:54:46.402764Z"
+  },
+  "pyca/cryptography/issue/13125": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:54:55.043945Z"
+  },
+  "pyca/cryptography/issue/13109": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:55:04.772901Z"
+  },
+  "pyca/cryptography/issue/13051": {
+    "status": "accepted",
+    "note": "Accepted because the question is a valid RFC 5280 compliance concern and the answer correctly analyzes the specification to confirm no explicit violation.",
+    "verified_at": "2026-06-04T19:55:49.505686Z"
+  },
+  "pyca/cryptography/issue/13034": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-08T04:25:56.350757Z"
+  },
+  "pyca/cryptography/issue/13030": {
+    "status": "accepted",
+    "note": "Accepted because the question is a valid cryptographic configuration issue and the answer correctly provides the appropriate lower-level API workaround.",
+    "verified_at": "2026-06-04T19:56:26.509110Z"
+  },
+  "pyca/cryptography/issue/13002": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:56:41.781543Z"
+  },
+  "pyca/cryptography/issue/12999": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:56:51.066727Z"
+  },
+  "pyca/cryptography/issue/12969": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:57:13.853408Z"
+  },
+  "pyca/cryptography/issue/12963": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:57:21.970970Z"
+  },
+  "pyca/cryptography/issue/12949": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:57:36.186064Z"
+  },
+  "pyca/cryptography/issue/12920": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:57:55.105379Z"
+  },
+  "pyca/cryptography/issue/12824": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:58:08.808813Z"
+  },
+  "pyca/cryptography/issue/12822": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:58:23.840329Z"
+  },
+  "pyca/cryptography/issue/12780": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:15:25.065509Z"
+  },
+  "pyca/cryptography/issue/12748": {
+    "status": "accepted",
+    "note": "Accepted because the question is a valid standards compliance concern and the answer clearly explains intentional leniency in parsing behavior.",
+    "verified_at": "2026-06-04T21:15:42.365823Z"
+  },
+  "pyca/cryptography/issue/12612": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:16:08.750297Z"
+  },
+  "pyca/cryptography/issue/12610": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:16:17.844349Z"
+  },
+  "pyca/cryptography/issue/12554": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:16:32.537683Z"
+  },
+  "pyca/cryptography/issue/12464": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:16:44.598157Z"
+  },
+  "pyca/cryptography/issue/12406": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:16:56.122575Z"
+  },
+  "pyca/cryptography/issue/12361": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:17:05.647891Z"
+  },
+  "pyca/cryptography/issue/12359": {
+    "status": "accepted",
+    "note": "Accepted because the question is a valid TLS/PKI workflow question and the answer correctly points to the appropriate standard library interface.",
+    "verified_at": "2026-06-04T21:18:05.912445Z"
+  },
+  "pyca/cryptography/issue/12332": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:18:41.390188Z"
+  },
+  "pyca/cryptography/issue/12301": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:19:26.591105Z"
+  },
+  "pyca/cryptography/issue/12258": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:19:40.954951Z"
+  },
+  "python-pillow/Pillow/issue/9600": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:23:58.129033Z"
+  },
+  "python-pillow/Pillow/issue/9579": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T21:24:12.253822Z"
+  },
+  "python-pillow/Pillow/issue/9439": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:24:21.208373Z"
+  },
+  "python-pillow/Pillow/issue/9361": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:24:29.754091Z"
+  },
+  "python-pillow/Pillow/issue/9295": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T21:24:40.755392Z"
+  },
+  "python-pillow/Pillow/issue/9178": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T21:25:08.456058Z"
+  },
+  "python-pillow/Pillow/issue/9162": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T21:25:26.483126Z"
+  },
+  "python-pillow/Pillow/issue/9079": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T21:25:45.310501Z"
+  },
+  "python-pillow/Pillow/issue/8935": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:25:59.641721Z"
+  },
+  "python-pillow/Pillow/issue/8706": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:26:09.329443Z"
+  },
+  "python-pillow/Pillow/issue/8669": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:26:19.869449Z"
+  },
+  "python-pillow/Pillow/issue/8546": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:26:28.938684Z"
+  },
+  "python-pillow/Pillow/issue/8439": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:26:48.250024Z"
+  },
+  "python-pillow/Pillow/issue/8405": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T21:26:59.025157Z"
+  },
+  "python-pillow/Pillow/issue/8363": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:27:09.536216Z"
+  },
+  "python-pillow/Pillow/issue/8073": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T21:27:22.731860Z"
+  },
+  "python-pillow/Pillow/issue/8047": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T21:27:32.957537Z"
+  },
+  "python-pillow/Pillow/issue/7910": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T21:27:50.478522Z"
+  },
+  "python-pillow/Pillow/issue/7876": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:28:04.994577Z"
+  },
+  "python-pillow/Pillow/issue/7873": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T21:28:15.393226Z"
+  },
+  "python-pillow/Pillow/issue/7626": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:28:23.989130Z"
+  },
+  "python-pillow/Pillow/issue/7518": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:28:41.484864Z"
+  },
+  "python-pillow/Pillow/issue/7504": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:28:54.293526Z"
+  },
+  "python-pillow/Pillow/issue/7485": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:29:05.065500Z"
+  },
+  "python-pillow/Pillow/issue/7454": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T21:29:17.364347Z"
+  },
+  "python-pillow/Pillow/issue/7391": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:29:43.962724Z"
+  },
+  "python-pillow/Pillow/issue/7390": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:29:54.569092Z"
+  },
+  "python-pillow/Pillow/issue/7361": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T21:30:41.745993Z"
+  },
+  "python-pillow/Pillow/issue/7179": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:30:57.151617Z"
+  },
+  "python-pillow/Pillow/issue/7137": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:31:22.667394Z"
+  },
+  "python-pillow/Pillow/issue/7042": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:31:38.479842Z"
+  },
+  "python-pillow/Pillow/issue/7031": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T21:32:19.433180Z"
+  },
+  "python-pillow/Pillow/issue/6963": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:32:30.754974Z"
+  },
+  "python-pillow/Pillow/issue/6955": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:33:40.709204Z"
+  },
+  "python-pillow/Pillow/issue/6687": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:34:04.842014Z"
+  },
+  "python-pillow/Pillow/issue/6665": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:34:19.320287Z"
+  },
+  "python-pillow/Pillow/issue/6495": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T21:34:31.225106Z"
+  },
+  "python-pillow/Pillow/issue/6407": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T21:34:55.679088Z"
+  },
+  "rails/rails/issue/57474": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:30:46.296367Z"
+  },
+  "rails/rails/issue/56869": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:31:32.446713Z"
+  },
+  "rails/rails/issue/56789": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-05T15:32:44.150012Z"
+  },
+  "rails/rails/issue/56736": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-05T15:33:11.145812Z"
+  },
+  "rails/rails/issue/56704": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:34:20.808619Z"
+  },
+  "rails/rails/issue/56684": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:34:36.501812Z"
+  },
+  "rails/rails/issue/56638": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:34:53.184123Z"
+  },
+  "rails/rails/issue/56452": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-05T15:35:18.880238Z"
+  },
+  "rails/rails/issue/56391": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:35:33.467175Z"
+  },
+  "rails/rails/issue/56158": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-05T15:35:49.819136Z"
+  },
+  "rails/rails/issue/56038": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-05T15:36:07.588226Z"
+  },
+  "rails/rails/issue/55886": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-05T15:36:25.427476Z"
+  },
+  "rails/rails/issue/55881": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:36:41.547761Z"
+  },
+  "rails/rails/issue/55866": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-05T15:37:04.247267Z"
+  },
+  "rails/rails/issue/55773": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:37:59.121497Z"
+  },
+  "rails/rails/issue/55764": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:38:19.108597Z"
+  },
+  "rails/rails/issue/55759": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:38:50.279644Z"
+  },
+  "rails/rails/issue/55528": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:39:14.741845Z"
+  },
+  "rails/rails/issue/55508": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-05T15:39:39.543322Z"
+  },
+  "rails/rails/issue/55460": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:42:22.108853Z"
+  },
+  "rails/rails/issue/55438": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:42:39.855599Z"
+  },
+  "rails/rails/issue/55423": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:44:20.479960Z"
+  },
+  "rails/rails/issue/55373": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:44:43.054648Z"
+  },
+  "rails/rails/issue/55245": {
+    "status": "accepted",
+    "note": "Addresses XSS risk in i18n interpolation via SafeBuffer-aware escaping and safe HTML output handling",
+    "verified_at": "2026-06-05T15:45:52.147228Z"
+  },
+  "rails/rails/issue/55219": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-05T15:46:12.411408Z"
+  },
+  "rails/rails/issue/55185": {
+    "status": "accepted",
+    "note": "ActiveRecord connection leaks are a resource exhaustion vulnerability affecting application availability, and the answer provides correct mitigation patterns",
+    "verified_at": "2026-06-05T15:46:40.825570Z"
+  },
+  "rails/rails/issue/55108": {
+    "status": "rejected",
+    "note": "interpreter segfault due to Ruby bug is a reliability/stability issue, not a security vulnerability",
+    "verified_at": "2026-06-05T15:47:07.895476Z"
+  },
+  "rails/rails/issue/54838": {
+    "status": "rejected",
+    "note": "CookieOverflow name/value boundary behavior is an implementation detail, not a security vulnerability",
+    "verified_at": "2026-06-05T15:47:40.031638Z"
+  },
+  "rails/rails/issue/54819": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:47:57.845505Z"
+  },
+  "rails/rails/issue/54778": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:48:18.340269Z"
+  },
+  "rails/rails/discussion/54773": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:48:34.783584Z"
+  },
+  "rails/rails/issue/54752": {
+    "status": "accepted",
+    "note": "Modifying ActiveStorage blob keys impacts secure token integrity and storage access safety, making this a security-relevant issue",
+    "verified_at": "2026-06-05T15:49:14.762782Z"
+  },
+  "rails/rails/issue/54595": {
+    "status": "accepted",
+    "note": "Warden failure_app reset affects authentication control flow and is security-relevant due to its impact on authentication handling integrity",
+    "verified_at": "2026-06-05T15:52:00.943215Z"
+  },
+  "rails/rails/issue/54534": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:52:24.857620Z"
+  },
+  "rails/rails/issue/54374": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:52:48.804901Z"
+  },
+  "rails/rails/issue/54357": {
+    "status": "accepted",
+    "note": "MessageVerifier key rotation callbacks are part of cryptographic security lifecycle handling, making this a security-relevant issue",
+    "verified_at": "2026-06-05T15:53:20.844745Z"
+  },
+  "rails/rails/issue/54343": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:53:46.710316Z"
+  },
+  "rails/rails/issue/54277": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:54:09.606574Z"
+  },
+  "rails/rails/issue/54139": {
+    "status": "accepted",
+    "note": "Unintended ActiveStorage initialization during asset precompilation can lead to secret exposure in CI/build environments, making this security-relevant",
+    "verified_at": "2026-06-05T15:54:42.849218Z"
+  },
+  "stripe/stripe-node/issue/2684": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:21:54.529563Z"
+  },
+  "stripe/stripe-node/issue/2665": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:22:13.683004Z"
+  },
+  "stripe/stripe-node/issue/2651": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:22:31.295899Z"
+  },
+  "stripe/stripe-node/issue/2534": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-05T23:22:51.602558Z"
+  },
+  "stripe/stripe-node/issue/2530": {
+    "status": "accepted",
+    "note": "Confirmed DoS vulnerability in dependency mitigated via patched qs version",
+    "verified_at": "2026-06-05T23:23:22.998295Z"
+  },
+  "stripe/stripe-node/issue/2369": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:23:51.040896Z"
+  },
+  "stripe/stripe-node/issue/2337": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:24:23.554966Z"
+  },
+  "stripe/stripe-node/issue/2223": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:24:41.263633Z"
+  },
+  "stripe/stripe-node/issue/2207": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:25:01.059406Z"
+  },
+  "stripe/stripe-node/issue/2124": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:25:25.617752Z"
+  },
+  "stripe/stripe-node/issue/2117": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:25:42.831452Z"
+  },
+  "stripe/stripe-node/issue/2078": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:25:59.984362Z"
+  },
+  "stripe/stripe-node/issue/2006": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:26:18.256387Z"
+  },
+  "stripe/stripe-node/issue/2004": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:26:55.708208Z"
+  },
+  "stripe/stripe-node/issue/1896": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:27:18.089776Z"
+  },
+  "stripe/stripe-node/issue/1886": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:27:45.908717Z"
+  },
+  "stripe/stripe-node/issue/1784": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:28:02.997089Z"
+  },
+  "stripe/stripe-node/issue/1778": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:28:22.545853Z"
+  },
+  "stripe/stripe-node/issue/1768": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:28:41.529935Z"
+  },
+  "stripe/stripe-node/issue/1645": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:29:02.050137Z"
+  },
+  "stripe/stripe-node/issue/1593": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:29:19.878533Z"
+  },
+  "stripe/stripe-node/issue/1577": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:31:07.442930Z"
+  },
+  "stripe/stripe-node/issue/1536": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:31:26.384269Z"
+  },
+  "stripe/stripe-node/issue/1517": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:31:44.935269Z"
+  },
+  "stripe/stripe-node/issue/1514": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:32:09.838133Z"
+  },
+  "stripe/stripe-node/issue/1504": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:32:31.555833Z"
+  },
+  "stripe/stripe-node/issue/1490": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-05T23:32:51.170695Z"
+  },
+  "stripe/stripe-node/issue/1428": {
+    "status": "accepted",
+    "note": "Security-relevant guidance on correct cryptographic webhook signature verification setup in Deno",
+    "verified_at": "2026-06-05T23:35:35.093850Z"
+  },
+  "stripe/stripe-node/issue/1356": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:36:34.212604Z"
+  },
+  "stripe/stripe-node/issue/1353": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:37:12.773457Z"
+  },
+  "stripe/stripe-node/issue/1294": {
+    "status": "accepted",
+    "note": "Security-relevant guidance on correct raw-body handling for webhook signature verification",
+    "verified_at": "2026-06-05T23:37:44.669618Z"
+  },
+  "stripe/stripe-node/issue/1286": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:38:10.411341Z"
+  },
+  "stripe/stripe-node/issue/1264": {
+    "status": "accepted",
+    "note": "Security-relevant guidance on PCI-driven restrictions for handling raw card data in Stripe SDK",
+    "verified_at": "2026-06-05T23:38:47.191865Z"
+  },
+  "stripe/stripe-node/issue/1254": {
+    "status": "accepted",
+    "note": "Security-relevant raw-body handling issue affecting webhook signature verification integrity",
+    "verified_at": "2026-06-05T23:39:28.168880Z"
+  },
+  "stripe/stripe-node/issue/1224": {
+    "status": "accepted",
+    "note": "security-relevant guidance on preventing sensitive PaymentIntent data exposure to client-side applications",
+    "verified_at": "2026-06-05T23:40:09.504874Z"
+  },
+  "stripe/stripe-node/issue/1214": {
+    "status": "accepted",
+    "note": "clear PCI compliance requirement enforcing tokenization instead of raw card data for Connect accounts",
+    "verified_at": "2026-06-05T23:40:49.093463Z"
+  },
+  "stripe/stripe-node/issue/1161": {
+    "status": "accepted",
+    "note": "security-relevant PCI compliance design decision restricting server-side raw card data handling",
+    "verified_at": "2026-06-05T23:42:12.500021Z"
+  },
+  "stripe/stripe-node/issue/1110": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-06T00:11:05.516805Z"
+  },
+  "stripe/stripe-node/issue/1085": {
+    "status": "accepted",
+    "note": "Security-relevant PCI compliance and secure token usage guidance",
+    "verified_at": "2026-06-06T00:11:34.513286Z"
+  },
+  "stripe/stripe-node/issue/1083": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-06T00:13:42.557530Z"
+  },
+  "stripe/stripe-node/issue/1067": {
+    "status": "accepted",
+    "note": "Security-relevant (webhook signature verification correctness and credential misuse risk)",
+    "verified_at": "2026-06-06T00:14:38.958990Z"
+  },
+  "stripe/stripe-node/issue/1043": {
+    "status": "accepted",
+    "note": "security-relevant (webhook payload integrity and signature verification correctness)",
+    "verified_at": "2026-06-06T00:15:50.118627Z"
+  },
+  "stripe/stripe-node/issue/1006": {
+    "status": "accepted",
+    "note": "Security-relevant (webhook signature verification broken by body parsing middleware)",
+    "verified_at": "2026-06-06T00:16:52.196190Z"
+  },
+  "stripe/stripe-node/issue/997": {
+    "status": "accepted",
+    "note": "Security-relevant (webhook signature verification and raw body handling in edge runtime)",
+    "verified_at": "2026-06-06T00:17:41.905586Z"
+  },
+  "stripe/stripe-node/issue/989": {
+    "status": "accepted",
+    "note": "Security-relevant (webhook signature verification depends on raw request body integrity)",
+    "verified_at": "2026-06-06T00:18:08.050801Z"
+  },
+  "stripe/stripe-node/issue/935": {
+    "status": "accepted",
+    "note": "security-relevant (OAuth credential misuse involving authorization code handling)",
+    "verified_at": "2026-06-06T00:18:31.792903Z"
+  },
+  "stripe/stripe-node/issue/932": {
+    "status": "accepted",
+    "note": "Security-relevant (webhook signature verification integrity depends on raw request body preservation)",
+    "verified_at": "2026-06-06T00:19:25.895335Z"
+  },
+  "urllib3/urllib3/issue/3745": {
+    "status": "accepted",
+    "note": "Confirmed security vulnerability with advisory and fix (redirect draining + attacker-controlled decompression).",
+    "verified_at": "2026-06-07T00:06:38.452373Z"
+  },
+  "urllib3/urllib3/issue/3734": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-07T00:07:00.482997Z"
+  },
+  "urllib3/urllib3/issue/3665": {
+    "status": "accepted",
+    "note": "Security-relevant (TLS certificate validation / X.509 verification behavior), with a mitigation tied to Python 3.13 verification changes.",
+    "verified_at": "2026-06-07T00:07:33.802914Z"
+  },
+  "urllib3/urllib3/issue/3640": {
+    "status": "accepted",
+    "note": "Directly addresses CVE applicability and mitigation/patchability for urllib3 2.2.0, which is clearly security-relevant.",
+    "verified_at": "2026-06-07T00:10:43.653850Z"
+  },
+  "urllib3/urllib3/issue/3632": {
+    "status": "accepted",
+    "note": "security-relevant due to HTTPS proxy TLS/SSL configuration and SSLContext handling, even though it is primarily a configuration issue rather than a vulnerability.",
+    "verified_at": "2026-06-07T17:10:53.686976Z"
+  },
+  "urllib3/urllib3/issue/3609": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-07T17:11:08.851577Z"
+  },
+  "urllib3/urllib3/issue/3608": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:11:30.961951Z"
+  },
+  "urllib3/urllib3/issue/3571": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-07T17:11:39.760848Z"
+  },
+  "urllib3/urllib3/issue/3542": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:12:10.500943Z"
+  },
+  "urllib3/urllib3/issue/3511": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:12:22.340156Z"
+  },
+  "urllib3/urllib3/issue/3465": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:12:32.111407Z"
+  },
+  "urllib3/urllib3/issue/3439": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-07T17:12:45.738762Z"
+  },
+  "urllib3/urllib3/issue/3432": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:12:56.071885Z"
+  },
+  "urllib3/urllib3/issue/3418": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:13:17.577296Z"
+  },
+  "urllib3/urllib3/issue/3374": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-07T17:13:27.534373Z"
+  },
+  "urllib3/urllib3/issue/3366": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:13:38.417370Z"
+  },
+  "urllib3/urllib3/issue/3352": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-07T17:14:15.961601Z"
+  },
+  "urllib3/urllib3/issue/3268": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:14:32.261722Z"
+  },
+  "urllib3/urllib3/issue/3201": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:14:44.577451Z"
+  },
+  "urllib3/urllib3/issue/3133": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:15:00.292678Z"
+  },
+  "urllib3/urllib3/issue/3111": {
+    "status": "accepted",
+    "note": "high-confidence security relevance due to TLS hardening bypass (DH parameter enforcement, cipher suite restrictions, and certificate verification weakening).",
+    "verified_at": "2026-06-07T17:15:27.016538Z"
+  },
+  "urllib3/urllib3/issue/3102": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:16:04.201562Z"
+  },
+  "urllib3/urllib3/issue/3081": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-07T17:17:20.652453Z"
+  },
+  "urllib3/urllib3/issue/3062": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:17:31.809536Z"
+  },
+  "urllib3/urllib3/issue/3053": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:17:42.742997Z"
+  },
+  "urllib3/urllib3/issue/3031": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:17:53.324153Z"
+  },
+  "urllib3/urllib3/issue/3020": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:18:05.534397Z"
+  },
+  "urllib3/urllib3/issue/3017": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-07T17:18:34.764206Z"
+  },
+  "urllib3/urllib3/issue/3016": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:20:47.435745Z"
+  },
+  "urllib3/urllib3/issue/3015": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:20:58.607703Z"
+  },
+  "urllib3/urllib3/issue/2982": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:21:11.513219Z"
+  },
+  "urllib3/urllib3/issue/2957": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:21:23.870983Z"
+  },
+  "urllib3/urllib3/issue/2955": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:21:35.797896Z"
+  },
+  "urllib3/urllib3/issue/2920": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:21:50.409207Z"
+  },
+  "urllib3/urllib3/issue/2915": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:22:02.019681Z"
+  },
+  "urllib3/urllib3/issue/2893": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:22:14.178448Z"
+  },
+  "urllib3/urllib3/issue/2886": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:22:26.999403Z"
+  },
+  "urllib3/urllib3/issue/2876": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-07T17:22:37.916053Z"
+  },
+  "urllib3/urllib3/issue/2867": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-07T17:22:51.318544Z"
+  },
+  "urllib3/urllib3/issue/2809": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:23:02.449436Z"
+  },
+  "urllib3/urllib3/issue/2802": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:23:16.038023Z"
+  },
+  "urllib3/urllib3/issue/2775": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:23:39.672144Z"
+  },
+  "urllib3/urllib3/issue/2700": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:23:59.655114Z"
+  },
+  "urllib3/urllib3/issue/2680": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:24:23.570933Z"
   }
 }
