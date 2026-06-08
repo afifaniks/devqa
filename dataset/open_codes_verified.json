@@ -480,5 +480,991 @@
     "rationale": "The exchange focuses on an old debug package version causing a memory-leak security concern and on backporting the fix from v5 to v4.",
     "note": "",
     "verified_at": "2026-06-07T21:33:46.226502Z"
+  },
+  "expressjs/express/issue/6067": {
+    "status": "accepted",
+    "codes": [
+      "false positive vulnerability report"
+    ],
+    "rationale": "The exchange is about whether a vulnerable serve-static dependency affects Express and hinges on the advisory's impacted version ranges.",
+    "note": "",
+    "verified_at": "2026-06-07T21:36:16.557530Z"
+  },
+  "expressjs/express/issue/6053": {
+    "status": "accepted",
+    "codes": [
+      "transitive dependency vulnerability",
+      "fixed version announcement"
+    ],
+    "rationale": "The question concerns a CVE in the cookie dependency pulled in by express, and the answer identifies the express version that contains the security fix.",
+    "note": "",
+    "verified_at": "2026-06-07T21:37:53.684649Z"
+  },
+  "expressjs/express/issue/5970": {
+    "status": "accepted",
+    "codes": [
+      "outdated dependency vulnerability",
+      "fixed version update"
+    ],
+    "rationale": "The exchange centers on a vulnerability report caused by an old path-to-regexp dependency and the maintainer\u2019s clarification that it was resolved by updating Express to the fixed release.",
+    "note": "",
+    "verified_at": "2026-06-07T21:39:43.044765Z"
+  },
+  "expressjs/express/issue/5968": {
+    "status": "accepted",
+    "codes": [
+      "dependency vulnerability fix",
+      "scanner advisory update"
+    ],
+    "rationale": "The exchange is about bumping a dependency to a non-vulnerable version, and it also discusses the security scanner/advisory being updated to reflect that fix.",
+    "note": "",
+    "verified_at": "2026-06-07T21:40:46.479678Z"
+  },
+  "expressjs/express/issue/5948": {
+    "status": "accepted",
+    "codes": [
+      "ReDoS protection",
+      "regex route matching"
+    ],
+    "rationale": "The exchange explains that Express 5 dropped string-based regular expression route matching to protect against denial-of-service risks from ReDoS.",
+    "note": "",
+    "verified_at": "2026-06-07T21:41:47.994557Z"
+  },
+  "expressjs/express/issue/5947": {
+    "status": "accepted",
+    "codes": [
+      "transitive dependency vulnerability",
+      "npm overrides mitigation"
+    ],
+    "rationale": "The exchange centers on a vulnerable transitive package (send) pulled in by Express and suggests using npm overrides to force a fixed version as a workaround.",
+    "note": "",
+    "verified_at": "2026-06-07T21:42:48.867037Z"
+  },
+  "expressjs/express/issue/5943": {
+    "status": "rejected",
+    "codes": [
+      "vulnerable transitive dependency",
+      "patch version update"
+    ],
+    "rationale": "The exchange identifies encodeurl as a vulnerable transitive dependency in serve-static/send/finalhandler and discusses bumping it via a patch release.",
+    "note": "Needs team planning knowledge to answer this",
+    "verified_at": "2026-06-07T21:44:01.869767Z"
+  },
+  "expressjs/express/discussion/5852": {
+    "status": "accepted",
+    "codes": [
+      "CORS preflight handling"
+    ],
+    "rationale": "The exchange is about a browser-triggered CORS preflight for a POST request and how the Express server should handle the resulting OPTIONS request.",
+    "note": "I wonder if we can count CORS as security issue. But let's just keep it for now",
+    "verified_at": "2026-06-07T21:45:42.988950Z"
+  },
+  "expressjs/express/issue/5698": {
+    "status": "rejected",
+    "codes": [
+      "cross-domain cookie access",
+      "same-origin policy"
+    ],
+    "rationale": "The issue is about a cookie being set on the backend but not readable on the frontend because the auth server and application are on different domains, which the answer attributes to browser same-origin restrictions.",
+    "note": "",
+    "verified_at": "2026-06-07T21:46:21.627571Z"
+  },
+  "expressjs/express/issue/5688": {
+    "status": "accepted",
+    "codes": [
+      "array index limit",
+      "query parsing behavior"
+    ],
+    "rationale": "The exchange is about qs converting arrays to objects when query array indices exceed 20, affecting how URL query parameters are parsed.",
+    "note": "",
+    "verified_at": "2026-06-07T21:48:17.336393Z"
+  },
+  "expressjs/express/issue/5651": {
+    "status": "rejected",
+    "codes": [
+      "dependency vulnerability report",
+      "wrong package identification"
+    ],
+    "rationale": "The question reports a vulnerability in a dependency and asks for an upgrade, while the answer clarifies that the advisory refers to a different cookie package than the one used here.",
+    "note": "",
+    "verified_at": "2026-06-07T21:48:32.739807Z"
+  },
+  "expressjs/express/issue/5516": {
+    "status": "rejected",
+    "codes": [
+      "HTTPS server configuration",
+      "documentation referral"
+    ],
+    "rationale": "The exchange is about configuring an Express app to run over HTTPS with certificates, and the response directs the user to the relevant API documentation rather than providing technical support.",
+    "note": "Not a sec issue",
+    "verified_at": "2026-06-07T21:49:38.172953Z"
+  },
+  "expressjs/express/issue/5459": {
+    "status": "accepted",
+    "codes": [
+      "custom proxy IP parsing",
+      "override request properties"
+    ],
+    "rationale": "The exchange is about handling the Forwarded header by parsing proxy IP information manually and overriding Express request getters like req.ip and req.protocol.",
+    "note": "",
+    "verified_at": "2026-06-07T21:51:14.071463Z"
+  },
+  "expressjs/express/issue/5449": {
+    "status": "rejected",
+    "codes": [
+      "automated spam PR blocking",
+      "notification spam from mentions"
+    ],
+    "rationale": "The exchange centers on whether to use a GitHub Action to automatically block spam pull requests, while also asking people to stop directly mentioning maintainers because it creates more notification spam.",
+    "note": "Not specifically a sec related question or concern",
+    "verified_at": "2026-06-07T21:53:02.764661Z"
+  },
+  "expressjs/express/issue/5353": {
+    "status": "accepted",
+    "codes": [
+      "malformed URL parameter",
+      "route decode error"
+    ],
+    "rationale": "The exchange is about a route parameter containing invalid percent characters that triggers a URI decode failure and prevents normal request handling.",
+    "note": "Intentional bad request error",
+    "verified_at": "2026-06-07T21:54:49.753821Z"
+  },
+  "expressjs/express/issue/5344": {
+    "status": "accepted",
+    "codes": [
+      "array-valued request headers",
+      "unsafe header concatenation"
+    ],
+    "rationale": "The exchange asks whether Express/Node can produce array-valued headers and whether such header values can be safely combined into a single string.",
+    "note": "Slightly related to security as it asks for \"safe\" concatenation of header parameters",
+    "verified_at": "2026-06-07T21:57:20.676300Z"
+  },
+  "expressjs/express/issue/5292": {
+    "status": "accepted",
+    "codes": [
+      "scanner-reported vulnerability",
+      "incomplete/generic CWE report"
+    ],
+    "rationale": "The issue centers on a security scanner flagging debug@2.6.9 as vulnerable, and the maintainer responds that the report uses generic CWE identifiers rather than a specific CVE.",
+    "note": "",
+    "verified_at": "2026-06-07T21:58:16.343261Z"
+  },
+  "expressjs/express/issue/5275": {
+    "status": "accepted",
+    "codes": [
+      "partitioned cookie support",
+      "res.cookie attribute missing"
+    ],
+    "rationale": "The exchange is about adding support for the Partitioned cookie attribute in Express and the fact that res.cookie() was not emitting that attribute until the fix release.",
+    "note": "This requires team plans to be answered",
+    "verified_at": "2026-06-07T22:00:06.821323Z"
+  },
+  "fastapi/fastapi/issue/13471": {
+    "status": "rejected",
+    "codes": [
+      "RFC compliance requirement",
+      "optional auth parameter"
+    ],
+    "rationale": "The exchange is about whether the Basic auth `realm` field is mandated by the relevant RFCs or can be omitted, and whether making it optional leads to non-conforming APIs.",
+    "note": "",
+    "verified_at": "2026-06-07T22:00:59.139369Z"
+  },
+  "fastapi/fastapi/issue/10177": {
+    "status": "rejected",
+    "codes": [
+      "authentication status code",
+      "test breakage after fix"
+    ],
+    "rationale": "The exchange is about changing unauthenticated responses from 403 to 401, and the answer notes that this change broke tests and requires updating expectations or pinning the version.",
+    "note": "Doesnt look like a sec issue",
+    "verified_at": "2026-06-08T00:56:14.831742Z"
+  },
+  "fastapi/fastapi/issue/11104": {
+    "status": "rejected",
+    "codes": [
+      "security advisory upgrade",
+      "multipart parsing error"
+    ],
+    "rationale": "The question centers on upgrading a dependency to address a security advisory and the resulting file upload/body parsing failure.",
+    "note": "",
+    "verified_at": "2026-06-08T00:57:14.066440Z"
+  },
+  "fastapi/fastapi/issue/5837": {
+    "status": "accepted",
+    "codes": [
+      "cookie security configuration"
+    ],
+    "rationale": "The exchange is about browser cookies not being set because a cookie with SameSite='none' must also use secure=True.",
+    "note": "",
+    "verified_at": "2026-06-08T00:59:39.405404Z"
+  },
+  "fastapi/fastapi/issue/5831": {
+    "status": "accepted",
+    "codes": [
+      "authenticated endpoint access"
+    ],
+    "rationale": "The question is about restricting access to the mounted /gradio path for logged-in or subscribed users, and the answer proposes enforcing that through request checks and middleware.",
+    "note": "",
+    "verified_at": "2026-06-08T01:01:04.111478Z"
+  },
+  "fastapi/fastapi/issue/5818": {
+    "status": "rejected",
+    "codes": [
+      "host header port handling",
+      "middleware host validation"
+    ],
+    "rationale": "The exchange is about TrustedHostMiddleware rejecting a Host header that includes a port, and whether the middleware\u2019s host validation logic should accept that form.",
+    "note": "Looks like a sys bug",
+    "verified_at": "2026-06-08T01:03:47.162879Z"
+  },
+  "fastapi/fastapi/issue/5723": {
+    "status": "accepted",
+    "codes": [
+      "dependency cache key",
+      "security scopes inheritance"
+    ],
+    "rationale": "The exchange is about FastAPI reusing or not reusing a dependency based on cache keys, and how adding security scopes changes how those scopes propagate through nested dependencies.",
+    "note": "",
+    "verified_at": "2026-06-08T01:07:12.324762Z"
+  },
+  "fastapi/fastapi/issue/5386": {
+    "status": "accepted",
+    "codes": [
+      "request body processing in middleware"
+    ],
+    "rationale": "The exchange is about reading and reusing the request body inside middleware/dependencies, and the main failure mode described is the application hanging indefinitely while processing the request.",
+    "note": "",
+    "verified_at": "2026-06-08T01:08:53.949968Z"
+  },
+  "fastapi/fastapi/issue/5334": {
+    "status": "accepted",
+    "codes": [
+      "secure cookie flag storage in localhost"
+    ],
+    "rationale": "The exchange is about cookies not being stored because the browser rejects them under the Secure and SameSite attributes, and the answer focuses on adjusting those cookie settings.",
+    "note": "",
+    "verified_at": "2026-06-08T01:10:22.471571Z"
+  },
+  "fastapi/fastapi/issue/5177": {
+    "status": "rejected",
+    "codes": [
+      "cookie encoding error",
+      "RFC latin-1 requirement"
+    ],
+    "rationale": "The exchange centers on a UnicodeEncodeError when setting cookie values and the explanation that Starlette follows RFC 7230\u2019s latin-1 encoding requirement.",
+    "note": "Doesn't look like an sec issue",
+    "verified_at": "2026-06-08T01:11:35.664585Z"
+  },
+  "fastapi/fastapi/issue/5017": {
+    "status": "accepted",
+    "codes": [
+      "sql injection prevention"
+    ],
+    "rationale": "The exchange asks how to handle SQL injection in a FastAPI app using psycopg2, and the answer points to psycopg2 documentation on passing parameters to SQL queries.",
+    "note": "",
+    "verified_at": "2026-06-08T01:12:30.261737Z"
+  },
+  "fastapi/fastapi/issue/4990": {
+    "status": "accepted",
+    "codes": [
+      "HTTPS redirect scheme downgrade to HTTP"
+    ],
+    "rationale": "The exchange is about HTTPS redirects being rewritten to HTTP and the role of proxy/forwarded header handling in preserving the original scheme.",
+    "note": "",
+    "verified_at": "2026-06-08T01:15:10.328620Z"
+  },
+  "fastapi/fastapi/issue/4962": {
+    "status": "accepted",
+    "codes": [
+      "global state mutation",
+      "secret value leakage"
+    ],
+    "rationale": "The issue describes `jsonable_encoder` mutating shared encoder state across calls and causing `SecretStr` values to be returned in plaintext instead of masked.",
+    "note": "",
+    "verified_at": "2026-06-08T01:16:22.806790Z"
+  },
+  "fastapi/fastapi/issue/4946": {
+    "status": "rejected",
+    "codes": [
+      "default exception handler body",
+      "no-content status codes"
+    ],
+    "rationale": "The issue concerns FastAPI\u2019s default HTTPException handler always sending a response body, which conflicts with HTTP status codes like 204 and 304 that should not include content.",
+    "note": "Not a sec issue",
+    "verified_at": "2026-06-08T01:17:27.432750Z"
+  },
+  "fastapi/fastapi/issue/4833": {
+    "status": "rejected",
+    "codes": [
+      "file descriptor leakage",
+      "implicit file cleanup"
+    ],
+    "rationale": "The exchange focuses on whether UploadFile resources are explicitly closed or instead cleaned up implicitly by FastAPI/Python, with concern about memory, disk space, and file descriptor leakage.",
+    "note": "Not a sec issue",
+    "verified_at": "2026-06-08T01:19:04.597942Z"
+  },
+  "fastapi/fastapi/issue/4768": {
+    "status": "rejected",
+    "codes": [
+      "bearer auth toggle",
+      "HTTPBearer 403 rejection"
+    ],
+    "rationale": "The exchange is about turning Bearer authentication on and off programmatically, and the specific security behavior discussed is HTTPBearer rejecting requests with a 403 when no token is present.",
+    "note": "",
+    "verified_at": "2026-06-08T01:20:35.716927Z"
+  },
+  "pyca/cryptography/issue/14709": {
+    "status": "rejected",
+    "codes": [
+      "cryptographic hash usage",
+      "documentation lookup"
+    ],
+    "rationale": "The question is about how to create a file hash with the cryptography library, and the answer directs the user to the relevant documentation rather than discussing a security flaw.",
+    "note": "No QA",
+    "verified_at": "2026-06-08T01:20:50.702498Z"
+  },
+  "pyca/cryptography/issue/14690": {
+    "status": "accepted",
+    "codes": [
+      "post-quantum support roadmap",
+      "issue tracker reference"
+    ],
+    "rationale": "The question asks about planned PQC features and whether there is an existing tracking issue, and the answer points to upcoming ML-KEM/ML-DSA support plus a specific SLH-DSA issue.",
+    "note": "Needs team plan to answer the question but there already exists an issue where the discuss this as indicated by a maintainer. Hence, I am keeping it",
+    "verified_at": "2026-06-08T01:25:16.645521Z"
+  },
+  "pyca/cryptography/issue/14207": {
+    "status": "accepted",
+    "codes": [
+      "dependency CVE check",
+      "false positive report"
+    ],
+    "rationale": "The exchange is about whether the once_cell dependency is actually affected by a reported CVE, with the answer specifically grounded in the version pinned in Cargo.lock.",
+    "note": "",
+    "verified_at": "2026-06-08T01:26:01.685856Z"
+  },
+  "pyca/cryptography/issue/14013": {
+    "status": "accepted",
+    "codes": [
+      "ASN.1 parsing error",
+      "encrypted RSA key loading"
+    ],
+    "rationale": "The exchange centers on a failure to deserialize an encrypted traditional RSA private key, reported as an ASN.1 parsing error with an unexpected tag.",
+    "note": "",
+    "verified_at": "2026-06-08T01:27:04.715047Z"
+  },
+  "pyca/cryptography/issue/13843": {
+    "status": "rejected",
+    "codes": [
+      "non-parseable serialization",
+      "round-trip failure"
+    ],
+    "rationale": "The exchange centers on malformed RFC4514 serialization for trailing spaces that cannot be parsed back, breaking the expected round-trip behavior.",
+    "note": "",
+    "verified_at": "2026-06-08T01:28:44.123139Z"
+  },
+  "python-pillow/Pillow/issue/9600": {
+    "status": "accepted",
+    "codes": [
+      "thread safety data race",
+      "shared block cache"
+    ],
+    "rationale": "The issue centers on unsynchronized access to a process-global block cache in Pillow's C code, leading to a potential data race under concurrent threaded use.",
+    "note": "",
+    "verified_at": "2026-06-08T01:35:04.924752Z"
+  },
+  "pyca/cryptography/issue/13538": {
+    "status": "rejected",
+    "codes": [
+      "invalid PrivateKeyInfo version",
+      "RFC 5958 violation"
+    ],
+    "rationale": "The exchange centers on DER private keys failing to load because they declare an unsupported PrivateKeyInfo v2 value, which the maintainer explains is invalid under RFC 5958.",
+    "note": "",
+    "verified_at": "2026-06-08T01:35:12.767360Z"
+  },
+  "python-pillow/Pillow/issue/9579": {
+    "status": "rejected",
+    "codes": [
+      "pinned dependency version",
+      "upstream release dependency"
+    ],
+    "rationale": "The answer explains that Pillow uses a version pinned in its dependency manifest and must wait for libtiff to tag a new release or use a patched snapshot.",
+    "note": "",
+    "verified_at": "2026-06-08T01:35:21.961509Z"
+  },
+  "python-pillow/Pillow/issue/9439": {
+    "status": "accepted",
+    "codes": [
+      "security fix backport",
+      "PSD image restriction"
+    ],
+    "rationale": "The exchange centers on whether a CVE fix can be backported to an older release, and the answer suggests limiting allowed image formats to avoid opening PSD files as a workaround.",
+    "note": "The maintainer says they only support the latest branch and supported python version. Would be interesting to see how LLMs respond when they have access to the docs",
+    "verified_at": "2026-06-08T01:39:21.814077Z"
+  },
+  "python-pillow/Pillow/issue/9361": {
+    "status": "accepted",
+    "codes": [
+      "segmentation fault crash",
+      "duplicate font variation"
+    ],
+    "rationale": "The issue reports a SIGSEGV when loading a specific font, and the maintainer identifies a duplicate variation entry in the font as the cause of the crash.",
+    "note": "",
+    "verified_at": "2026-06-08T01:40:05.988035Z"
+  },
+  "python-pillow/Pillow/issue/9295": {
+    "status": "rejected",
+    "codes": [
+      "retagged release tag",
+      "checksum mismatch"
+    ],
+    "rationale": "The exchange centers on a changed source checksum that raised concern about whether the 12.0.0 tag was deleted and recreated, and the maintainer confirms the retagged release process.",
+    "note": "",
+    "verified_at": "2026-06-08T01:40:10.794772Z"
+  },
+  "python-pillow/Pillow/issue/9101": {
+    "status": "rejected",
+    "codes": [
+      "attack surface increase",
+      "separate plugin wheels"
+    ],
+    "rationale": "The question frames unneeded image formats as expanding attack surface and proposes keeping large or niche formats in separately distributed plugin wheels.",
+    "note": "",
+    "verified_at": "2026-06-08T01:40:11.459889Z"
+  },
+  "python-pillow/Pillow/issue/8546": {
+    "status": "accepted",
+    "codes": [
+      "malicious user-provided input",
+      "font parsing security"
+    ],
+    "rationale": "The exchange is about the safety of loading uploaded font files as byte streams and the risk of malicious or vulnerable font data being parsed by Pillow.",
+    "note": "",
+    "verified_at": "2026-06-08T01:46:13.478070Z"
+  },
+  "python-pillow/Pillow/issue/8405": {
+    "status": "rejected",
+    "codes": [
+      "division by zero",
+      "unused codec code"
+    ],
+    "rationale": "The issue reports a potential division-by-zero in ImagingFliDecode and frames it as unused legacy codec code that may be removable.",
+    "note": "",
+    "verified_at": "2026-06-08T01:46:21.899832Z"
+  },
+  "python-pillow/Pillow/issue/8073": {
+    "status": "rejected",
+    "codes": [
+      "nonstandard dylibs directory",
+      "macOS code-signing failure"
+    ],
+    "rationale": "The exchange centers on shared objects being placed in a nonstandard .dylibs location and the resulting notarization/code-signing breakage on macOS.",
+    "note": "",
+    "verified_at": "2026-06-08T01:46:22.650571Z"
+  },
+  "python-pillow/Pillow/issue/7876": {
+    "status": "accepted",
+    "codes": [
+      "specially crafted input crashes",
+      "uncaught exception handling"
+    ],
+    "rationale": "The issue describes multiple crashes triggered by crafted files and frames them as uncaught exceptions that should be handled properly.",
+    "note": "",
+    "verified_at": "2026-06-08T01:46:56.123038Z"
+  },
+  "python-pillow/Pillow/issue/7626": {
+    "status": "accepted",
+    "codes": [
+      "transitive dependency vulnerability"
+    ],
+    "rationale": "The exchange is about whether Pillow is exposed to a CVE in its WebP dependency and whether upgrading libwebp separately can mitigate the issue without updating Pillow.",
+    "note": "",
+    "verified_at": "2026-06-08T01:47:13.274766Z"
+  },
+  "python-pillow/Pillow/issue/7518": {
+    "status": "accepted",
+    "codes": [
+      "transitive dependency vulnerability"
+    ],
+    "rationale": "The exchange is about whether a CVE in zlib/minizip affects Pillow through its bundled Windows build, and the answer focuses on how Pillow links zlib on Windows.",
+    "note": "",
+    "verified_at": "2026-06-08T01:47:55.722059Z"
+  },
+  "python-pillow/Pillow/issue/7179": {
+    "status": "accepted",
+    "codes": [
+      "transitive dependency vulnerability"
+    ],
+    "rationale": "The exchange is about whether a libtiff CVE affects Pillow through its bundled dependency and which Pillow release first includes the fix.",
+    "note": "",
+    "verified_at": "2026-06-08T01:48:07.213118Z"
+  },
+  "python-pillow/Pillow/issue/7137": {
+    "status": "accepted",
+    "codes": [
+      "libtiff vulnerability inquiry",
+      "false positive report"
+    ],
+    "rationale": "The question asks whether multiple libtiff CVEs affect Pillow, and the answer explains they only impact the tiffcrop tool, which Pillow does not use.",
+    "note": "",
+    "verified_at": "2026-06-08T01:48:29.761653Z"
+  },
+  "python-pillow/Pillow/issue/7031": {
+    "status": "rejected",
+    "codes": [
+      "libtiff CVE impact",
+      "dependency version fix"
+    ],
+    "rationale": "The exchange is about whether a specific libtiff vulnerability affects Pillow and notes the version where the bundled dependency was updated to include the fix.",
+    "note": "",
+    "verified_at": "2026-06-08T01:48:30.957773Z"
+  },
+  "python-pillow/Pillow/issue/6955": {
+    "status": "accepted",
+    "codes": [
+      "transitive dependency vulnerability",
+      "false positive report"
+    ],
+    "rationale": "The exchange is about whether specific libtiff CVEs affect Pillow, and the answer says they do not because Pillow does not use the tiffcrop tool.",
+    "note": "",
+    "verified_at": "2026-06-08T01:49:09.441759Z"
+  },
+  "python-pillow/Pillow/issue/6687": {
+    "status": "accepted",
+    "codes": [
+      "false positive vulnerability alert",
+      "intermittent vulnerability detection"
+    ],
+    "rationale": "The exchange centers on whether pip-audit is reporting a false alarm and explains that the advisory came from an intermittently detected issue that was later marked fixed before a proper patch landed.",
+    "note": "",
+    "verified_at": "2026-06-08T01:51:44.557029Z"
+  },
+  "python-pillow/Pillow/issue/6665": {
+    "status": "accepted",
+    "codes": [
+      "transitive dependency vulnerability"
+    ],
+    "rationale": "The exchange is about whether Pillow is affected by a specific libtiff CVE, and the answer narrows the concern to the tiffsplit tool rather than Pillow\u2019s general image loading path.",
+    "note": "",
+    "verified_at": "2026-06-08T01:52:32.019629Z"
+  },
+  "python-pillow/Pillow/issue/6407": {
+    "status": "rejected",
+    "codes": [
+      "old version security risk",
+      "missing security fixes"
+    ],
+    "rationale": "The exchange centers on whether using Pillow 8.3.2 in production is safe and the maintainer explains that older versions lack later security fixes.",
+    "note": "",
+    "verified_at": "2026-06-08T01:52:33.131359Z"
+  },
+  "rails/rails/issue/54343": {
+    "status": "rejected",
+    "codes": [
+      "cached class reload issue",
+      "store class name"
+    ],
+    "rationale": "The exchange is about a connection class being cached in PoolConfig and breaking after reload, with the proposed fix to store the class name and primary flag instead of the class object.",
+    "note": "",
+    "verified_at": "2026-06-08T01:52:33.962491Z"
+  },
+  "rails/rails/issue/56736": {
+    "status": "accepted",
+    "codes": [
+      "initializer order misconfiguration",
+      "silent hash digest change"
+    ],
+    "rationale": "The exchange is about accessing `key_generator` too early in initialization causing the app to silently use the weaker SHA1 digest instead of the expected SHA256.",
+    "note": "",
+    "verified_at": "2026-06-08T01:53:20.949082Z"
+  },
+  "rails/rails/issue/56158": {
+    "status": "accepted",
+    "codes": [
+      "deadlocked transaction state",
+      "writes outside transaction"
+    ],
+    "rationale": "The exchange centers on a deadlock leaving the transaction marked usable and allowing database writes to proceed outside a valid transaction context.",
+    "note": "",
+    "verified_at": "2026-06-08T01:54:00.148266Z"
+  },
+  "rails/rails/issue/55528": {
+    "status": "rejected",
+    "codes": [
+      "removed image processing methods",
+      "restore TIFF to PDF"
+    ],
+    "rationale": "The exchange centers on a security-driven removal of image processing options in Rails 8.0.2.1 and how to re-enable TIFF-to-PDF conversion with the new configuration setting.",
+    "note": "",
+    "verified_at": "2026-06-08T01:54:02.716631Z"
+  },
+  "rails/rails/issue/55245": {
+    "status": "accepted",
+    "codes": [
+      "safe HTML interpolation",
+      "translation XSS risk"
+    ],
+    "rationale": "The exchange is about preserving HTML safety when interpolating links into translations and avoiding unsafe escaping behavior that could lead to XSS.",
+    "note": "",
+    "verified_at": "2026-06-08T01:55:56.172686Z"
+  },
+  "rails/rails/issue/55219": {
+    "status": "accepted",
+    "codes": [
+      "missing rate limiting",
+      "password reset abuse"
+    ],
+    "rationale": "The exchange centers on a generated controller lacking rate limiting and the resulting risk of abusing the password reset email endpoint.",
+    "note": "",
+    "verified_at": "2026-06-08T01:56:42.806878Z"
+  },
+  "rails/rails/issue/54926": {
+    "status": "rejected",
+    "codes": [
+      "SHA-1 default signing",
+      "secure-by-default digest"
+    ],
+    "rationale": "The issue concerns signed cookies using SHA-1 by default instead of a more secure digest like SHA-256, and the response points to a PR to change that default.",
+    "note": "",
+    "verified_at": "2026-06-08T01:57:36.305994Z"
+  },
+  "stripe/stripe-node/issue/2534": {
+    "status": "accepted",
+    "codes": [
+      "transitive dependency vulnerability",
+      "memory exhaustion DoS"
+    ],
+    "rationale": "The issue reports a vulnerable transitive qs dependency in the Stripe SDK and describes the resulting denial-of-service risk from unbounded array creation and memory exhaustion.",
+    "note": "",
+    "verified_at": "2026-06-08T01:57:52.985126Z"
+  },
+  "stripe/stripe-node/issue/2530": {
+    "status": "accepted",
+    "codes": [
+      "qs dependency vulnerability",
+      "memory exhaustion DoS"
+    ],
+    "rationale": "The exchange is about a vulnerable qs dependency and specifically the risk of denial of service through memory exhaustion.",
+    "note": "",
+    "verified_at": "2026-06-08T01:58:07.425798Z"
+  },
+  "stripe/stripe-node/issue/1784": {
+    "status": "rejected",
+    "codes": [
+      "type definition mismatch",
+      "raw payment details"
+    ],
+    "rationale": "The issue reports an incorrect TypeScript type for `external_account`, and the answer explains the design choice is to discourage handling raw payment details directly.",
+    "note": "",
+    "verified_at": "2026-06-08T01:58:09.773078Z"
+  },
+  "stripe/stripe-node/issue/877": {
+    "status": "rejected",
+    "codes": [
+      "double-charging risk",
+      "idempotency keys"
+    ],
+    "rationale": "The question is about preventing duplicate off-session charges by using idempotency keys, and the answer explains how to pass an idempotency key in the request options.",
+    "note": "",
+    "verified_at": "2026-06-08T01:58:10.544314Z"
+  },
+  "stripe/stripe-node/issue/844": {
+    "status": "rejected",
+    "codes": [
+      "raw card details",
+      "PCI-protected data"
+    ],
+    "rationale": "The exchange is about whether the type should allow object input for external_account, and the answer explains that this would encourage sending raw card or bank account details server-side, which is sensitive and PCI-protected.",
+    "note": "",
+    "verified_at": "2026-06-08T01:58:12.743066Z"
+  },
+  "urllib3/urllib3/issue/3734": {
+    "status": "rejected",
+    "codes": [
+      "brotli decode regression",
+      "chunked transfer decoding"
+    ],
+    "rationale": "The exchange centers on a brotli content-decoding failure that appears as a regression, specifically when decoding chunked HTTP responses.",
+    "note": "",
+    "verified_at": "2026-06-08T01:58:13.257074Z"
+  },
+  "urllib3/urllib3/issue/3640": {
+    "status": "rejected",
+    "codes": [
+      "vulnerable version clarification",
+      "unpatchable browser issue"
+    ],
+    "rationale": "The exchange centers on whether CVE-2025-50182 affects urllib3 2.2.0 and whether that browser-side vulnerability can be fixed within urllib3.",
+    "note": "",
+    "verified_at": "2026-06-08T01:58:34.314756Z"
+  },
+  "psf/requests/issue/7335": {
+    "status": "accepted",
+    "codes": [
+      "header control character validation",
+      "null byte header rejection"
+    ],
+    "rationale": "The exchange is about rejecting ASCII control characters and NULs in HTTP header names and values during header validity checking.",
+    "note": "",
+    "verified_at": "2026-06-08T02:01:31.436262Z"
+  },
+  "psf/requests/issue/7247": {
+    "status": "rejected",
+    "codes": [
+      "binary model file verification",
+      "independent source recreation"
+    ],
+    "rationale": "The question focuses on verifying newly introduced .bin model files and whether they can be recreated from source for auditability.",
+    "note": "Not much of a sec issue",
+    "verified_at": "2026-06-08T02:02:58.175743Z"
+  },
+  "psf/requests/issue/7209": {
+    "status": "accepted",
+    "codes": [
+      "trailing-dot redirect loop",
+      "TLS SNI hostname handling"
+    ],
+    "rationale": "The exchange centers on an infinite redirect loop caused by FQDNs with a trailing dot, and the answer frames it as hostname stripping behavior tied to TLS/SNI handling.",
+    "note": "",
+    "verified_at": "2026-06-08T02:04:09.069048Z"
+  },
+  "psf/requests/issue/7085": {
+    "status": "accepted",
+    "codes": [
+      "certificate verification failure",
+      "stricter SSL verification"
+    ],
+    "rationale": "The exchange centers on TLS certificate validation errors and explains that newer Python/urllib3 behavior introduces stricter SSL verification checks.",
+    "note": "",
+    "verified_at": "2026-06-08T02:04:32.336489Z"
+  },
+  "psf/requests/issue/7035": {
+    "status": "accepted",
+    "codes": [
+      "local version parsing",
+      "warning suppression"
+    ],
+    "rationale": "The exchange centers on Requests mishandling a PEP 440 local version string during compatibility parsing, and the maintainer\u2019s remedy is to suppress the resulting warning with filtering.",
+    "note": "",
+    "verified_at": "2026-06-08T02:07:30.919465Z"
+  },
+  "psf/requests/issue/7013": {
+    "status": "rejected",
+    "codes": [
+      "wheel hash mismatch",
+      "trusted publisher misconfiguration"
+    ],
+    "rationale": "The exchange centers on a discrepancy between the PyPI wheel hash and the CI artifact hash, and the maintainer attributes it to configuration issues in the GitHub Actions trusted-publisher release workflow.",
+    "note": "Not much of a sec issue. It was a configuration issue with the team",
+    "verified_at": "2026-06-08T02:08:59.106982Z"
+  },
+  "psf/requests/issue/6978": {
+    "status": "accepted",
+    "codes": [
+      "incomplete certificate chain",
+      "partial chain trust"
+    ],
+    "rationale": "The exchange is about failing TLS verification when the server omits an intermediate certificate and whether a trusted leaf can be accepted via partial-chain verification.",
+    "note": "",
+    "verified_at": "2026-06-08T02:09:50.440702Z"
+  },
+  "psf/requests/issue/6976": {
+    "status": "accepted",
+    "codes": [
+      "false positive vulnerability report"
+    ],
+    "rationale": "The exchange is about reported CVEs that do not actually affect Requests, and the maintainer points to updating the urllib3 dependency instead.",
+    "note": "",
+    "verified_at": "2026-06-08T02:10:10.310091Z"
+  },
+  "psf/requests/issue/6974": {
+    "status": "accepted",
+    "codes": [
+      "SSL certificate verification failure",
+      "missing Authority Key Identifier"
+    ],
+    "rationale": "The exchange centers on an HTTPS certificate validation error in Requests/Python 3.13, specifically traced to a certificate missing the Authority Key Identifier extension.",
+    "note": "",
+    "verified_at": "2026-06-08T02:11:17.724117Z"
+  },
+  "psf/requests/issue/6969": {
+    "status": "accepted",
+    "codes": [
+      "missing subject alternative names",
+      "CA certificate instead of leaf"
+    ],
+    "rationale": "The exchange centers on hostname verification failing because the self-signed cert lacks SANs and was generated as a CA certificate rather than a proper leaf/server certificate.",
+    "note": "",
+    "verified_at": "2026-06-08T02:12:15.541187Z"
+  },
+  "psf/requests/issue/6964": {
+    "status": "accepted",
+    "codes": [
+      "netrc credential leak",
+      "fixed version announcement"
+    ],
+    "rationale": "The exchange centers on a .netrc credential disclosure vulnerability in requests and confirms the release version that addresses it.",
+    "note": "",
+    "verified_at": "2026-06-08T02:14:13.635233Z"
+  },
+  "psf/requests/issue/6952": {
+    "status": "rejected",
+    "codes": [
+      "CVE fix status",
+      "scanner false positive"
+    ],
+    "rationale": "The exchange asks whether specific CVEs are fixed in the released versions and whether the analyzer report is a false positive.",
+    "note": "",
+    "verified_at": "2026-06-08T02:14:19.581716Z"
+  },
+  "psf/requests/issue/6947": {
+    "status": "accepted",
+    "codes": [
+      "TLS verification failure",
+      "Windows Python compatibility"
+    ],
+    "rationale": "The exchange centers on `session.verify = False` breaking TLS certificate verification behavior, and the failure is described as specific to Windows on Python 3.13/3.14.",
+    "note": "",
+    "verified_at": "2026-06-08T02:14:47.389915Z"
+  },
+  "psf/requests/issue/6946": {
+    "status": "rejected",
+    "codes": [
+      "outdated CVE report",
+      "public security reporting"
+    ],
+    "rationale": "The exchange concerns a CVE being reported against a version that maintainers say is already patched and not affected, along with guidance to avoid posting security concerns publicly.",
+    "note": "",
+    "verified_at": "2026-06-08T02:15:24.562689Z"
+  },
+  "psf/requests/issue/6945": {
+    "status": "accepted",
+    "codes": [
+      "SSL certificate verification",
+      "strict X509 validation"
+    ],
+    "rationale": "The exchange centers on a failed HTTPS certificate check and explains that the cause is OpenSSL/Python strict X509 verification requiring a Subject Key Identifier.",
+    "note": "",
+    "verified_at": "2026-06-08T02:15:57.004536Z"
+  },
+  "psf/requests/issue/6934": {
+    "status": "rejected",
+    "codes": [
+      "urllib3 regression failures",
+      "backport fix availability"
+    ],
+    "rationale": "The exchange centers on test regressions triggered by upgrading urllib3 to 2.4.0 and whether the fixes from PR #6924 and related commits are available in a released version.",
+    "note": "",
+    "verified_at": "2026-06-08T02:16:35.453370Z"
+  },
+  "psf/requests/issue/6928": {
+    "status": "accepted",
+    "codes": [
+      "unexpected authorization header",
+      "netrc default entry"
+    ],
+    "rationale": "The exchange centers on an unintended Authorization header being added during requests, traced to a default .netrc entry being treated as valid.",
+    "note": "",
+    "verified_at": "2026-06-08T02:18:06.273048Z"
+  },
+  "psf/requests/issue/6877": {
+    "status": "rejected",
+    "codes": [
+      "undocumented exceptions",
+      "deprecated exception removal"
+    ],
+    "rationale": "The exchange focuses on which exception classes should be documented versus left internal, and on how to handle the obsolete URLRequired exception without breaking backward compatibility.",
+    "note": "",
+    "verified_at": "2026-06-08T02:19:52.958825Z"
+  },
+  "psf/requests/issue/6872": {
+    "status": "accepted",
+    "codes": [
+      "shared SSL context",
+      "thread safety issue"
+    ],
+    "rationale": "The issue centers on multiple threads accessing and reconfiguring the same SSLContext, leading to intermittent segmentation faults.",
+    "note": "",
+    "verified_at": "2026-06-08T02:20:37.322148Z"
+  },
+  "psf/requests/issue/6868": {
+    "status": "accepted",
+    "codes": [
+      "SSL context race condition",
+      "OpenSSL version conflict"
+    ],
+    "rationale": "The exchange centers on an intermittent failure in SSL_CTX_load_verify_locations described as a race condition with certain OpenSSL versions, alongside concern about mixed or conflicting SSL libraries in the environment.",
+    "note": "",
+    "verified_at": "2026-06-08T02:22:26.751466Z"
+  },
+  "psf/requests/issue/6859": {
+    "status": "rejected",
+    "codes": [
+      "docstring type mismatch",
+      "SSL verify parameter"
+    ],
+    "rationale": "The issue is about documentation incorrectly stating that `Session.verify` only accepts a bool, while the actual concern is that it also supports a string value for SSL verification.",
+    "note": "",
+    "verified_at": "2026-06-08T02:22:38.651734Z"
+  },
+  "psf/requests/issue/6831": {
+    "status": "rejected",
+    "codes": [
+      "removed cipher setting",
+      "transitive dependency breakage"
+    ],
+    "rationale": "The exchange centers on DEFAULT_CIPHERS being removed from urllib3 and the resulting SSL failure in Requests after an upgrade, so these codes capture the missing configuration and dependency-related breakage.",
+    "note": "",
+    "verified_at": "2026-06-08T02:23:31.474297Z"
+  },
+  "psf/requests/issue/6815": {
+    "status": "rejected",
+    "codes": [
+      "permission denied import",
+      "environment variable trigger"
+    ],
+    "rationale": "The issue describes an import failing with a Windows PermissionError, and the answer identifies an environment variable that triggers the problematic code path.",
+    "note": "Doesn't look like a security issue",
+    "verified_at": "2026-06-08T02:29:21.941854Z"
+  },
+  "psf/requests/issue/6790": {
+    "status": "rejected",
+    "codes": [
+      "import-time performance regression",
+      "SSLContext created on import"
+    ],
+    "rationale": "The exchange focuses on a slowdown during module import and whether requests should stop creating a default SSLContext at import time.",
+    "note": "It's a performance issue, not security",
+    "verified_at": "2026-06-08T02:33:05.777299Z"
+  },
+  "psf/requests/issue/6784": {
+    "status": "accepted",
+    "codes": [
+      "double slash path failure"
+    ],
+    "rationale": "The issue describes requests failing when the URL path contains double slashes, and the failure is tied to Digest authentication request handling.",
+    "note": "",
+    "verified_at": "2026-06-08T02:36:19.947992Z"
+  },
+  "psf/requests/issue/6764": {
+    "status": "accepted",
+    "codes": [
+      "permission denied error",
+      "temporary cert file"
+    ],
+    "rationale": "The issue centers on a PermissionError caused by writing extracted certificates to a shared /tmp file that later users cannot access.",
+    "note": "",
+    "verified_at": "2026-06-08T02:37:28.421823Z"
+  },
+  "psf/requests/issue/6745": {
+    "status": "accepted",
+    "codes": [
+      "segmentation fault",
+      "cert parameter crash"
+    ],
+    "rationale": "The exchange centers on a segmentation fault that occurs when using the `cert` parameter in Requests, with the issue tied to a specific code path and version.",
+    "note": "",
+    "verified_at": "2026-06-08T02:41:04.074670Z"
   }
 }
