@@ -517,7 +517,7 @@ function app() {
       this.saving = true;
       this.saveMsg = '';
       try {
-        const resp = await fetch(`/api/oc/records/${this.selected.index}`, {
+        const resp = await fetch(`/api/oc/records/${this.selected.index}/save`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
