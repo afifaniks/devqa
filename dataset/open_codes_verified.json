@@ -1466,5 +1466,478 @@
     "rationale": "The exchange centers on a segmentation fault that occurs when using the `cert` parameter in Requests, with the issue tied to a specific code path and version.",
     "note": "",
     "verified_at": "2026-06-08T02:41:04.074670Z"
+  },
+  "psf/requests/issue/6736": {
+    "status": "accepted",
+    "codes": [
+      "TLS certificate loading"
+    ],
+    "rationale": "The exchange is about restoring system CA certificate loading for HTTPS verification after a Requests upgrade, and the suggested fix is either explicitly loading default certs or pinning Requests to excluded versions.",
+    "note": "",
+    "verified_at": "2026-06-08T03:42:38.484310Z"
+  },
+  "psf/requests/issue/6733": {
+    "status": "accepted",
+    "codes": [
+      "silent deprecation breakage"
+    ],
+    "rationale": "The exchange centers on a deprecated method no longer being called, causing an unexpected breakage, and the maintainer points to a workaround that preserves custom get_connection behavior.",
+    "note": "",
+    "verified_at": "2026-06-08T03:42:55.149826Z"
+  },
+  "psf/requests/issue/6726": {
+    "status": "accepted",
+    "codes": [
+      "shared SSL context mutation"
+    ],
+    "rationale": "The issue describes a shared SSL context being modified during parallel requests, causing client certificate mix-ups and key mismatch errors when multiple mTLS certs are used concurrently.",
+    "note": "",
+    "verified_at": "2026-06-08T03:44:41.947452Z"
+  },
+  "psf/requests/issue/6717": {
+    "status": "accepted",
+    "codes": [
+      "SSLContext certificate loading"
+    ],
+    "rationale": "The exchange is about how to load default system CA certificates with Requests 2.32.x using SSLContext, and the maintainer provides a custom HTTPAdapter-based implementation to do it.",
+    "note": "",
+    "verified_at": "2026-06-08T03:48:52.148409Z"
+  },
+  "psf/requests/issue/6715": {
+    "status": "rejected",
+    "codes": [
+      "custom SSL adapter compatibility",
+      "no code changes needed"
+    ],
+    "rationale": "The exchange is about whether an existing custom SSL adapter still works after the 2.32.x change and whether developers must modify their implementation.",
+    "note": "",
+    "verified_at": "2026-06-08T03:49:14.828399Z"
+  },
+  "psf/requests/issue/6707": {
+    "status": "rejected",
+    "codes": [
+      "URL scheme incompatibility",
+      "version pinning workaround"
+    ],
+    "rationale": "The exchange centers on a broken custom URL scheme (`http+docker`) after a Requests security-related change, and the practical mitigation is to pin compatible package versions or upgrade to a fixed docker-py release.",
+    "note": "",
+    "verified_at": "2026-06-08T03:51:45.776329Z"
+  },
+  "psf/requests/issue/6690": {
+    "status": "accepted",
+    "codes": [
+      "dependency vulnerability disclosure",
+      "transitive dependency versioning"
+    ],
+    "rationale": "The issue asks whether upgrading the idna dependency to a fixed version removes a CVE, and the answer discusses how transitive dependency versions affect whether that safe version is actually installed.",
+    "note": "",
+    "verified_at": "2026-06-08T03:54:34.685054Z"
+  },
+  "psf/requests/issue/6706": {
+    "status": "rejected",
+    "codes": [
+      "missing test certificate files",
+      "sdist packaging omission"
+    ],
+    "rationale": "The issue reports that TLS test certificates are absent from the source distribution, and the maintainer explains they were omitted from MANIFEST.in.",
+    "note": "",
+    "verified_at": "2026-06-08T03:54:44.650717Z"
+  },
+  "psf/requests/issue/6669": {
+    "status": "accepted",
+    "codes": [
+      "SSL handshake failure",
+      "weak cipher suites"
+    ],
+    "rationale": "The exchange centers on an SSL/TLS handshake error that occurs because the server only offers weak cipher suites, not because certificate verification is being ignored.",
+    "note": "The maintainer suggests that they wont accept weak algorithm for the sake of security",
+    "verified_at": "2026-06-08T03:56:24.693286Z"
+  },
+  "psf/requests/issue/6660": {
+    "status": "accepted",
+    "codes": [
+      "CA bundle env vars",
+      "virtualenv certifi mismatch"
+    ],
+    "rationale": "The exchange is about whether REQUESTS_CA_BUNDLE and CURL_CA_BUNDLE are honored, and the apparent problem is traced to certifi behavior differing inside a virtual environment.",
+    "note": "A false positive report as apparently the user was using a different library",
+    "verified_at": "2026-06-08T03:59:10.909287Z"
+  },
+  "psf/requests/issue/6616": {
+    "status": "rejected",
+    "codes": [
+      "SSL handshake failure",
+      "urllib3 SSL context"
+    ],
+    "rationale": "The exchange centers on an SSLV3 handshake failure when connecting to a site and the fix involves changing the SSL context in urllib3 after the Requests/urllib3 upgrade.",
+    "note": "",
+    "verified_at": "2026-06-08T04:00:07.380245Z"
+  },
+  "pyca/cryptography/issue/14592": {
+    "status": "accepted",
+    "codes": [
+      "invalid Distinguished Encoding Rules (DER) rejection"
+    ],
+    "rationale": "The exchange centers on whether the library should accept a certificate with an explicitly encoded default value in BasicConstraints, and on the resulting failure when one bad extension prevents access to all extensions.",
+    "note": "",
+    "verified_at": "2026-06-08T04:05:01.340463Z"
+  },
+  "pyca/cryptography/issue/14477": {
+    "status": "accepted",
+    "codes": [
+      "security fix breaks compatibility",
+      "deprecated utility side effect"
+    ],
+    "rationale": "The exchange centers on a CVE fix in cryptography causing an unexpected Ansible compatibility break, traced to the deprecated utility behavior.",
+    "note": "",
+    "verified_at": "2026-06-08T04:05:54.265050Z"
+  },
+  "pyca/cryptography/issue/14334": {
+    "status": "rejected",
+    "codes": [
+      "unsupported SECP256R1 curve",
+      "community.crypto regression"
+    ],
+    "rationale": "The exchange centers on a reported SECP256R1 support failure and clarifies that the problem is a regression in the community.crypto dependency rather than cryptography itself.",
+    "note": "",
+    "verified_at": "2026-06-08T04:09:22.382317Z"
+  },
+  "pyca/cryptography/issue/14173": {
+    "status": "accepted",
+    "codes": [
+      "certificate criticality interpretation",
+      "BR extension semantics"
+    ],
+    "rationale": "The exchange is about how to interpret CA/B Forum Baseline Requirements symbols for X.509 extension criticality and how that maps to the library\u2019s validation behavior.",
+    "note": "",
+    "verified_at": "2026-06-08T04:10:12.792408Z"
+  },
+  "pyca/cryptography/issue/14048": {
+    "status": "accepted",
+    "codes": [
+      "DH parameter validation slowdown"
+    ],
+    "rationale": "The exchange centers on a severe slowdown caused by DH parameter checking, and the fix is to skip validation for well-known domain parameters.",
+    "note": "",
+    "verified_at": "2026-06-08T04:12:22.843461Z"
+  },
+  "pyca/cryptography/issue/13700": {
+    "status": "rejected",
+    "codes": [
+      "EC key size mismatch",
+      "hardcoded curve attributes"
+    ],
+    "rationale": "The exchange is about inconsistent elliptic-curve `key_size` versus `group_order` values, and the maintainer notes the values are hardcoded in `ec.py`.",
+    "note": "",
+    "verified_at": "2026-06-08T04:14:39.608362Z"
+  },
+  "pyca/cryptography/issue/13684": {
+    "status": "rejected",
+    "codes": [
+      "DLL import failure",
+      "Python version incompatibility"
+    ],
+    "rationale": "The issue centers on a DLL load error when importing the cryptography package, and the answer identifies an incompatible Python 3.9.0/3.9.1 runtime as the cause requiring an upgrade.",
+    "note": "",
+    "verified_at": "2026-06-08T04:15:10.233330Z"
+  },
+  "pyca/cryptography/issue/13475": {
+    "status": "rejected",
+    "codes": [
+      "FIPS mode verification failure",
+      "OpenSSL build mismatch"
+    ],
+    "rationale": "The issue centers on RSA/JWT signature verification failing only in FIPS mode, and the answer attributes it to a mismatch between the wheel\u2019s statically linked OpenSSL and the dynamically loaded FIPS provider.",
+    "note": "",
+    "verified_at": "2026-06-08T04:16:13.469828Z"
+  },
+  "pyca/cryptography/issue/13468": {
+    "status": "rejected",
+    "codes": [
+      "dependency version conflict",
+      "transitive pin incompatibility"
+    ],
+    "rationale": "The exchange is about cryptography becoming incompatible with other packages because of a cffi<2.0 pin, and the answer frames it as a dependency version conflict with transitive pinning constraints.",
+    "note": "",
+    "verified_at": "2026-06-08T04:16:35.749012Z"
+  },
+  "pyca/cryptography/issue/13287": {
+    "status": "rejected",
+    "codes": [
+      "deprecation period extension",
+      "certifi trust store removal"
+    ],
+    "rationale": "The exchange is about how long the warning-to-error deprecation will remain in effect and ties that timeline to the removal of invalid CAs from certifi or other major trust stores.",
+    "note": "",
+    "verified_at": "2026-06-08T04:18:53.159358Z"
+  },
+  "pyca/cryptography/issue/13349": {
+    "status": "accepted",
+    "codes": [
+      "negotiated group name binding",
+      "pyOpenSSL API exposure"
+    ],
+    "rationale": "The exchange is about adding an OpenSSL binding for the negotiated TLS group name and then exposing it as a new Connection method in pyOpenSSL.",
+    "note": "",
+    "verified_at": "2026-06-08T04:19:45.163888Z"
+  },
+  "pyca/cryptography/issue/13219": {
+    "status": "rejected",
+    "codes": [
+      "base64 storage overhead",
+      "optional encoding behavior"
+    ],
+    "rationale": "The question focuses on Fernet\u2019s base64 wrapping as wasted storage space and asks for it to be made optional in encrypt/decrypt behavior.",
+    "note": "",
+    "verified_at": "2026-06-08T04:20:59.604964Z"
+  },
+  "pyca/cryptography/issue/13125": {
+    "status": "accepted",
+    "codes": [
+      "PEM trailing data acceptance"
+    ],
+    "rationale": "The exchange is about whether `load_pem_private_key` should reject arbitrary bytes after the PEM END marker, and the user briefly suggests a stricter parsing mode.",
+    "note": "",
+    "verified_at": "2026-06-08T04:22:05.610266Z"
+  },
+  "pyca/cryptography/issue/13109": {
+    "status": "rejected",
+    "codes": [
+      "transitive dependency slowdown",
+      "client re-instantiation overhead"
+    ],
+    "rationale": "The exchange identifies a slowdown caused by an indirectly used dependency (google-auth-library-python via cryptography) and then traces the performance problem to repeatedly recreating bucket client connections on requests.",
+    "note": "It's a performance issue not security",
+    "verified_at": "2026-06-08T04:23:15.766758Z"
+  },
+  "pyca/cryptography/issue/13051": {
+    "status": "accepted",
+    "codes": [
+      "empty AKI extension",
+      "RFC 5280 compliance issue"
+    ],
+    "rationale": "The exchange centers on whether a CRL with an empty AuthorityKeyIdentifier is valid and whether accepting it violates RFC 5280.",
+    "note": "",
+    "verified_at": "2026-06-08T04:24:39.883665Z"
+  },
+  "pyca/cryptography/issue/13034": {
+    "status": "rejected",
+    "codes": [
+      "PKCS#12 DER parsing warning",
+      "BER fallback deprecation"
+    ],
+    "rationale": "The exchange centers on a warning that a PKCS#12 bundle could not be parsed as DER and is falling back to BER, with the maintainer framing it as a long deprecation tracked in issue #12936.",
+    "note": "",
+    "verified_at": "2026-06-08T04:26:12.996923Z"
+  },
+  "pyca/cryptography/issue/13030": {
+    "status": "rejected",
+    "codes": [
+      "GCM tag length configuration",
+      "AESGCM API limitation"
+    ],
+    "rationale": "The exchange is about needing a shorter 12-byte GCM authentication tag and the limitation of the one-shot AESGCM wrapper, with the answer pointing to the more flexible GCM mode API.",
+    "note": "It's a feature request, not a valid security related question or feature",
+    "verified_at": "2026-06-08T04:27:04.487548Z"
+  },
+  "pyca/cryptography/issue/13002": {
+    "status": "accepted",
+    "codes": [
+      "PKCS#8 header mismatch",
+      "private key loading regression"
+    ],
+    "rationale": "The exchange centers on a private key failing to load because the PEM header does not match the PKCS#8 format, and the user asks whether the behavior is a regression or expected compatibility change.",
+    "note": "",
+    "verified_at": "2026-06-08T04:28:19.021353Z"
+  },
+  "pyca/cryptography/issue/12999": {
+    "status": "rejected",
+    "codes": [
+      "removed API workaround",
+      "explicit SM2 support"
+    ],
+    "rationale": "The exchange centers on a previously available OpenSSL API workaround that was removed and the need to implement SM2 support explicitly in cryptography.",
+    "note": "Not a security concern",
+    "verified_at": "2026-06-08T04:29:15.180672Z"
+  },
+  "pyca/cryptography/issue/12969": {
+    "status": "accepted",
+    "codes": [
+      "non-compliant certificate parsing",
+      "serial number deprecation warning"
+    ],
+    "rationale": "The exchange is about handling certificates with serial number 0, specifically whether the deprecation warning should remain while still allowing parsing of non-compliant certificates.",
+    "note": "",
+    "verified_at": "2026-06-08T04:30:47.997749Z"
+  },
+  "pyca/cryptography/issue/12963": {
+    "status": "accepted",
+    "codes": [
+      "FIPS module bug",
+      "OpenSSL version mismatch"
+    ],
+    "rationale": "The answer explains that the failure is caused by a bug in the OpenSSL 3.4 FIPS module and that the newer cryptography optimization assumes capabilities that differ across OpenSSL/provider versions.",
+    "note": "",
+    "verified_at": "2026-06-08T04:32:48.787007Z"
+  },
+  "pyca/cryptography/issue/12949": {
+    "status": "accepted",
+    "codes": [
+      "PBE-MD5-DES support",
+      "unknown key encryption algorithm"
+    ],
+    "rationale": "The question is about restoring support for the insecure PBE-MD5-DES key encryption algorithm after it started failing with an unknown OID error.",
+    "note": "",
+    "verified_at": "2026-06-08T04:34:32.223884Z"
+  },
+  "pyca/cryptography/issue/12920": {
+    "status": "rejected",
+    "codes": [
+      "raw key input format",
+      "base64-encoded key format"
+    ],
+    "rationale": "The exchange is about whether Fernet can accept a raw 32-byte key directly or only a base64-encoded key, and the maintainer confirms the library uses a single base64 key format.",
+    "note": "",
+    "verified_at": "2026-06-08T04:49:42.373374Z"
+  },
+  "pyca/cryptography/issue/12824": {
+    "status": "accepted",
+    "codes": [
+      "private key serialization",
+      "seed-only key format"
+    ],
+    "rationale": "The exchange focuses on whether expanded decapsulation keys should be serializable and confirms that only seed-based key material is needed, not expanded private keys.",
+    "note": "",
+    "verified_at": "2026-06-08T04:55:43.960494Z"
+  },
+  "pyca/cryptography/issue/12822": {
+    "status": "rejected",
+    "codes": [
+      "LibreSSL version compatibility",
+      "portable release dependency"
+    ],
+    "rationale": "The exchange is about build failure on LibreSSL 4.1.0 and the need to wait for a LibreSSL portable release before adding support.",
+    "note": "Not sure if its security issue",
+    "verified_at": "2026-06-08T04:59:36.366309Z"
+  },
+  "pyca/cryptography/issue/12780": {
+    "status": "accepted",
+    "codes": [
+      "reject duplicate CRL entries",
+      "X.509 validation check"
+    ],
+    "rationale": "The exchange centers on duplicate revoked entries or serial numbers in a CRL and whether the X.509 verification process should reject them during validation.",
+    "note": "",
+    "verified_at": "2026-06-08T05:01:46.199598Z"
+  },
+  "pyca/cryptography/issue/12748": {
+    "status": "accepted",
+    "codes": [
+      "zero serial number parsing in CRL",
+      "RFC5280 compliance question"
+    ],
+    "rationale": "The exchange concerns whether accepting an authorityCertSerialNumber of 0 is a parsing bug and whether it violates RFC5280 requirements.",
+    "note": "",
+    "verified_at": "2026-06-08T05:02:28.564185Z"
+  },
+  "pyca/cryptography/issue/12612": {
+    "status": "rejected",
+    "codes": [
+      "compile-time configuration",
+      "OpenSSL provider detection"
+    ],
+    "rationale": "The exchange is about whether a build-time flag is needed to skip RC4 and the maintainer says OpenSSL configuration should be picked up automatically through rust-openssl.",
+    "note": "",
+    "verified_at": "2026-06-08T05:05:20.062403Z"
+  },
+  "pyca/cryptography/issue/12610": {
+    "status": "rejected",
+    "codes": [
+      "no release timeline",
+      "post-quantum algorithm support"
+    ],
+    "rationale": "The exchange asks for an estimate on when PQC support will arrive, and the maintainer explicitly says they do not offer timelines while expressing interest in adding ML-KEM.",
+    "note": "Needs a human judgment to answer",
+    "verified_at": "2026-06-08T05:06:04.369382Z"
+  },
+  "pyca/cryptography/issue/12554": {
+    "status": "rejected",
+    "codes": [
+      "crypto library choice documentation",
+      "openSSL policy statement"
+    ],
+    "rationale": "The exchange is about whether the project documents its underlying crypto library choices, and the maintainer points to an existing statement explaining the project's OpenSSL views.",
+    "note": "",
+    "verified_at": "2026-06-08T05:06:23.405635Z"
+  },
+  "pyca/cryptography/issue/12464": {
+    "status": "accepted",
+    "codes": [
+      "code signing certificate validation",
+      "custom extension policy"
+    ],
+    "rationale": "The exchange is about validating a code-signing certificate chain and using the new ExtensionPolicy API to adapt x509 verification beyond the default server/client cases.",
+    "note": "",
+    "verified_at": "2026-06-08T05:08:03.319985Z"
+  },
+  "pyca/cryptography/issue/12406": {
+    "status": "rejected",
+    "codes": [
+      "PKCS7 bindings misuse",
+      "CMS verification support"
+    ],
+    "rationale": "The exchange centers on whether it is safe to use PKCS#7 bindings directly for CMS message verification and notes that proper CMS verification support is not yet available.",
+    "note": "",
+    "verified_at": "2026-06-08T05:09:02.633649Z"
+  },
+  "pyca/cryptography/issue/12361": {
+    "status": "rejected",
+    "codes": [
+      "StringPrep comparison",
+      "certificate name matching"
+    ],
+    "rationale": "The exchange centers on whether issuer and subject names should be compared using RFC 5280 StringPrep rules rather than byte-for-byte encoded values, and on the resulting certificate verification mismatch.",
+    "note": "Answer appears before the tagged question comment ",
+    "verified_at": "2026-06-08T05:10:40.146037Z"
+  },
+  "pyca/cryptography/issue/12359": {
+    "status": "accepted",
+    "codes": [
+      "TLS intermediates retrieval",
+      "unverified certificate chain"
+    ],
+    "rationale": "The question asks how to obtain the intermediate certificates from a server\u2019s TLS handshake, and the answer points to the unverified chain API as the source.",
+    "note": "",
+    "verified_at": "2026-06-08T05:12:55.616813Z"
+  },
+  "pyca/cryptography/issue/12332": {
+    "status": "accepted",
+    "codes": [
+      "missing attribute regression",
+      "backward compatibility concern"
+    ],
+    "rationale": "The exchange centers on a suspected removal of the `not_valid_after_utc` attribute and asks how downstream libraries can handle the API change in a compatible way.",
+    "note": "A false positive report but it concerns security to some aspect",
+    "verified_at": "2026-06-08T05:14:10.479642Z"
+  },
+  "pyca/cryptography/issue/12301": {
+    "status": "accepted",
+    "codes": [
+      "incorrect type annotation",
+      "certificate public key type"
+    ],
+    "rationale": "The exchange is about a mypy type mismatch caused by the library\u2019s signature for `is_signature_valid`, specifically the accepted certificate public key types.",
+    "note": "",
+    "verified_at": "2026-06-08T05:16:03.164578Z"
+  },
+  "pyca/cryptography/issue/12258": {
+    "status": "rejected",
+    "codes": [
+      "no-chacha build support",
+      "conditional cfg handling"
+    ],
+    "rationale": "The exchange is about building cryptography against OpenSSL configured without ChaCha support and the need to add cfg-based code paths to handle that build configuration.",
+    "note": "",
+    "verified_at": "2026-06-08T05:18:50.918297Z"
   }
 }
