@@ -1939,5 +1939,609 @@
     "rationale": "The exchange is about building cryptography against OpenSSL configured without ChaCha support and the need to add cfg-based code paths to handle that build configuration.",
     "note": "",
     "verified_at": "2026-06-08T05:18:50.918297Z"
+  },
+  "rails/rails/issue/56789": {
+    "status": "rejected",
+    "codes": [
+      "PostgreSQL 19 compatibility",
+      "skip version-specific test"
+    ],
+    "rationale": "The exchange is about a Rails test failing under PostgreSQL 19 because the database no longer allows non-standard string literals, and the proposed resolution is to skip that test on PostgreSQL 19 or newer.",
+    "note": "Doesn't seem like a sec issue",
+    "verified_at": "2026-06-08T05:20:21.818125Z"
+  },
+  "rails/rails/issue/56452": {
+    "status": "accepted",
+    "codes": [
+      "nested transaction rollback",
+      "silenced rollback errors"
+    ],
+    "rationale": "The exchange centers on ActiveRecord::Rollback being swallowed in nested transactions and the resulting silent rollback behavior.",
+    "note": "",
+    "verified_at": "2026-06-08T05:21:41.684681Z"
+  },
+  "rails/rails/issue/56038": {
+    "status": "rejected",
+    "codes": [
+      "duplicate unique index",
+      "redundant token uniqueness"
+    ],
+    "rationale": "The issue centers on a migration generator producing duplicate `unique: true` index options and an extra index for a token column, which are the two main security-relevant concern types expressed.",
+    "note": "Not a sec issue. The issue is a functional bug in the Rails migration generator. ",
+    "verified_at": "2026-06-08T05:24:05.906471Z"
+  },
+  "rails/rails/issue/55886": {
+    "status": "accepted",
+    "codes": [
+      "SSL certificate verification failure",
+      "OpenSSL CRL checking"
+    ],
+    "rationale": "The exchange centers on HTTPS handshakes failing because certificate verification breaks, specifically due to OpenSSL\u2019s CRL verification flags on macOS.",
+    "note": "",
+    "verified_at": "2026-06-08T05:26:33.199220Z"
+  },
+  "rails/rails/issue/55866": {
+    "status": "accepted",
+    "codes": [
+      "SQLite foreign key enforcement",
+      "migration data loss"
+    ],
+    "rationale": "The exchange is about the correct sequencing of SQLite foreign key PRAGMAs during a migration, because getting it wrong can wipe out or corrupt table data.",
+    "note": "",
+    "verified_at": "2026-06-08T05:26:53.778130Z"
+  },
+  "rails/rails/issue/55508": {
+    "status": "accepted",
+    "codes": [
+      "asset requests set-cookie",
+      "middleware ordering issue"
+    ],
+    "rationale": "The exchange centers on asset responses unexpectedly sending a session cookie, and the answer attributes it to Propshaft being mounted after the Rack middleware chain rather than earlier.",
+    "note": "",
+    "verified_at": "2026-06-08T05:28:31.504316Z"
+  },
+  "rails/rails/issue/55185": {
+    "status": "accepted",
+    "codes": [
+      "connection release after transaction"
+    ],
+    "rationale": "The exchange is about preventing a leased database connection from staying checked out after a transaction, especially in nested code, and the answer recommends explicit release_connection or with_connection usage.",
+    "note": "",
+    "verified_at": "2026-06-08T05:32:07.760875Z"
+  },
+  "rails/rails/issue/54752": {
+    "status": "accepted",
+    "codes": [
+      "safely modify blob key modification"
+    ],
+    "rationale": "The exchange is about whether it is safe to change an ActiveStorage blob\u2019s key or filename after creation, and the maintainer explains that blob keys are automatically generated and blobs should remain immutable except for metadata.",
+    "note": "",
+    "verified_at": "2026-06-08T05:35:43.891702Z"
+  },
+  "rails/rails/issue/54595": {
+    "status": "rejected",
+    "codes": [
+      "warden config reset",
+      "failure_app nil"
+    ],
+    "rationale": "The exchange centers on `with_routing` resetting Devise/Warden configuration, specifically causing `failure_app` to become `nil` and trigger internal server errors.",
+    "note": "",
+    "verified_at": "2026-06-08T05:36:12.339566Z"
+  },
+  "rails/rails/issue/54357": {
+    "status": "rejected",
+    "codes": [
+      "intended callback API",
+      "rotation callback usage"
+    ],
+    "rationale": "The exchange clarifies the intended `on_rotation` API for MessageVerifiers and whether the callback should be used via `rotate(...).on_rotation` rather than as an `:on_rotation` option.",
+    "note": "",
+    "verified_at": "2026-06-08T05:36:25.744019Z"
+  },
+  "rails/rails/issue/54139": {
+    "status": "accepted",
+    "codes": [
+      "boot-time ActiveStorage loading in CI/CD pipelines",
+      "assets precompile side effect"
+    ],
+    "rationale": "The exchange centers on ActiveStorage::Blob being loaded during boot, which unexpectedly triggers S3 configuration while running assets:precompile.",
+    "note": "",
+    "verified_at": "2026-06-08T05:44:35.598521Z"
+  },
+  "stripe/stripe-node/issue/1428": {
+    "status": "rejected",
+    "codes": [
+      "Deno version regression",
+      "webhook payload validation"
+    ],
+    "rationale": "The exchange centers on a Deno compatibility regression that breaks the library in older Deno versions and on restoring webhook event parsing so the payload can be validated.",
+    "note": "Not a security question",
+    "verified_at": "2026-06-08T05:45:04.559025Z"
+  },
+  "stripe/stripe-node/issue/1294": {
+    "status": "accepted",
+    "codes": [
+      "webhook signature verification",
+      "raw request body access"
+    ],
+    "rationale": "The exchange centers on preserving and reading the exact raw request body in NextJS so Stripe can verify the webhook signature without the payload being altered.",
+    "note": "",
+    "verified_at": "2026-06-08T05:46:47.032795Z"
+  },
+  "stripe/stripe-node/issue/1264": {
+    "status": "accepted",
+    "codes": [
+      "PCI compliance concerns",
+      "TypeScript type omission"
+    ],
+    "rationale": "The exchange focuses on avoiding raw card typing because of higher PCI compliance requirements, and on the missing TypeScript support for the `card` payment_method_data shape.",
+    "note": "",
+    "verified_at": "2026-06-08T05:53:48.900976Z"
+  },
+  "stripe/stripe-node/issue/1254": {
+    "status": "accepted",
+    "codes": [
+      "webhook signature verification",
+      "json middleware interference"
+    ],
+    "rationale": "The exchange centers on Stripe webhook signature verification failing because the endpoint needs the unparsed raw request body, but express.json() was converting it to JSON before verification.",
+    "note": "",
+    "verified_at": "2026-06-08T05:55:35.794452Z"
+  },
+  "stripe/stripe-node/issue/1224": {
+    "status": "accepted",
+    "codes": [
+      "no built-in redaction"
+    ],
+    "rationale": "The exchange centers on whether the client should receive only the client secret versus more PaymentIntent data, and on the lack of a built-in redaction function in stripe-node.",
+    "note": "",
+    "verified_at": "2026-06-08T05:56:34.546587Z"
+  },
+  "stripe/stripe-node/issue/1214": {
+    "status": "rejected",
+    "codes": [
+      "raw card details",
+      "client-side card token"
+    ],
+    "rationale": "The exchange is about an API call failing because card details were sent directly for a connected account, and the fix is to collect card data client-side and use a Stripe.js token instead.",
+    "note": "",
+    "verified_at": "2026-06-08T05:59:22.477703Z"
+  },
+  "stripe/stripe-node/issue/1161": {
+    "status": "accepted",
+    "codes": [
+      "server-side card details",
+      "PCI compliance requirements"
+    ],
+    "rationale": "The exchange is about whether raw card data can be sent from the server and the security/compliance implications of doing so, specifically the higher PCI requirements.",
+    "note": "",
+    "verified_at": "2026-06-08T06:00:03.533849Z"
+  },
+  "stripe/stripe-node/issue/1110": {
+    "status": "accepted",
+    "codes": [
+      "rate-limit retry handling",
+      "underlying problem masking"
+    ],
+    "rationale": "The exchange is about whether 429 rate-limit responses should be retried automatically in the SDK, and the maintainer argues that doing so would hide the real application issue.",
+    "note": "",
+    "verified_at": "2026-06-08T06:02:28.675078Z"
+  },
+  "stripe/stripe-node/issue/1085": {
+    "status": "rejected",
+    "codes": [
+      "test card tokens",
+      "integration test scenarios"
+    ],
+    "rationale": "The exchange is about how to use Stripe\u2019s built-in test tokens like `tok_visa` and `tok_chargeDeclined` instead of manually specifying card numbers for server-side testing.",
+    "note": "",
+    "verified_at": "2026-06-08T06:03:07.992617Z"
+  },
+  "stripe/stripe-node/issue/1083": {
+    "status": "rejected",
+    "codes": [
+      "3D Secure test status",
+      "missing pending_setup_intent object"
+    ],
+    "rationale": "The exchange centers on 3D Secure test cards returning an unexpected Setup Intent status and on `pending_setup_intent` containing only an ID instead of the full object.",
+    "note": "",
+    "verified_at": "2026-06-08T06:04:15.115716Z"
+  },
+  "stripe/stripe-node/issue/1067": {
+    "status": "accepted",
+    "codes": [
+      "webhook signature verification",
+      "wrong secret key"
+    ],
+    "rationale": "The exchange is about a Stripe webhook signature mismatch during event construction, and the answer identifies that the wrong credential was used in the third argument instead of the webhook signing secret.",
+    "note": "",
+    "verified_at": "2026-06-08T06:04:42.836548Z"
+  },
+  "stripe/stripe-node/issue/1043": {
+    "status": "accepted",
+    "codes": [
+      "webhook signature verification",
+      "raw request body"
+    ],
+    "rationale": "The exchange is about Stripe webhook verification failing because the signed payload does not match, with emphasis on needing the raw request body for signature checking.",
+    "note": "",
+    "verified_at": "2026-06-08T06:05:56.632205Z"
+  },
+  "stripe/stripe-node/issue/1006": {
+    "status": "rejected",
+    "codes": [
+      "webhook signature mismatch",
+      "middleware body parsing"
+    ],
+    "rationale": "The exchange centers on a webhook signature verification failure caused by Express JSON/urlencoded middleware and the need to use raw body parsing instead.",
+    "note": "",
+    "verified_at": "2026-06-08T06:06:41.598864Z"
+  },
+  "stripe/stripe-node/issue/997": {
+    "status": "rejected",
+    "codes": [
+      "raw request body",
+      "webhook signature validation"
+    ],
+    "rationale": "The question is about how to obtain the raw request payload in a Cloudflare Worker so Stripe webhook signatures can be validated successfully.",
+    "note": "",
+    "verified_at": "2026-06-08T06:07:58.509431Z"
+  },
+  "stripe/stripe-node/issue/989": {
+    "status": "accepted",
+    "codes": [
+      "raw request body",
+      "parsed webhook payload"
+    ],
+    "rationale": "The exchange centers on Stripe webhook signature verification failing because the event body was parsed instead of passed as the raw request body to constructEvent.",
+    "note": "",
+    "verified_at": "2026-06-08T06:08:43.520748Z"
+  },
+  "stripe/stripe-node/issue/935": {
+    "status": "accepted",
+    "codes": [
+      "wrong OAuth code parameter",
+      "invalid JSON response"
+    ],
+    "rationale": "The exchange centers on using the Connect client ID instead of the OAuth authorization code in `stripe.oauth.token`, which led to an `Invalid JSON received from the Stripe API` error.",
+    "note": "",
+    "verified_at": "2026-06-08T06:10:07.832707Z"
+  },
+  "stripe/stripe-node/issue/932": {
+    "status": "accepted",
+    "codes": [
+      "raw request body",
+      "webhook signature verification"
+    ],
+    "rationale": "The exchange centers on Stripe webhook verification failing because the framework is passing parsed JSON instead of the raw request body needed by constructEvent.",
+    "note": "",
+    "verified_at": "2026-06-08T06:11:22.935301Z"
+  },
+  "urllib3/urllib3/issue/3745": {
+    "status": "accepted",
+    "codes": [
+      "redirect body decompression",
+      "attacker-controlled response buffering"
+    ],
+    "rationale": "The focal exchange is about whether redirect handling that drains and decompresses response bodies is a security issue, specifically involving attacker-controlled compressed bodies being fully buffered.",
+    "note": "While the question is valid, the maintainer did not acknowledge it as a security question. We may still keep it to extract some valid questions.",
+    "verified_at": "2026-06-08T06:17:21.205969Z"
+  },
+  "urllib3/urllib3/issue/3665": {
+    "status": "accepted",
+    "codes": [
+      "SSL certificate verification failure"
+    ],
+    "rationale": "The issue centers on a certificate verification error behind a corporate proxy, and the answer proposes a workaround by turning off Python 3.13's strict X509 verification flags in the SSL context.",
+    "note": "",
+    "verified_at": "2026-06-08T06:17:48.619435Z"
+  },
+  "urllib3/urllib3/issue/3632": {
+    "status": "accepted",
+    "codes": [
+      "HTTPS proxy handshake failure",
+      "custom proxy SSL context"
+    ],
+    "rationale": "The issue centers on an SSL handshake failure when using an HTTPS proxy after upgrading urllib3, and the answer points to configuring a custom proxy SSL context via `proxy_ssl_context`.",
+    "note": "",
+    "verified_at": "2026-06-08T06:19:42.477720Z"
+  },
+  "urllib3/urllib3/issue/3608": {
+    "status": "accepted",
+    "codes": [
+      "TPM/HSM private keys",
+      "mTLS client authentication"
+    ],
+    "rationale": "The issue is about using TPM/HSM-stored private keys for a client certificate in an mTLS handshake, specifically how to supply or reference the key for authentication.",
+    "note": "",
+    "verified_at": "2026-06-08T06:21:27.386230Z"
+  },
+  "urllib3/urllib3/issue/3542": {
+    "status": "rejected",
+    "codes": [
+      "macOS Python upgrade",
+      "disable TLS warnings"
+    ],
+    "rationale": "The exchange centers on resolving the warning by upgrading the system Python on macOS and, as an alternative, suppressing urllib3 TLS warnings.",
+    "note": "",
+    "verified_at": "2026-06-08T06:21:49.439772Z"
+  },
+  "urllib3/urllib3/issue/3511": {
+    "status": "rejected",
+    "codes": [
+      "conda brotli dependency",
+      "compressed request parsing"
+    ],
+    "rationale": "The exchange centers on conda pulling in brotli-python as an extra dependency and the resulting failure to parse compressed Sentry requests.",
+    "note": "Maintainer said they don't track library distributed by conda",
+    "verified_at": "2026-06-08T06:23:38.473731Z"
+  },
+  "urllib3/urllib3/issue/3465": {
+    "status": "accepted",
+    "codes": [
+      "SSL hostname mismatch error"
+    ],
+    "rationale": "The exchange centers on a certificate hostname mismatch for an S3 bucket name with an underscore and a workaround to bypass or replace hostname verification using urllib3 settings.",
+    "note": "",
+    "verified_at": "2026-06-08T06:25:16.086333Z"
+  },
+  "urllib3/urllib3/issue/3432": {
+    "status": "accepted",
+    "codes": [
+      "FIPS mode incompatibility/compliance",
+      "lazy hash import"
+    ],
+    "rationale": "The issue is about urllib3 breaking when md5 is unavailable in FIPS-enabled Python, and the proposed fix is to defer or dynamically resolve hash functions instead of importing md5 at module load.",
+    "note": "",
+    "verified_at": "2026-06-08T06:27:07.217533Z"
+  },
+  "urllib3/urllib3/issue/3418": {
+    "status": "rejected",
+    "codes": [
+      "GitHub Actions version pinning",
+      "hash-based action locking"
+    ],
+    "rationale": "The exchange is about why two workflow jobs use different pinned versions of a GitHub Action and what tool is used to pin actions to specific commit hashes.",
+    "note": "Doesn't state any security concern explicitly",
+    "verified_at": "2026-06-08T06:28:16.751038Z"
+  },
+  "urllib3/urllib3/issue/3366": {
+    "status": "rejected",
+    "codes": [
+      "CI test failures",
+      "TLS certificate change"
+    ],
+    "rationale": "The thread is about failing continuous integration tests on Python 3.13.0a5, traced to a certificate-related TLS change in CPython that breaks urllib3's test suite.",
+    "note": "Not a sec question",
+    "verified_at": "2026-06-08T06:28:55.509047Z"
+  },
+  "urllib3/urllib3/issue/3268": {
+    "status": "rejected",
+    "codes": [
+      "OpenSSL error message change",
+      "regex-based error matching"
+    ],
+    "rationale": "The exchange centers on a new OpenSSL 3.2.0 SSL error string breaking tests and the fix is to extend the regex so the code recognizes and maps that message.",
+    "note": "Not a sec question",
+    "verified_at": "2026-06-08T06:30:04.987507Z"
+  },
+  "urllib3/urllib3/issue/3201": {
+    "status": "rejected",
+    "codes": [
+      "DH_KEY_TOO_SMALL SSL error",
+      "multiprocessing SSL workaround"
+    ],
+    "rationale": "The exchange centers on a specific TLS handshake failure caused by weak DH parameters and on finding a workaround that preserves requests in multiprocessing after upgrading urllib3.",
+    "note": "Not a sec issue",
+    "verified_at": "2026-06-08T06:33:01.933247Z"
+  },
+  "urllib3/urllib3/issue/3133": {
+    "status": "rejected",
+    "codes": [
+      "OpenSSL version requirement",
+      "unsupported OpenSSL dependency"
+    ],
+    "rationale": "The exchange centers on urllib3 v2.0 requiring OpenSSL 1.1.1+ and the security implications of using an older, unsupported OpenSSL version.",
+    "note": "",
+    "verified_at": "2026-06-08T06:33:38.019282Z"
+  },
+  "urllib3/urllib3/issue/3111": {
+    "status": "rejected",
+    "codes": [
+      "OpenSSL version incompatibility",
+      "TLS handshake failure"
+    ],
+    "rationale": "The issue centers on failing SSL fingerprint tests caused by an unsupported protocol error during the TLS handshake, which the answer attributes to OpenSSL version behavior and a later urllib3 fix.",
+    "note": "OP reported they cant reproduce",
+    "verified_at": "2026-06-08T06:37:37.046895Z"
+  },
+  "urllib3/urllib3/issue/3102": {
+    "status": "accepted",
+    "codes": [
+      "OpenSSL version mismatch",
+      "unsupported Python version"
+    ],
+    "rationale": "The exchange centers on an ImportError caused by urllib3 requiring a newer OpenSSL than the one bundled with the user's Python, and the maintainer points to Python 3.7 being end-of-life and needing an upgrade.",
+    "note": "",
+    "verified_at": "2026-06-08T06:38:05.413443Z"
+  },
+  "urllib3/urllib3/issue/3062": {
+    "status": "rejected",
+    "codes": [
+      "raw malformed URLs",
+      "percent-encoding invalid characters"
+    ],
+    "rationale": "The exchange is about whether urllib3 can send raw or malformed URLs without transformation, and the maintainer explains that invalid characters are always percent-encoded.",
+    "note": "Not really a sec issue",
+    "verified_at": "2026-06-08T06:39:31.482247Z"
+  },
+  "urllib3/urllib3/issue/3053": {
+    "status": "rejected",
+    "codes": [
+      "request body encoding",
+      "Content-Length mismatch"
+    ],
+    "rationale": "The exchange centers on how string request bodies are encoded differently in urllib3 2.0 versus 1.26.x, and how that change alters the computed Content-Length.",
+    "note": "Not a sec issue",
+    "verified_at": "2026-06-08T06:41:22.438750Z"
+  },
+  "urllib3/urllib3/issue/3031": {
+    "status": "accepted",
+    "codes": [
+      "TLS handshake failure",
+      "cipher suite mismatch"
+    ],
+    "rationale": "The issue centers on a failed TLS handshake when the client and server have no overlapping cipher suites, even with verify disabled.",
+    "note": "",
+    "verified_at": "2026-06-08T06:42:12.473767Z"
+  },
+  "urllib3/urllib3/issue/3020": {
+    "status": "rejected",
+    "codes": [
+      "LibreSSL compatibility warning",
+      "macOS system Python"
+    ],
+    "rationale": "The exchange is about urllib3\u2019s behavior with macOS\u2019s system Python compiled against LibreSSL, and the maintainer frames it as a warning rather than a blocking incompatibility.",
+    "note": "Not a sec question",
+    "verified_at": "2026-06-08T06:43:42.783819Z"
+  },
+  "urllib3/urllib3/issue/3016": {
+    "status": "rejected",
+    "codes": [
+      "OpenSSL version incompatibility",
+      "Amazon Linux package install"
+    ],
+    "rationale": "The exchange centers on urllib3 failing with an older OpenSSL version and the workaround is to install the OpenSSL 1.1 packages on Amazon Linux 2.",
+    "note": "",
+    "verified_at": "2026-06-08T06:44:23.006933Z"
+  },
+  "urllib3/urllib3/issue/3015": {
+    "status": "rejected",
+    "codes": [
+      "missing import symbol",
+      "warning turned error"
+    ],
+    "rationale": "The issue is about an import failing because `SubjectAltNameWarning` is no longer exposed, and the maintainer explains that in urllib3 2.0 the warning was removed by changing it into an error.",
+    "note": "",
+    "verified_at": "2026-06-08T06:46:18.369676Z"
+  },
+  "urllib3/urllib3/issue/2982": {
+    "status": "accepted",
+    "codes": [
+      "POST retry exclusion",
+      "non-idempotent method"
+    ],
+    "rationale": "The exchange is about why POST is not included in default retry behavior, and the answer grounds that in POST being non-idempotent and therefore not safely retried by default.",
+    "note": "Interesting case where OP wanted to contribute but maintainer rejected since the idea was not safe",
+    "verified_at": "2026-06-08T06:47:38.015469Z"
+  },
+  "urllib3/urllib3/issue/2957": {
+    "status": "accepted",
+    "codes": [
+      "custom CA bundle",
+      "environment variable configuration"
+    ],
+    "rationale": "The exchange is about trusting a local certificate authority bundle for SSL verification and specifically asks whether an environment variable can be used to configure that CA path.",
+    "note": "Needs internet access since the answer was quoted from stackoverflow",
+    "verified_at": "2026-06-08T06:49:52.223151Z"
+  },
+  "urllib3/urllib3/issue/2955": {
+    "status": "rejected",
+    "codes": [
+      "client socket None return",
+      "documentation-matching behavior"
+    ],
+    "rationale": "The exchange is about whether SSLSocket.shared_ciphers() returning None on client sockets is expected behavior and whether the implementation should match the SSL documentation.",
+    "note": "",
+    "verified_at": "2026-06-08T06:50:09.731390Z"
+  },
+  "urllib3/urllib3/issue/2920": {
+    "status": "accepted",
+    "codes": [
+      "schemeless URL deprecation",
+      "parsing ambiguity"
+    ],
+    "rationale": "The exchange focuses on whether to deprecate or remove support for schemeless URLs because they create inconsistent URL parsing across libraries.",
+    "note": "",
+    "verified_at": "2026-06-08T06:51:25.792635Z"
+  },
+  "urllib3/urllib3/issue/2915": {
+    "status": "rejected",
+    "codes": [
+      "TLS cipher mismatch",
+      "Docker-specific 403"
+    ],
+    "rationale": "The exchange centers on a 403 caused by urllib3 using different TLS ciphers than the server accepts, with the behavior appearing only in the Docker environment.",
+    "note": "",
+    "verified_at": "2026-06-08T06:52:39.909954Z"
+  },
+  "urllib3/urllib3/issue/2893": {
+    "status": "rejected",
+    "codes": [
+      "exception pickling failure",
+      "process pool crash"
+    ],
+    "rationale": "The exchange centers on an InvalidChunkLength exception that cannot be pickled/unpickled and the resulting BrokenProcessPool crash in a multiprocessing workflow.",
+    "note": "Not a sec issue",
+    "verified_at": "2026-06-08T06:55:59.761410Z"
+  },
+  "urllib3/urllib3/issue/2886": {
+    "status": "rejected",
+    "codes": [
+      "Windows certificate store",
+      "CA cert file path"
+    ],
+    "rationale": "The question is about using Windows system certificates with PoolManager and the mismatch between a certificate store list and the file-path format expected by ca_certs.",
+    "note": "",
+    "verified_at": "2026-06-08T06:56:42.264099Z"
+  },
+  "urllib3/urllib3/issue/2809": {
+    "status": "accepted",
+    "codes": [
+      "suppress warnings in dev environment"
+    ],
+    "rationale": "The question asks for a way to temporarily disable one specific warning for a single call, and the answer points to using a context manager to control warning suppression.",
+    "note": "",
+    "verified_at": "2026-06-08T06:57:14.307432Z"
+  },
+  "urllib3/urllib3/issue/2802": {
+    "status": "accepted",
+    "codes": [
+      "invalid URL characters (prone to SSRF)",
+      "percent-encode invalid input"
+    ],
+    "rationale": "The exchange is about handling invalid characters in a URL reg-name and deciding whether they should be rejected or percent-encoded during parsing.",
+    "note": "",
+    "verified_at": "2026-06-08T06:59:30.362942Z"
+  },
+  "urllib3/urllib3/issue/2775": {
+    "status": "accepted",
+    "codes": [
+      "proxy bypass reuse",
+      "CPython bug workaround"
+    ],
+    "rationale": "The exchange is about urllib3 using auto_open to prevent proxy-bypass socket reuse, and the answer explains it was originally a workaround for a CPython host/port mutation bug.",
+    "note": "",
+    "verified_at": "2026-06-08T07:01:37.656973Z"
+  },
+  "urllib3/urllib3/issue/2700": {
+    "status": "rejected",
+    "codes": [
+      "deprecated dependency removal",
+      "version specifier preservation"
+    ],
+    "rationale": "The exchange is about updating package requirements by removing the deprecated `[secure]` extra while keeping the existing urllib3 version constraints intact.",
+    "note": "Not a sec issue, it just intends to notify some packages",
+    "verified_at": "2026-06-08T07:02:39.574447Z"
+  },
+  "urllib3/urllib3/issue/2680": {
+    "status": "rejected",
+    "codes": [
+      "deprecated extra removal",
+      "dependency upgrade guidance"
+    ],
+    "rationale": "The exchange is about removing the `urllib3[secure]` extra and related pyopenssl usage, while giving concrete upgrade and uninstall steps to stop the warning.",
+    "note": "",
+    "verified_at": "2026-06-08T07:04:26.922518Z"
   }
 }
