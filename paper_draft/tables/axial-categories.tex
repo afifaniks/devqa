@@ -1,0 +1,28 @@
+\begin{table*}[t]
+\caption{\emph{Preliminary, author-proposed} axial grouping of the open
+  codes into candidate higher-level categories. \textbf{Pairs} counts verified
+  pairs touching the category (a two-code pair may fall in two categories, so
+  the column sums to more than \dnum{158}). This grouping is a working draft to be
+  finalized by axial coding with an independent second coder and inter-rater
+  agreement; category names and boundaries are not yet fixed.}
+\label{tab:axial}
+\centering
+\footnotesize
+\begin{tabular}{l r p{0.62\linewidth}}
+\toprule
+\textbf{Candidate category} & \textbf{Pairs} & \textbf{Representative open codes} \\
+\midrule
+HTTP Request and Response Security & \dnum{40} & raw request body, credential leakage on redirect, CSRF token generation, double submit cookie, automatic redirect handling, absolute URL bypass \\
+TLS and Certificate Validation & \dnum{38} & SSL certificate verification failure, OpenSSL version mismatch, ASN.1 parsing error, TLS SNI hostname handling, certificate verification failure, stricter SSL verification \\
+Dependency and Supply-Chain Security & \dnum{26} & transitive dependency vulnerability, transitive dependency CVE, compromised package versions, dependency version update, prepare script install failure, false positive dependency vulnerability \\
+Authentication and Session Integrity & \dnum{17} & webhook signature verification, unsigned JWT handling, question regarding jwt signing, signature verification bypass, token blacklist, JWT logout invalidation \\
+Cryptographic Key and Algorithm Use & \dnum{15} & SM2 key algorithm mismatch, RSA key length requirement, cryptographic algorithm default mismatch, post-quantum support roadmap, encrypted RSA key loading, silent hash digest change \\
+Input Handling and Denial of Service & \dnum{15} & memory exhaustion DoS, unsafe boundary generation, ReDoS vulnerability, ReDoS protection, regex route matching, array index limit \\
+Vulnerability Report Triage & \dnum{14} & false positive report, scanner false positive, false positive vulnerability report, false vulnerability report, vulnerability database error, advisory database update \\
+Patch, Release, and Compliance & \dnum{14} & fixed version announcement, SSRF vulnerability backport, safe version guidance, patched version marking, TLS deprecation support, SSRF fix availability \\
+Secure Configuration and Defaults & \dnum{13} & deprecated URL parsing, opt-in security setting, missing config types, android network security config, initializer order misconfiguration, missing rate limiting \\
+Platform and Version Compatibility & \dnum{10} & RAT on machine, issue tracker reference, local version parsing, Windows Python compatibility, permission denied error, missing attribute regression \\
+Concurrency and Data Integrity & \dnum{7} & global state mutation, thread safety data race, shared block cache, deadlocked transaction state, writes outside transaction, thread safety issue \\
+\bottomrule
+\end{tabular}
+\end{table*}

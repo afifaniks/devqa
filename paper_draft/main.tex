@@ -1,0 +1,61 @@
+\documentclass[10pt,conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+% The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs}
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+% ── Provisional numeric values ───────────────────────────────────────────────
+% Wrap every tweakable statistic in \dnum{...}. While \shownumstrue, these
+% render highlighted (colored) so they are easy to find and update as the data
+% grows. To remove all highlighting for a clean PDF, flip to \shownumsfalse.
+\newif\ifshownums\shownumstrue
+\newcommand{\dnum}[1]{\ifshownums\textcolor{red!75!black}{\textbf{#1}}\else#1\fi}
+
+\newcommand{\researchquestion}[2]{%
+  \vspace{0.4em}
+  \noindent\colorbox{gray!15}{%
+    \parbox{\dimexpr\linewidth-2\fboxsep}{%
+      \vspace{0.3em}%
+      \textbf{#1:} #2%
+      \vspace{0.3em}%
+    }%
+  }%
+  \vspace{0.4em}%
+}
+
+\begin{document}
+
+\title{SecDevQA: Can LLM Agents Answer Security Questions Developers Ask?}
+
+\author{
+\IEEEauthorblockN{Anonymous Authors}
+}
+\maketitle
+
+\begin{abstract}
+Developers routinely ask security questions in open-source project forums: whether a reported vulnerability affects their specific usage, which version introduced a regression, or whether a proposed patch is sufficient. Answering such questions often requires consulting multiple artifact types — source code, commit history, CVE and GHSA advisories, dependency manifests, or external documentation — yet it is unclear which artifact types are necessary for which categories of question, or how well current LLMs and agents perform under realistic context constraints. We present SecDevQA, a benchmark of [N] developer security question-answer pairs mined from security-labeled issues, advisory discussions, and CVE-linked threads across [K] open-source GitHub repositories. We restrict the benchmark to pairs where the maintainer's answer contains at least one externally verifiable factual claim — a CVE or GHSA identifier, fixed version number, fix commit SHA, or advisory record. These hard facts anchor automated grading: an LLM judge is prompted to verify whether a model's response correctly states each specific factual claim, a narrowly scoped task whose reliability can be directly validated by human spot-check against the structured ground truth. Each pair is annotated with the artifact types the maintainer's answer drew on (source code, commit history, advisory records, dependency manifests, documentation) and assigned to an inductively derived question category. We evaluate frontier and open-weight LLMs and coding agents on SecDevQA under three controlled context conditions — no context, single-artifact, and multi-artifact — and measure accuracy per question category and per artifact type. Our main empirical contribution is a map of which artifact types are necessary to answer which categories of developer security questions, and the marginal accuracy gain each type provides.
+
+\end{abstract}
+
+\begin{IEEEkeywords}
+component, formatting, style, styling, insert
+\end{IEEEkeywords}
+
+\input{sections/introduction}
+\input{sections/benchmark-construction}
+\input{sections/experimental-setup}
+\input{sections/threats-to-validity}
+\input{sections/related-work}
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}

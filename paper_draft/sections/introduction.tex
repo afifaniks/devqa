@@ -1,0 +1,101 @@
+\section{Introduction}
+\label{sec:intro}
+
+Developers regularly confront security decisions in the course of building and
+maintaining their own software. They need to know whether a freshly disclosed
+vulnerability in a dependency actually affects the way they use it, which release
+first introduced a regression, whether a proposed patch is sufficient, or which
+version is safe to upgrade to. When the answer is not obvious, they ask---on
+issue trackers, in advisory discussions, and on CVE-linked threads of the
+projects they depend on. How developers resolve such questions has direct
+consequences for the security of the software they ship: a substantial body of
+usable-security research shows that developers lean heavily on online information
+sources when solving security problems, and that the quality of those sources
+measurably shapes the security of the resulting code. Acar
+et al.\ found that only a small fraction of the Stack~Overflow threads developers
+consult for security tasks contain secure advice~\cite{acar2016information}, and
+Fischer et al.\ traced insecure snippets from such threads into hundreds of
+thousands of shipped applications~\cite{fischer2017stackoverflow}. Getting
+trustworthy answers to developer security questions is therefore not a
+convenience problem but a software-security problem.
+
+These questions are also distinctive in what it takes to answer them. Unlike
+general code-comprehension questions, a developer security question typically
+cannot be resolved from the repository's source alone. Answering ``does
+CVE-2022-25883 affect me, and what do I upgrade to?'' requires cross-referencing
+artifacts that live partly outside the codebase: the CVE or GHSA advisory and its
+affected-version ranges, the fix commit or pull request, the project's dependency
+manifest, and sometimes an upstream RFC or registry. Project maintainers answer
+these questions precisely because they know which artifact to consult---and,
+crucially, \emph{different questions demand different artifacts}. A question about
+a transitive dependency is answered from the advisory and the manifest; a
+question about a TLS validation change is answered from the source and the commit
+history. Which artifact types are necessary for which kinds of security question
+is, to date, an unmeasured empirical question.
+
+Large language models (LLMs) and coding agents are increasingly the first
+responders to such questions, yet no existing benchmark evaluates them on the
+security questions developers actually ask, or on the artifact dependence those
+questions exhibit. Repository-level QA benchmarks---SWE-QA~\cite{sweqa2026},
+CoReQA~\cite{coreqa2025}, and StackRepoQA~\cite{stackrepoqa2025}---treat developer
+questions uniformly and consider only code-internal context; they neither isolate
+security questions nor model the external advisory artifacts those questions
+depend on. (StackRepoQA further reports that much of the apparent accuracy on
+such tasks reflects memorization of public threads rather than
+reasoning~\cite{stackrepoqa2025}, a contamination risk any security-QA benchmark
+must confront.) Security-specific LLM benchmarks, in turn, measure a different
+task: SecVulEval~\cite{secvuleval2025} and CodeSecEval~\cite{codeseceval2024}
+evaluate vulnerability detection and secure code generation,
+SecureAgentBench~\cite{secureagentbench2025} evaluates whether agents write
+secure patches, and SecQA~\cite{secqa2023} tests textbook security knowledge via
+multiple-choice questions. None of them studies real, free-text developer
+security questions, and none treats artifact context as a controlled variable.
+
+We close this gap with \textbf{SecDevQA}, a benchmark of real developer security
+question--answer pairs mined from security-labeled issues, advisory discussions,
+and CVE-linked threads across open-source GitHub repositories. Two design choices
+make the benchmark both rigorous and analytically useful. First, we restrict the
+benchmark to \emph{hard-verifiable} pairs: pairs whose maintainer answer states
+at least one externally checkable fact---a CVE or GHSA identifier, a fixed version
+number, a fix commit or pull request, or an advisory URL. These hard facts anchor
+automated grading, turning the otherwise subjective task of scoring a free-text
+answer into the narrowly scoped task of checking whether a model's response
+correctly conveys a named, verifiable claim---a judgment a human can validate in
+seconds. Second, every pair is annotated with the artifact types its answer drew
+on, so that artifact context can be supplied to models as a controlled
+experimental condition rather than left implicit.
+
+This design lets us pursue three questions that prior work cannot. We first
+derive, by inductive open coding of the mined corpus, a taxonomy of developer
+security question categories and an empirical map of which artifact types
+maintainers draw on to answer each---findings about developer security practice
+that stand independently of any model evaluation (RQ1). We then measure how
+accurately frontier LLMs, open-weight LLMs, and coding agents answer these
+questions, broken down by category (RQ2). Finally, and centrally, we ask which
+artifact types are \emph{necessary} to answer which categories of question, by
+supplying artifacts as context under controlled conditions and measuring each
+type's marginal contribution (RQ3); we further examine whether autonomous agents
+retrieve the artifacts they actually need (RQ4). Our guiding hypothesis is that
+context dependence is category-specific: an artifact type that is essential for
+one category of security question yields little benefit for another---a result
+with direct implications for how retrieval-augmented and agentic security tools
+should be built.
+
+\noindent\textbf{Contributions.} This paper makes the following contributions:
+\begin{itemize}
+  \item \textbf{SecDevQA}, a benchmark of real, hard-verifiable developer
+        security Q\&A pairs mined from open-source repositories, each annotated
+        with the artifact types needed to answer it and a structured record of
+        its verifiable hard facts (\S\ref{sec:benchmark-construction}).
+  \item A fact-grounded grading protocol that exploits hard facts to make
+        LLM-judge scoring narrowly scoped and human-validatable
+        (\S\ref{sec:benchmark-construction}).
+  \item An inductively derived taxonomy of developer security question
+        categories and an empirical category-to-artifact map, both
+        independent of any LLM evaluation (\S\ref{sec:open-coding}).
+  \item An evaluation of frontier and open-weight LLMs and coding agents under
+        controlled context conditions, quantifying the marginal, category-specific
+        contribution of each artifact type (\S\ref{sec:experimental-setup}).
+  \item A public release of the benchmark, the mining and extraction pipeline,
+        and the evaluation harness.
+\end{itemize}

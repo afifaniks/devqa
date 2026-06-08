@@ -1,0 +1,25 @@
+\begin{table}[t]
+\caption{Artifact types the maintainer's answer drew on, across the \dnum{158}
+  verified pairs (a pair may draw on several). Annotations are LLM-extracted and
+  spot-checked; they drive the context conditions of the evaluation.}
+\label{tab:artifacts}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{l r r}
+\toprule
+\textbf{Artifact type} & \textbf{Pairs} & \textbf{\%} \\
+\midrule
+documentation (docs, README, changelog) & \dnum{126} & \dnum{79.7} \\
+code (repository source) & \dnum{92} & \dnum{58.2} \\
+advisory (GHSA / OSV / project advisory) & \dnum{35} & \dnum{22.2} \\
+pr\_data (PR diff or discussion) & \dnum{23} & \dnum{14.6} \\
+issue\_tracker (linked issues) & \dnum{23} & \dnum{14.6} \\
+dependency\_manifest & \dnum{19} & \dnum{12.0} \\
+external\_reference (RFC, registry, etc.) & \dnum{14} & \dnum{8.9} \\
+commit\_history (log, blame, commit) & \dnum{14} & \dnum{8.9} \\
+cve\_cwe\_db (NVD/CWE/CVSS) & \dnum{7} & \dnum{4.4} \\
+ci\_logs & \dnum{2} & \dnum{1.3} \\
+\bottomrule
+\end{tabular}
+\end{table}

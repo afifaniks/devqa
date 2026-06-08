@@ -1,0 +1,207 @@
+\section{Benchmark Construction}
+\label{sec:benchmark-construction}
+
+SecDevQA is built in four stages: (i)~systematic selection of source
+repositories from the GitHub Advisory Database, (ii)~LLM-assisted detection and
+extraction of candidate security question--answer (Q\&A) pairs from issue and
+discussion threads, (iii)~manual verification of each candidate pair, and
+(iv)~inductive open coding of the verified pairs toward a taxonomy of developer
+security questions. The numbers reported below describe the corpus at the
+current stage of construction; the benchmark is being actively expanded along
+the same protocol, so absolute counts will grow while the procedure remains
+fixed.
+
+\subsection{Repository Selection}
+\label{sec:repo-selection}
+
+To avoid hand-picking projects in a way that could bias the question
+distribution, we draw the source repositories from an external, independently
+maintained catalogue of security activity: the GitHub Advisory Database. We
+clone the database (snapshot \dnum{2026-06-04}; \dnum{31{,}213} reviewed
+advisories) and parse every reviewed GHSA entry, extracting the GitHub
+repositories referenced by each advisory and, for each repository, the number of
+advisories that carry a documented fix version. This yields \dnum{9{,}102}
+distinct repositories that have appeared in at least one reviewed advisory.
+
+We then apply three pre-specified filters intended to keep repositories that are
+both security-active and practically minable:
+
+\begin{enumerate}
+  \item \textbf{Security activity:} at least \dnum{10} advisories with a
+        documented fix version, so that the project has a substantive, externally
+        catalogued security history;
+  \item \textbf{Popularity:} at least \dnum{1{,}000} GitHub stars, as a proxy for
+        a real user base whose developers ask questions;
+  \item \textbf{Maintenance:} a push within the last \dnum{24} months and not
+        archived, so that threads reflect current practice.
+\end{enumerate}
+
+Applying the advisory-count filter leaves \dnum{440} repositories; adding the
+popularity and maintenance filters leaves \dnum{344}. To enforce language and
+ecosystem diversity rather than concentrating on whichever ecosystem happens to
+have the most advisories, we rank the survivors by fix-bearing advisory count
+within each package ecosystem (npm, PyPI, RubyGems, etc.) and retain the top
+repositories per ecosystem, producing a diverse candidate pool spanning
+\dnum{ten} ecosystems.
+
+From this pool we are mining repositories incrementally. The current corpus
+comprises the \dnum{ten} repositories in Table~\ref{tab:repos}, spanning
+\dnum{three} languages (Python, JavaScript, Ruby) and a range of
+security-sensitive domains:
+HTTP clients (\texttt{requests}, \texttt{urllib3}, \texttt{axios}),
+cryptography (\texttt{pyca/cryptography}), image processing (\texttt{Pillow}),
+web frameworks (\texttt{express}, \texttt{fastapi}, \texttt{rails}),
+authentication (\texttt{node-jsonwebtoken}), and payment integration
+(\texttt{stripe-node}). The selection deliberately mixes repositories with a
+large catalogued advisory history with widely used libraries in domains where
+security questions are common but formal advisories are sparser, so that the
+corpus is not skewed toward projects with heavyweight advisory processes
+(\S\ref{sec:verification} describes the per-repository cap that enforces this).
+
+\subsection{Detection and Extraction of Q\&A Pairs}
+\label{sec:extraction}
+
+For each repository we retrieve the most recent \dnum{2{,}000} issue and
+discussion threads and flatten them into ordered comment sequences. We bound the
+window deliberately: our goal is not to harvest every security Q\&A pair a
+project has ever produced, but to collect a corpus large and diverse enough to
+support the taxonomy and evaluation in this study. Recent threads also better
+reflect current libraries, advisories, and developer practice.
+
+Locating security Q\&A pairs in this material by hand is impractical. A single
+active repository accumulates thousands of issues, the large majority of which
+are ordinary functional bugs, feature requests, or support questions with no
+security content; security discussions are a sparse minority scattered across
+that volume, and confirming whether a given thread contains a genuine
+question--answer exchange requires reading it end to end. Manually browsing
+every issue across \dnum{ten} repositories---tens of thousands of threads---to
+find this minority is prohibitively slow. We therefore use an LLM as a
+\emph{prefilter} that reads every thread and surfaces likely candidates, turning
+an intractable full-text triage into a tractable verification problem over a
+small candidate set. A two-stage LLM pipeline identifies candidate Q\&A pairs.
+
+\textbf{Stage~1 (detection).} An LLM reads each thread and decides whether it
+contains a genuine developer security question paired with a substantive answer,
+emitting a boolean, a short summary, and a confidence score. Because this stage
+is a prefilter feeding human verification, we deliberately prompt it to favor
+\emph{recall} over precision: the cost of a false positive is a few seconds of
+reviewer time at the verification stage, whereas a false negative silently drops
+a real pair from the corpus with no opportunity for recovery. We accordingly set
+a permissive \dnum{0.70} confidence threshold and instruct the model to surface
+borderline threads rather than discard them. The downstream \dnum{39\%} rejection
+rate (\S\ref{sec:verification}) is the expected, acceptable price of this
+recall-oriented design.
+
+\textbf{Stage~2 (extraction).} For threads passing Stage~1, a second prompt
+extracts the specific question and answer comments, the role of the answerer
+(maintainer, contributor, commenter, or self-answer), the artifact types the
+answer draws on (\S\ref{sec:annotation}), and any externally verifiable
+\emph{hard facts} the answer states---CVE/GHSA/OSV identifiers, fixed version
+numbers, fix commit SHAs, fix PR references, and advisory URLs.
+
+This pipeline produced \dnum{260} candidate pairs across the \dnum{ten}
+repositories. We intentionally extract candidates broadly at this stage and rely
+on manual verification, rather than the LLM, to make the final inclusion
+decision.
+
+\subsection{Manual Verification}
+\label{sec:verification}
+
+Every candidate pair is reviewed by the first author through a purpose-built
+annotation interface that presents the full thread alongside the extracted
+question, answer, role, artifacts, and hard facts. A pair is \emph{accepted}
+only if it satisfies the inclusion criteria: the question concerns a security
+situation in the developer's own project, the answer is substantive and
+information-providing, and the question and answer are attributable to distinct,
+identifiable comments. Pairs that are not genuinely security-related
+(e.g.\ ordinary functional bugs), that are unanswerable without information
+absent from the thread, or that are mis-extracted are \emph{rejected}; the
+reviewer records a short reason for each rejection.
+
+To prevent the most security-active projects from dominating the corpus, we cap
+the number of verified pairs retained per repository at \dnum{25}. This keeps the
+corpus balanced across projects, languages, and security domains rather than
+skewed toward the few repositories with the densest advisory history. In the
+current corpus the cap does not yet bind---every repository falls at or below it
+(the largest, \texttt{requests}, contributes \dnum{24} pairs)---but it fixes the
+composition policy as mining scales to more and larger repositories.
+
+Of the \dnum{260} candidates, \dnum{158} (\dnum{60.8\%}) were accepted and
+\dnum{102} were rejected---a rejection rate that, given the recall-oriented
+prefilter, is expected and underscores why LLM extraction alone is insufficient
+and human verification is required. No single repository exceeds \dnum{15.2\%} of
+the verified pairs. The accepted pairs are answered predominantly by project
+maintainers (\dnum{104} of \dnum{158}), with the remainder from
+contributors~(\dnum{26}), other commenters~(\dnum{18}), and the original poster
+self-answering~(\dnum{10}). Threads span \dnum{2020--2026} and contain a median
+of \dnum{4} comments (mean \dnum{5.7}, max \dnum{41}).
+
+Of the \dnum{158} verified pairs, \dnum{105} (\dnum{66.5\%}) satisfy the
+additional \emph{hard-verifiability} requirement: the answer states at least one
+externally checkable fact. This hard subset is the part of the benchmark that
+supports fact-grounded automated grading (the remaining \dnum{53} pairs are
+retained for taxonomy construction so that the taxonomy is not biased toward only
+those question types that yield checkable identifiers). Across the hard subset,
+the most common fact types are fixed version numbers (\dnum{47} pairs) and
+advisory URLs (\dnum{44}), followed by fix PRs (\dnum{26}), CVE identifiers
+(\dnum{24}), fix commits (\dnum{21}), and GHSA identifiers (\dnum{14}). Hard
+facts are spot-checked against NVD, GHSA, and OSV at construction time, and the
+advisory-database snapshot date is recorded with the release to support future
+re-verification.
+
+\subsection{Artifact-Type and Hard-Fact Annotation}
+\label{sec:annotation}
+
+Each verified pair carries an \texttt{artifacts\_needed} list recording which
+artifact types the maintainer's answer drew on, and a structured
+\texttt{hard\_facts} record. The artifact-type distribution
+(Table~\ref{tab:artifacts}) shows that answering these questions is rarely a
+matter of reading source code alone: documentation and project source dominate,
+but advisories, pull-request and commit history, dependency manifests, and
+external references (RFCs, registries, upstream issues) each appear in a
+non-trivial fraction of answers. This spread is what motivates the per-artifact
+context conditions in the evaluation (\S\ref{sec:experimental-setup}): different
+question categories lean on different artifact types, and the annotation makes
+that dependency measurable.
+
+\subsection{Open Coding Toward a Question Taxonomy}
+\label{sec:open-coding}
+
+To characterize \emph{what} developers ask about, we apply inductive open coding
+to the verified pairs. The coding unit is the verbatim Q\&A exchange. An LLM
+coder (\texttt{gpt-5.4-mini}, accessed through a uniform LiteLLM interface) is
+prompted to assign one or two short noun-phrase codes naming the security
+concern at issue, given the issue title and body, the Q\&A summary, the full
+thread, and the focal question and answer. As with detection, an LLM-assisted
+first pass makes coding tractable and consistent at corpus scale while keeping a
+human in control of the final code: the first author then reviewed every pair in
+the same annotation interface, free to edit or replace any LLM-assigned code, so
+the resulting codebook reflects human judgment rather than model output. The
+first-author verification note is deliberately withheld from the coder to avoid
+anchoring its codes to the acceptance rationale.
+
+This pass produced \dnum{261} code instances over the \dnum{158} pairs
+(\dnum{1--2} per pair), with \dnum{235} distinct codes---a fine-grained
+vocabulary that reflects how specific developer security questions are
+(e.g.\ ``missing subject alternative names,'' ``HTTPS redirect scheme
+downgrade,'' ``transitive dependency vulnerability''). The single most frequent
+code, \emph{transitive dependency vulnerability}, accounts for \dnum{12}
+instances; the long tail of singleton codes confirms that the corpus is not
+dominated by a handful of canned questions.
+
+The next step is axial coding: collapsing the open codes into a smaller set of
+higher-level categories that will anchor the per-category analysis in
+RQ2--RQ3. Table~\ref{tab:axial} presents a \emph{preliminary, author-proposed}
+grouping of the \dnum{235} codes into \dnum{eleven} candidate categories,
+reported here to convey the shape of the emerging taxonomy. The two largest
+groups---HTTP request and response security (SSRF, redirects, headers, cookies)
+and TLS and certificate validation---together cover roughly half the corpus,
+consistent with the HTTP-client and web-framework projects mined so far. We
+stress that this grouping is not final: category names and boundaries will be
+fixed through axial coding with an independent second coder, and we will report
+inter-rater agreement (Cohen's $\kappa$) on a held-out sample, together with a
+saturation analysis as the corpus grows.
+
+\input{tables/repo-stats}
+\input{tables/artifacts}
+\input{tables/axial-categories}
