@@ -8,10 +8,13 @@ per API response. cached_tokens = prompt-cache hit (automatic for prompts
 """
 
 import json
+import time
 
+import httpx
 from openai import OpenAI
 
-client = OpenAI()
+# connect=10s, read=120s per attempt (large prompts need ~60-90s on busy API)
+client = OpenAI(timeout=httpx.Timeout(60.0, connect=10.0))
 
 STAGE1_MODEL = "gpt-5.4-mini"
 STAGE2_MODEL = "gpt-5.4-mini"
@@ -54,5 +57,7 @@ def generate_json(prompt, model=STAGE1_MODEL, system=None, max_tokens=2048,
 
         except Exception as e:
             print(f"[openai] attempt {attempt+1} failed: {e}")
+            if attempt < 2:
+                time.sleep(2 ** attempt)  # 1s, 2s
 
     return None

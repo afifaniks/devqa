@@ -10,18 +10,23 @@ if not GITHUB_TOKENS and os.getenv("GITHUB_TOKEN"):
 
 # Repositories to mine — add more here as you expand
 REPOS = [
-    "stripe/stripe-node",
-    "psf/requests",
-    "fastapi/fastapi",
-    "auth0/node-jsonwebtoken",
-    "axios/axios",
-    "django/django",
-    "rails/rails",
-    "python-pillow/Pillow",
-    "pyca/cryptography",
-    "expressjs/express",
-    "urllib3/urllib3",
-]
+    # "stripe/stripe-node",
+    # "psf/requests",
+    # "fastapi/fastapi",
+    # "auth0/node-jsonwebtoken",
+    # "axios/axios",
+    # "django/django",
+    # "rails/rails",
+    # "python-pillow/Pillow",
+    # "pyca/cryptography",
+    # "expressjs/express",
+    # "urllib3/urllib3",
+    "tensorflow/tensorflow", 
+    "magento/magento2", 
+    # "jenkinsci/jenkins", 
+    # "apache/tomcat"
+    ]
+
 
 # How many items to fetch per page (max 100 for GitHub API)
 PAGE_SIZE = 100
