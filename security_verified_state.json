@@ -2078,5 +2078,140 @@
     "status": "accepted",
     "note": "",
     "verified_at": "2026-06-07T17:24:23.570933Z"
+  },
+  "tensorflow/tensorflow/issue/112207": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:47:17.757960Z"
+  },
+  "tensorflow/tensorflow/issue/107125": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:47:31.288075Z"
+  },
+  "tensorflow/tensorflow/issue/104359": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:47:40.096457Z"
+  },
+  "tensorflow/tensorflow/issue/104260": {
+    "status": "rejected",
+    "note": "false positive \u2014 malformed/invalid SparseTensor inputs caused sanitizer OOB warning; maintainer says SparseConcat is not the issue; input invariant violation, not security vulnerability",
+    "verified_at": "2026-06-09T18:48:00.182021Z"
+  },
+  "tensorflow/tensorflow/issue/104258": {
+    "status": "rejected",
+    "note": "false positive \u2014 invalid segment_ids violate documented constraints; GPU OOB write is a downstream effect of bad input, not a confirmed vulnerability or security-relevant bug",
+    "verified_at": "2026-06-09T18:48:22.921432Z"
+  },
+  "tensorflow/tensorflow/issue/104080": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:48:35.951437Z"
+  },
+  "tensorflow/tensorflow/issue/104079": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:48:43.163028Z"
+  },
+  "tensorflow/tensorflow/issue/104078": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:48:50.115476Z"
+  },
+  "tensorflow/tensorflow/issue/104076": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:49:03.587366Z"
+  },
+  "tensorflow/tensorflow/issue/102490": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:49:11.010201Z"
+  },
+  "tensorflow/tensorflow/issue/101746": {
+    "status": "rejected",
+    "note": "reject \u2014 GPU architecture/driver PTX incompatibility (Blackwell RTX 5080); tracking issue pointer and JIT/XLA workaround are compatibility guidance, not security vulnerability content",
+    "verified_at": "2026-06-09T18:49:28.010034Z"
+  },
+  "tensorflow/tensorflow/issue/101397": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:49:41.047528Z"
+  },
+  "tensorflow/tensorflow/issue/99592": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:50:05.205931Z"
+  },
+  "tensorflow/tensorflow/issue/98996": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:50:14.973190Z"
+  },
+  "tensorflow/tensorflow/issue/97941": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:50:22.622640Z"
+  },
+  "tensorflow/tensorflow/issue/97165": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:50:28.898498Z"
+  },
+  "tensorflow/tensorflow/issue/94709": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:50:35.824451Z"
+  },
+  "tensorflow/tensorflow/issue/87669": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:50:45.388119Z"
+  },
+  "tensorflow/tensorflow/issue/87468": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:50:51.811107Z"
+  },
+  "tensorflow/tensorflow/issue/86048": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:50:57.820848Z"
+  },
+  "tensorflow/tensorflow/issue/85174": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:51:05.967185Z"
+  },
+  "tensorflow/tensorflow/issue/84104": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:51:12.539760Z"
+  },
+  "tensorflow/tensorflow/issue/83379": {
+    "status": "rejected",
+    "note": "reject \u2014 CUDA/cuDNN compatibility crash on Manjaro resolved in tf-nightly/stable 2.20; installation/version guidance only, not a security vulnerability",
+    "verified_at": "2026-06-09T18:51:27.312080Z"
+  },
+  "tensorflow/tensorflow/issue/80951": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:51:41.356441Z"
+  },
+  "tensorflow/tensorflow/issue/80736": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:51:48.425237Z"
+  },
+  "tensorflow/tensorflow/issue/77843": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:51:53.883859Z"
+  },
+  "tensorflow/tensorflow/issue/76826": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:52:02.505462Z"
   }
 }
