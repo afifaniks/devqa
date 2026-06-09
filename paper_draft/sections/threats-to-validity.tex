@@ -1,16 +1,9 @@
 \section{Threats to Validity}
 \label{sec:threats}
 
-\subsection{External Validity}
-We mine only publicly visible artifacts. Security issues are often disclosed privately and resolved under embargo, leaving just a
+\noindent\textbf{External Validity.} We mine only publicly visible artifacts. Security issues are often disclosed privately and resolved under embargo, leaving just a
 released advisory or changelog entry in public; SecDevQA captures only questions negotiated in the open and may under-represent privately-routed ones. We scope
 our claims to publicly resolved security Q\&A. Repositories are chosen for security activity and popularity (\dnum{three} languages so far), and the hard-verifiable filter
 may exclude question types lacking checkable facts. We report per-repository results and derive the taxonomy from the full corpus to keep both gaps visible.
 
-\subsection{Internal Validity}
-
-\textbf{LLM-assisted pipeline.} [TO BE DONE]
-
-\textbf{LLM-as-judge.} Free-text grading uses an LLM judge. Hard facts ground but do not eliminate judge error; we verify named claims, cross-check identifiers, and re-evaluate a \dnum{15\%} sample by hand.
-
-\textbf{Contamination.} Public threads may be memorized~\cite{stackrepoqa2025}; the no-context condition with training-cutoff stratification flags this.
+\noindent\textbf{Internal Validity.} \textbf{LLM-assisted pipeline. [TO BE DONE]} Free-text grading uses an LLM judge. Hard facts ground but do not eliminate judge error; we verify named claims, cross-check identifiers, and re-evaluate a \dnum{15\%} sample by hand. Public threads may be memorized~\cite{stackrepoqa2025}; the no-context condition with training-cutoff stratification flags this.

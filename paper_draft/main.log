@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.6.8)  8 JUN 2026 16:32
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.6.8)  8 JUN 2026 16:52
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -293,15 +293,15 @@ File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
 
 
 ]
-LaTeX Font Info:    Trying to load font information for U+msa on input line 86.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 17.
  (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 86.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 17.
  (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 89.
+LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 17.
  (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/latex/psnfss/ts1ptm.fd
 File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
 )) (./sections/benchmark-construction.tex
@@ -349,7 +349,9 @@ Before submitting the final camera ready copy, remember to:
  uses only Type 1 fonts and that every step in the generation
  process uses the appropriate paper size.
 
-[5] (./main.aux)
+[5
+
+] (./main.aux)
  ***********
 LaTeX2e <2026-06-01>
 L3 programming layer <2026-05-26>
@@ -358,13 +360,13 @@ L3 programming layer <2026-05-26>
 Here is how much of TeX's memory you used:
  4438 strings out of 468300
  71521 string characters out of 5426743
- 512462 words of memory out of 5000000
+ 512574 words of memory out of 5000000
  33444 multiletter control sequences out of 15000+600000
  669556 words of font info for 118 fonts, out of 8000000 for 9000
  430 hyphenation exceptions out of 8191
  57i,9n,65p,1938b,295s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on main.pdf (5 pages, 135534 bytes).
+Output written on main.pdf (5 pages, 135542 bytes).
 PDF statistics:
  66 PDF objects out of 1000 (max. 8388607)
  40 compressed objects within 1 object stream
