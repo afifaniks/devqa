@@ -2213,5 +2213,255 @@
     "status": "rejected",
     "note": "",
     "verified_at": "2026-06-09T18:52:02.505462Z"
+  },
+  "magento/magento2/issue/40792": {
+    "status": "rejected",
+    "note": "reject \u2014 Magento customer grid indexing delay due to cron-based update mode; commit and release notes describe intended behavior change, not a security vulnerability",
+    "verified_at": "2026-06-09T19:49:34.181960Z"
+  },
+  "magento/magento2/issue/40785": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T19:49:45.459944Z"
+  },
+  "magento/magento2/issue/40762": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T19:49:53.335025Z"
+  },
+  "magento/magento2/issue/40616": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T19:50:16.883439Z"
+  },
+  "magento/magento2/issue/40591": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T19:50:33.373242Z"
+  },
+  "magento/magento2/issue/40568": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T19:50:42.308257Z"
+  },
+  "magento/magento2/issue/40551": {
+    "status": "rejected",
+    "note": "reject \u2014 sri-hashes.json race condition is a deployment/build integrity issue; response only states commit closure without verified security impact or detailed fix validation",
+    "verified_at": "2026-06-09T19:50:49.787515Z"
+  },
+  "magento/magento2/issue/40548": {
+    "status": "rejected",
+    "note": "reject \u2014 Magento REST product query slowdown is a database indexing/performance regression; fix is a query optimization (new index in 2.4.9), not a security vulnerability",
+    "verified_at": "2026-06-09T19:51:19.306458Z"
+  },
+  "magento/magento2/issue/40521": {
+    "status": "rejected",
+    "note": "reject \u2014 customer city field disallowed character validation is a functional input validation rule fix (AC-16504 commit reference), not a confirmed security vulnerability or exploit",
+    "verified_at": "2026-06-09T19:51:44.712747Z"
+  },
+  "magento/magento2/issue/40520": {
+    "status": "rejected",
+    "note": "reject \u2014 Magento MediaStorage nginx try_files / get.php routing behavior; response only confirms non-reproducibility in latest develop, no validated security vulnerability or exploit",
+    "verified_at": "2026-06-09T19:52:15.304938Z"
+  },
+  "magento/magento2/issue/40492": {
+    "status": "rejected",
+    "note": "reject \u2014 reported DivisionByZeroError in credit memo tax calculation was not reproducible by maintainer; no confirmed security vulnerability or exploitable condition established",
+    "verified_at": "2026-06-09T19:52:46.819870Z"
+  },
+  "magento/magento2/issue/40474": {
+    "status": "rejected",
+    "note": "reject \u2014 Magento FPC identifier change (IdentifierForSave vs Identifier) is a cache behavior/DI configuration issue; no confirmed customer data leakage or security vulnerability demonstrated",
+    "verified_at": "2026-06-09T19:53:20.735263Z"
+  },
+  "magento/magento2/issue/40437": {
+    "status": "rejected",
+    "note": "reject \u2014 SQL injection report in Magento collection filters is still in triage stage; response only requests reproduction details without confirming vulnerability or fix",
+    "verified_at": "2026-06-09T19:53:44.197099Z"
+  },
+  "magento/magento2/issue/40394": {
+    "status": "rejected",
+    "note": "reject \u2014 USPS OAuth token caching/backport AC-15210 is a performance/API efficiency patch for rate limiting, not a confirmed security vulnerability or exploit",
+    "verified_at": "2026-06-09T19:53:59.993059Z"
+  },
+  "magento/magento2/issue/40351": {
+    "status": "rejected",
+    "note": "reject \u2014 Magento PayPal_Braintree SalesOrderGridPlugin SQL rewrite causes invalid query; resolved by KB KA-27163 patch, but no confirmed security vulnerability or exploit scenario",
+    "verified_at": "2026-06-09T19:54:25.454534Z"
+  },
+  "magento/magento2/issue/40346": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-09T19:54:55.696302Z"
+  },
+  "magento/magento2/issue/40309": {
+    "status": "rejected",
+    "note": "reject \u2014 Magento sales_email disabled flag incorrectly ignored; fixed in AC-16059 (2.4.9-beta1), but no demonstrated security vulnerability or exploit impact",
+    "verified_at": "2026-06-09T19:55:16.282601Z"
+  },
+  "magento/magento2/issue/40308": {
+    "status": "rejected",
+    "note": "reject \u2014 Magento UPS SOAP integration deprecation and OAuth2 migration is a platform upgrade requirement, not a confirmed security vulnerability or exploit scenario",
+    "verified_at": "2026-06-09T19:55:37.432665Z"
+  },
+  "magento/magento2/issue/40304": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T19:55:48.934630Z"
+  },
+  "magento/magento2/issue/40297": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T19:55:54.223323Z"
+  },
+  "magento/magento2/issue/40287": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T19:56:06.289860Z"
+  },
+  "magento/magento2/issue/40270": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T19:56:16.491733Z"
+  },
+  "magento/magento2/issue/40247": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T19:56:29.788993Z"
+  },
+  "magento/magento2/issue/40241": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T19:56:54.172955Z"
+  },
+  "magento/magento2/issue/40236": {
+    "status": "accepted",
+    "note": "borderline: deployment pipeline regression affecting checkout rendering, but lacks confirmed security impact or official fix anchor; patch is user-proposed, not validated upstream fix; security framing (SRI regression) is plausible but not substantiated as vulnerability class",
+    "verified_at": "2026-06-09T19:59:14.138522Z"
+  },
+  "magento/magento2/issue/40230": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T19:59:50.333076Z"
+  },
+  "magento/magento2/issue/40226": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-09T20:00:24.843781Z"
+  },
+  "magento/magento2/issue/40211": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T20:00:34.647033Z"
+  },
+  "magento/magento2/issue/40190": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-09T20:00:52.843821Z"
+  },
+  "magento/magento2/issue/40189": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T20:01:13.714124Z"
+  },
+  "magento/magento2/issue/40187": {
+    "status": "accepted",
+    "note": "This is a clear functional correctness + inventory integrity issue exposed via GraphQL, which is security-relevant in e-commerce contexts (incorrect stock visibility can affect ordering logic and system trust boundaries).",
+    "verified_at": "2026-06-09T20:01:47.343649Z"
+  },
+  "magento/magento2/issue/40165": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T20:02:05.509526Z"
+  },
+  "magento/magento2/issue/40154": {
+    "status": "accepted",
+    "note": "This is a clear object state integrity bug in core order/invoice workflow, which can lead to incorrect business logic execution (order object being mutated into invoice state).",
+    "verified_at": "2026-06-09T20:02:33.383957Z"
+  },
+  "magento/magento2/issue/40146": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T20:02:51.724373Z"
+  },
+  "magento/magento2/issue/40138": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T20:05:17.464361Z"
+  },
+  "magento/magento2/issue/40120": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-09T20:06:06.663430Z"
+  },
+  "magento/magento2/issue/40117": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-09T20:06:36.843134Z"
+  },
+  "magento/magento2/issue/40102": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T20:07:22.891657Z"
+  },
+  "magento/magento2/issue/40099": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-09T20:07:39.491907Z"
+  },
+  "magento/magento2/issue/40093": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-09T20:08:04.940256Z"
+  },
+  "magento/magento2/issue/40044": {
+    "status": "accepted",
+    "note": "Clear security-relevant data integrity issue (store-view label overwrite) with valid Jira anchor AC-15208 and versioned fix target (2.4.9-alpha3); answer consistently maps issue to resolved internal ticket and release.",
+    "verified_at": "2026-06-09T20:08:34.436069Z"
+  },
+  "magento/magento2/issue/40039": {
+    "status": "accepted",
+    "note": "Security-relevant stale full-page cache issue after login with clear reproducible behavior; answer is anchored to PR #40008 and linked issue #40007, and provides a concrete patch-based resolution signal consistent with Magento fix workflows.",
+    "verified_at": "2026-06-09T20:09:04.695371Z"
+  },
+  "magento/magento2/issue/40029": {
+    "status": "accepted",
+    "note": "Clear security-relevant REST API authorization bypass (cross-website product add-to-cart and order placement); properly anchored with internal Jira AC-15054, related commits reference, and fixed version 2.4.9-alpha3, with consistent reproduction-to-fix mapping.",
+    "verified_at": "2026-06-09T20:09:32.476948Z"
+  },
+  "magento/magento2/issue/40028": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T20:09:49.910252Z"
+  },
+  "magento/magento2/issue/40021": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T20:10:00.072933Z"
+  },
+  "magento/magento2/issue/40019": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T20:10:30.229912Z"
+  },
+  "magento/magento2/issue/40006": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T20:10:41.618676Z"
+  },
+  "magento/magento2/issue/40002": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T20:10:53.768765Z"
+  },
+  "magento/magento2/issue/39995": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T20:11:10.263042Z"
+  },
+  "magento/magento2/issue/39994": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-09T20:11:34.661342Z"
   }
 }
