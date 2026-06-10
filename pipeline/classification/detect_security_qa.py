@@ -7,8 +7,9 @@ Stage-0 pre-filter is the sanity check that the thread has substantive
 non-bot participation.
 
 Stage 1   (LLM, N-sample self-consistency):
-          Detect whether the thread contains a valid security-related
-          developer information need. Emits free-text need_summary — no
+          Detect whether the thread contains a valid security/vulnerability
+          question (NOT a general developer information need). Emits free-text
+          need_summary — no
           fixed enum, for later open + axial coding into the security
           taxonomy. Tightened with explicit BAD-pattern guardrails
           (PEM-format usage errors, browser-storage deflections,
@@ -61,7 +62,7 @@ from utils.openai_client import STAGE1_MODEL, generate_json
 from utils.storage import append_record, load_jsonl, repo_dir
 
 SYSTEM_PROMPT = """You are a research assistant analyzing GitHub threads
-for an academic study on real developer security information needs in
+for an academic study on real developer security quest in
 open-source repositories. Follow instructions precisely and return only
 valid JSON with no extra text."""
 
@@ -114,24 +115,40 @@ def build_detection_prompt(thread_text):
     # prefix is byte-identical on every call (KV / prompt-cache hit across all
     # threads). The only variable input — the thread — is appended LAST, so it is
     # the first point of divergence and nothing cacheable sits behind it.
-    return f"""You will decide whether ONE GitHub thread contains a developer information need related to SECURITY in this project, AND whether the thread contains a concrete answer to that need. The thread is provided at the very END of this message, after all instructions.
+    return f"""You will decide whether a GitHub thread contains a SECURITY or PRIVACY question about this project, 
+AND whether the thread contains a concrete answer to it. 
+We collect ONLY security/privacy question-answer pairs — NOT general developer information needs (functional bugs, regressions, config/usage, UI, build/CI/compat failures 
+are OUT unless the question itself raises a security or privacy risk). 
+The thread is provided at the very END of this message, after all instructions.
  
 Two independent tests must both pass for INCLUDE = true. Apply them with different stances:
  
-  TEST A — Is the question SECURITY/VULNERABILITY-related?  → BE LENIENT.
-  TEST B — Is the answer CONCRETE?                          → BE STRICT.
- 
-If A is uncertain → favour inclusion (a human will review borderline security tags). If B is uncertain → favour exclusion (we cannot grade an unanchored answer). Both must hold; do not trade one for the other.
+  TEST A — Is the QUESTION ITSELF a security or PRIVACY question?  → STRICT that it IS one; OPEN-ENDED about what kind.
+  TEST B — Is the answer CONCRETE?                                  → BE STRICT.
+
+TEST A — the core discriminator (apply this principle, not a keyword list). 
+
+A security/privacy question concerns protecting a system or its data against an 
+ADVERSARY or against unauthorized / unintended access — i.e. confidentiality, integrity, availability, authentication, authorization, 
+or the PRIVACY of user/personal data. It is defined by a 
+TRUST BOUNDARY: untrusted or attacker-controlled input, another user, the network, a malicious actor, or data that must not leak. 
+Ask: is there an adversary, or a trust boundary being crossed?
+
+- If YES — someone could be attacked, gain unauthorized access, escalate privilege, bypass a check, tamper, deny service to others, or have private/personal data exposed — it IS a security/privacy question, whatever the specific class, and WHETHER OR NOT any CVE/CWE/GHSA/advisory is mentioned. Most valid pairs cite NO identifier; do not require one.
+- If NO adversary and NO trust boundary — the issue only affects the developer's own correct/incorrect use of their own system with their own inputs (a functional bug, crash, out-of-bounds, overflow, performance issue, build/version/hardware/OS compatibility, UI, or feature/roadmap question) — it is NOT security, however low-level or alarming the failure sounds. Merely touching a security-named component (auth, token, cert, permission, cookie, CSP...) does NOT make it security.
+- Functionality vs weakness: a security MECHANISM merely not working, erroring, or needing configuration (login fails, an auth call returns 401/404, how to set up TLS/auth, why a token is undefined) is FUNCTIONALITY or usage — in scope ONLY if it reveals a WEAKNESS that grants unauthorized access, bypasses a control, or exposes data. "It doesn't work" is not a security question; "it lets the wrong person in / leaks X" is.
+The kinds of security/privacy issue are OPEN-ENDED: the examples below are illustrative, not a fixed list — a genuine one matching NONE of them still counts. Do NOT reject for not fitting a named category, and do NOT require a CVE/identifier. The only strict requirement is a real adversary or trust boundary. If there is none, or you are unsure there is any → EXCLUDE. If B is uncertain → favour exclusion. Both must hold; do not trade one for the other.
 Both question answer pairs must be in English.
  
 TEST A — Security relevance. Mark security-related if ANY of the following are plausibly in play. This list is illustrative, not exhaustive — include anything that bears on the project's security posture:
 - A vulnerability, advisory, CVE, GHSA, CWE, OSV, exploit, weakness, or security risk affecting this project, its dependencies, or its users.
 - Whether a fix, patch, mitigation, or workaround addresses a security concern — even partially.
 - Sensitive-data handling (tokens, secrets, credentials, PII, keys), redaction, logging, sanitization, or leakage.
+- Privacy of user / personal data: unintended exposure or collection, over-broad logging/telemetry, tracking, consent, retention, or de-anonymization.
 - Web/app vuln classes: auth, authz, IDOR / broken object-level authorization, privilege escalation, sessions, cookies (Secure/HttpOnly/SameSite), CSRF, CORS misconfiguration, XSS, SSRF, open redirect, RCE, injection (SQL/NoSQL/command/template/LDAP), deserialization, XXE, path traversal.
 - Crypto & transport security: weak algorithms, IV/nonce reuse, weak randomness, padding-oracle / timing side-channels, and TLS/certificate or hostname VERIFICATION (including whether verification is actually performed or can be bypassed/disabled).
-- Memory-safety & native bugs: buffer/heap overflow, use-after-free, out-of-bounds read/write, integer overflow, null-deref — including crashes on malformed/attacker-controlled input.
-- Denial of service: ReDoS, decompression/zip/XML bombs, algorithmic-complexity or hash-collision DoS, unbounded allocation/resource exhaustion, infinite loops.
+- Memory-safety & native bugs: buffer/heap overflow, use-after-free, out-of-bounds read/write, integer overflow, null-deref — but ONLY when reachable via UNTRUSTED / attacker-controlled input crossing a trust boundary (an untrusted model file, a network/serving request, a malicious upload). A crash or out-of-bounds report caused by the CALLER'S OWN invalid arguments in their own process (wrong shape, bad indices, an oversized tensor the developer themselves passed, a sanitizer flagging a kernel on hand-crafted bad input) is a ROBUSTNESS bug, NOT a security issue — EXCLUDE.
+- Denial of service: ReDoS, decompression/zip/XML bombs, algorithmic-complexity or hash-collision DoS, unbounded allocation/resource exhaustion, infinite loops — ONLY when triggerable by untrusted/attacker-controlled input across a trust boundary, NOT a developer crashing their own process with their own invalid input.
 - HTTP-layer attacks: request smuggling / desync, CRLF / header injection, host-header injection, cache poisoning.
 - Authentication-token integrity: JWT signature bypass (alg=none, RS256↔HS256 confusion), missing/incorrect signature verification.
 - Concurrency security: TOCTOU and other race conditions with a security impact.
@@ -152,15 +169,17 @@ EXCLUDE as not concrete:
 - Unanchored speculation: "probably fine," "should be safe."
  
 Other categorical EXCLUDES (regardless of security-tag confidence — these are confirmed FP patterns):
- 
+
+- IN-SCOPE OVERRIDE — read FIRST: if the thread genuinely concerns a security or privacy property (an adversary, a trust-boundary crossing, unauthorized access, privilege/escalation, or exposure of private data) it is in scope and the EXCLUDE patterns below do NOT override that. This holds whether or not a CVE/GHSA/OSV/advisory is cited — an identifier is sufficient but NOT required. The EXCLUDE patterns target only threads with no adversary and no trust boundary. NOTE: this override is about TEST A (security relevance) ONLY — it does NOT relax TEST B. A deflection, a non-answer, or an unanchored response is still EXCLUDED even when the question is a real CVE/advisory security question.
 - The thread has NO response at all (only the original post, no substantive comments), or only automated-bot replies.
 - The thread is purely a generic security tutorial unrelated to this project (e.g. asking the maintainers to explain XSS in general).
 - **Adapter / config questions that touch a security-named API but ask no security question.** The OP wants to know which adapter to use, why a flag like `rejectUnauthorized` isn't honoured in a test environment, why percent-encoding is preserved on a URL parser. The answer explains the configuration, not a security risk. Example BAD include: jsdom not using the http adapter so the user's `rejectUnauthorized: false` isn't applied — answer is "switch adapter." EXCEPTION → INCLUDE if TLS/certificate verification is actually being DISABLED or silently ignored in a way that weakens security in production (a real MITM concern), not merely unset for a local test.
 - **"Wrong forum" / "ask Stripe support" / "ask in Discord" deflections.** Maintainer's only informational content is "this isn't a question for this repo." No security information about this project is exchanged.
-- **Pure regression bugs whose only security-flavoured connection is the file/function/class name** (e.g. a method called `signSafely` crashes, an `auth` route returns 500). If the question is "why does this not work" rather than "is there a security risk here," EXCLUDE. EXCEPTION → INCLUDE if the crash is triggered by malformed or attacker-controlled input, or exploitability is raised (possible DoS / memory-safety).
+- **Pure regression bugs whose only security-flavoured connection is the file/function/class name** (e.g. a method called `signSafely` crashes, an `auth` route returns 500). If the question is "why does this not work" rather than "is there a security risk here," EXCLUDE. EXCEPTION → INCLUDE only if the crash is reachable via UNTRUSTED / attacker-controlled input that crosses a trust boundary (an untrusted model, a network/serving request), or the thread explicitly argues exploitability. A developer's own invalid arguments crashing their own process is NOT in scope, even if a sanitizer reports an out-of-bounds read/write.
 - **Generic auth misconfig.** OP added authentication to the wrong router, can't reach a public endpoint, etc. — answer is "read the auth docs." EXCEPTION → INCLUDE if it exposes an access-control weakness (e.g. an endpoint reachable without the intended authorization).
+- **Functional / compatibility / environment questions with no adversary or trust boundary** — build or install failures, hardware/GPU/driver/OS compatibility, library version mismatches, performance, or feature-support / roadmap-timeline questions. A concrete answer, linked PRs, "known issue" tracking, or fix-version numbers do NOT make these security. EXCEPTION → INCLUDE only if it concerns a genuinely VULNERABLE dependency (a known vulnerability in that dependency), not mere functional or version incompatibility.
  
-If you are uncertain about TEST A (security-relatedness), INCLUDE — a human will review borderline security tags. If you are uncertain about TEST B (concreteness), EXCLUDE — unanchored answers cannot be graded.
+If it clearly IS a security/vulnerability question but you cannot name what kind it is (it matches none of the listed examples), INCLUDE — the kinds are open-ended and a human will review. If you are uncertain whether the thread is a security/vulnerability question at all (vs a functional/regression/config/UI bug), EXCLUDE. If you are uncertain about TEST B (concreteness), EXCLUDE — unanchored answers cannot be graded.
  
 If you include, write ONE SENTENCE summarizing what security information the developer needed to know AND which anchor (identifier or source) the answer rests on. Plain English, no taxonomy labels.
  
@@ -176,7 +195,7 @@ Return only this JSON:
 Confidence is for downstream sorting during manual review, NOT for filtering. (All confidence levels still require a concrete anchor — TEST B is a hard gate, not a confidence slider.)
 - HIGH = clearly security-relevant AND the anchor is unambiguous.
 - MEDIUM = security-relevant; the anchor exists but is partial or indirect (e.g. fix version cited but no CVE).
-- LOW = security relevance is borderline; the anchor exists and is concrete — included for manual security-tag review.
+- LOW = it IS a security/vulnerability question but its kind is hard to name (fits none of the listed examples) or the anchor is the weakest acceptable; included for manual review. (Do NOT use LOW to smuggle in non-security questions — those are EXCLUDE, not LOW.)
  
 ==================== THREAD TO ANALYZE (the only variable input — everything below is this thread) ====================
 <thread>
@@ -602,7 +621,7 @@ def _save_response(repo, entry):
 
 
 def run(repo, model=STAGE1_MODEL, confidence_threshold=0.3, limit=None,
-        max_pairs=None, force=False, state_filter=None):
+        max_pairs=None, force=False, state_filter=None, since=None, until=None):
     print(f"\n[detect_security_qa] {repo}")
     print(f"  model:      {model}")
     print(f"  threshold:  {confidence_threshold}")
@@ -610,6 +629,8 @@ def run(repo, model=STAGE1_MODEL, confidence_threshold=0.3, limit=None,
     print(f"  ans floor:  hard>={MIN_ANSWER_CHARS}  soft>={SOFT_FLOOR_CHARS} (or hard_facts)")
     if state_filter:
         print(f"  state:      {state_filter}")
+    if since or until:
+        print(f"  created:    {since or '-inf'} .. {until or '+inf'}")
     if max_pairs:
         print(f"  cap/repo:   {max_pairs}")
 
@@ -636,6 +657,19 @@ def run(repo, model=STAGE1_MODEL, confidence_threshold=0.3, limit=None,
     threads_to_do = [t for t in threads if t["number"] not in done]
     if state_filter:
         threads_to_do = [t for t in threads_to_do if t.get("state", "").lower() == state_filter]
+    if since or until:
+        # created_at is ISO-8601 "YYYY-MM-DDTHH:MM:SSZ"; compare on the date prefix
+        # so an inclusive --until (e.g. 2025-12-31) keeps that whole day.
+        def _in_range(t):
+            d = (t.get("created_at") or "")[:10]
+            if not d:
+                return False
+            if since and d < since:
+                return False
+            if until and d > until:
+                return False
+            return True
+        threads_to_do = [t for t in threads_to_do if _in_range(t)]
     threads_to_do.sort(key=lambda t: t["number"], reverse=True)
     if limit:
         threads_to_do = threads_to_do[:limit]
@@ -757,6 +791,10 @@ if __name__ == "__main__":
                         help="Re-process all threads from scratch")
     parser.add_argument("--state", choices=["open", "closed"], default=None,
                         help="Filter threads by issue state (default: all)")
+    parser.add_argument("--since", default=None, metavar="YYYY-MM-DD",
+                        help="Only threads created on/after this date (e.g. 2025-10-01)")
+    parser.add_argument("--until", default=None, metavar="YYYY-MM-DD",
+                        help="Only threads created on/before this date (inclusive)")
     parser.add_argument("--stage1-samples", type=int, default=1,
                         help=f"Stage-1 self-consistency sample count (default {STAGE1_SAMPLES}; set 1 to disable)")
     args = parser.parse_args()
@@ -776,4 +814,6 @@ if __name__ == "__main__":
             max_pairs=args.max_pairs,
             force=args.force,
             state_filter=args.state,
+            since=args.since,
+            until=args.until,
         )
