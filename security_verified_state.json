@@ -2463,5 +2463,85 @@
     "status": "accepted",
     "note": "",
     "verified_at": "2026-06-09T20:11:34.661342Z"
+  },
+  "jenkinsci/jenkins/issue/26822": {
+    "status": "rejected",
+    "note": "This is a feature request / architectural security discussion, not a concrete security issue in Jenkins. The answer is security-aware (restrict to admin-only controllers because of risk), but it is opinion/guidance without a concrete fix anchor (no CVE, advisory, commit, or implemented change).",
+    "verified_at": "2026-06-10T01:31:19.527481Z"
+  },
+  "jenkinsci/jenkins/issue/26851": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T01:31:59.113173Z"
+  },
+  "jenkinsci/jenkins/issue/26810": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T01:32:40.205036Z"
+  },
+  "jenkinsci/jenkins/issue/26750": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T01:32:45.321540Z"
+  },
+  "jenkinsci/jenkins/issue/26716": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T01:33:09.590001Z"
+  },
+  "jenkinsci/jenkins/issue/26693": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T01:33:32.382833Z"
+  },
+  "jenkinsci/jenkins/issue/26592": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T01:33:52.169341Z"
+  },
+  "jenkinsci/jenkins/issue/26563": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T01:34:18.485624Z"
+  },
+  "jenkinsci/jenkins/issue/26507": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T01:35:34.978743Z"
+  },
+  "jenkinsci/jenkins/issue/26489": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T01:36:16.898173Z"
+  },
+  "jenkinsci/jenkins/issue/26204": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T01:36:43.140583Z"
+  },
+  "jenkinsci/jenkins/issue/26196": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T01:37:19.775958Z"
+  },
+  "jenkinsci/jenkins/issue/26097": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T01:38:05.807261Z"
+  },
+  "jenkinsci/jenkins/issue/26027": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T01:38:43.336960Z"
+  },
+  "jenkinsci/jenkins/issue/25958": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T01:39:02.959336Z"
+  },
+  "jenkinsci/jenkins/issue/25903": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T01:39:22.873575Z"
   }
 }
