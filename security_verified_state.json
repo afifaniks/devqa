@@ -2793,5 +2793,255 @@
     "status": "rejected",
     "note": "",
     "verified_at": "2026-06-10T16:32:14.870761Z"
+  },
+  "ImageMagick/ImageMagick/issue/8707": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:49:52.952571Z"
+  },
+  "ImageMagick/ImageMagick/issue/8706": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:49:59.175490Z"
+  },
+  "ImageMagick/ImageMagick/issue/8690": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T19:50:07.151777Z"
+  },
+  "ImageMagick/ImageMagick/issue/8609": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:50:12.664744Z"
+  },
+  "ImageMagick/ImageMagick/issue/8584": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T19:50:25.518366Z"
+  },
+  "ImageMagick/ImageMagick/issue/8582": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T19:50:38.383334Z"
+  },
+  "ImageMagick/ImageMagick/issue/8574": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:50:46.402538Z"
+  },
+  "ImageMagick/ImageMagick/issue/8567": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T19:50:59.810167Z"
+  },
+  "ImageMagick/ImageMagick/issue/8557": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T19:51:07.256932Z"
+  },
+  "ImageMagick/ImageMagick/issue/8538": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T19:51:13.021688Z"
+  },
+  "ImageMagick/ImageMagick/issue/8535": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T19:51:19.539726Z"
+  },
+  "ImageMagick/ImageMagick/issue/8508": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T19:51:25.683944Z"
+  },
+  "ImageMagick/ImageMagick/issue/8494": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T19:51:43.631158Z"
+  },
+  "ImageMagick/ImageMagick/issue/8460": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:51:55.531886Z"
+  },
+  "ImageMagick/ImageMagick/issue/8440": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:52:03.289729Z"
+  },
+  "ImageMagick/ImageMagick/issue/8375": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:52:11.289592Z"
+  },
+  "ImageMagick/ImageMagick/issue/8318": {
+    "status": "accepted",
+    "note": "ImageMagick release integrity verification via SHA256 checksum comparison and digest.rdf reference; addresses supply-chain consistency and CI validation mismatch; accepted as security-relevant artifact integrity and verification response",
+    "verified_at": "2026-06-10T19:52:29.807233Z"
+  },
+  "ImageMagick/ImageMagick/issue/8301": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T19:53:00.601917Z"
+  },
+  "ImageMagick/ImageMagick/issue/8265": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:53:07.336506Z"
+  },
+  "ImageMagick/ImageMagick/issue/8255": {
+    "status": "accepted",
+    "note": "GHSA-cfh4-9f7v-fhrc advisory updated to include fixing commits; confirms security fix provenance recorded in official advisory metadata; accepted as valid security traceability update without explicit commit enumeration but authoritative advisory-level confirmation",
+    "verified_at": "2026-06-10T19:53:30.982850Z"
+  },
+  "ImageMagick/ImageMagick/issue/8239": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T19:53:41.162780Z"
+  },
+  "ImageMagick/ImageMagick/issue/8234": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:53:53.992802Z"
+  },
+  "ImageMagick/ImageMagick/issue/8186": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T19:54:01.394360Z"
+  },
+  "ImageMagick/ImageMagick/issue/8184": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T19:54:17.672327Z"
+  },
+  "ImageMagick/ImageMagick/issue/8149": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:54:30.710040Z"
+  },
+  "ImageMagick/ImageMagick/issue/8135": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:54:39.045675Z"
+  },
+  "ImageMagick/ImageMagick/issue/8124": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:54:55.154001Z"
+  },
+  "ImageMagick/ImageMagick/issue/8109": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:55:06.237164Z"
+  },
+  "ImageMagick/ImageMagick/issue/8038": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T19:55:14.690629Z"
+  },
+  "ImageMagick/ImageMagick/issue/8022": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T19:55:22.620542Z"
+  },
+  "ImageMagick/ImageMagick/issue/8013": {
+    "status": "accepted",
+    "note": "Ghostscript delegate default pngalpha rendering introduces alpha channel causing Fax/Group4 TIFF compression to be skipped in PDF rasterization pipeline; mitigated via delegates.xml device change to png16m; accepted as security-relevant image processing pipeline regression affecting compression behavior and external delegate trust boundary",
+    "verified_at": "2026-06-10T19:55:39.393292Z"
+  },
+  "ImageMagick/ImageMagick/issue/8003": {
+    "status": "accepted",
+    "note": "BMP parser incorrectly accepts negative biHeight for compressed formats violating BITMAPINFOHEADER specification; confirmed reproducible parsing validation issue with active patch scheduled for main branch and beta releases; accepted as security-relevant image parser input validation flaw",
+    "verified_at": "2026-06-10T19:56:02.273357Z"
+  },
+  "ImageMagick/ImageMagick/issue/7978": {
+    "status": "accepted",
+    "note": "SVG MSVG/XML renderer hang due to crafted input causing infinite processing loop leading to denial of service; confirmed reproducible and patched in main branch with beta release propagation; accepted as security-relevant resource exhaustion vulnerability in image parsing pipeline",
+    "verified_at": "2026-06-10T19:56:20.090074Z"
+  },
+  "ImageMagick/ImageMagick/issue/7947": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:56:40.688227Z"
+  },
+  "ImageMagick/ImageMagick/issue/7941": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T19:56:54.453657Z"
+  },
+  "ImageMagick/ImageMagick/issue/7881": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:57:04.311326Z"
+  },
+  "ImageMagick/ImageMagick/issue/7837": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T19:57:14.601695Z"
+  },
+  "ImageMagick/ImageMagick/issue/7832": {
+    "status": "accepted",
+    "note": "MNG parser memory exhaustion caused by malicious LOOP value leading to excessive frame allocation (up to 2^31 images); mitigated via policy.xml list-length resource cap; accepted as security-relevant resource exhaustion vulnerability in image decoding pipeline",
+    "verified_at": "2026-06-10T19:57:55.968043Z"
+  },
+  "ImageMagick/ImageMagick/issue/7825": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:58:07.015707Z"
+  },
+  "ImageMagick/ImageMagick/issue/7751": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:58:19.256821Z"
+  },
+  "ImageMagick/ImageMagick/issue/7724": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:59:19.228477Z"
+  },
+  "ImageMagick/ImageMagick/issue/7628": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:59:55.400892Z"
+  },
+  "ImageMagick/ImageMagick/issue/7616": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T20:00:10.077979Z"
+  },
+  "ImageMagick/ImageMagick/issue/7610": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T20:00:35.314108Z"
+  },
+  "ImageMagick/ImageMagick/issue/7568": {
+    "status": "accepted",
+    "note": "CVE-2024-41817 scoped as Linux AppImage-only issue affecting pre-7.1.1-36 builds; Windows binaries confirmed unaffected; accepted as security-relevant vulnerability applicability clarification with platform-specific false-positive determination",
+    "verified_at": "2026-06-10T20:00:48.981718Z"
+  },
+  "ImageMagick/ImageMagick/issue/7562": {
+    "status": "accepted",
+    "note": "SVG parser hang due to crafted input causing infinite CPU consumption during conversion pipeline; confirmed reproducible DoS condition with upstream patch scheduled for main branch and beta release inclusion; accepted as security-relevant resource exhaustion vulnerability in SVG processing pipeline",
+    "verified_at": "2026-06-10T20:01:29.932022Z"
+  },
+  "ImageMagick/ImageMagick/issue/7542": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T20:01:43.962794Z"
+  },
+  "ImageMagick/ImageMagick/issue/7521": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T20:01:54.420813Z"
+  },
+  "ImageMagick/ImageMagick/issue/7513": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T20:02:02.577510Z"
+  },
+  "ImageMagick/ImageMagick/issue/7446": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T20:02:23.570829Z"
   }
 }
