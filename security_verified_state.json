@@ -2543,5 +2543,255 @@
     "status": "rejected",
     "note": "",
     "verified_at": "2026-06-10T01:39:22.873575Z"
+  },
+  "kubernetes/kubernetes/issue/139515": {
+    "status": "accepted",
+    "note": "borderline: reliability/availability issue but security-relevant due to cluster-wide kube-proxy sync failure; answer well-anchored via nft reproduction and 128-char limit evidence",
+    "verified_at": "2026-06-10T16:18:23.937298Z"
+  },
+  "kubernetes/kubernetes/issue/139391": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:18:44.545300Z"
+  },
+  "kubernetes/kubernetes/issue/139389": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:18:56.809669Z"
+  },
+  "kubernetes/kubernetes/issue/139263": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:19:06.311563Z"
+  },
+  "kubernetes/kubernetes/issue/139069": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:19:20.892940Z"
+  },
+  "kubernetes/kubernetes/issue/139044": {
+    "status": "accepted",
+    "note": "accept \u2014 scheduler data race confirmed fixed via PR #139057 with supporting CI run evidence; concurrency correctness issue with security-adjacent implications (race condition in core scheduling path)",
+    "verified_at": "2026-06-10T16:19:38.355416Z"
+  },
+  "kubernetes/kubernetes/issue/138962": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:19:54.933913Z"
+  },
+  "kubernetes/kubernetes/issue/138952": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:20:01.275596Z"
+  },
+  "kubernetes/kubernetes/issue/138936": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:20:17.771626Z"
+  },
+  "kubernetes/kubernetes/issue/138826": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:20:52.190651Z"
+  },
+  "kubernetes/kubernetes/issue/138763": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:21:01.022895Z"
+  },
+  "kubernetes/kubernetes/issue/138707": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:22:12.504404Z"
+  },
+  "kubernetes/kubernetes/issue/138689": {
+    "status": "accepted",
+    "note": "accept \u2014 security-relevant workload identity/token rotation behavior in kubelet; well-anchored in specific kubelet token manager code and explains retry semantics under transient failures",
+    "verified_at": "2026-06-10T16:22:25.122016Z"
+  },
+  "kubernetes/kubernetes/issue/138607": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:22:36.425705Z"
+  },
+  "kubernetes/kubernetes/issue/138595": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:22:42.351242Z"
+  },
+  "kubernetes/kubernetes/issue/138556": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:22:56.119097Z"
+  },
+  "kubernetes/kubernetes/issue/138534": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:23:02.714012Z"
+  },
+  "kubernetes/kubernetes/issue/138489": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:23:12.971849Z"
+  },
+  "kubernetes/kubernetes/issue/138461": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:23:25.404674Z"
+  },
+  "kubernetes/kubernetes/issue/138436": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:23:32.492462Z"
+  },
+  "kubernetes/kubernetes/issue/138431": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:23:38.623575Z"
+  },
+  "kubernetes/kubernetes/issue/138402": {
+    "status": "accepted",
+    "note": "accept \u2014 kubelet/containerd CPU stats edge case (zero UsageNanoCores) affects resource reporting correctness; well-anchored in containerd issues #13138/#12629 and Kubernetes PR #138423 with explicit fallback fix",
+    "verified_at": "2026-06-10T16:23:55.452359Z"
+  },
+  "kubernetes/kubernetes/issue/138374": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:24:04.526892Z"
+  },
+  "kubernetes/kubernetes/issue/138329": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:24:16.956124Z"
+  },
+  "kubernetes/kubernetes/issue/138315": {
+    "status": "accepted",
+    "note": "accept \u2014 CVE applicability analysis correctly determined as non-exploitable in Kubernetes due to unsupported BSD/Solaris platform scope; well-anchored in OpenTelemetry source and Kubernetes platform support policy",
+    "verified_at": "2026-06-10T16:25:25.502815Z"
+  },
+  "kubernetes/kubernetes/issue/138225": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:25:39.482052Z"
+  },
+  "kubernetes/kubernetes/issue/138073": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:25:53.027552Z"
+  },
+  "kubernetes/kubernetes/issue/137915": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:27:11.510597Z"
+  },
+  "kubernetes/kubernetes/issue/137912": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:27:19.021132Z"
+  },
+  "kubernetes/kubernetes/issue/137895": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:27:27.192849Z"
+  },
+  "kubernetes/kubernetes/issue/137894": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:27:34.368277Z"
+  },
+  "kubernetes/kubernetes/issue/137893": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:27:42.006289Z"
+  },
+  "kubernetes/kubernetes/issue/137891": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:27:50.321568Z"
+  },
+  "kubernetes/kubernetes/issue/137886": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:28:00.004552Z"
+  },
+  "kubernetes/kubernetes/issue/137855": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:28:08.764138Z"
+  },
+  "kubernetes/kubernetes/issue/137853": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:28:21.190920Z"
+  },
+  "kubernetes/kubernetes/issue/137842": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:28:35.633647Z"
+  },
+  "kubernetes/kubernetes/issue/137841": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:28:45.056393Z"
+  },
+  "kubernetes/kubernetes/issue/137797": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:28:52.298046Z"
+  },
+  "kubernetes/kubernetes/issue/137782": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:29:01.877453Z"
+  },
+  "kubernetes/kubernetes/issue/137758": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:29:11.062375Z"
+  },
+  "kubernetes/kubernetes/issue/137737": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:29:24.382650Z"
+  },
+  "kubernetes/kubernetes/issue/137724": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:30:54.890855Z"
+  },
+  "kubernetes/kubernetes/issue/137705": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:31:04.551902Z"
+  },
+  "kubernetes/kubernetes/issue/137697": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:31:11.149723Z"
+  },
+  "kubernetes/kubernetes/issue/137686": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:31:18.588576Z"
+  },
+  "kubernetes/kubernetes/issue/137618": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:31:30.738004Z"
+  },
+  "kubernetes/kubernetes/issue/137617": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:31:54.532514Z"
+  },
+  "kubernetes/kubernetes/issue/137560": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:32:02.586910Z"
+  },
+  "kubernetes/kubernetes/issue/137459": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:32:14.870761Z"
   }
 }
