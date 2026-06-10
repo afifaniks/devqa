@@ -5,6 +5,7 @@
 /open      → Open-coded pairs       (open_qa_pairs.jsonl)
 /security  → Security QA pairs      (security_qa_pairs.jsonl)
 /benchmark → Security benchmark     (dataset/security_benchmark.jsonl)
+/normalized→ Normalized eval QA pairs (dataset/eval_pairs.jsonl)
 """
 
 import json
@@ -41,6 +42,16 @@ BENCHMARK_FILE = ROOT / "dataset" / "security_benchmark.jsonl"
 OC_CODES_FILE = ROOT / "dataset" / "open_codes.jsonl"
 OC_VERIFIED_FILE = ROOT / "dataset" / "open_codes_verified.json"
 OC_EXPORT_FILE = ROOT / "dataset" / "open_codes_verified.jsonl"
+
+# ── Normalized eval-pairs review files ──────────────────────────────────────────
+# Stage-1 normalizer output (eval/normalize.py). Reviewed in place: `approved` /
+# `review_status` are written back into this file (the pipeline reads `approved`).
+EVAL_PAIRS_FILE = ROOT / "dataset" / "eval_pairs.jsonl"
+# Source threads (with full comments[]) joined in for side-by-side review.
+EVAL_SOURCE_FILES = [
+    ROOT / "dataset" / "security_benchmark_filtered.jsonl",
+    ROOT / "dataset" / "security_benchmark.jsonl",
+]
 
 sys.path.insert(0, str(ROOT / "pipeline"))
 from utils.taxonomy import CATEGORIES, QUESTIONS, QUESTION_TO_CATEGORY  # noqa: E402
@@ -214,6 +225,21 @@ class OCSaveRequest(BaseModel):
     note: Optional[str] = ""
 
 
+class NormQAPair(BaseModel):
+    qid: Optional[str] = None
+    question: str
+    answer: str
+    knowledge_type: str                       # "parametric" | "grounded"
+    grounding_sources: list[str] = []
+    answer_grounded_in: Optional[str] = None
+
+
+class NormSaveRequest(BaseModel):
+    status: str                               # "approved" | "rejected" | "pending"
+    qa_pairs: list[NormQAPair]
+    note: Optional[str] = ""
+
+
 # ── Open-coding data ───────────────────────────────────────────────────────────
 
 oc_records: list[dict] = []          # merged: LLM codes + benchmark context
@@ -277,6 +303,62 @@ def save_benchmark_data() -> None:
             f.write(json.dumps(record) + "\n")
 
 
+# ── Normalized eval-pairs data ──────────────────────────────────────────────────
+
+norm_records: list[dict] = []            # eval_pairs.jsonl records (in file order)
+norm_source_by_id: dict[str, dict] = {}  # thread_id -> source thread (with comments)
+
+FIX_FACT_FIELDS = ("fixed_versions", "fix_prs", "fix_commits", "advisory_urls")
+
+
+def _norm_status(r: dict) -> str:
+    """3-way review status derived from the record. `approved:true` -> approved;
+    an explicit review_status is authoritative if present; else pending."""
+    rs = r.get("review_status")
+    if rs in ("approved", "rejected", "pending"):
+        return rs
+    return "approved" if r.get("approved") else "pending"
+
+
+def _fix_leak_flags(question: str, hard_facts: dict) -> list[str]:
+    """Fix-type identifiers (the resolution) appearing in the question text."""
+    leaked, ql = [], (question or "").lower()
+    for field in FIX_FACT_FIELDS:
+        for val in (hard_facts or {}).get(field, []) or []:
+            if val and str(val).lower() in ql:
+                leaked.append(f"{field}:{val}")
+    return leaked
+
+
+def load_norm_data() -> None:
+    global norm_records, norm_source_by_id
+    norm_records = []
+    norm_source_by_id = {}
+    for src in EVAL_SOURCE_FILES:
+        if not src.exists():
+            continue
+        with src.open(encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                t = json.loads(line)
+                norm_source_by_id.setdefault(t["id"], t)  # first file wins
+    if EVAL_PAIRS_FILE.exists():
+        with EVAL_PAIRS_FILE.open(encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if line:
+                    norm_records.append(json.loads(line))
+
+
+def save_norm_data() -> None:
+    EVAL_PAIRS_FILE.parent.mkdir(parents=True, exist_ok=True)
+    with EVAL_PAIRS_FILE.open("w", encoding="utf-8") as f:
+        for record in norm_records:
+            f.write(json.dumps(record, ensure_ascii=False) + "\n")
+
+
 # ── App ───────────────────────────────────────────────────────────────────────
 
 
@@ -287,10 +369,11 @@ async def lifespan(app: FastAPI):
     load_security_data()
     load_benchmark_data()
     load_oc_data()
+    load_norm_data()
     print(
         f"Loaded {len(pairs)} F&M pairs, {len(open_pairs)} open-coded pairs, "
         f"{len(security_pairs)} security pairs, {len(benchmark_records)} benchmark records, "
-        f"{len(oc_records)} open-coding records",
+        f"{len(oc_records)} open-coding records, {len(norm_records)} normalized threads",
         file=sys.stderr,
     )
     yield
@@ -302,6 +385,7 @@ _STATS_HTML = Path(__file__).parent / "templates" / "stats.html"
 _CHAT_HTML = Path(__file__).parent / "templates" / "chat.html"
 _BENCHMARK_HTML = Path(__file__).parent / "templates" / "benchmark.html"
 _OC_HTML = Path(__file__).parent / "templates" / "open_coding.html"
+_NORM_HTML = Path(__file__).parent / "templates" / "normalized.html"
 
 app = FastAPI(title="DevQA – Pair Review Tool", lifespan=lifespan)
 app.mount(
@@ -1202,6 +1286,149 @@ def download_oc_export():
 @app.get("/api/oc/repos")
 def get_oc_repos():
     return sorted({r.get("repo", "") for r in oc_records})
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# NORMALIZED EVAL-PAIRS REVIEW  (/normalized  and  /api/normalized/*)
+# ══════════════════════════════════════════════════════════════════════════════
+
+
+@app.get("/normalized", response_class=HTMLResponse)
+async def normalized_index():
+    return HTMLResponse(_NORM_HTML.read_text(encoding="utf-8"))
+
+
+@app.get("/api/normalized/records")
+def get_norm_records(
+    repo: Optional[str] = None,
+    status: Optional[str] = None,
+    knowledge: Optional[str] = None,
+    q: Optional[str] = None,
+    page: int = 1,
+    page_size: int = 500,
+):
+    filtered = []
+    for i, r in enumerate(norm_records):
+        pairs_ = r.get("qa_pairs", [])
+        vstatus = _norm_status(r)
+        kinds = [p.get("knowledge_type") for p in pairs_]
+
+        if repo and r.get("repo") != repo:
+            continue
+        if status and vstatus != status:
+            continue
+        if knowledge and knowledge not in kinds:
+            continue
+        if q:
+            ql = q.lower()
+            searchable = " ".join(
+                [r.get("title", "")]
+                + [p.get("question", "") + " " + p.get("answer", "") for p in pairs_]
+            ).lower()
+            if ql not in searchable:
+                continue
+
+        filtered.append({
+            "index": i,
+            "id": r.get("thread_id"),
+            "repo": r.get("repo"),
+            "title": r.get("title"),
+            "n_pairs": len(pairs_),
+            "kinds": kinds,
+            "status": vstatus,
+            "has_leak": bool(r.get("leak_flags")),
+            "has_error": bool(r.get("error")),
+            "note": r.get("review_note", ""),
+        })
+    total = len(filtered)
+    start = (page - 1) * page_size
+    return {"total": total, "page": page, "page_size": page_size,
+            "items": filtered[start: start + page_size]}
+
+
+@app.get("/api/normalized/records/{index}")
+def get_norm_record(index: int):
+    if index < 0 or index >= len(norm_records):
+        raise HTTPException(status_code=404, detail="Record not found")
+    r = dict(norm_records[index])
+    r["index"] = index
+    r["id"] = r.get("thread_id")          # frontend keys list/detail on `id`
+    r["status"] = _norm_status(r)
+    r["review_note"] = r.get("review_note", "")
+    r["reviewed_at"] = r.get("reviewed_at", "")
+    # Join source thread for side-by-side review.
+    src = norm_source_by_id.get(r.get("thread_id"), {})
+    r["comments"] = src.get("comments", [])
+    src_meta = r.get("source", {}) or {}
+    r["question_comment_id"] = src_meta.get("question_comment_id") or src.get("question_comment_id")
+    r["answer_comment_id"] = src_meta.get("answer_comment_id") or src.get("answer_comment_id")
+    r["reporter"] = src.get("reporter")
+    r["answer_author"] = src.get("answer_author")
+    return r
+
+
+@app.patch("/api/normalized/records/{index}")
+def update_norm_record(index: int, body: NormSaveRequest):
+    if index < 0 or index >= len(norm_records):
+        raise HTTPException(status_code=404, detail="Record not found")
+    if body.status not in ("approved", "rejected", "pending"):
+        raise HTTPException(status_code=400, detail="Invalid status")
+    r = norm_records[index]
+    hard_facts = r.get("hard_facts", {})
+
+    new_pairs = []
+    all_leaks = []
+    for j, p in enumerate(body.qa_pairs):
+        ktype = p.knowledge_type if p.knowledge_type in ("parametric", "grounded") else "grounded"
+        sources = [] if ktype == "parametric" else [s for s in p.grounding_sources if s.strip()]
+        leaks = _fix_leak_flags(p.question, hard_facts)
+        all_leaks += leaks
+        new_pairs.append({
+            "qid": p.qid or f"{r.get('thread_id')}#{j+1}",
+            "question": p.question.strip(),
+            "answer": p.answer.strip(),
+            "knowledge_type": ktype,
+            "grounding_sources": sources,
+            "answer_grounded_in": p.answer_grounded_in,
+            "leak_flags": leaks,
+        })
+
+    r["qa_pairs"] = new_pairs
+    r["leak_flags"] = all_leaks
+    r["review_status"] = body.status
+    r["approved"] = (body.status == "approved")
+    r["needs_review"] = (body.status == "pending")
+    r["review_note"] = body.note or ""
+    r["reviewed_at"] = datetime.utcnow().isoformat() + "Z"
+    save_norm_data()
+    return {"ok": True}
+
+
+@app.get("/api/normalized/stats")
+def get_norm_stats():
+    counts = {"approved": 0, "rejected": 0, "pending": 0}
+    kinds = {"parametric": 0, "grounded": 0}
+    n_pairs = 0
+    for r in norm_records:
+        counts[_norm_status(r)] = counts.get(_norm_status(r), 0) + 1
+        for p in r.get("qa_pairs", []):
+            n_pairs += 1
+            k = p.get("knowledge_type")
+            if k in kinds:
+                kinds[k] += 1
+    return {"total": len(norm_records), "n_pairs": n_pairs,
+            "counts": counts, "kinds": kinds}
+
+
+@app.get("/api/normalized/repos")
+def get_norm_repos():
+    return sorted({r.get("repo", "") for r in norm_records if r.get("repo")})
+
+
+@app.post("/api/normalized/reload")
+def reload_norm():
+    load_norm_data()
+    return {"ok": True, "total": len(norm_records)}
 
 
 if __name__ == "__main__":
