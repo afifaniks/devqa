@@ -127,8 +127,8 @@ def build_thread_view(thread: dict) -> str:
             tag.append("MAINTAINER ANSWER")
         label = f" [{' / '.join(tag)}]" if tag else ""
         body = c.get("body", "")
-        if len(body) > 10000:
-            body = body[:10000] + f"\n... [truncated {len(c['body'])} chars]"
+        if len(body) > 20000:
+            body = body[:20000] + f"\n... [truncated {len(c['body'])} chars]"
         parts.append(f"--- comment {c.get('id')} by {c.get('author','?')}"
                      f" ({c.get('role','')}){label} ---\n{body}\n")
     return "\n".join(parts)
@@ -161,19 +161,25 @@ THE ANSWER (grounded EXACTLY on the thread):
   thread. If the thread answer is terse or points elsewhere, reflect that honestly \
   (e.g. "The maintainer states it is fixed and points to PR #932").
 
-KNOWLEDGE TYPE (judge from how the answer was actually given):
-- "parametric": answered from general security/engineering knowledge that any expert \
-  could state WITHOUT this repository or any document — e.g. "an RSA key must be at \
-  least 2048 bits for JOSE", "never trust a JWT with alg=none". Correct, specific \
-  knowledge is still parametric. An LLM could answer it from knowledge alone.
-- "grounded": answering REQUIRES this library's specific behaviour/implementation \
-  and/or an external source the thread points to — a PR/commit, an advisory or \
-  CVE/GHSA record, documentation, another issue, or a non-obvious behaviour of THIS \
-  library that a general expert would not know without inspecting it.
-The answer's OWN comment is NEVER a grounding source — do not list "comment cN". For \
-grounded pairs, `grounding_sources` lists the EXTERNAL/REPO things the answer relied on \
-(e.g. "PR #932", "https://...advisory", "axios only copies the XSRF cookie into a \
-header", "CVE-2022-25883 advisory"). Use [] for parametric.
+KNOWLEDGE TYPE (judge from what the answer's correctness actually rests on)
+- "parametric": the answer is a security/engineering fact or remediation any expert \
+  could give from general knowledge, or from a public standard/advisory the QUESTION \
+  itself already cites — WITHOUT this project's source, releases, or internals. E.g. \
+  "an RSA key must be >= 2048 bits for JOSE", "never trust a JWT with alg=none". \
+  Correct, specific general knowledge is still parametric: an LLM could answer it alone.
+- "grounded": the answer's correctness rests on THIS project's specifics or an external \
+  source the thread points to. This INCLUDES stating that the issue is fixed in a \
+  specific release, PR, or commit of this project — even tersely, even as a bare \
+  version number (e.g. "fixed in vX.Y.Z") — because an LLM cannot know this project's \
+  internal release/PR/commit identifiers without the repository. It also includes a \
+  change in this library's behaviour between versions (e.g. a new default), any other \
+  non-obvious behaviour of this library, or an advisory/CVE/GHSA record, documentation, \
+  or another issue the answer relies on.
+For grounded pairs, `grounding_sources` lists the EXTERNAL/REPO things the answer relied \
+on (e.g. "PR #932", "fixed version 2.3.1", "https://...advisory", "axios only copies \
+the XSRF cookie into a header"). The answer's OWN comment is NEVER a source (do not list \
+"comment cN"), and generic support/contact links (Discord, chat, mailing list, "ask the \
+community") are NEVER sources. Use [] for parametric.
 
 DECOMPOSITION:
 - Emit MULTIPLE pairs ONLY when the reporter raised distinct questions AND the answer \
@@ -205,7 +211,7 @@ def chat_json(model: str, system: str, user: str, max_tokens: int = 6000) -> dic
     kwargs = dict(model=model,
                   messages=[{"role": "system", "content": system},
                             {"role": "user", "content": user}],
-                  max_tokens=max_tokens, response_format={"type": "json_object"})
+                  max_tokens=max_tokens, reasoning_effort="low", response_format={"type": "json_object"})
     try:
         r = litellm.completion(temperature=0, **kwargs)
     except litellm.BadRequestError as exc:
@@ -244,6 +250,22 @@ def fix_leak_flags(question: str, hard_facts: dict, context_text: str = "") -> l
     return leaked
 
 
+def answer_states_fix(answer_body: str, hard_facts: dict) -> list[str]:
+    """Fix-resolution facts the ANSWER itself states: a fixed version, fix PR/commit, or
+    advisory the maintainer points to. Matching against the answer text — not the
+    pair-level hard_facts — ties grounding to the answer and keeps reporter-cited SUBJECT
+    facts out of it. A fix the answer states is repo/advisory-specific information an LLM
+    cannot produce without that source, so its presence makes the pair `grounded`."""
+    ab = (answer_body or "").lower()
+    stated = []
+    for field in ("fixed_versions", "fix_prs", "fix_commits", "advisory_urls"):
+        for val in (hard_facts or {}).get(field, []) or []:
+            needle = str(val).lower().lstrip("#")
+            if needle and needle in ab:
+                stated.append(str(val))
+    return stated
+
+
 def normalize_thread(thread: dict, model: str) -> dict:
     parsed = chat_json(model, NORMALIZE_PROMPT, build_thread_view(thread))
     raw_pairs = parsed.get("qa_pairs") or []
@@ -257,6 +279,8 @@ def normalize_thread(thread: dict, model: str) -> dict:
     # source the question may legitimately draw on. Fix identifiers present here are
     # the questioner's own context, not a leak from the answer.
     context_text = "\n".join(c.get("body", "") for c in context_before_answer(thread))
+    # Fix facts the answer itself states — the principled grounded signal (see helper).
+    answer_fix_facts = answer_states_fix(answer_body, hard_facts)
 
     qa_pairs, leak_flags = [], []
     for i, p in enumerate(raw_pairs):
@@ -264,17 +288,26 @@ def normalize_thread(thread: dict, model: str) -> dict:
         answer = str(p.get("answer", "")).strip()
         if not question or not answer:
             continue
-        ktype = p.get("knowledge_type")
-        if ktype not in ("parametric", "grounded"):
-            ktype = "grounded" if answer_refs else "parametric"
         # Drop self-referential "sources" (the answer's own comment is not a source).
         answer_cid = thread.get("answer_comment_id") or ""
         sources = [s for s in (p.get("grounding_sources") or [])
                    if str(s).strip().lower().lstrip("comment ").strip() != answer_cid.lower()
                    and not re.fullmatch(r"(comment\s+)?c\d+", str(s).strip(), re.I)]
-        # If nothing external remains and the answer cites no in-thread refs, the answer
-        # was given from knowledge — it is parametric, whatever the model labelled it.
-        if ktype == "grounded" and not sources and not answer_refs:
+
+        ktype = p.get("knowledge_type")
+        if ktype not in ("parametric", "grounded"):
+            ktype = "grounded" if (sources or answer_fix_facts) else "parametric"
+        # A fix the ANSWER itself states (this project's version/PR/commit/advisory) is
+        # repo/advisory-specific knowledge an LLM cannot produce unaided: the pair is
+        # grounded regardless of the model's label, which corrects the failure mode where
+        # a terse "fixed in <version>" answer is mislabelled parametric.
+        if answer_fix_facts:
+            ktype = "grounded"
+            if not sources:
+                sources = list(answer_fix_facts)
+        # A grounded pair must rest on something external; if nothing remains, the answer
+        # was given from general knowledge — it is parametric, whatever the model said.
+        if ktype == "grounded" and not sources:
             ktype = "parametric"
         if ktype == "parametric":
             sources = []
@@ -321,7 +354,12 @@ def run(input_path: Path, output_path: Path, model: str, force: bool,
         limit: int | None) -> None:
     threads = load_jsonl(input_path)
     if limit:
-        threads = threads[:limit]
+        # threads = threads[:limit]
+        # Use random samples
+        import random
+        random.seed(42)
+        threads = random.sample(threads, min(limit, len(threads)))
+        
     print(f"Loaded {len(threads)} threads from {input_path}")
 
     existing: dict[str, dict] = {}
