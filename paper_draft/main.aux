@@ -21,8 +21,19 @@
 \newlabel{sec:verification}{{\mbox  {II-C}}{3}{}{subsection.2.3}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-D}}Artifact-Type and Hard-Fact Annotation}{3}{}\protected@file@percent }
 \newlabel{sec:annotation}{{\mbox  {II-D}}{3}{}{subsection.2.4}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-E}}Open Coding Toward a Question Taxonomy}{3}{}\protected@file@percent }
-\newlabel{sec:open-coding}{{\mbox  {II-E}}{3}{}{subsection.2.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-E}}Question Normalization}{3}{}\protected@file@percent }
+\newlabel{sec:normalization}{{\mbox  {II-E}}{3}{}{subsection.2.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-F}}Open Coding Toward a Question Taxonomy}{4}{}\protected@file@percent }
+\newlabel{sec:open-coding}{{\mbox  {II-F}}{4}{}{subsection.2.6}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {I}{\ignorespaces Repositories in the current SecDevQA corpus. \textbf  {Pairs} = Q\&A pairs retained after manual verification; \textbf  {Hard} = subset whose answer carries at least one externally verifiable fact (\textcolor {red!75!black}{\textbf  {2026-06-08}}).}}{5}{}\protected@file@percent }
+\newlabel{tab:repos}{{I}{5}{}{table.1}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {II}{\ignorespaces Artifact types the maintainer's answer drew on, across the \textcolor {red!75!black}{\textbf  {158}} verified pairs (a pair may draw on several).}}{5}{}\protected@file@percent }
+\newlabel{tab:artifacts}{{II}{5}{}{table.2}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {III}Experimental Setup}{5}{}\protected@file@percent }
+\newlabel{sec:experimental-setup}{{III}{5}{}{section.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-A}}Research Questions (RQs)}{5}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {IV}Threats to Validity}{5}{}\protected@file@percent }
+\newlabel{sec:threats}{{IV}{5}{}{section.4}{}}
 \citation{stackrepoqa2025}
 \citation{sweqa2026}
 \citation{stackrepoqa2025}
@@ -31,17 +42,6 @@
 \bibdata{references}
 \bibcite{acar2016information}{1}
 \bibcite{fischer2017stackoverflow}{2}
-\@writefile{lot}{\contentsline {table}{\numberline {I}{\ignorespaces Repositories in the current SecDevQA corpus. \textbf  {Pairs} = Q\&A pairs retained after manual verification; \textbf  {Hard} = subset whose answer carries at least one externally verifiable fact (CVE/GHSA ID, fixed version, fix commit/PR, advisory URL). Stars rounded to thousands (\textcolor {red!75!black}{\textbf  {2026-06-08}}).}}{4}{}\protected@file@percent }
-\newlabel{tab:repos}{{I}{4}{}{table.1}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {III}Experimental Setup}{4}{}\protected@file@percent }
-\newlabel{sec:experimental-setup}{{III}{4}{}{section.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-A}}Research Questions (RQs)}{4}{}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {II}{\ignorespaces Artifact types the maintainer's answer drew on, across the \textcolor {red!75!black}{\textbf  {158}} verified pairs (a pair may draw on several). Annotations are LLM-extracted and spot-checked; they drive the context conditions of the evaluation.}}{4}{}\protected@file@percent }
-\newlabel{tab:artifacts}{{II}{4}{}{table.2}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {IV}Threats to Validity}{4}{}\protected@file@percent }
-\newlabel{sec:threats}{{IV}{4}{}{section.4}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {V}Related Work}{4}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{References}{4}{}\protected@file@percent }
 \bibcite{sweqa2026}{3}
 \bibcite{coreqa2025}{4}
 \bibcite{stackrepoqa2025}{5}
@@ -49,8 +49,10 @@
 \bibcite{codeseceval2024}{7}
 \bibcite{secureagentbench2025}{8}
 \bibcite{secqa2023}{9}
-\@writefile{lot}{\contentsline {table}{\numberline {III}{\ignorespaces \emph  {Preliminary, author-proposed} axial grouping of the open codes into candidate higher-level categories. \textbf  {Pairs} counts verified pairs touching the category (a two-code pair may fall in two categories, so the column sums to more than \textcolor {red!75!black}{\textbf  {158}}). This grouping is a working draft to be finalized by axial coding with an independent second coder and inter-rater agreement; category names and boundaries are not yet fixed.}}{5}{}\protected@file@percent }
-\newlabel{tab:axial}{{III}{5}{}{table.3}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {IV}{\ignorespaces Comparison with related work. \textbf  {Sec.}~=~security-specific corpus; \textbf  {Adv.}~=~external advisory artifacts as context; \textbf  {Grd.}~=~fact-grounded grading; \textbf  {Abl.}~=~artifact-type ablation. \text  {$\mathsurround \z@ \mathchar "458$}~full; P~partial; $\times $~none.}}{5}{}\protected@file@percent }
-\newlabel{tab:related}{{IV}{5}{}{table.4}{}}
-\gdef \@abspage@last{5}
+\@writefile{lot}{\contentsline {table}{\numberline {III}{\ignorespaces Axial grouping of the open codes into candidate higher-level categories. \textbf  {Pairs} counts verified pairs touching the category (a two-code pair may fall in two categories, so the column sums to more than \textcolor {red!75!black}{\textbf  {158}}).}}{6}{}\protected@file@percent }
+\newlabel{tab:axial}{{III}{6}{}{table.3}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {V}Related Work}{6}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{References}{6}{}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {IV}{\ignorespaces Comparison with related work. \textbf  {Sec.}~=~security-specific corpus; \textbf  {Adv.}~=~external advisory artifacts as context; \textbf  {Grd.}~=~fact-grounded grading; \textbf  {Abl.}~=~artifact-type ablation. \text  {$\mathsurround \z@ \mathchar "458$}~full; P~partial; $\times $~none.}}{6}{}\protected@file@percent }
+\newlabel{tab:related}{{IV}{6}{}{table.4}{}}
+\gdef \@abspage@last{6}

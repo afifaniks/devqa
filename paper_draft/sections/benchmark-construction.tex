@@ -2,12 +2,13 @@
 \dnum{[The numeric data throughout the paper will be iteratively updated, hence they are colored and bold]}
 \label{sec:benchmark-construction}
 
-SecDevQA is built in four stages: (i)~systematic selection of source
+SecDevQA is built in five stages: (i)~systematic selection of source
 repositories from the GitHub Advisory Database, (ii)~LLM-assisted detection and
 extraction of candidate security question--answer (Q\&A) pairs from issue and
-discussion threads, (iii)~manual verification of each candidate pair, and
-(iv)~inductive open coding of the verified pairs toward a taxonomy of developer
-security questions. The numbers reported below describe the corpus at the
+discussion threads, (iii)~manual verification and artifact/hard-fact annotation
+of each candidate pair, (iv)~normalization of every verified pair into one or
+more self-contained, gradeable evaluation items, and (v)~inductive open coding of
+the verified pairs toward a taxonomy of developer security questions. The numbers reported below describe the corpus at the
 current stage of construction; the benchmark is being actively expanded along
 the same protocol, so absolute counts will grow while the procedure remains
 fixed.
@@ -154,6 +155,106 @@ non-trivial fraction of answers. This spread is what motivates the per-artifact
 context conditions in the evaluation (\S\ref{sec:experimental-setup}): different
 question categories lean on different artifact types, and the annotation makes
 that dependency measurable.
+
+\subsection{Question Normalization}
+\label{sec:normalization}
+
+A verified thread is not yet a gradeable evaluation item. The developer's
+question is embedded in a multi-comment exchange, leans on earlier comments
+(``the error above,'' ``this issue''), and frequently sits in a thread whose
+later comments---or even whose title---already disclose the resolution. Handing
+such a raw thread to a model under test would leak the answer and conflate reading
+comprehension with security reasoning. We therefore normalize each verified pair
+into one or more self-contained \emph{(question, answer)} items through a single
+LLM pass that is then human-verified. Every decision in this step is governed by
+one constraint---the item must stay faithful to what was really asked and
+answered---because authenticity is the benchmark's reason for being; the choices
+below are each justified against that constraint.
+
+\noindent\textbf{Self-contained, resolution-free questions.}
+The question is reconstructed to stand alone: every reporter-supplied specific
+(versions, runtime and operating system, configuration, the exact error and
+stack-trace text, and all code or proof-of-concept, kept verbatim) is preserved,
+and dangling references are resolved against earlier comments. The question must
+not, however, state its own resolution---the fixed version, patch commit or pull
+request, or advisory identifier introduced \emph{as the answer} is withheld---so
+that the item remains a genuine open question rather than a fill-in-the-blank. We
+separate the \emph{subject} a reporter cites as their premise (the CVE they are
+worried about, the version they run), which legitimately stays, from the
+\emph{fix} that resolves it, which must not appear. To make this auditable rather
+than a matter of trust in the rewrite, we (i)~retain the verbatim original
+reporter comment alongside the normalized question, so a reader can confirm that
+no specific was invented or dropped, and (ii)~run a deterministic leak check that
+flags any fix-type hard fact---a fixed version, fix pull request or commit, or
+advisory URL---present in the question but absent from the pre-answer reporter
+context: a fix the reporter stated earlier is legitimate context, whereas a fix
+that could only have come from the answer is a leak. Flagged items are corrected
+in the human pass.
+
+\noindent\textbf{Thread-grounded answers.}
+The gold answer is a faithful distillation of how the maintainer actually
+answered, drawn strictly from the thread; the normalizer is forbidden to add
+facts, fixes, or reasoning the thread does not contain. When the maintainer's
+answer is terse or a pointer---``fixed in \#932, released 9.0.2''---the gold
+answer reflects exactly that, labelled honestly as the maintainer's stated
+resolution rather than inflated into a fuller explanation we cannot source. We
+deliberately do \emph{not} fetch external advisories or patch diffs to enrich the
+gold answer at this stage, as doing so would fabricate ground truth the thread
+never contained. Instead, the artifacts the answer points to---advisory URLs and
+the fix pull requests or commits---are recorded as \texttt{grounding\_sources};
+at grading time the referenced pull-request and commit diffs are resolved and
+supplied to the judge under the with-context conditions
+(\S\ref{sec:experimental-setup}), so that a terse pointer-answer can still
+corroborate a richer but correct model response without our having invented the
+reference answer.
+
+\noindent\textbf{Knowledge type: an explicit answerability axis.}
+The most consequential annotation we attach records whether answering a pair
+requires the repository at all. Each pair is labelled \emph{parametric}---a
+security or engineering fact any expert could give from general knowledge or from
+a public standard the question itself cites, which an LLM could answer with no
+repository or document---or \emph{grounded}---resting on this project's specific
+behaviour or releases, or on an external source the thread points to. This
+distinction is what keeps the evaluation fair. The common pointer-answer ``fixed
+in pull request \#932'' is unanswerable without the repository, so scoring a
+no-context model on it would measure memorization of one project's pull-request
+numbering rather than security capability. Recording knowledge type per pair
+turns the no-context condition into a legitimate capability test on the
+parametric pairs, makes the grounded pairs the locus of the artifact-context
+analysis (\S\ref{sec:experimental-setup}), and turns high no-context accuracy on
+grounded pairs into direct evidence of training-data contamination rather than
+reasoning. The label is assigned by the normalizer from the answer's semantics and
+then hardened by a deterministic rule: if the answer itself states a fix artifact
+also recorded in \texttt{hard\_facts}---matched against the answer text, so that a
+reporter-cited subject fact does not trigger it---the pair is grounded regardless
+of the model's label, because such an artifact is project- or advisory-specific
+information a model cannot produce unaided. The rule errs toward \emph{grounded}
+by design: mislabelling a repository-internal answer as parametric would wrongly
+admit an unanswerable question into the no-context capability test, whereas the
+opposite error merely also routes a pair through the richer context conditions.
+
+\noindent\textbf{Conservative decomposition.}
+A single thread sometimes bundles distinct information needs---``is my usage
+actually affected?'' and ``how do I remediate?''---each answered separately by the
+maintainer. We split a thread into multiple items only when the reporter genuinely
+raised distinct questions \emph{and} the maintainer's answer addresses more than
+one of them; we never invent a sub-question the thread does not answer. This
+restraint is the line between reframing a real implicit ask and fabricating
+gradeable-looking questions the thread cannot ground---the latter being precisely
+the synthetic-question construction our authenticity claim rejects.
+
+\noindent\textbf{Outcome and verification.}
+An initial pass over \dnum{50} verified threads yields \dnum{58} gradeable items,
+with \dnum{5} threads decomposed into more than one; \dnum{53} items are grounded
+and \dnum{5} parametric. The grounded-heavy split is expected: the
+hard-verifiability filter (\S\ref{sec:verification}) selects for answers that rest
+on a specific fix or advisory, leaving general-knowledge answers a minority. Every
+item retains its verbatim original and is marked for human verification, and
+\emph{two researchers independently review every normalized pair}. Reviewing the
+full set rather than a sample lets us report inter-annotator agreement (Cohen's
+$\kappa$) on the knowledge-type label and on the leak and context-completeness
+judgments over the entire benchmark, and reconcile every disagreement before a
+pair enters the evaluated set.
 
 \subsection{Open Coding Toward a Question Taxonomy}
 \label{sec:open-coding}
