@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SecDevQA — Evaluation Harness</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><text y=%221.2em%22 font-size=%2220%22>🧪</text></svg>">
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/htm@3.1.1/dist/htm.umd.js"></script>
+<style>
+  :root {
+    --bg:#0f1117; --surface:#171a23; --surface2:#1e2230; --border:#2a2f3f;
+    --text:#e2e6f0; --muted:#8b93a7; --accent:#6ea8fe; --accent-bg:#16243d;
+    --green:#4ade80; --green-bg:#14331f; --yellow:#fbbf24; --yellow-bg:#3a2e10;
+    --red:#f87171; --red-bg:#3a1818; --purple:#c084fc; --purple-bg:#2c1a3d;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text);
+         font:14px/1.45 -apple-system,'Segoe UI',Roboto,sans-serif; }
+  header { display:flex; align-items:center; gap:14px; padding:10px 18px;
+           border-bottom:1px solid var(--border); background:var(--surface);
+           position:sticky; top:0; z-index:5; }
+  header h1 { font-size:15px; margin:0; }
+  .hdr-stat { font-size:12px; color:var(--muted); }
+  .hdr-stat b { color:var(--text); }
+  .pulse { width:8px; height:8px; border-radius:50%; background:var(--green);
+           animation:pulse 1.2s infinite; display:inline-block; margin-right:5px; }
+  @keyframes pulse { 50% { opacity:.25; } }
+  main { padding:16px 18px; max-width:1280px; margin:0 auto; }
+  h2 { font-size:13px; text-transform:uppercase; letter-spacing:.06em;
+       color:var(--muted); margin:22px 0 10px; }
+  .empty { color:var(--muted); text-align:center; padding:40px 0; }
+  code { background:var(--surface2); padding:1px 5px; border-radius:4px; font-size:12px; }
+
+  /* launcher */
+  .launcher { background:var(--surface); border:1px solid var(--border);
+              border-radius:10px; padding:14px; display:flex; flex-wrap:wrap;
+              gap:12px; align-items:flex-end; }
+  .field { display:flex; flex-direction:column; gap:4px; }
+  .field label { font-size:11px; color:var(--muted); text-transform:uppercase;
+                 letter-spacing:.05em; }
+  select, input[type=text], input[type=number] {
+    background:var(--surface2); color:var(--text); border:1px solid var(--border);
+    border-radius:6px; padding:6px 9px; font-size:13px; min-width:130px; }
+  input[type=text] { min-width:230px; }
+  input[type=number] { min-width:70px; width:80px; }
+  .checks { display:flex; gap:10px; flex-wrap:wrap; padding:6px 0; }
+  .checks label { font-size:12px; display:flex; gap:4px; align-items:center;
+                  color:var(--text); text-transform:none; letter-spacing:0; }
+  button.primary { background:var(--accent); color:#0b1220; font-weight:700;
+    border:none; border-radius:7px; padding:8px 18px; font-size:13px; cursor:pointer; }
+  button.primary:disabled { opacity:.5; cursor:default; }
+  button.ghost { background:none; border:1px solid var(--border); color:var(--muted);
+    border-radius:6px; padding:4px 10px; font-size:12px; cursor:pointer; }
+  button.ghost:hover { color:var(--text); }
+  .launch-msg { font-size:12px; color:var(--green); width:100%; font-family:monospace; }
+  .launch-err { color:var(--red); }
+  .unavailable { color:var(--muted); }
+
+  /* processes */
+  .proc { background:var(--surface); border:1px solid var(--border); border-radius:8px;
+          padding:10px 12px; margin-bottom:8px; }
+  .proc-head { display:flex; gap:10px; align-items:center; cursor:pointer; flex-wrap:wrap; }
+  .proc pre { background:var(--surface2); border-radius:6px; padding:8px 10px;
+              font-size:11px; max-height:220px; overflow-y:auto; white-space:pre-wrap;
+              word-break:break-word; margin:8px 0 0; }
+
+  /* runs */
+  .run { background:var(--surface); border:1px solid var(--border);
+         border-radius:10px; margin-bottom:14px; overflow:hidden; }
+  .run-head { display:flex; align-items:center; gap:12px; padding:12px 14px;
+              cursor:pointer; flex-wrap:wrap; }
+  .run-head:hover { background:var(--surface2); }
+  .run-name { font-family:monospace; font-size:13px; font-weight:700; }
+  .badge { font-size:10px; font-weight:700; padding:2px 8px; border-radius:10px;
+           text-transform:uppercase; letter-spacing:.04em; }
+  .b-running { background:var(--green-bg); color:var(--green); }
+  .b-idle    { background:var(--surface2); color:var(--muted); }
+  .b-agent   { background:var(--purple-bg); color:var(--purple); }
+  .b-correct { background:var(--green-bg); color:var(--green); }
+  .b-partial { background:var(--yellow-bg); color:var(--yellow); }
+  .b-incorrect, .b-error, .b-halluc { background:var(--red-bg); color:var(--red); }
+  .run-meta { font-size:12px; color:var(--muted); display:flex; gap:14px;
+              flex-wrap:wrap; margin-left:auto; align-items:center; }
+  .run-meta b { color:var(--text); }
+  .bar { height:5px; background:var(--surface2); }
+  .bar i { display:block; height:100%; background:var(--accent); transition:width .5s; }
+  .tools { font-size:11px; color:var(--muted); font-family:monospace; }
+
+  .detail { border-top:1px solid var(--border); }
+  .item { padding:10px 14px; border-bottom:1px solid var(--border); }
+  .item:last-child { border-bottom:none; }
+  .item-head { display:flex; gap:10px; align-items:center; cursor:pointer; flex-wrap:wrap; }
+  .item-qid { font-family:monospace; font-size:12px; color:var(--accent); }
+  .item-sub { font-size:11px; color:var(--muted); }
+  .item-body { margin-top:10px; display:grid; gap:10px; }
+  .panel { background:var(--surface2); border-radius:8px; padding:10px 12px; }
+  .panel h4 { margin:0 0 6px; font-size:11px; text-transform:uppercase;
+              letter-spacing:.05em; color:var(--muted); }
+  .panel pre { margin:0; white-space:pre-wrap; word-break:break-word;
+               font-size:12px; font-family:monospace; max-height:340px; overflow-y:auto; }
+  .claim { display:flex; gap:8px; font-size:12px; margin:4px 0; align-items:baseline; }
+  .fact { display:inline-block; font-family:monospace; font-size:11px; padding:2px 7px;
+          border-radius:6px; margin:2px 4px 2px 0; }
+  .tstep { border-left:2px solid var(--border); padding:4px 10px; margin:6px 0; }
+  .tstep b { font-family:monospace; font-size:12px; }
+  .tstep pre { max-height:180px; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script>
+const { useState, useEffect, useCallback, Fragment } = React;
+const html = htm.bind(React.createElement);
+
+const api = async (path, opts) => {
+  const r = await fetch(path, opts);
+  if (!r.ok) throw new Error((await r.json().catch(() => ({}))).detail || r.statusText);
+  return r.json();
+};
+const age = s => s < 60 ? `${s}s ago` : s < 3600 ? `${Math.floor(s/60)}m ago` : `${Math.floor(s/3600)}h ago`;
+
+/* ── Launcher ─────────────────────────────────────────────────────────── */
+
+function Launcher({ options, onLaunched }) {
+  const [system, setSystem] = useState('agent');
+  const [model, setModel] = useState('gpt-5.4-mini');
+  const [groups, setGroups] = useState([]);          // empty = full snapshot
+  const [limit, setLimit] = useState('');
+  const [unapproved, setUnapproved] = useState(false);
+  const [force, setForce] = useState(false);
+  const [gradeAfter, setGradeAfter] = useState(true);
+  const [judge, setJudge] = useState('gpt-5.4');
+  const [msg, setMsg] = useState(null);
+  const [busy, setBusy] = useState(false);
+
+  const sys = (options.systems || []).find(s => s.id === system) || {};
+  const allGroups = options.groups || [];
+  const toggleGroup = g => setGroups(prev =>
+    prev.includes(g) ? prev.filter(x => x !== g) : [...prev, g]);
+
+  const launch = async () => {
+    setBusy(true); setMsg(null);
+    try {
+      const body = {
+        system, model: sys.needs_model || model ? (model || null) : null,
+        groups: sys.has_groups && groups.length ? groups : null,
+        limit: limit ? parseInt(limit) : null,
+        include_unapproved: unapproved, force,
+        grade_after: gradeAfter, judge: gradeAfter ? judge : null,
+      };
+      const r = await api('/api/launch', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body) });
+      setMsg({ ok: true, text: `launched ${r.run_name} — ${r.cmd}` });
+      onLaunched();
+    } catch (e) {
+      setMsg({ ok: false, text: String(e.message || e) });
+    } finally { setBusy(false); }
+  };
+
+  return html`
+    <div class="launcher">
+      <div class="field">
+        <label>System under test</label>
+        <select value=${system} onChange=${e => setSystem(e.target.value)}>
+          ${(options.systems || []).map(s => html`
+            <option key=${s.id} value=${s.id} disabled=${!s.available}>
+              ${s.label}${s.available ? '' : ' (not installed)'}
+            </option>`)}
+        </select>
+      </div>
+      <div class="field">
+        <label>Model ${sys.needs_model ? '' : '(optional passthrough)'}</label>
+        <input type="text" list="models" value=${model}
+               placeholder=${sys.needs_model ? 'litellm model id' : 'agent default'}
+               onChange=${e => setModel(e.target.value)} />
+        <datalist id="models">
+          ${(options.model_suggestions || []).map(m => html`<option key=${m} value=${m} />`)}
+        </datalist>
+      </div>
+      ${sys.has_groups && html`
+        <div class="field">
+          <label>Context (artifact groups — none checked = full snapshot)</label>
+          <div class="checks">
+            ${allGroups.map(g => html`
+              <label key=${g}>
+                <input type="checkbox" checked=${groups.includes(g)}
+                       onChange=${() => toggleGroup(g)} /> ${g}
+              </label>`)}
+          </div>
+        </div>`}
+      <div class="field">
+        <label>Limit</label>
+        <input type="number" min="1" value=${limit} placeholder="all"
+               onChange=${e => setLimit(e.target.value)} />
+      </div>
+      <div class="field">
+        <label>Options</label>
+        <div class="checks">
+          <label><input type="checkbox" checked=${unapproved}
+                 onChange=${e => setUnapproved(e.target.checked)} /> include unapproved</label>
+          <label><input type="checkbox" checked=${force}
+                 onChange=${e => setForce(e.target.checked)} /> force re-run</label>
+          <label><input type="checkbox" checked=${gradeAfter}
+                 onChange=${e => setGradeAfter(e.target.checked)} /> grade after</label>
+        </div>
+      </div>
+      ${gradeAfter && html`
+        <div class="field">
+          <label>Judge</label>
+          <input type="text" list="judges" value=${judge}
+                 onChange=${e => setJudge(e.target.value)} />
+          <datalist id="judges">
+            ${(options.judge_suggestions || []).map(m => html`<option key=${m} value=${m} />`)}
+          </datalist>
+        </div>`}
+      <button class="primary" disabled=${busy || (sys.needs_model && !model)}
+              onClick=${launch}>${busy ? 'launching…' : '▶ Launch run'}</button>
+      ${msg && html`<div class=${'launch-msg' + (msg.ok ? '' : ' launch-err')}>${msg.text}</div>`}
+    </div>`;
+}
+
+/* ── Processes ────────────────────────────────────────────────────────── */
+
+function Procs({ procs, onStop }) {
+  const [open, setOpen] = useState(null);
+  if (!procs.length) return null;
+  return html`
+    <${Fragment}>
+      <h2>Launched processes (this UI session)</h2>
+      ${procs.map(p => html`
+        <div class="proc" key=${p.proc_id}>
+          <div class="proc-head" onClick=${() => setOpen(open === p.proc_id ? null : p.proc_id)}>
+            <span class="badge ${p.running ? 'b-running' : p.returncode === 0 ? 'b-idle' : 'b-error'}">
+              ${p.running ? 'running' : p.returncode === 0 ? 'done' : `exit ${p.returncode}`}
+            </span>
+            <span class="run-name">${p.run_name}</span>
+            <span class="item-sub">${p.started}</span>
+            ${p.running && html`
+              <button class="ghost" style=${{marginLeft:'auto'}}
+                      onClick=${e => { e.stopPropagation(); onStop(p.proc_id); }}>■ stop</button>`}
+          </div>
+          ${open === p.proc_id && html`<pre>${p.log_tail || '(no output yet)'}</pre>`}
+        </div>`)}
+    <//>`;
+}
+
+/* ── Run item detail ──────────────────────────────────────────────────── */
+
+function Item({ run, it }) {
+  const [open, setOpen] = useState(false);
+  const [transcript, setTranscript] = useState(null);
+  const loadTranscript = async () => {
+    try { setTranscript(await api(`/api/transcript/${encodeURIComponent(run.name)}/${encodeURIComponent(it.qid_slug)}`)); }
+    catch { setTranscript({ transcript: [{ step: 0, type: 'no transcript found' }] }); }
+  };
+  const factStyle = f => f.status === 'matched'
+    ? { background: 'var(--green-bg)', color: 'var(--green)' }
+    : f.status === 'missing'
+    ? { background: 'var(--red-bg)', color: 'var(--red)' }
+    : { background: 'var(--surface)', color: 'var(--muted)' };
+
+  return html`
+    <div class="item">
+      <div class="item-head" onClick=${() => setOpen(!open)}>
+        <span class="item-qid">${it.qid}</span>
+        ${it.outcome && html`<span class="badge b-${it.outcome}">${it.outcome}</span>`}
+        ${it.hallucinated && html`<span class="badge b-halluc">hallucinated</span>`}
+        ${it.error && html`<span class="badge b-error">error</span>`}
+        <span class="item-sub">${it.knowledge_type}</span>
+        ${it.n_tool_calls != null && html`<span class="item-sub">${it.n_tool_calls} tool calls</span>`}
+        ${it.runtime_secs != null && html`<span class="item-sub">${it.runtime_secs}s</span>`}
+        ${it.snapshot && html`<span class="item-sub">@${(it.snapshot.commit || '').slice(0, 8)}</span>`}
+        <span class="item-sub" style=${{marginLeft:'auto'}}>${it.chars} chars</span>
+      </div>
+      ${open && html`
+        <div class="item-body">
+          ${it.error && html`<div class="panel"><h4>Error</h4><pre>${it.error}</pre></div>`}
+          <div class="panel"><h4>Question</h4><pre>${it.question}</pre></div>
+          <div class="panel"><h4>Response</h4><pre>${it.response}</pre></div>
+          ${it.hard_facts && it.hard_facts.length > 0 && html`
+            <div class="panel"><h4>Hard facts (deterministic tier)</h4>
+              ${it.hard_facts.map((f, i) => html`
+                <span class="fact" key=${i} style=${factStyle(f)}>
+                  ${f.field}: ${f.value} — ${f.status}</span>`)}
+            </div>`}
+          ${it.claims && it.claims.length > 0 && html`
+            <div class="panel"><h4>Judge claims</h4>
+              ${it.claims.map((c, i) => html`
+                <div class="claim" key=${i}>
+                  <span class="badge ${c.verdict === 'yes' ? 'b-correct' : c.verdict === 'partial' ? 'b-partial' : 'b-incorrect'}">
+                    ${c.verdict}</span><span>${c.claim}</span>
+                </div>`)}
+              ${(it.hallucinations || []).map((h, i) => html`
+                <div class="claim" key=${'h' + i}>
+                  <span class="badge b-halluc">halluc</span><span>${h.assertion}</span>
+                </div>`)}
+            </div>`}
+          ${run.is_agent && !it.error && html`
+            <div class="panel">
+              <h4>Transcript <button class="ghost" onClick=${loadTranscript}>load</button></h4>
+              ${transcript && (transcript.transcript || []).map((s, i) => html`
+                <div class="tstep" key=${i}>
+                  <b>#${s.step} ${s.type === 'tool'
+                    ? `${s.tool} ${JSON.stringify(s.args)}` : s.type}</b>
+                  ${s.result && html`<pre>${s.result}</pre>`}
+                  ${s.stdout && html`<pre>${s.stdout}</pre>`}
+                </div>`)}
+              ${transcript && transcript.stderr && html`
+                <div class="tstep"><b>stderr</b><pre>${transcript.stderr}</pre></div>`}
+            </div>`}
+        </div>`}
+    </div>`;
+}
+
+/* ── Run card ─────────────────────────────────────────────────────────── */
+
+function Run({ run, totals, open, onToggle }) {
+  const [detail, setDetail] = useState({ items: [] });
+  useEffect(() => {
+    if (!open) return;
+    let live = true;
+    const load = () => api(`/api/runs/${encodeURIComponent(run.name)}`)
+      .then(d => live && setDetail(d)).catch(() => {});
+    load();
+    const t = setInterval(load, 4000);
+    return () => { live = false; clearInterval(t); };
+  }, [open, run.name, run.n_done, run.n_graded]);
+
+  const pct = totals.items_approved
+    ? Math.min(100, Math.round(100 * run.n_done / totals.items_approved)) : 0;
+
+  return html`
+    <div class="run">
+      <div class="run-head" onClick=${() => onToggle(run.name)}>
+        <span class="badge ${run.running ? 'b-running' : 'b-idle'}">
+          ${run.running ? 'live' : 'idle'}</span>
+        ${run.is_agent && html`<span class="badge b-agent">agent</span>`}
+        <span class="run-name">${run.name}</span>
+        <span class="run-meta">
+          <span>done <b>${run.n_done}</b></span>
+          ${run.n_errors > 0 && html`<span>errors <b style=${{color:'var(--red)'}}>${run.n_errors}</b></span>`}
+          <span>graded <b>${run.n_graded}</b></span>
+          ${run.n_graded > 0 && html`
+            <span>
+              <span class="badge b-correct">✓ ${run.outcomes.correct || 0}</span>
+              ${' '}<span class="badge b-partial">~ ${run.outcomes.partial || 0}</span>
+              ${' '}<span class="badge b-incorrect">✗ ${run.outcomes.incorrect || 0}</span>
+              ${run.n_hallucinated > 0 && html`${' '}<span class="badge b-halluc">☄ ${run.n_hallucinated}</span>`}
+            </span>`}
+          ${run.is_agent && html`<span class="tools">
+            ${Object.entries(run.tool_groups).map(([g, n]) => `${g}:${n}`).join(' ')}</span>`}
+          <span>${age(run.updated_secs_ago)}</span>
+        </span>
+      </div>
+      <div class="bar"><i style=${{width: pct + '%'}} /></div>
+      ${open && html`<div class="detail">
+        ${detail.items.map(it => html`<${Item} key=${it.qid} run=${run} it=${it} />`)}
+      </div>`}
+    </div>`;
+}
+
+/* ── App ──────────────────────────────────────────────────────────────── */
+
+function App() {
+  const [options, setOptions] = useState({});
+  const [runs, setRuns] = useState([]);
+  const [totals, setTotals] = useState({});
+  const [procs, setProcs] = useState([]);
+  const [open, setOpen] = useState(null);
+  const [lastFetch, setLastFetch] = useState('—');
+
+  const refresh = useCallback(async () => {
+    try {
+      const [r, p] = await Promise.all([api('/api/runs'), api('/api/procs')]);
+      setRuns(r.runs); setTotals(r.totals); setProcs(p.procs);
+      setLastFetch(new Date().toLocaleTimeString());
+    } catch { /* server restarting; keep last view */ }
+  }, []);
+
+  useEffect(() => {
+    api('/api/options').then(setOptions).catch(() => {});
+    refresh();
+    const t = setInterval(refresh, 3000);
+    return () => clearInterval(t);
+  }, [refresh]);
+
+  const stopProc = async id => { await api(`/api/procs/${id}/stop`, { method: 'POST' }); refresh(); };
+  const anyRunning = runs.some(r => r.running) || procs.some(p => p.running);
+
+  return html`
+    <${Fragment}>
+      <header>
+        <h1>🧪 SecDevQA evaluation harness</h1>
+        <span class="hdr-stat">${anyRunning && html`<span class="pulse" />`}
+          <b>${runs.length}</b> runs</span>
+        <span class="hdr-stat">items: <b>${totals.items_approved ?? '…'}</b> approved
+          / <b>${totals.items_total ?? '…'}</b> total</span>
+        <span class="hdr-stat" style=${{marginLeft:'auto'}}>updated ${lastFetch}</span>
+      </header>
+      <main>
+        <h2>Launch a run</h2>
+        <${Launcher} options=${options} onLaunched=${refresh} />
+        <${Procs} procs=${procs} onStop=${stopProc} />
+        <h2>Runs</h2>
+        ${runs.length === 0 && html`<div class="empty">
+          No runs yet — launch one above, or from the shell:
+          <code>python -m harness agent --model gpt-5.4-mini</code></div>`}
+        ${runs.map(r => html`
+          <${Run} key=${r.name} run=${r} totals=${totals}
+                  open=${open === r.name}
+                  onToggle=${n => setOpen(open === n ? null : n)} />`)}
+      </main>
+    <//>`;
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(html`<${App} />`);
+</script>
+</body>
+</html>
