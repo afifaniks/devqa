@@ -138,6 +138,8 @@ def build_thread_view(thread: dict) -> str:
 # Prompt
 # ---------------------------------------------------------------------------
 
+# TODO: I think we could slightly simplify the types. Knowledge is when no grounding sources are cited, and grounding is whent at least one 
+
 NORMALIZE_PROMPT = """\
 You convert a GitHub security issue thread into one or more gradeable (question, \
 answer) pairs for a developer-security benchmark. You are given the full thread with \
@@ -159,7 +161,7 @@ THE ANSWER (grounded EXACTLY on the thread):
 - State, in 1-4 sentences, how the maintainer/community actually answered — distilled \
   faithfully from the thread. Do NOT add facts, fixes, or reasoning that are not in the \
   thread. If the thread answer is terse or points elsewhere, reflect that honestly \
-  (e.g. "The maintainer states it is fixed and points to PR #932").
+  (e.g. "It is fixed and points to PR #932").
 
 KNOWLEDGE TYPE (judge from what the answer's correctness actually rests on)
 - "parametric": the answer is a security/engineering fact or remediation any expert \
