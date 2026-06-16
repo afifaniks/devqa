@@ -1,18 +1,235 @@
-\section{Experimental Setup}
+\section{Experimental Design}
 \label{sec:experimental-setup}
-\subsection{Research Questions (RQs)}
-\researchquestion{RQ1}{What categories of security concerns motivate developer questions
-in open-source projects, and which artifact types do maintainers draw on
-to answer them?}
- 
-\researchquestion{RQ2}{How accurately do frontier LLMs, open-weight LLMs, and coding
-agents answer real developer security questions, broken down by question
-category?}
- 
-\researchquestion{RQ3}{Which artifact types are necessary to answer which categories of
-developer security questions, and what is the marginal accuracy contribution
-of each artifact type when provided as context?}
- 
-\researchquestion{RQ4}{When agents have autonomous tool access to a repository, do they
-retrieve the artifacts actually needed to answer a given security question,
-or do they fail at artifact selection?}
+
+\subsection{Research Questions}
+\researchquestion{RQ1}{What categories of security concerns motivate developer
+questions in open-source projects, and which artifact types do maintainers draw
+on to answer them?}
+
+\researchquestion{RQ2}{How accurately do frontier LLMs, open-weight LLMs, and
+coding agents answer real developer security questions, broken down by question
+category and knowledge type?}
+
+\researchquestion{RQ3}{Which artifact types are necessary to answer which
+categories of developer security questions? What is the marginal accuracy
+contribution of each artifact type when access to it is selectively granted or
+withheld?}
+
+\researchquestion{RQ4}{When agents choose autonomously which artifacts to
+consult, do they consult the artifact types maintainers actually needed---and
+when they fail, is it because they never retrieved the right artifact or
+because they reasoned incorrectly over it?}
+
+RQ1 is answered by the benchmark construction itself (\S\ref{sec:open-coding});
+the category-to-artifact map it produces is simultaneously an empirical finding
+about developer security practice and the ground-truth prediction that RQ3
+tests: if maintainers needed a given artifact type to answer questions of a
+category, then granting a system access to that artifact type should improve
+its accuracy on the category, and withholding it should specifically degrade
+it.
+
+\subsection{Evaluation at the Moment of Asking: Time-Capped Snapshots}
+\label{sec:snapshot}
+
+A naive with-context evaluation would hand the system the repository at its
+current head---but for most items the fix commit, the fix pull-request
+discussion, and often the advisory itself entered the repository \emph{after}
+the question was asked. Against current state, ``answering'' degenerates into
+retrieving the posted resolution. We instead freeze the world at the moment the
+question was asked. For an item with report time $t_\theta$, the
+\emph{time-capped snapshot} comprises: the repository working tree at the last
+default-branch commit preceding $t_\theta$, with commit history truncated
+there; the project's issues and pull requests created at or before $t_\theta$,
+with later comments and reviews removed; and the GitHub security advisories
+referencing the repository published at or before $t_\theta$. The source
+thread itself is always excluded from the issue corpus---the system must never
+read the conversation it is being tested on. No live network access is
+provided under any condition:
+a system that consulted today's NVD entry would observe the resolution and void
+the cap.
+
+Two properties of this construction deserve emphasis. First, resolution
+identifiers that post-date $t_\theta$ are unavailable \emph{by construction},
+which changes what can be graded (\S\ref{sec:grading}): for such items the task
+is to produce the correct diagnosis, verdict, and remediation direction, not to
+name a future release number. Second, when the resolution \emph{pre}-dates the
+question---a duplicate report already answered, a fix already merged or
+released, an advisory already published---it is legitimately discoverable
+inside the snapshot, and locating it is precisely the task a maintainer performs
+when triaging a new report. The benchmark therefore contains a natural
+retrieval sub-task whose ground truth we did not have to synthesize.
+
+\subsection{Systems Under Test}
+\label{sec:systems}
+
+We evaluate three system classes. Each agent backbone is also evaluated as a
+bare LLM, so every with-context result has a paired no-context control from the
+same model.
+
+\textbf{Bare LLMs (no context).} The model receives only the normalized
+question $q$ and answers from parametric knowledge. We evaluate frontier
+closed-weight models and open-weight models under identical prompts
+(temperature~0 where the API permits).
+
+\textbf{Reference agent (typed tools).} Our harness implements a tool-calling
+agent whose tools are \emph{partitioned by artifact type}: file reading,
+listing, and code search over the snapshot working tree (\textsf{code});
+commit log and ancestor-guarded commit display (\textsf{commits}); keyword
+search and full-text retrieval over the capped issue and pull-request corpora
+(\textsf{issues}, \textsf{prs}); and search and retrieval over the capped
+advisory set (\textsf{advisory}). Because each tool belongs to exactly one group, the set of
+artifact types an agent consulted on an item is read directly off its
+transcript as tool-call counts---the instrument RQ4 requires---and access to an
+artifact type is granted or withheld by enabling or disabling its tool group,
+the instrument RQ3 requires. The agent runs a bounded tool-calling loop
+(at most \dnum{15} rounds) before committing to an answer; all transcripts are
+released.
+
+\textbf{Off-the-shelf coding agents.} To ground the agent results in systems
+practitioners actually use, we additionally evaluate production coding agents
+(Claude~Code and OpenCode) headlessly. Each item runs in a sandbox directory
+materializing its snapshot as plain files: the repository tree exported at the
+snapshot commit \emph{without} version-control metadata (so post-report history
+is physically absent), the capped issue, pull-request, and advisory corpora as
+structured data files, and a correspondingly truncated commit log. Because a
+shell-equipped agent cannot be \emph{provably} prevented from reaching the
+network, this condition is best-effort capped: the prompt forbids external
+access, the sandbox contains nothing post-report, and we release full
+transcripts; we treat the residual risk as a stated limitation
+(\S\ref{sec:threats}) and rely on the typed-tool agent for the airtight
+analysis.
+
+\subsection{Context Conditions and Selective Artifact Provision}
+\label{sec:conditions}
+
+Let $\mathcal{G} = \{\textsf{code}, \textsf{commits}, \textsf{issues},
+\textsf{prs}, \textsf{advisory}\}$ be the tool groups. The annotated artifact
+types map onto these groups in the obvious way: code, dependency manifests,
+and documentation are served by \textsf{code}; advisories and CVE/CWE database
+entries by \textsf{advisory}; external references have no serving group, since
+live external sources are excluded by the time cap. A \emph{condition} is a
+subset $S \subseteq \mathcal{G}$ of groups the system may access:
+
+\begin{itemize}
+  \item $S = \emptyset$ --- \textbf{no context}: the bare-LLM condition;
+  \item $S = \mathcal{G}$ --- \textbf{full snapshot}: the agent conditions of
+        \S\ref{sec:systems}, run over the entire benchmark;
+  \item $S = \mathcal{G} \setminus \{g\}$ (leave-one-out) and $S = \{g\}$
+        (single-group) --- \textbf{selective provision}, run on a stratified
+        subset of contextual items whose annotated artifact types span at least
+        two groups, so that ablating one group leaves the others intact.
+\end{itemize}
+
+The selective-provision runs operationalize RQ3 as a controlled experiment:
+necessity of group $g$ for category $k$ manifests as an accuracy drop under
+$\mathcal{G} \setminus \{g\}$ relative to $\mathcal{G}$, and sufficiency as
+accuracy under $\{g\}$ approaching that under $\mathcal{G}$
+(\S\ref{sec:metrics}). The full-snapshot agent runs simultaneously supply the
+RQ4 observational data: per item, the transcript yields the set of groups the
+agent actually consulted, which we compare against the groups serving the
+maintainer-annotated artifact types.
+
+\subsection{Grading}
+\label{sec:grading}
+
+Model answers are free text, so grading combines a deterministic tier that is
+exact where exactness is possible with an LLM-judge tier that is validated
+where judgment is unavoidable. Both tiers are aware of the condition and the
+knowledge type.
+
+\textbf{Tier 1: condition-aware hard-fact matching.}
+Each hard fact is matched in the response by a conservative, type-specific
+identifier pattern (word-boundary--guarded version strings, PR-shaped
+references, SHA prefixes of at least seven characters, exact CVE/GHSA/CWE
+identifiers). Crucially, a fact is \emph{scored} only where it is knowable
+under the condition: subject facts the reporter could cite are gradeable under
+any condition, while a fix fact is gradeable only when the system had context
+access \emph{and} the artifact behind the fact existed at report time (the fix
+commit merged, the release tagged, the advisory published before $t_\theta$).
+A no-context model is therefore never penalized for not knowing one project's
+pull-request numbering, and no system is penalized for not naming an
+identifier that did not yet exist---the failure mode that, left uncorrected,
+turns a capability benchmark into a memorization probe. Unknowable facts are
+recorded as \emph{not gradeable} and excluded from both numerator and
+denominator.
+
+\textbf{Tier 2: per-claim judge with a resolution oracle.}
+An LLM judge---never the model under evaluation, with candidate identity
+anonymized---decomposes the gold answer into atomic claims (a cause, a
+verdict, a user-actionable remediation, an identifier) and verdicts each claim
+as conveyed, partially conveyed, or not conveyed by the response, quoting the
+supporting response phrase so every verdict is spot-checkable. Because gold
+answers are thread-grounded (\S\ref{sec:normalization}), a terse maintainer
+pointer (``fixed in \#932, released 9.0.2'') yields a terse gold; to let a
+richer-but-correct response earn credit such a gold cannot confirm, items
+whose gold answer cites a fix pull request or commit are enriched at grading
+time with the resolved change diff as a \emph{resolution oracle} for the judge.
+Eligibility for this oracle is deliberately mechanical---an explicit fix PR or
+commit reference, resolved by a single API call, with failures marked
+unresolved and the item graded on the thread gold alone---and we report the
+eligibility and resolution rates rather than chasing fixes through advisory
+prose. The judge is condition-aware in one further respect: under agent
+conditions, specific detail beyond the terse gold (affected ranges, root-cause
+analysis, identifiers the agent verifiably retrieved) is expected enrichment,
+and is flagged as hallucination only when it \emph{contradicts} the gold or the
+question's premises; under no context, any concrete project-specific assertion
+absent from the gold is flagged.
+
+\textbf{Outcomes.} Each (item, system, condition) triple receives an outcome in
+$\{\textsc{correct}, \textsc{partial}, \textsc{incorrect}\}$ from the claim
+verdicts, plus an orthogonal boolean \textsc{hallucinated} when the response
+asserts fabricated specifics. We keep hallucination separate rather than
+folding it into \textsc{incorrect}: an answer can convey the right remediation
+\emph{and} fabricate a CVE number, and the fabrication is the more
+safety-relevant signal.
+
+\textbf{Judge reliability.} We use an ensemble of $\ge 2$ judge models with
+randomized presentation order; disagreements are flagged for human resolution.
+Judge verdicts are cross-checked against the Tier-1 identifier matches, and
+mismatches (e.g.\ a \textsc{correct} verdict with zero gradeable facts matched)
+are audited. We calibrate against human labels on a stratified random sample of
+\dnum{50--80} graded items and report Cohen's $\kappa$ (judge vs.\ human); the
+judge prompt is revised and re-calibrated until $\kappa \ge 0.80$ before any
+reported run.
+
+\subsection{Metrics}
+\label{sec:metrics}
+
+Our primary metric is $\mathrm{Acc}(S, k)$, a system's accuracy under
+condition $S$ on the items of question category $k$, alongside the analogous
+partial-credit rate, the hallucination rate, and the Tier-1 hard-fact recall
+over gradeable facts. All metrics are additionally split by knowledge type:
+no-context capability claims are made on parametric items only, while contextual
+items carry the artifact-context analysis. The marginal value of artifact
+group $g$ for category $k$ is the leave-one-out contrast on the
+selective-provision subset,
+$\delta_g(k) = \mathrm{Acc}(\mathcal{G}, k) -
+\mathrm{Acc}(\mathcal{G} \setminus \{g\}, k)$, and its sufficiency is
+$\sigma_g(k) = \mathrm{Acc}(\{g\}, k) - \mathrm{Acc}(\emptyset, k)$, both over
+contextual items. RQ1's category-to-artifact map predicts $\delta_g(k)$ to be
+large exactly where maintainers needed an artifact type served by $g$; RQ3
+tests that prediction. For RQ4 we report, per category, the agreement between
+the groups the agent consulted and the groups serving the maintainer-annotated
+artifact types, and decompose agent failures into \emph{retrieval failures}
+(the agent answered incorrectly having never consulted some required group)
+versus \emph{reasoning failures} (it consulted every required group and still
+answered incorrectly).
+
+\subsection{Negative Controls and Contamination Analysis}
+\label{sec:contamination}
+
+All threads are public and plausibly present in training corpora; a credible
+security benchmark must measure, not assume away, memorization. We use three
+instruments. First, the knowledge-type design itself: contextual items are
+near-unanswerable without project access, so above-chance no-context accuracy
+on contextual items is direct evidence of memorization, cleaner than any
+post-hoc heuristic. Second, every item carries $t_\theta$, and results are
+stratified by whether $t_\theta$ precedes each model's training cutoff;
+markedly higher no-context accuracy on pre-cutoff items indicates recall rather
+than reasoning. Third, for the typed-tool agent, the transcript makes
+memorization visible at item granularity: a response naming a fix identifier
+whose serving tool group was never called cannot have derived it from the
+provided context. Approximately \dnum{10\%} of items are additionally tagged as
+unanswerable from their annotated artifact types alone (requiring, e.g., an
+external database lookup excluded by the time cap); these negative controls
+measure confabulation separately from legitimate inference.

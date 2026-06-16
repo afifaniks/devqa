@@ -1,2 +1,65 @@
 \section{Related Work}
+\label{sec:related}
+
+\noindent\textbf{Repository-level developer question answering.}
+A recent line of benchmarks evaluates LLMs on questions about real codebases.
+SWE-QA~\cite{sweqa2026} constructs repository-level questions from a taxonomy of
+seed templates instantiated per repository with program analysis and an LLM,
+pairing them with RAG-assisted, expert-revised answers and an LLM-as-judge
+evaluation with human validation. Its questions are clean and controllable but
+deliberately synthetic: no developer ever asked them. CoReQA~\cite{coreqa2025}
+similarly targets repository-level comprehension with code-centric context.
+StackRepoQA~\cite{stackrepoqa2025} moves toward authenticity by pairing Stack
+Overflow questions with repositories, and reports a finding that motivates much
+of our design: a substantial share of apparent model accuracy on public
+developer threads reflects memorization of those threads rather than reasoning
+over the repository. All three treat developer questions as a uniform
+population, supply only code-internal context, and grade against answers whose
+correctness is itself difficult to verify externally. SecDevQA differs on each
+axis: its questions are verbatim-grounded in real maintainer exchanges, are
+specifically security questions whose answers depend on artifacts \emph{outside}
+the repository (advisories, vulnerability databases), carry externally
+checkable hard facts that anchor grading, and are evaluated under a time cap
+that makes the memorization risk StackRepoQA observed measurable per item
+(\S\ref{sec:contamination}) rather than merely acknowledged.
+
+\noindent\textbf{Security benchmarks for LLMs and agents.}
+Security-specific evaluations target tasks adjacent to ours but distinct from
+it. SecVulEval~\cite{secvuleval2025} measures vulnerability \emph{detection} on
+labelled code; CodeSecEval~\cite{codeseceval2024} measures secure code
+\emph{generation}; SecureAgentBench~\cite{secureagentbench2025} evaluates
+whether coding agents produce secure patches under repository tasks; and
+SecQA~\cite{secqa2023} tests textbook security knowledge through
+multiple-choice questions. These benchmarks share deterministic or
+near-deterministic grading, but none evaluates the question-answering task
+developers actually pose to maintainers---free-text, situation-specific, and
+resolved by consulting heterogeneous artifacts---and none treats artifact
+access as a controlled variable. SecDevQA is complementary: where
+SecureAgentBench asks whether an agent can \emph{write} a secure change, we ask
+whether it can \emph{answer} the security questions that precede and motivate
+such changes, and which evidence it needs to do so.
+
+\noindent\textbf{Developer security information behavior.}
+That developers' security outcomes depend on the information sources they
+consult is well established. Acar et al.~\cite{acar2016information} showed
+experimentally that developers permitted to consult Stack Overflow produced
+less secure code than those using official documentation, and that only a
+minority of consulted threads contained secure advice; Fischer et
+al.~\cite{fischer2017stackoverflow} traced insecure code snippets from such
+threads into hundreds of thousands of deployed Android applications. This
+literature measures the \emph{consequences} of answer quality but offers no
+instrument for evaluating a new class of answerers. As LLMs and agents become
+the first responders to developer security questions, SecDevQA provides that
+instrument, and its category-to-artifact map (RQ1) extends this literature with
+a quantitative account of \emph{which evidence} trustworthy answers rest on.
+
+\noindent\textbf{Positioning.}
+Table~\ref{tab:related} summarizes the comparison. The claim we make is
+precise: no existing benchmark combines (a)~real security Q\&A mined from
+developer forums, (b)~external advisory artifacts as a context variable,
+(c)~fact-grounded, condition-aware grading, and (d)~systematic measurement of
+which artifact types are necessary for which question categories. We do not
+claim to be the first repository-level QA benchmark, nor the first security
+evaluation of LLMs.
+
 \input{tables/related-benchmarks}

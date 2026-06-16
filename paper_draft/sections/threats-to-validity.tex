@@ -1,11 +1,71 @@
 \section{Threats to Validity}
 \label{sec:threats}
 
-\noindent\textbf{External Validity.} We mine only publicly visible artifacts. Security issues are often disclosed privately and resolved under embargo, leaving just a
-released advisory or changelog entry in public; SecDevQA captures only questions negotiated in the open and may under-represent privately-routed ones. We scope
-our claims to publicly resolved security Q\&A. Repositories are chosen for security activity and popularity (\dnum{three} languages so far), and the hard-verifiable filter
-may exclude question types lacking checkable facts. We report per-repository results and derive the taxonomy from the full corpus to keep both gaps visible.
+\noindent\textbf{Construct validity.}
+Our evaluation items are \emph{normalized} from raw threads---made
+self-contained and stripped of their resolution---which could dilute the
+authenticity claim or leak the answer. Both risks are addressed by construction
+(\S\ref{sec:normalization}): the verbatim original reporter text is released
+with every item; the deterministic leak check flags any fix identifier
+present in a question that the reporter had not stated before the
+answer, and we report the residual leak rate of the released set; and every
+normalized item is independently reviewed by two researchers, with Cohen's
+$\kappa$ reported over the full benchmark for the knowledge-type, leak, and
+context-completeness judgments and every disagreement reconciled before
+evaluation. The knowledge-type label itself is a construct: mislabelling a
+contextual pair as parametric would admit an unanswerable question into the
+no-context capability test. The deterministic hardening rule
+(\S\ref{sec:normalization}) biases errors in the safe direction, and
+condition-aware gradeability ensures a labelling error cannot
+convert an unknowable identifier into a scored miss. Finally, gold answers are
+thread-grounded: a terse maintainer pointer yields a terse gold. We do not
+inflate such golds; instead the grading-time resolution oracle
+(\S\ref{sec:grading}) supplies the resolved fix diff to the judge, and we
+report results separately for pointer-style and substantive-answer items so the
+two populations are not conflated.
 
-\noindent\textbf{Construct Validity.} Our evaluation questions are normalized from raw threads to stand alone and to withhold the resolution, which could weaken the authenticity claim or leak the answer. We address both by construction (\S\ref{sec:normalization}): the verbatim original reporter comment is retained and released with every normalized question; a deterministic check flags any fix-type identifier that appears in a question without the reporter having stated it before the answer; and every normalized pair is independently reviewed by two researchers, so inter-annotator agreement (Cohen's $\kappa$) on the knowledge-type and leak judgments is reported over the full set and disagreements are reconciled before evaluation. Because the gold answer is distilled strictly from the thread, a terse maintainer pointer yields a terse gold answer; we label these honestly and, for grounded pairs that cite a fix pull request or commit, supply the resolved diff to the judge under the with-context conditions rather than inflating the ground truth. The parametric/grounded label further guards the no-context condition: scoring a model on a repository-internal fact it cannot know unaided would measure memorization, so only parametric pairs anchor no-context capability claims.
+\noindent\textbf{Internal validity.}
+Free-text grading uses an LLM judge, and hard facts ground but do not eliminate
+judge error---a response may cite the correct CVE while contradicting the
+verdict it implies. We mitigate with the controls of \S\ref{sec:grading}:
+per-claim verdicts with quoted evidence rather than holistic scores, a
+$\ge 2$-judge ensemble with flagged disagreements, regex cross-checks of
+identifier verdicts, and human calibration to $\kappa \ge 0.80$ on a stratified
+sample before any reported run. The resolution oracle is scoped by a mechanical
+eligibility rule (an explicit fix PR or commit reference, one resolution
+attempt); items outside it are graded on the thread gold alone, and we report
+eligibility and resolution rates so the oracle's coverage is visible. Snapshot
+assembly is itself an instrument that can err: the snapshot commit is resolved
+on the default branch (a question may concern a release branch), and the issue and advisory
+corpora are bounded by what our miners retrieved. We release snapshot
+identifiers (commit SHAs, corpus counts, database snapshot dates) with every
+run for re-verification.
 
-\noindent\textbf{Internal Validity.} Free-text grading uses an LLM judge. Hard facts ground but do not eliminate judge error; we verify named claims, cross-check identifiers, and re-evaluate a \dnum{15\%} sample by hand. Public threads may be memorized~\cite{stackrepoqa2025}; the no-context condition with training-cutoff stratification flags this.
+\noindent\textbf{External validity.}
+We mine only publicly visible artifacts. Security issues are often disclosed
+privately and resolved under embargo, leaving just an advisory or changelog in
+public; SecDevQA captures questions negotiated in the open and may
+under-represent privately routed ones, so our claims are scoped to publicly
+resolved security Q\&A. Repositories are selected for catalogued security
+activity and popularity (\dnum{three} languages so far), which may bias toward
+projects with formal advisory processes; we report per-repository results and
+cap any repository's share of the corpus to keep the bias bounded and visible.
+The hard-verifiability filter excludes question types that rarely yield
+checkable identifiers (e.g.\ severity assessment, design rationale); deriving
+the taxonomy from the full corpus, including non-hard pairs, keeps that gap
+measurable rather than silent.
+
+\noindent\textbf{Contamination and the time cap.}
+Public threads may be memorized~\cite{stackrepoqa2025}, and the time cap
+constrains a system's \emph{context}, not its \emph{weights}: a model whose
+training data includes the resolved thread can reproduce the resolution under
+any condition. We therefore measure memorization rather than assume its
+absence, with three instruments (\S\ref{sec:contamination}): no-context
+accuracy on contextual items, training-cutoff stratification over $t_\theta$, and
+transcript-level detection for the typed-tool agent (a fix identifier asserted
+without the serving tool group ever being called). A residual limitation
+remains for off-the-shelf agents: a shell-equipped agent cannot be provably
+prevented from reaching the network, so the external-agent condition is
+best-effort capped---the sandbox physically contains no post-report data and
+the prompt forbids external access---and we release its transcripts; airtight
+claims rest on the typed-tool reference agent.

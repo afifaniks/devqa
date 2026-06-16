@@ -8,6 +8,9 @@
 \usepackage{textcomp}
 \usepackage{xcolor}
 \usepackage{booktabs}
+\usepackage{url}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric,fit,backgrounds}
 
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
@@ -41,12 +44,11 @@
 \maketitle
 
 \begin{abstract}
-Developers routinely ask security questions in open-source project forums: whether a reported vulnerability affects their specific usage, which version introduced a regression, or whether a proposed patch is sufficient. Answering such questions often requires consulting multiple artifact types — source code, commit history, CVE and GHSA advisories, dependency manifests, or external documentation — yet it is unclear which artifact types are necessary for which categories of question, or how well current LLMs and agents perform under realistic context constraints. We present SecDevQA, a benchmark of [N] developer security question-answer pairs mined from security-labeled issues, advisory discussions, and CVE-linked threads across [K] open-source GitHub repositories. We restrict the benchmark to pairs where the maintainer's answer contains at least one externally verifiable factual claim — a CVE or GHSA identifier, fixed version number, fix commit SHA, or advisory record. These hard facts anchor automated grading: an LLM judge is prompted to verify whether a model's response correctly states each specific factual claim, a narrowly scoped task whose reliability can be directly validated by human spot-check against the structured ground truth. Each pair is annotated with the artifact types the maintainer's answer drew on (source code, commit history, advisory records, dependency manifests, documentation) and assigned to an inductively derived question category. We evaluate frontier and open-weight LLMs and coding agents on SecDevQA under three controlled context conditions — no context, single-artifact, and multi-artifact — and measure accuracy per question category and per artifact type. Our main empirical contribution is a map of which artifact types are necessary to answer which categories of developer security questions, and the marginal accuracy gain each type provides.
-
+Developers routinely ask security questions in open-source project forums: whether a disclosed vulnerability affects their specific usage, which release fixes it, or whether a proposed patch is sufficient. Answering such questions requires cross-referencing artifacts that live partly outside the codebase---advisories, fix commits, dependency manifests---yet no existing benchmark evaluates LLMs or coding agents on the security questions developers actually ask, nor on the artifact dependence those questions exhibit. We present \mbox{SecDevQA}, a benchmark of \dnum{[N]} developer security question--answer pairs mined from issue threads across \dnum{[K]} open-source repositories and restricted to pairs whose maintainer answer states at least one externally verifiable hard fact (CVE/GHSA identifier, fixed version, fix commit or pull request, advisory record). Each verified thread is normalized into a self-contained, resolution-free question and a thread-grounded gold answer, labelled by \emph{knowledge type}---whether a correct answer is derivable from general security knowledge (parametric) or requires project-specific or advisory-specific information (grounded)---and annotated with the artifact types the maintainer drew on. Systems are evaluated at the moment the question was asked: an agent receives tool access over a \emph{time-capped snapshot} of the project (repository at the last pre-report commit; issues, pull requests, and advisories published before the report), so that answering is reconstruction of the maintainer's reasoning rather than retrieval of the posted resolution. Grading is two-tiered and condition-aware: a deterministic identifier check scores each hard fact only under conditions where it is knowable, and a per-claim LLM judge---validated against human labels---scores the free-text remainder, with fabricated specifics reported separately as hallucinations. Analysis of the corpus yields a taxonomy of developer security question categories and an empirical map from categories to required artifact types; selectively granting and withholding artifact access to frontier LLMs, open-weight LLMs, and coding agents quantifies the marginal value of each artifact type per category. SecDevQA, the mining pipeline, and the evaluation harness are released as open artifacts.
 \end{abstract}
 
 \begin{IEEEkeywords}
-component, formatting, style, styling, insert
+software security, developer questions, benchmark, large language models, coding agents, question answering, mining software repositories
 \end{IEEEkeywords}
 
 \input{sections/introduction}

@@ -2,18 +2,28 @@
 \dnum{[The numeric data throughout the paper will be iteratively updated, hence they are colored and bold]}
 \label{sec:benchmark-construction}
 
-SecDevQA is built in five stages: (i)~systematic selection of source
-repositories from the GitHub Advisory Database, (ii)~LLM-assisted detection and
-extraction of candidate security question--answer (Q\&A) pairs from issue and
-discussion threads, (iii)~manual verification and artifact/hard-fact annotation
-of each candidate pair, (iv)~normalization of every verified pair into one or
-more self-contained, gradeable evaluation items, and (v)~inductive open coding of
-the verified pairs toward a taxonomy of developer security questions. The numbers reported below describe the corpus at the
-current stage of construction; the benchmark is being actively expanded along
-the same protocol, so absolute counts will grow while the procedure remains
-fixed.
+SecDevQA is built in three phases. \textbf{(1)~Question sourcing}
+(\S\ref{sec:phase-sourcing}) selects source repositories from the GitHub
+Advisory Database and mines their issue and discussion threads.
+\textbf{(2)~QA pair extraction and verification} (\S\ref{sec:phase-extraction})
+runs a two-stage LLM pipeline that detects and extracts candidate security
+question--answer (Q\&A) pairs---together with the artifact types and externally
+verifiable hard facts each answer draws on---after which the first author
+manually verifies every candidate for inclusion. \textbf{(3)~Normalization and
+coding} (\S\ref{sec:phase-normalization}) turns each verified pair into one or
+more self-contained, gradeable evaluation items under independent dual review,
+and inductively codes the pairs---open coding followed by higher-level axial
+coding---toward a taxonomy of developer security questions. The numbers reported
+below describe the corpus at the current stage of construction; the benchmark is
+being actively expanded along the same protocol, so absolute counts will grow
+while the procedure remains fixed.
 
-\subsection{Repository Selection}
+\input{figures/benchmark-pipeline}
+
+\subsection{Question Sourcing}
+\label{sec:phase-sourcing}
+
+\subsubsection{Repository Selection}
 \label{sec:repo-selection}
 
 To avoid hand-picking projects in a way that could bias the question distribution, we draw the source repositories from an external, independent maintained catalogue of security activity: the GitHub Advisory Database. We clone the database (snapshot \dnum{2026-06-04}; \dnum{31{,}213} reviewed advisories) and parse every reviewed GHSA entry, extracting the GitHub repositories referenced by each advisory and, for each repository, the number of advisories that carry a documented fix version. This yields \dnum{9{,}102} distinct repositories that have appeared in at least one reviewed advisory. We then apply three pre-specified filters intended to keep repositories that are
@@ -50,8 +60,8 @@ security questions are common but formal advisories are sparser, so that the
 corpus is not skewed toward projects with heavyweight advisory processes
 (\S\ref{sec:verification} describes the per-repository cap that enforces this).
 
-\subsection{Detection and Extraction of Q\&A Pairs}
-\label{sec:extraction}
+\subsubsection{Thread Mining}
+\label{sec:mining}
 
 For each repository we retrieve the most recent \dnum{2{,}000} issue and
 discussion threads and flatten them into ordered comment sequences. We bound the
@@ -60,17 +70,18 @@ project has ever produced, but to collect a corpus large and diverse enough to
 support the taxonomy and evaluation in this study. Recent threads also better
 reflect current libraries, advisories, and developer practice.
 
-Locating security Q\&A pairs in this material by hand is impractical. A single
-active repository accumulates thousands of issues, the large majority of which
-are ordinary functional bugs, feature requests, or support questions with no
-security content; security discussions are a sparse minority scattered across
-that volume, and confirming whether a given thread contains a genuine
-question--answer exchange requires reading it end to end. Manually browsing
-every issue across \dnum{ten} repositories---tens of thousands of threads---to
-find this minority is prohibitively slow. We therefore use an LLM as a
-\emph{prefilter} that reads every thread and surfaces likely candidates, turning
-an intractable full-text triage into a tractable verification problem over a
-small candidate set. A two-stage LLM pipeline identifies candidate Q\&A pairs.
+\subsection{QA Pair Extraction and Verification}
+\label{sec:phase-extraction}
+
+\subsubsection{LLM Detection and Extraction}
+\label{sec:extraction}
+
+Security Q\&A pairs are a sparse minority scattered across thousands of
+mostly-functional issues, and confirming one requires reading a thread end to
+end, so manual triage across tens of thousands of threads is impractical. We
+instead use a two-stage LLM pipeline as a \emph{prefilter} that reads every
+thread and surfaces likely candidates, turning intractable full-text triage into
+tractable verification over a small candidate set.
 
 \textbf{Stage~1 (detection).} An LLM reads each thread and decides whether it
 contains a genuine developer security question paired with a substantive answer,
@@ -96,7 +107,7 @@ repositories. We intentionally extract candidates broadly at this stage and rely
 on manual verification, rather than the LLM, to make the final inclusion
 decision.
 
-\subsection{Manual Verification}
+\subsubsection{Manual Verification}
 \label{sec:verification}
 
 Every candidate pair is reviewed by the first author through a purpose-built
@@ -128,20 +139,20 @@ contributors~(\dnum{26}), other commenters~(\dnum{18}), and the original poster
 self-answering~(\dnum{10}). Threads span \dnum{2020--2026} and contain a median
 of \dnum{4} comments (mean \dnum{5.7}, max \dnum{41}).
 
-Of the \dnum{158} verified pairs, \dnum{105} (\dnum{66.5\%}) satisfy the
-additional \emph{hard-verifiability} requirement: the answer states at least one
-externally checkable fact. This hard subset is the part of the benchmark that
-supports fact-grounded automated grading (the remaining \dnum{53} pairs are
-retained for taxonomy construction so that the taxonomy is not biased toward only
-those question types that yield checkable identifiers). Across the hard subset,
-the most common fact types are fixed version numbers (\dnum{47} pairs) and
+In \dnum{105} of the \dnum{158} verified pairs (\dnum{66.5\%}) the answer states
+at least one externally checkable fact---a CVE/GHSA/OSV identifier, a fixed
+version, a fix commit or PR, or an advisory URL. Such facts anchor deterministic
+grading wherever they appear; the remaining \dnum{53} pairs carry none and are
+graded by the judge alone, but we retain them in full so the taxonomy is not
+biased toward only those questions that yield checkable identifiers. Among the
+fact-bearing pairs, the most common fact types are fixed version numbers (\dnum{47} pairs) and
 advisory URLs (\dnum{44}), followed by fix PRs (\dnum{26}), CVE identifiers
 (\dnum{24}), fix commits (\dnum{21}), and GHSA identifiers (\dnum{14}). Hard
 facts are spot-checked against NVD, GHSA, and OSV at construction time, and the
 advisory-database snapshot date is recorded with the release to support future
 re-verification.
 
-\subsection{Artifact-Type and Hard-Fact Annotation}
+\subsubsection{Artifact-Type and Hard-Fact Annotation}
 \label{sec:annotation}
 
 Each verified pair carries an \texttt{artifacts\_needed} list recording which
@@ -156,111 +167,96 @@ context conditions in the evaluation (\S\ref{sec:experimental-setup}): different
 question categories lean on different artifact types, and the annotation makes
 that dependency measurable.
 
-\subsection{Question Normalization}
+\subsection{Normalization and Coding}
+\label{sec:phase-normalization}
+
+\subsubsection{Question Normalization}
 \label{sec:normalization}
 
-A verified thread is not yet a gradeable evaluation item. The developer's
-question is embedded in a multi-comment exchange, leans on earlier comments
-(``the error above,'' ``this issue''), and frequently sits in a thread whose
-later comments---or even whose title---already disclose the resolution. Handing
-such a raw thread to a model under test would leak the answer and conflate reading
-comprehension with security reasoning. We therefore normalize each verified pair
-into one or more self-contained \emph{(question, answer)} items through a single
-LLM pass that is then human-verified. Every decision in this step is governed by
-one constraint---the item must stay faithful to what was really asked and
-answered---because authenticity is the benchmark's reason for being; the choices
-below are each justified against that constraint.
+A verified thread is not yet a gradeable item: the question is embedded in a
+multi-comment exchange, leans on earlier comments (``the error above''), and
+often sits in a thread whose later comments---or title---already disclose the
+resolution. Handing such a thread to a model under test would leak the answer and
+conflate reading comprehension with security reasoning. We therefore normalize
+each verified pair into one or more self-contained \emph{(question, answer)}
+items through a single LLM pass that is then human-verified, under one governing
+constraint: each item must stay faithful to what was really asked and answered.
+Each item carries the normalized question and thread-grounded gold answer, the
+report time $t_\theta$ (the issue's creation time), the knowledge-type label
+below, the artifact types the answer drew on (\S\ref{sec:annotation}), and the
+hard-fact record---partitioned into \emph{subject} facts (CVE/GHSA/CWE/OSV
+identifiers a reporter cites as a premise) and \emph{fix} facts (fixed versions,
+fix PRs/commits, advisory URLs that constitute the resolution).
 
 \noindent\textbf{Self-contained, resolution-free questions.}
-The question is reconstructed to stand alone: every reporter-supplied specific
-(versions, runtime and operating system, configuration, the exact error and
-stack-trace text, and all code or proof-of-concept, kept verbatim) is preserved,
-and dangling references are resolved against earlier comments. The question must
-not, however, state its own resolution---the fixed version, patch commit or pull
-request, or advisory identifier introduced \emph{as the answer} is withheld---so
-that the item remains a genuine open question rather than a fill-in-the-blank. We
-separate the \emph{subject} a reporter cites as their premise (the CVE they are
-worried about, the version they run), which legitimately stays, from the
-\emph{fix} that resolves it, which must not appear. To make this auditable rather
-than a matter of trust in the rewrite, we (i)~retain the verbatim original
-reporter comment alongside the normalized question, so a reader can confirm that
-no specific was invented or dropped, and (ii)~run a deterministic leak check that
-flags any fix-type hard fact---a fixed version, fix pull request or commit, or
-advisory URL---present in the question but absent from the pre-answer reporter
-context: a fix the reporter stated earlier is legitimate context, whereas a fix
-that could only have come from the answer is a leak. Flagged items are corrected
-in the human pass.
+The question preserves every reporter-supplied specific verbatim (versions,
+OS/runtime, configuration, error and stack-trace text, code and
+proof-of-concept) and resolves dangling references against earlier comments, but
+never states its own resolution: a fix fact introduced \emph{as the answer} is
+withheld, so the item stays an open question rather than a fill-in-the-blank. To
+make this auditable we retain the verbatim original comment and run a
+deterministic leak check that flags any fix fact appearing in the question
+without having been stated by a participant \emph{before} the maintainer's
+answer---such an identifier can only have been imported from the answer, whereas
+a fix the reporter cited earlier is legitimate context. Flagged items are
+corrected in the human pass, and we report the residual leak rate.
 
 \noindent\textbf{Thread-grounded answers.}
-The gold answer is a faithful distillation of how the maintainer actually
-answered, drawn strictly from the thread; the normalizer is forbidden to add
-facts, fixes, or reasoning the thread does not contain. When the maintainer's
-answer is terse or a pointer---``fixed in \#932, released 9.0.2''---the gold
-answer reflects exactly that, labelled honestly as the maintainer's stated
-resolution rather than inflated into a fuller explanation we cannot source. We
-deliberately do \emph{not} fetch external advisories or patch diffs to enrich the
-gold answer at this stage, as doing so would fabricate ground truth the thread
-never contained. Instead, the artifacts the answer points to---advisory URLs and
-the fix pull requests or commits---are recorded as \texttt{grounding\_sources};
-at grading time the referenced pull-request and commit diffs are resolved and
-supplied to the judge under the with-context conditions
-(\S\ref{sec:experimental-setup}), so that a terse pointer-answer can still
-corroborate a richer but correct model response without our having invented the
-reference answer.
+The gold answer faithfully distills how the maintainer answered, drawn strictly
+from the thread; the normalizer may not add facts, fixes, or reasoning the thread
+lacks. A terse pointer---``fixed in \#932, released 9.0.2''---is kept as exactly
+that. We do not fetch external advisories or patch diffs to enrich the gold
+answer, which would fabricate ground truth the thread never contained; instead
+the artifacts it points to are recorded as \texttt{grounding\_sources} and the
+referenced diffs are resolved at grading time under the with-context conditions
+(\S\ref{sec:experimental-setup}), so a terse pointer can still corroborate a
+richer but correct model response.
 
-\noindent\textbf{Knowledge type: an explicit answerability axis.}
-The most consequential annotation we attach records whether answering a pair
-requires the repository at all. Each pair is labelled \emph{parametric}---a
-security or engineering fact any expert could give from general knowledge or from
-a public standard the question itself cites, which an LLM could answer with no
-repository or document---or \emph{grounded}---resting on this project's specific
-behaviour or releases, or on an external source the thread points to. This
-distinction is what keeps the evaluation fair. The common pointer-answer ``fixed
-in pull request \#932'' is unanswerable without the repository, so scoring a
-no-context model on it would measure memorization of one project's pull-request
-numbering rather than security capability. Recording knowledge type per pair
-turns the no-context condition into a legitimate capability test on the
-parametric pairs, makes the grounded pairs the locus of the artifact-context
-analysis (\S\ref{sec:experimental-setup}), and turns high no-context accuracy on
-grounded pairs into direct evidence of training-data contamination rather than
-reasoning. The label is assigned by the normalizer from the answer's semantics and
-then hardened by a deterministic rule: if the answer itself states a fix artifact
-also recorded in \texttt{hard\_facts}---matched against the answer text, so that a
-reporter-cited subject fact does not trigger it---the pair is grounded regardless
-of the model's label, because such an artifact is project- or advisory-specific
-information a model cannot produce unaided. The rule errs toward \emph{grounded}
-by design: mislabelling a repository-internal answer as parametric would wrongly
-admit an unanswerable question into the no-context capability test, whereas the
-opposite error merely also routes a pair through the richer context conditions.
+\noindent\textbf{Knowledge type.}
+Each item is also labelled by \emph{knowledge type}, recording whether answering
+it requires this project at all. A \emph{parametric} item is answerable from
+general security knowledge or a public standard the question cites. In
+\texttt{fastapi/fastapi}~\#5837,\footnote{\url{https://github.com/fastapi/fastapi/issues/5837}}
+a login cookie never reaches the browser, and the answer is a browser-platform
+rule rather than a fact about FastAPI: a \texttt{SameSite=None} cookie must also
+set \texttt{Secure}. A \emph{contextual} item instead rests on this project's own
+behavior, releases, or a source the thread points to. In
+\texttt{auth0/node-jsonwebtoken}~\#921,\footnote{\url{https://github.com/auth0/node-jsonwebtoken/issues/921}}
+the answer ``the fix was merged in \#932 and released in 9.0.2'' cannot be
+produced without the repository. A deterministic rule hardens the label: an answer stating
+a fix fact about the project's own code or releases is forced \emph{contextual},
+so a borderline judgment never admits an unanswerable pair into the no-context
+test. The label exists for the evaluation, where it keeps the no-context
+condition a fair capability test and serves as a contamination probe
+(\S\ref{sec:experimental-setup}).
 
-\noindent\textbf{Conservative decomposition.}
-A single thread sometimes bundles distinct information needs---``is my usage
-actually affected?'' and ``how do I remediate?''---each answered separately by the
-maintainer. We split a thread into multiple items only when the reporter genuinely
-raised distinct questions \emph{and} the maintainer's answer addresses more than
-one of them; we never invent a sub-question the thread does not answer. This
-restraint is the line between reframing a real implicit ask and fabricating
-gradeable-looking questions the thread cannot ground---the latter being precisely
-the synthetic-question construction our authenticity claim rejects.
+\noindent\textbf{Decomposition.}
+A thread sometimes bundles distinct needs---``am I affected?'' and ``how do I
+remediate?''---each answered separately by the maintainer. We split into multiple
+items only when the reporter genuinely raised distinct questions \emph{and} the
+maintainer answered more than one; we never invent a sub-question the thread does
+not answer.
 
-\noindent\textbf{Outcome and verification.}
-An initial pass over \dnum{50} verified threads yields \dnum{58} gradeable items,
-with \dnum{5} threads decomposed into more than one; \dnum{53} items are grounded
-and \dnum{5} parametric. The grounded-heavy split is expected: the
-hard-verifiability filter (\S\ref{sec:verification}) selects for answers that rest
-on a specific fix or advisory, leaving general-knowledge answers a minority. Every
-item retains its verbatim original and is marked for human verification, and
-\emph{two researchers independently review every normalized pair}. Reviewing the
-full set rather than a sample lets us report inter-annotator agreement (Cohen's
-$\kappa$) on the knowledge-type label and on the leak and context-completeness
-judgments over the entire benchmark, and reconcile every disagreement before a
-pair enters the evaluated set.
+\noindent\textbf{Outcome.}
+An initial pass over \dnum{50} threads yields \dnum{56} items (\dnum{3} threads
+decomposed), \dnum{44} contextual and \dnum{12} parametric. Contextual pairs
+predominate, since an answer that cites the project's own fix is contextual by
+construction, but the \dnum{21\%} parametric share (secure-configuration,
+secure-API-usage, advisory-triage, and design-rationale questions) keeps the
+no-context capability test and the contamination analysis
+well populated. Every item
+retains its verbatim original, and \emph{two researchers independently review
+every pair}, letting us report Cohen's $\kappa$ on the knowledge-type label and
+the leak and context-completeness judgments over the whole benchmark and
+reconcile all disagreements before evaluation.
 
-\subsection{Open Coding Toward a Question Taxonomy}
+\subsubsection{Open and Axial Coding}
 \label{sec:open-coding}
 
-To characterize \emph{what} developers ask about, we apply inductive open coding
-to the verified pairs. The coding unit is the verbatim Q\&A exchange. An LLM
+We code the verified pairs in two stages: inductive \emph{open coding} of each
+pair, followed by higher-level \emph{axial coding} that collapses the open codes
+into a smaller set of categories. Open coding characterizes \emph{what}
+developers ask about; the coding unit is the verbatim Q\&A exchange. An LLM
 coder (\texttt{gpt-5.4-mini}, accessed through a uniform LiteLLM interface) is
 prompted to assign one or two short noun-phrase codes naming the security
 concern at issue, given the issue title and body, the Q\&A summary, the full
@@ -281,9 +277,8 @@ code, \emph{transitive dependency vulnerability}, accounts for \dnum{12}
 instances; the long tail of singleton codes confirms that the corpus is not
 dominated by a handful of canned questions.
 
-The next step is axial coding: collapsing the open codes into a smaller set of
-higher-level categories that will anchor the per-category analysis in
-RQ2--RQ3. Table~\ref{tab:axial} presents a \emph{preliminary, author-proposed}
+Axial coding then groups the open codes into a smaller set of higher-level
+categories that anchor the per-category analysis in RQ2--RQ3. Table~\ref{tab:axial} presents a \emph{preliminary, author-proposed}
 grouping of the \dnum{235} codes into \dnum{eleven} candidate categories,
 reported here to convey the shape of the emerging taxonomy. The two largest
 groups---HTTP request and response security (SSRF, redirects, headers, cookies)

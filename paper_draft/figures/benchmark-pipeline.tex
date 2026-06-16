@@ -1,0 +1,70 @@
+% SecDevQA benchmark-construction pipeline: three phases, each with sub-steps.
+% Counts are wrapped in \dnum{} so they track the live corpus.
+\begin{figure*}[t]
+\centering
+\begin{tikzpicture}[
+  >={Stealth[length=2.2mm]},
+  font=\footnotesize,
+  sbox/.style={rounded corners=1.5pt, draw=black!50, align=center,
+               text width=15mm, minimum height=10mm, inner sep=2pt},
+  auto/.style={sbox, fill=blue!9},
+  human/.style={sbox, fill=orange!16},
+  phase/.style={rounded corners=3pt, draw=black!45, very thick, inner sep=3mm},
+  plab/.style={font=\footnotesize\bfseries, align=center},
+  store/.style={cylinder, shape border rotate=90, aspect=0.22, draw=black!55,
+                fill=green!12, align=center, text width=27mm, minimum height=8mm,
+                inner sep=1pt, font=\scriptsize},
+  arr/.style={->, semithick, black!65},
+  flow/.style={->, very thick, black!75},
+  cnt/.style={font=\scriptsize, fill=white, inner sep=1.5pt, align=center},
+  note/.style={font=\scriptsize\itshape, text=black!60, align=center},
+  node distance=4mm and 5mm,
+]
+% ---- sub-steps ----
+\node[auto] (repo) {Repository\\selection};
+\node[auto, right=of repo] (mine) {Thread\\mining};
+\node[auto, right=12mm of mine] (extract) {LLM detect\\\& extract};
+\node[human, right=of extract] (verify) {Manual\\verification};
+\node[auto, right=12mm of verify] (norm) {Normalize\\to items};
+\node[human, right=of norm] (dual) {Dual review\\($\kappa$)};
+\node[human, right=of dual] (code) {Open \&\\axial coding};
+% ---- within-phase arrows ----
+\draw[arr] (repo) -- (mine);
+\draw[arr] (extract) -- (verify);
+\draw[arr] (norm) -- (dual);
+\draw[arr] (dual) -- (code);
+% ---- phase containers (behind steps) ----
+\begin{scope}[on background layer]
+  \node[phase, fit=(repo)(mine),        fill=blue!4]   (p1) {};
+  \node[phase, fit=(extract)(verify),   fill=orange!5] (p2) {};
+  \node[phase, fit=(norm)(dual)(code),  fill=orange!5] (p3) {};
+\end{scope}
+% ---- phase titles ----
+\node[plab, above=1mm of p1.north] {Phase~1\\{\normalfont Question Sourcing}};
+\node[plab, above=1mm of p2.north] {Phase~2\\{\normalfont QA Pair Extraction \& Verification}};
+\node[plab, above=1mm of p3.north] {Phase~3\\{\normalfont Normalization \& Coding}};
+% ---- inter-phase flow ----
+\draw[flow] (p1) -- (p2);
+\draw[flow] (p2) -- (p3);
+% ---- funnel counts and released artifacts ----
+\node[note, below=2.5mm of p1.south] {\dnum{10} repos};
+\node[store, below=13mm of p2.south] (db1) {\texttt{security\_benchmark}\\\dnum{158} pairs (\dnum{105} fact-bearing)};
+\node[store, below=13mm of p3.south, xshift=-7mm] (db2) {\texttt{eval\_pairs}\\\dnum{56}: \dnum{44} ctx, \dnum{12} param};
+\node[store, right=3mm of db2, fill=gray!12] (db3) {Question\\taxonomy};
+\draw[arr] (p2.south) -- (db1.north) node[cnt, midway] {\dnum{XXXXX}\,$\to$\,\dnum{158}\\(\dnum{102} rej.)};
+\draw[arr] (p3.south) -- (db2.north);
+\draw[arr] (p3.south) -- (db3.north);
+\end{tikzpicture}
+\caption{\textbf{SecDevQA construction pipeline.} Three phases
+(\S\ref{sec:phase-sourcing}--\S\ref{sec:phase-normalization}). Phase~1 sources
+candidate threads from \dnum{10} repositories; Phase~2 extracts candidate Q\&A
+pairs with a two-stage LLM pipeline and screens them down to \dnum{158}
+human-verified pairs (\dnum{105} stating an externally checkable hard fact);
+Phase~3 normalizes \dnum{56} pairs into self-contained, resolution-free
+evaluation items (\dnum{44} contextual, \dnum{12} parametric) under independent
+dual annotation, and codes the corpus (open then axial) toward a question
+taxonomy. Blue steps are automated (LLM); orange steps are human-in-the-loop;
+green cylinders are released artifacts. Counts reflect the current state of
+construction and grow as the protocol is applied to more repositories.}
+\label{fig:pipeline}
+\end{figure*}
