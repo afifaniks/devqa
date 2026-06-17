@@ -8,7 +8,7 @@ Advisory Database and mines their issue and discussion threads.
 \textbf{(2)~QA pair extraction and verification} (\S\ref{sec:phase-extraction})
 runs a two-stage LLM pipeline that detects and extracts candidate security
 question--answer (Q\&A) pairs---together with the artifact types and externally
-verifiable hard facts each answer draws on---after which the first author
+verifiable facts each answer draws on---after which the first author
 manually verifies every candidate for inclusion. \textbf{(3)~Normalization and
 coding} (\S\ref{sec:phase-normalization}) turns each verified pair into one or
 more self-contained, gradeable evaluation items under independent dual review,
@@ -98,8 +98,8 @@ recall-oriented design.
 \textbf{Stage~2 (extraction).} For threads passing Stage~1, a second prompt
 extracts the specific question and answer comments, the role of the answerer
 (maintainer, contributor, commenter, or self-answer), the artifact types the
-answer draws on (\S\ref{sec:annotation}), and any externally verifiable
-\emph{hard facts} the answer states---CVE/GHSA/OSV identifiers, fixed version
+answer draws on (\S\ref{sec:annotation}), and any externally
+\emph{verifiable facts} the answer states---CVE/GHSA/OSV identifiers, fixed version
 numbers, fix commit SHAs, fix PR references, and advisory URLs.
 
 This pipeline produced \dnum{XXXXX} candidate pairs across the \dnum{ten}
@@ -112,7 +112,7 @@ decision.
 
 Every candidate pair is reviewed by the first author through a purpose-built
 annotation interface that presents the full thread alongside the extracted
-question, answer, role, artifacts, and hard facts. A pair is \emph{accepted}
+question, answer, role, artifacts, and verifiable facts. A pair is \emph{accepted}
 only if it satisfies the inclusion criteria: the question concerns a security
 situation in the developer's own project, the answer is substantive and
 information-providing, and the question and answer are attributable to distinct,
@@ -152,7 +152,7 @@ facts are spot-checked against NVD, GHSA, and OSV at construction time, and the
 advisory-database snapshot date is recorded with the release to support future
 re-verification.
 
-\subsubsection{Artifact-Type and Hard-Fact Annotation}
+\subsubsection{Artifact-Type and Verifiable-Fact Annotation}
 \label{sec:annotation}
 
 Each verified pair carries an \texttt{artifacts\_needed} list recording which
@@ -184,7 +184,7 @@ constraint: each item must stay faithful to what was really asked and answered.
 Each item carries the normalized question and thread-grounded gold answer, the
 report time $t_\theta$ (the issue's creation time), the knowledge-type label
 below, the artifact types the answer drew on (\S\ref{sec:annotation}), and the
-hard-fact record---partitioned into \emph{subject} facts (CVE/GHSA/CWE/OSV
+verifiable-fact record---partitioned into \emph{subject} facts (CVE/GHSA/CWE/OSV
 identifiers a reporter cites as a premise) and \emph{fix} facts (fixed versions,
 fix PRs/commits, advisory URLs that constitute the resolution).
 

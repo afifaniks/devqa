@@ -137,8 +137,8 @@ exact where exactness is possible with an LLM-judge tier that is validated
 where judgment is unavoidable. Both tiers are aware of the condition and the
 knowledge type.
 
-\textbf{Tier 1: condition-aware hard-fact matching.}
-Each hard fact is matched in the response by a conservative, type-specific
+\textbf{Tier 1: condition-aware verifiable-fact matching.}
+Each verifiable fact is matched in the response by a conservative, type-specific
 identifier pattern (word-boundary--guarded version strings, PR-shaped
 references, SHA prefixes of at least seven characters, exact CVE/GHSA/CWE
 identifiers). Crucially, a fact is \emph{scored} only where it is knowable
@@ -197,7 +197,7 @@ reported run.
 
 Our primary metric is $\mathrm{Acc}(S, k)$, a system's accuracy under
 condition $S$ on the items of question category $k$, alongside the analogous
-partial-credit rate, the hallucination rate, and the Tier-1 hard-fact recall
+partial-credit rate, the hallucination rate, and the Tier-1 verifiable-fact recall
 over gradeable facts. All metrics are additionally split by knowledge type:
 no-context capability claims are made on parametric items only, while contextual
 items carry the artifact-context analysis. The marginal value of artifact
