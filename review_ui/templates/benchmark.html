@@ -3,17 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Security Benchmark Browser</title>
+  <title>SecDevQA — Security Benchmark</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22https://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><text y=%221.2em%22 font-size=%2220%22>🔒</text></svg>">
   <link rel="stylesheet" href="/static/app.css" />
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3/dist/cdn.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <style>
     [x-cloak] { display: none !important; }
 
     /* ── layout ────────────────────────────────────────────────── */
     #bm-layout {
       display: grid;
-      grid-template-columns: 320px 1fr;
+      grid-template-columns: 340px 1fr;
       height: calc(100vh - 52px);
       overflow: hidden;
     }
@@ -30,10 +31,18 @@
       gap: 6px;
       border-bottom: 1px solid var(--border);
     }
-    #bm-list {
-      overflow-y: auto;
-      flex: 1;
+    #bm-list { overflow-y: auto; flex: 1; }
+    #bm-stats {
+      border-top: 1px solid var(--border);
+      padding: 10px 12px;
+      font-size: 12px;
+      background: var(--code-bg);
     }
+    #bm-stats .bm-stats-total { font-weight: 700; margin-bottom: 6px; }
+    .bm-stat-row { display: flex; align-items: center; gap: 6px; margin-top: 4px; }
+    .bm-stat-bar { flex: 1; height: 6px; border-radius: 3px; background: var(--border); overflow: hidden; }
+    .bm-stat-bar > span { display: block; height: 100%; }
+    .bm-stat-num { font-family: monospace; min-width: 64px; text-align: right; color: var(--muted); }
     .bm-item {
       padding: 10px 12px;
       border-bottom: 1px solid var(--border);
@@ -45,114 +54,170 @@
     .bm-item-repo { font-size: 11px; color: var(--muted); font-family: monospace; margin-bottom: 2px; }
     .bm-item-title { font-size: 13px; font-weight: 600; line-height: 1.3; margin-bottom: 4px; }
     .bm-item-topic { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .bm-item-badges { display: flex; gap: 4px; margin-top: 4px; flex-wrap: wrap; }
+    .bm-item-badges { display: flex; gap: 4px; margin-top: 5px; flex-wrap: wrap; align-items: center; }
 
     /* ── detail pane ───────────────────────────────────────────── */
-    #bm-detail {
-      overflow-y: auto;
-      padding: 20px 24px;
-    }
+    #bm-detail { overflow-y: auto; padding: 24px 28px; }
+    .bm-detail-inner { max-width: 920px; margin: 0 auto; }
     .bm-empty {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100%;
-      color: var(--muted);
-      font-size: 15px;
+      display: flex; align-items: center; justify-content: center;
+      height: 100%; color: var(--muted); font-size: 15px;
     }
+
+    /* ── badges ────────────────────────────────────────────────── */
+    .badge2 {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 11px; font-weight: 600; line-height: 1;
+      padding: 4px 9px; border-radius: 999px;
+      border: 1px solid transparent; white-space: nowrap;
+    }
+    .b-cve   { background:#fee2e2; color:#991b1b; }
+    .b-ghsa  { background:#ede9fe; color:#5b21b6; }
+    .b-cwe   { background:#ffedd5; color:#9a3412; }
+    .b-ver   { background:#dbeafe; color:#1e40af; }
+    .b-fix   { background:#d1fae5; color:#065f46; }
+    .b-adv   { background:#cffafe; color:#155e75; }
+    .b-open  { background:#dcfce7; color:#166534; }
+    .b-closed{ background:#f3f4f6; color:#374151; }
+    .b-note  { background:#fef3c7; color:#92400e; }
+    .b-leak  { background:#fee2e2; color:#9f1239; }
+    .b-pairs { background:#e0e7ff; color:#3730a3; }
+    .dark .b-cve{background:#3f1d1d;color:#fca5a5}.dark .b-ghsa{background:#2e1065;color:#c4b5fd}
+    .dark .b-cwe{background:#431407;color:#fdba74}.dark .b-ver{background:#1e3a5f;color:#93c5fd}
+    .dark .b-fix{background:#064e3b;color:#6ee7b7}.dark .b-adv{background:#083344;color:#67e8f9}
+    .dark .b-open{background:#052e16;color:#86efac}.dark .b-closed{background:#1f2937;color:#d1d5db}
+    .dark .b-note{background:#451a03;color:#fcd34d}.dark .b-leak{background:#4c0519;color:#fda4af}
+    .dark .b-pairs{background:#1e1b4b;color:#c7d2fe}
 
     /* ── sections ──────────────────────────────────────────────── */
-    .bm-section { margin-bottom: 20px; }
+    .bm-section { margin-bottom: 26px; }
     .bm-section-title {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.07em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 8px;
-      padding-bottom: 4px;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.07em;
+      text-transform: uppercase; color: var(--muted);
+      margin-bottom: 10px; padding-bottom: 4px;
       border-bottom: 1px solid var(--border);
+      display:flex; align-items:center; gap:8px;
     }
+    .bm-section-count { color: var(--accent); font-weight: 700; }
 
     /* ── meta grid ─────────────────────────────────────────────── */
-    .bm-meta-grid {
-      display: grid;
-      grid-template-columns: 130px 1fr;
-      gap: 4px 12px;
-      font-size: 13px;
-    }
+    .bm-meta-grid { display: grid; grid-template-columns: 130px 1fr; gap: 5px 12px; font-size: 13px; }
     .bm-meta-label { color: var(--muted); font-weight: 500; }
     .bm-meta-value { word-break: break-word; }
     .bm-meta-value a { color: var(--accent); text-decoration: none; }
     .bm-meta-value a:hover { text-decoration: underline; }
 
-    /* ── text blocks ───────────────────────────────────────────── */
-    .bm-text-block {
-      font-size: 13px;
-      line-height: 1.6;
-      background: var(--code-bg);
-      border-radius: 6px;
-      padding: 10px 12px;
-      white-space: pre-wrap;
-      word-break: break-word;
+    /* ── callout (topic) ───────────────────────────────────────── */
+    .bm-topic {
+      font-size: 15px; font-weight: 600; line-height: 1.4;
+      background: var(--code-bg); border-left: 3px solid var(--accent);
+      border-radius: 4px; padding: 12px 14px;
     }
 
-    /* ── hard facts ────────────────────────────────────────────── */
-    .bm-facts-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 6px;
-      font-size: 13px;
+    /* ── normalized QA pairs (the highlight) ───────────────────── */
+    .qa-card {
+      border: 1px solid var(--border); border-radius: 10px;
+      margin-bottom: 16px; overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
     }
-    .bm-fact-item { display: flex; flex-direction: column; gap: 2px; }
+    .qa-card-head {
+      display: flex; align-items: center; gap: 8px;
+      padding: 9px 14px; background: var(--code-bg);
+      border-bottom: 1px solid var(--border); flex-wrap: wrap;
+    }
+    .qa-card-num { font-weight: 700; font-size: 13px; }
+    .qa-kt {
+      font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 999px;
+    }
+    .qa-kt-grounded   { background:#d1fae5; color:#065f46; }
+    .qa-kt-parametric { background:#dbeafe; color:#1e40af; }
+    .dark .qa-kt-grounded{background:#064e3b;color:#6ee7b7}
+    .dark .qa-kt-parametric{background:#1e3a5f;color:#93c5fd}
+    .qa-block { padding: 12px 16px; }
+    .qa-block + .qa-block { border-top: 1px dashed var(--border); }
+    .qa-role {
+      font-size: 10px; font-weight: 700; letter-spacing: .06em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 6px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .qa-role-dot { width: 7px; height: 7px; border-radius: 50%; }
+    .qa-role-q .qa-role-dot { background: #3b82f6; }
+    .qa-role-a .qa-role-dot { background: #10b981; }
+    .qa-md { font-size: 13.5px; line-height: 1.65; }
+    .qa-grounding {
+      padding: 10px 16px; background: var(--code-bg);
+      border-top: 1px solid var(--border); font-size: 12px;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .qa-grounding-row { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+    .qa-grounding-label { color: var(--muted); font-weight: 600; min-width: 96px; }
+    .src-chip {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-family: monospace; font-size: 11px;
+      background: var(--tag-bg, #e8f0fe); color: var(--tag-fg, #1a56db);
+      padding: 2px 8px; border-radius: 6px; text-decoration: none; word-break: break-all;
+    }
+    .src-chip:hover { text-decoration: underline; }
+    .dark .src-chip { background:#1e3a5f; color:#90caf9; }
+
+    /* ── markdown rendering ────────────────────────────────────── */
+    .md :is(h1,h2,h3,h4) { font-size: 1.05em; margin: 12px 0 6px; }
+    .md p { margin: 0 0 8px; }
+    .md ul, .md ol { margin: 0 0 8px; padding-left: 22px; }
+    .md code {
+      font-family: ui-monospace, monospace; font-size: 0.88em;
+      background: rgba(127,127,127,0.16); padding: 1px 5px; border-radius: 4px;
+    }
+    .md pre {
+      background: #0d1117; color: #e6edf3; padding: 12px 14px;
+      border-radius: 8px; overflow-x: auto; font-size: 12.5px; line-height: 1.5;
+    }
+    .md pre code { background: none; padding: 0; color: inherit; }
+    .md a { color: var(--accent); }
+    .md blockquote {
+      border-left: 3px solid var(--border); margin: 0 0 8px;
+      padding-left: 12px; color: var(--muted);
+    }
+    .md img { max-width: 100%; }
+    .md table { border-collapse: collapse; font-size: 12.5px; }
+    .md th, .md td { border: 1px solid var(--border); padding: 4px 8px; }
+
+    /* ── hard facts ────────────────────────────────────────────── */
+    .bm-facts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px; font-size: 13px; }
+    .bm-fact-item { display: flex; flex-direction: column; gap: 3px; }
     .bm-fact-label { font-size: 11px; color: var(--muted); font-weight: 600; }
-    .bm-fact-value { font-family: monospace; font-size: 12px; }
+    .bm-fact-value { font-family: monospace; font-size: 12px; display:flex; flex-wrap:wrap; gap:5px; }
     .bm-fact-empty { color: var(--muted); font-style: italic; }
 
     /* ── artifact tags ─────────────────────────────────────────── */
-    .bm-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+    .bm-tags { display: flex; flex-wrap: wrap; gap: 6px; }
     .bm-tag {
-      font-size: 11px;
-      padding: 2px 8px;
-      border-radius: 12px;
-      background: var(--tag-bg, #e8f0fe);
-      color: var(--tag-fg, #1a56db);
-      font-weight: 500;
+      font-size: 11px; padding: 3px 10px; border-radius: 999px;
+      background: var(--tag-bg, #e8f0fe); color: var(--tag-fg, #1a56db); font-weight: 500;
     }
     .dark .bm-tag { background: #1e3a5f; color: #90caf9; }
 
-    /* ── comments thread ───────────────────────────────────────── */
-    .bm-thread-toggle {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      cursor: pointer;
-      user-select: none;
-      font-size: 13px;
-      font-weight: 600;
-      padding: 6px 0;
-      color: var(--fg);
+    /* ── collapsible raw ───────────────────────────────────────── */
+    .bm-disclosure {
+      border: 1px solid var(--border); border-radius: 10px; overflow: hidden;
     }
-    .bm-thread-toggle:hover { color: var(--accent); }
-    .bm-thread-arrow { transition: transform 0.2s; font-size: 11px; }
-    .bm-thread-arrow.open { transform: rotate(90deg); }
+    .bm-disclosure-head {
+      display: flex; align-items: center; gap: 8px; cursor: pointer;
+      user-select: none; font-size: 13px; font-weight: 600;
+      padding: 12px 14px; background: var(--code-bg);
+    }
+    .bm-disclosure-head:hover { color: var(--accent); }
+    .bm-arrow { transition: transform 0.2s; font-size: 11px; }
+    .bm-arrow.open { transform: rotate(90deg); }
+    .bm-disclosure-body { padding: 14px; }
 
-    .bm-comment {
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      margin-bottom: 8px;
-      overflow: hidden;
-    }
+    /* ── comments thread ───────────────────────────────────────── */
+    .bm-comment { border: 1px solid var(--border); border-radius: 6px; margin-bottom: 8px; overflow: hidden; }
     .bm-comment.is-question { border-color: #3b82f6; }
     .bm-comment.is-answer   { border-color: #10b981; }
     .bm-comment-header {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 10px;
-      background: var(--code-bg);
-      font-size: 12px;
-      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 8px; padding: 6px 10px;
+      background: var(--code-bg); font-size: 12px; border-bottom: 1px solid var(--border);
     }
     .bm-comment.is-question .bm-comment-header { background: #eff6ff; }
     .bm-comment.is-answer   .bm-comment-header { background: #ecfdf5; }
@@ -161,54 +226,28 @@
     .bm-comment-id { font-family: monospace; font-weight: 700; color: var(--muted); }
     .bm-comment-author { font-weight: 600; }
     .bm-comment-ts { color: var(--muted); margin-left: auto; }
-    .bm-comment-role-badge {
-      font-size: 10px;
-      padding: 1px 6px;
-      border-radius: 10px;
-      font-weight: 600;
-    }
+    .bm-comment-role-badge { font-size: 10px; padding: 1px 6px; border-radius: 10px; font-weight: 600; }
     .role-question { background: #bfdbfe; color: #1e40af; }
     .role-answer   { background: #a7f3d0; color: #065f46; }
     .dark .role-question { background: #1e3a5f; color: #93c5fd; }
     .dark .role-answer   { background: #064e3b; color: #6ee7b7; }
-    .bm-comment-body {
-      padding: 10px 12px;
-      font-size: 13px;
-      line-height: 1.6;
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
+    .bm-comment-body { padding: 10px 12px; font-size: 13px; }
 
     /* ── edit mode ─────────────────────────────────────────────── */
     .edit-field {
-      width: 100%;
-      font-size: 13px;
-      padding: 6px 8px;
-      border-radius: 4px;
-      border: 1px solid var(--border);
-      background: var(--input-bg, #fff);
-      color: var(--fg);
-      box-sizing: border-box;
-      font-family: inherit;
+      width: 100%; font-size: 13px; padding: 6px 8px; border-radius: 4px;
+      border: 1px solid var(--border); background: var(--input-bg, #fff);
+      color: var(--fg); box-sizing: border-box; font-family: inherit;
     }
     .dark .edit-field { background: #1e1e2e; border-color: #444; }
     textarea.edit-field { resize: vertical; min-height: 70px; }
     .edit-row { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
     .edit-row label { font-size: 12px; font-weight: 600; color: var(--muted); }
-    .edit-actions { display: flex; gap: 8px; margin-top: 4px; }
-
+    .edit-actions { display: flex; gap: 8px; margin-top: 4px; align-items: center; }
     .bm-artifact-check { display: flex; flex-wrap: wrap; gap: 8px; }
-    .bm-artifact-check label {
-      display: flex; align-items: center; gap: 4px;
-      font-size: 12px; cursor: pointer;
-    }
+    .bm-artifact-check label { display: flex; align-items: center; gap: 4px; font-size: 12px; cursor: pointer; }
 
-    /* ── topbar additions ──────────────────────────────────────── */
-    .bm-topbar-count {
-      font-size: 13px;
-      color: var(--muted);
-      margin-left: 8px;
-    }
+    .bm-topbar-count { font-size: 13px; color: var(--muted); margin-left: 8px; }
     .btn-edit-active { background: var(--accent) !important; color: #fff !important; }
   </style>
 </head>
@@ -216,9 +255,9 @@
 <body x-data="app()" x-init="init()">
 
 <div id="topbar">
-  <h1>Security Benchmark</h1>
-  <span class="pipeline-badge pipeline-security">Benchmark</span>
-  <span class="bm-topbar-count" x-text="`${total} records`"></span>
+  <h1>SecDevQA</h1>
+  <span class="pipeline-badge pipeline-security">Security Benchmark</span>
+  <span class="bm-topbar-count" x-text="`${total} questions`"></span>
   <div class="topbar-right">
     <a class="btn" href="/">← Review UI</a>
     <button class="btn" @click="toggleTheme()" x-text="isDark ? '☀ Light' : '🌙 Dark'"></button>
@@ -235,10 +274,15 @@
              @input.debounce.300ms="loadList()"
              placeholder="Search title, topic, summary…" />
       <select class="select" x-model="filterRepo" @change="loadList()">
-        <option value="">All repos</option>
+        <option value="">All repositories</option>
         <template x-for="r in repos" :key="r">
-          <option :value="r" x-text="r.replace('/','/​')"></option>
+          <option :value="r" x-text="r"></option>
         </template>
+      </select>
+      <select class="select" x-model="filterKnowledge" @change="loadList()">
+        <option value="">All Q&amp;A types</option>
+        <option value="grounded">Contextual only</option>
+        <option value="parametric">Parametric only</option>
       </select>
     </div>
     <div id="bm-list">
@@ -249,9 +293,12 @@
           <div class="bm-item-title" x-text="`#${item.number} ${item.title}`"></div>
           <div class="bm-item-topic" x-text="item.security_topic"></div>
           <div class="bm-item-badges">
-            <span x-show="item.has_cve" class="badge" style="background:#fee2e2;color:#991b1b;font-size:10px;padding:1px 6px">CVE</span>
-            <span x-show="item.has_fix" class="badge" style="background:#d1fae5;color:#065f46;font-size:10px;padding:1px 6px">Fix PR</span>
-            <span x-show="item.human_note" class="badge" style="background:#fef3c7;color:#92400e;font-size:10px;padding:1px 6px">Note</span>
+            <span x-show="item.has_cve"   class="badge2 b-cve">CVE</span>
+            <span x-show="item.has_ghsa"  class="badge2 b-ghsa">GHSA</span>
+            <span x-show="item.has_fix"   class="badge2 b-fix">Fix</span>
+            <span x-show="item.has_advisory" class="badge2 b-adv">Advisory</span>
+            <span x-show="item.n_pairs"   class="badge2 b-pairs"
+                  x-text="`${item.n_pairs} Q&A`"></span>
           </div>
         </div>
       </template>
@@ -259,89 +306,132 @@
         No records match
       </div>
     </div>
+    <div id="bm-stats" x-show="stats">
+      <div class="bm-stats-total"
+           x-text="`${stats.records} questions · ${stats.n_pairs} Q&A pairs · ${stats.repos} repos`"></div>
+      <div class="bm-stat-row">
+        <span class="qa-kt qa-kt-grounded" style="cursor:help" :title="ktTip('grounded')">contextual</span>
+        <span class="bm-stat-bar"><span
+              :style="`width:${pct(stats.kinds.grounded)}%;background:#10b981`"></span></span>
+        <span class="bm-stat-num" x-text="`${stats.kinds.grounded} (${pct(stats.kinds.grounded)}%)`"></span>
+      </div>
+      <div class="bm-stat-row">
+        <span class="qa-kt qa-kt-parametric" style="cursor:help" :title="ktTip('parametric')">parametric</span>
+        <span class="bm-stat-bar"><span
+              :style="`width:${pct(stats.kinds.parametric)}%;background:#3b82f6`"></span></span>
+        <span class="bm-stat-num" x-text="`${stats.kinds.parametric} (${pct(stats.kinds.parametric)}%)`"></span>
+      </div>
+    </div>
   </div>
 
   <!-- ── Detail pane ─────────────────────────────────────── -->
   <div id="bm-detail">
-    <div class="bm-empty" x-show="!selected">Select a record from the list</div>
+    <div class="bm-empty" x-show="!selected">Select a question from the list</div>
 
     <template x-if="selected">
-      <div>
+      <div class="bm-detail-inner">
 
         <!-- Header -->
-        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;gap:12px">
-          <div>
-            <div style="font-size:12px;color:var(--muted);font-family:monospace;margin-bottom:4px"
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;gap:12px">
+          <div style="min-width:0">
+            <div style="font-size:12px;color:var(--muted);font-family:monospace;margin-bottom:6px;word-break:break-all"
                  x-text="selected.id"></div>
-            <h2 style="margin:0;font-size:18px;line-height:1.3" x-text="selected.title"></h2>
+            <h2 style="margin:0;font-size:20px;line-height:1.3" x-text="selected.title"></h2>
           </div>
           <div style="display:flex;gap:6px;flex-shrink:0">
-            <button class="btn" :class="editMode ? 'btn-edit-active' : ''"
-                    @click="toggleEdit()">
+            <button class="btn" :class="editMode ? 'btn-edit-active' : ''" @click="toggleEdit()">
               <span x-text="editMode ? '✎ Editing' : '✎ Edit'"></span>
             </button>
-            <a class="btn" :href="selected.url" target="_blank" rel="noopener">↗ GitHub</a>
+            <a class="btn btn-primary" :href="selected.url" target="_blank" rel="noopener">View on GitHub ↗</a>
           </div>
         </div>
 
-        <!-- Metadata -->
-        <div class="bm-section">
-          <div class="bm-section-title">Metadata</div>
-          <div class="bm-meta-grid">
-            <span class="bm-meta-label">Repo</span>
-            <span class="bm-meta-value" x-text="selected.repo"></span>
-            <span class="bm-meta-label">State</span>
-            <span class="bm-meta-value" x-text="selected.state"></span>
-            <span class="bm-meta-label">Created</span>
-            <span class="bm-meta-value" x-text="fmtDate(selected.created_at)"></span>
-            <span class="bm-meta-label">Closed</span>
-            <span class="bm-meta-value" x-text="selected.closed_at ? fmtDate(selected.closed_at) : '—'"></span>
-            <span class="bm-meta-label">Reporter</span>
-            <span class="bm-meta-value" x-text="selected.reporter || '—'"></span>
-            <span class="bm-meta-label">Labels</span>
-            <span class="bm-meta-value">
-              <template x-if="selected.labels && selected.labels.length">
-                <span x-text="selected.labels.join(', ')"></span>
-              </template>
-              <template x-if="!selected.labels || !selected.labels.length">
-                <span style="color:var(--muted)">—</span>
-              </template>
-            </span>
-            <span class="bm-meta-label">Answerer role</span>
-            <span class="bm-meta-value" x-show="!editMode" x-text="selected.answerer_role"></span>
-            <span x-show="editMode">
-              <select class="edit-field" x-model="edit.answerer_role" style="width:auto">
-                <option value="maintainer">maintainer</option>
-                <option value="contributor">contributor</option>
-                <option value="commenter">commenter</option>
-                <option value="op_self">op_self</option>
-                <option value="other">other</option>
-              </select>
-            </span>
-            <span class="bm-meta-label">LLM confidence</span>
-            <span class="bm-meta-value" x-text="selected.llm_confidence ? selected.llm_confidence.toFixed(3) : '—'"></span>
-          </div>
+        <!-- Badge row -->
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:24px">
+          <span class="badge2" :class="selected.state === 'open' ? 'b-open' : 'b-closed'"
+                x-text="selected.state"></span>
+          <template x-for="cve in (selected.hard_facts.cve_ids || [])" :key="cve">
+            <a class="badge2 b-cve" :href="`https://nvd.nist.gov/vuln/detail/${cve}`" target="_blank" rel="noopener"
+               style="text-decoration:none" x-text="cve"></a>
+          </template>
+          <template x-for="ghsa in (selected.hard_facts.ghsa_ids || [])" :key="ghsa">
+            <a class="badge2 b-ghsa" :href="`https://github.com/advisories/${ghsa}`" target="_blank" rel="noopener"
+               style="text-decoration:none" x-text="ghsa"></a>
+          </template>
+          <template x-for="cwe in (selected.hard_facts.cwe_ids || [])" :key="cwe">
+            <span class="badge2 b-cwe" x-text="cwe"></span>
+          </template>
+          <template x-for="v in (selected.hard_facts.fixed_versions || [])" :key="v">
+            <span class="badge2 b-ver" x-text="`fixed: ${v}`"></span>
+          </template>
+          <span x-show="(selected.hard_facts.fix_prs||[]).length || (selected.hard_facts.fix_commits||[]).length"
+                class="badge2 b-fix">has fix</span>
+          <span x-show="(selected.hard_facts.advisory_urls||[]).length" class="badge2 b-adv">advisory</span>
+          <span class="badge2 b-pairs" x-text="`${(selected.qa_pairs||[]).length} normalized Q&A`"></span>
         </div>
 
         <!-- Security topic -->
         <div class="bm-section">
           <div class="bm-section-title">Security Topic</div>
           <template x-if="!editMode">
-            <div class="bm-text-block" x-text="selected.security_topic || '—'"></div>
+            <div class="bm-topic" x-text="selected.security_topic || '—'"></div>
           </template>
           <template x-if="editMode">
             <input class="edit-field" type="text" x-model="edit.security_topic" />
           </template>
         </div>
 
-        <!-- QA summary -->
+        <!-- ★ Normalized Q&A pairs -->
         <div class="bm-section">
-          <div class="bm-section-title">QA Summary</div>
-          <template x-if="!editMode">
-            <div class="bm-text-block" x-text="selected.qa_summary || '—'"></div>
+          <div class="bm-section-title">
+            Normalized Q&amp;A
+            <span class="bm-section-count" x-text="(selected.qa_pairs||[]).length"></span>
+          </div>
+          <template x-if="!(selected.qa_pairs && selected.qa_pairs.length)">
+            <div style="color:var(--muted);font-size:13px;font-style:italic">No normalized pairs for this record.</div>
           </template>
-          <template x-if="editMode">
-            <textarea class="edit-field" x-model="edit.qa_summary" rows="4"></textarea>
+          <template x-for="(p, i) in (selected.qa_pairs || [])" :key="p.qid || i">
+            <div class="qa-card">
+              <div class="qa-card-head">
+                <span class="qa-card-num" x-text="`Q&A ${i+1}`"></span>
+                <span class="qa-kt" style="cursor:help"
+                      :class="p.knowledge_type === 'parametric' ? 'qa-kt-parametric' : 'qa-kt-grounded'"
+                      :title="ktTip(p.knowledge_type)"
+                      x-text="ktLabel(p.knowledge_type)"></span>
+                <span style="margin-left:auto;font-family:monospace;font-size:11px;color:var(--muted)"
+                      x-text="p.qid"></span>
+              </div>
+
+              <div class="qa-block">
+                <div class="qa-role qa-role-q"><span class="qa-role-dot"></span>Question</div>
+                <div class="qa-md md" x-html="md(p.question)"></div>
+              </div>
+
+              <div class="qa-block">
+                <div class="qa-role qa-role-a"><span class="qa-role-dot"></span>Answer</div>
+                <div class="qa-md md" x-html="md(p.answer)"></div>
+              </div>
+
+              <template x-if="(p.grounding_sources||[]).length || p.answer_grounded_in">
+                <div class="qa-grounding">
+                  <div class="qa-grounding-row" x-show="(p.grounding_sources||[]).length">
+                    <span class="qa-grounding-label">Source</span>
+                    <template x-for="src in (p.grounding_sources || [])" :key="src">
+                      <template x-if="isUrl(src)">
+                        <a class="src-chip" :href="src" target="_blank" rel="noopener" x-text="src"></a>
+                      </template>
+                      <template x-if="!isUrl(src)">
+                        <span class="src-chip" x-text="src"></span>
+                      </template>
+                    </template>
+                  </div>
+                  <div class="qa-grounding-row" x-show="p.answer_grounded_in">
+                    <span class="qa-grounding-label">Answer comment</span>
+                    <span class="src-chip" x-text="p.answer_grounded_in"></span>
+                  </div>
+                </div>
+              </template>
+            </div>
           </template>
         </div>
 
@@ -353,10 +443,21 @@
               <template x-for="[key, label] in hardFactFields" :key="key">
                 <div class="bm-fact-item">
                   <span class="bm-fact-label" x-text="label"></span>
-                  <span class="bm-fact-value"
-                        x-text="(selected.hard_facts[key] && selected.hard_facts[key].length) ? selected.hard_facts[key].join(', ') : '—'"
-                        :class="(!selected.hard_facts[key] || !selected.hard_facts[key].length) ? 'bm-fact-empty' : ''">
-                  </span>
+                  <template x-if="(selected.hard_facts[key] || []).length">
+                    <span class="bm-fact-value">
+                      <template x-for="v in selected.hard_facts[key]" :key="v">
+                        <template x-if="isUrl(v)">
+                          <a class="src-chip" :href="v" target="_blank" rel="noopener" x-text="v"></a>
+                        </template>
+                        <template x-if="!isUrl(v)">
+                          <span class="src-chip" x-text="v"></span>
+                        </template>
+                      </template>
+                    </span>
+                  </template>
+                  <template x-if="!(selected.hard_facts[key] || []).length">
+                    <span class="bm-fact-value bm-fact-empty">—</span>
+                  </template>
                 </div>
               </template>
             </div>
@@ -377,7 +478,7 @@
 
         <!-- Artifacts needed -->
         <div class="bm-section">
-          <div class="bm-section-title">Artifacts Needed</div>
+          <div class="bm-section-title">Artifacts Needed to Answer</div>
           <template x-if="!editMode">
             <div class="bm-tags">
               <template x-for="a in selected.artifacts_needed" :key="a">
@@ -400,79 +501,140 @@
           </template>
         </div>
 
-        <!-- Q/A comments (highlighted) -->
+        <!-- Metadata -->
         <div class="bm-section">
-          <div class="bm-section-title">Question &amp; Answer</div>
-          <template x-if="editMode">
-            <div style="display:flex;gap:12px;margin-bottom:10px">
-              <div class="edit-row" style="flex:1">
-                <label>Question comment ID</label>
-                <select class="edit-field" x-model="edit.question_comment_id">
-                  <template x-for="c in selected.comments" :key="c.id">
-                    <option :value="c.id" x-text="`${c.id} — ${c.author}`"></option>
-                  </template>
-                </select>
-              </div>
-              <div class="edit-row" style="flex:1">
-                <label>Answer comment ID</label>
-                <select class="edit-field" x-model="edit.answer_comment_id">
-                  <template x-for="c in selected.comments" :key="c.id">
-                    <option :value="c.id" x-text="`${c.id} — ${c.author}`"></option>
-                  </template>
-                </select>
-              </div>
-            </div>
-          </template>
-          <template x-for="c in qaComments()" :key="c.id">
-            <div class="bm-comment" :class="commentClass(c)">
-              <div class="bm-comment-header">
-                <span class="bm-comment-id" x-text="c.id"></span>
-                <span class="bm-comment-author" x-text="c.author"></span>
-                <span x-show="isQuestion(c)" class="bm-comment-role-badge role-question">question</span>
-                <span x-show="isAnswer(c)"   class="bm-comment-role-badge role-answer">answer</span>
-                <span class="bm-comment-ts" x-text="fmtDate(c.timestamp)"></span>
-              </div>
-              <div class="bm-comment-body" x-text="c.body"></div>
-            </div>
-          </template>
-        </div>
-
-        <!-- Full thread (collapsible) -->
-        <div class="bm-section">
-          <div class="bm-thread-toggle" @click="threadOpen = !threadOpen">
-            <span class="bm-thread-arrow" :class="{ open: threadOpen }">▶</span>
-            <span x-text="`Full Thread (${selected.comments.length} comments)`"></span>
-          </div>
-          <template x-if="threadOpen">
-            <div>
-              <template x-for="c in selected.comments" :key="c.id">
-                <div class="bm-comment" :class="commentClass(c)">
-                  <div class="bm-comment-header">
-                    <span class="bm-comment-id" x-text="c.id"></span>
-                    <span class="bm-comment-author" x-text="c.author"></span>
-                    <span x-show="isQuestion(c)" class="bm-comment-role-badge role-question">question</span>
-                    <span x-show="isAnswer(c)"   class="bm-comment-role-badge role-answer">answer</span>
-                    <span class="bm-comment-ts" x-text="fmtDate(c.timestamp)"></span>
-                  </div>
-                  <div class="bm-comment-body" x-text="c.body"></div>
-                </div>
+          <div class="bm-section-title">Metadata</div>
+          <div class="bm-meta-grid">
+            <span class="bm-meta-label">Repository</span>
+            <span class="bm-meta-value">
+              <a :href="`https://github.com/${selected.repo}`" target="_blank" rel="noopener" x-text="selected.repo"></a>
+            </span>
+            <span class="bm-meta-label">Issue</span>
+            <span class="bm-meta-value">
+              <a :href="selected.url" target="_blank" rel="noopener" x-text="`#${selected.number}`"></a>
+            </span>
+            <span class="bm-meta-label">Created</span>
+            <span class="bm-meta-value" x-text="fmtDate(selected.created_at)"></span>
+            <span class="bm-meta-label">Closed</span>
+            <span class="bm-meta-value" x-text="selected.closed_at ? fmtDate(selected.closed_at) : '—'"></span>
+            <span class="bm-meta-label">Reporter</span>
+            <span class="bm-meta-value" x-text="selected.reporter || '—'"></span>
+            <span class="bm-meta-label">Answered by</span>
+            <span class="bm-meta-value" x-show="!editMode">
+              <span x-text="selected.answer_author || '—'"></span>
+              <span x-show="selected.answerer_role" style="color:var(--muted)"
+                    x-text="` (${selected.answerer_role})`"></span>
+            </span>
+            <span x-show="editMode">
+              <select class="edit-field" x-model="edit.answerer_role" style="width:auto">
+                <option value="maintainer">maintainer</option>
+                <option value="contributor">contributor</option>
+                <option value="commenter">commenter</option>
+                <option value="op_self">op_self</option>
+                <option value="other">other</option>
+              </select>
+            </span>
+            <span class="bm-meta-label">Labels</span>
+            <span class="bm-meta-value">
+              <template x-if="selected.labels && selected.labels.length">
+                <span class="bm-tags">
+                  <template x-for="l in selected.labels" :key="l"><span class="bm-tag" x-text="l"></span></template>
+                </span>
               </template>
-            </div>
-          </template>
+              <template x-if="!selected.labels || !selected.labels.length">
+                <span style="color:var(--muted)">—</span>
+              </template>
+            </span>
+          </div>
         </div>
 
-        <!-- Human note -->
+        <!-- ── Raw details (collapsed) ───────────────────────── -->
         <div class="bm-section">
-          <div class="bm-section-title">Human Note</div>
-          <template x-if="!editMode">
-            <div class="bm-text-block"
-                 x-text="selected.human_note || ''"
-                 :style="!selected.human_note ? 'color:var(--muted);font-style:italic' : ''">
+          <div class="bm-disclosure">
+            <div class="bm-disclosure-head" @click="rawOpen = !rawOpen">
+              <span class="bm-arrow" :class="{ open: rawOpen }">▶</span>
+              <span>Raw source &amp; extraction details</span>
+              <span style="margin-left:auto;color:var(--muted);font-weight:400"
+                    x-text="`${selected.comments.length} comments`"></span>
             </div>
-          </template>
-          <template x-if="editMode">
-            <textarea class="edit-field" x-model="edit.human_note" rows="3"></textarea>
-          </template>
+            <template x-if="rawOpen">
+              <div class="bm-disclosure-body">
+
+                <!-- QA summary -->
+                <div class="bm-section">
+                  <div class="bm-section-title">LLM QA Summary</div>
+                  <template x-if="!editMode">
+                    <div class="md qa-md" x-html="md(selected.qa_summary || '—')"></div>
+                  </template>
+                  <template x-if="editMode">
+                    <textarea class="edit-field" x-model="edit.qa_summary" rows="4"></textarea>
+                  </template>
+                </div>
+
+                <!-- Source question/answer comment selectors (edit) -->
+                <template x-if="editMode">
+                  <div style="display:flex;gap:12px;margin-bottom:14px">
+                    <div class="edit-row" style="flex:1">
+                      <label>Question comment ID</label>
+                      <select class="edit-field" x-model="edit.question_comment_id">
+                        <template x-for="c in selected.comments" :key="c.id">
+                          <option :value="c.id" x-text="`${c.id} — ${c.author}`"></option>
+                        </template>
+                      </select>
+                    </div>
+                    <div class="edit-row" style="flex:1">
+                      <label>Answer comment ID</label>
+                      <select class="edit-field" x-model="edit.answer_comment_id">
+                        <template x-for="c in selected.comments" :key="c.id">
+                          <option :value="c.id" x-text="`${c.id} — ${c.author}`"></option>
+                        </template>
+                      </select>
+                    </div>
+                  </div>
+                </template>
+
+                <!-- Full thread -->
+                <div class="bm-section">
+                  <div class="bm-section-title">Full Issue Thread</div>
+                  <template x-for="c in selected.comments" :key="c.id">
+                    <div class="bm-comment" :class="commentClass(c)">
+                      <div class="bm-comment-header">
+                        <span class="bm-comment-id" x-text="c.id"></span>
+                        <span class="bm-comment-author" x-text="c.author"></span>
+                        <span x-show="isQuestion(c)" class="bm-comment-role-badge role-question">question</span>
+                        <span x-show="isAnswer(c)"   class="bm-comment-role-badge role-answer">answer</span>
+                        <span class="bm-comment-ts" x-text="fmtDate(c.timestamp)"></span>
+                      </div>
+                      <div class="bm-comment-body md" x-html="md(c.body)"></div>
+                    </div>
+                  </template>
+                </div>
+
+                <!-- Provenance + note -->
+                <div class="bm-section" style="margin-bottom:0">
+                  <div class="bm-section-title">Provenance</div>
+                  <div class="bm-meta-grid">
+                    <span class="bm-meta-label">LLM confidence</span>
+                    <span class="bm-meta-value" x-text="selected.llm_confidence != null ? selected.llm_confidence.toFixed(3) : '—'"></span>
+                    <span class="bm-meta-label">Normalizer</span>
+                    <span class="bm-meta-value" x-text="selected.normalizer_model || '—'"></span>
+                    <span class="bm-meta-label">Reviewed at</span>
+                    <span class="bm-meta-value" x-text="selected.reviewed_at ? fmtDate(selected.reviewed_at) : '—'"></span>
+                  </div>
+                  <div style="margin-top:12px">
+                    <div class="bm-section-title">Reviewer Note</div>
+                    <template x-if="!editMode">
+                      <div class="md qa-md" x-html="md(selected.human_note || '_(none)_')"></div>
+                    </template>
+                    <template x-if="editMode">
+                      <textarea class="edit-field" x-model="edit.human_note" rows="3"></textarea>
+                    </template>
+                  </div>
+                </div>
+
+              </div>
+            </template>
+          </div>
         </div>
 
         <!-- Save / Cancel -->
@@ -494,23 +656,10 @@
 <script>
 function app() {
   return {
-    // list state
-    items: [],
-    total: 0,
-    repos: [],
-    searchQ: '',
-    filterRepo: '',
-
-    // detail state
-    selected: null,
-    threadOpen: false,
-    editMode: false,
-    edit: {},
-    saving: false,
-    saveMsg: '',
-    reloading: false,
-
-    // theme
+    items: [], total: 0, repos: [], stats: null,
+    searchQ: '', filterRepo: '', filterKnowledge: '',
+    selected: null, rawOpen: false,
+    editMode: false, edit: {}, saving: false, saveMsg: '', reloading: false,
     isDark: document.documentElement.classList.contains('dark'),
 
     hardFactFields: [
@@ -523,7 +672,6 @@ function app() {
       ['fix_commits',    'Fix commits'],
       ['advisory_urls',  'Advisory URLs'],
     ],
-
     allArtifacts: [
       'code', 'documentation', 'cve_cwe_db', 'pr_data',
       'dependency_manifest', 'external_reference', 'commit_history',
@@ -531,14 +679,45 @@ function app() {
     ],
 
     async init() {
+      if (window.marked) {
+        marked.setOptions({ breaks: true, gfm: true });
+      }
       this.repos = await fetch('/api/benchmark/repos').then(r => r.json());
-      await this.loadList();
+      await Promise.all([this.loadList(), this.loadStats()]);
+    },
+
+    async loadStats() {
+      this.stats = await fetch('/api/benchmark/stats').then(r => r.json());
+    },
+
+    pct(n) {
+      if (!this.stats || !this.stats.n_pairs) return 0;
+      return Math.round(n / this.stats.n_pairs * 100);
+    },
+
+    md(text) {
+      if (!text) return '';
+      if (!window.marked) return text;
+      try { return marked.parse(String(text)); }
+      catch (e) { return String(text); }
+    },
+
+    isUrl(s) { return typeof s === 'string' && /^https?:\/\//i.test(s); },
+
+    // Display label: data still uses "grounded"; paper/UI term is "contextual".
+    ktLabel(kt) { return kt === 'grounded' ? 'contextual' : kt; },
+
+    ktTip(kt) {
+      return kt === 'parametric'
+        ? 'Parametric: the answer was given from general knowledge alone, without grounding in any additional resource.'
+        : 'Contextual: the answer was grounded in additional resources (code, commits, PRs, advisories, or external references).';
     },
 
     async loadList() {
-      const params = new URLSearchParams({ page_size: 200 });
-      if (this.filterRepo) params.set('repo', this.filterRepo);
-      if (this.searchQ)    params.set('q', this.searchQ);
+      const params = new URLSearchParams({ page_size: 300 });
+      if (this.filterRepo)      params.set('repo', this.filterRepo);
+      if (this.filterKnowledge) params.set('knowledge', this.filterKnowledge);
+      if (this.searchQ)         params.set('q', this.searchQ);
       const data = await fetch(`/api/benchmark/records?${params}`).then(r => r.json());
       this.items = data.items;
       this.total = data.total;
@@ -546,15 +725,13 @@ function app() {
 
     async selectRecord(index) {
       this.editMode = false;
-      this.threadOpen = false;
+      this.rawOpen = false;
       this.saveMsg = '';
-      const data = await fetch(`/api/benchmark/records/${index}`).then(r => r.json());
-      this.selected = data;
+      this.selected = await fetch(`/api/benchmark/records/${index}`).then(r => r.json());
     },
 
     toggleEdit() {
       if (!this.editMode) {
-        // clone editable fields into edit buffer
         const s = this.selected;
         this.edit = {
           qa_summary:          s.qa_summary || '',
@@ -566,19 +743,16 @@ function app() {
           artifacts_needed:    [...(s.artifacts_needed || [])],
           hard_facts:          JSON.parse(JSON.stringify(s.hard_facts || {})),
         };
+        this.rawOpen = true;   // editing touches raw-section fields
       }
       this.editMode = !this.editMode;
       this.saveMsg = '';
     },
 
-    cancelEdit() {
-      this.editMode = false;
-      this.saveMsg = '';
-    },
+    cancelEdit() { this.editMode = false; this.saveMsg = ''; },
 
     async saveEdits() {
-      this.saving = true;
-      this.saveMsg = '';
+      this.saving = true; this.saveMsg = '';
       try {
         const resp = await fetch(`/api/benchmark/records/${this.selected.index}`, {
           method: 'PATCH',
@@ -586,10 +760,7 @@ function app() {
           body: JSON.stringify(this.edit),
         });
         if (!resp.ok) throw new Error(await resp.text());
-        // refresh selected record
-        const updated = await fetch(`/api/benchmark/records/${this.selected.index}`).then(r => r.json());
-        this.selected = updated;
-        // refresh list item
+        this.selected = await fetch(`/api/benchmark/records/${this.selected.index}`).then(r => r.json());
         await this.loadList();
         this.editMode = false;
         this.saveMsg = 'Saved';
@@ -610,7 +781,7 @@ function app() {
     async reload() {
       this.reloading = true;
       await fetch('/api/benchmark/reload', { method: 'POST' });
-      await this.loadList();
+      await Promise.all([this.loadList(), this.loadStats()]);
       if (this.selected) await this.selectRecord(this.selected.index);
       this.reloading = false;
     },
@@ -626,14 +797,6 @@ function app() {
       const d = new Date(iso);
       return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) +
              ' ' + d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
-    },
-
-    // return only the question + answer comments for the compact view
-    qaComments() {
-      if (!this.selected) return [];
-      const qid = this.editMode ? this.edit.question_comment_id : this.selected.question_comment_id;
-      const aid = this.editMode ? this.edit.answer_comment_id   : this.selected.answer_comment_id;
-      return (this.selected.comments || []).filter(c => c.id === qid || c.id === aid);
     },
 
     isQuestion(c) {

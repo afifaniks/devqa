@@ -37,6 +37,13 @@ SECURITY_EXPORT_FILE = ROOT / "security_verified_qa_pairs.jsonl"
 
 # ── Benchmark dataset files ────────────────────────────────────────────────────
 BENCHMARK_FILE = ROOT / "dataset" / "security_benchmark.jsonl"
+# Public benchmark browser reads the *final* artifact (includes normalized
+# qa_pairs); falls back to the legacy file if the final one is absent.
+BENCHMARK_FINAL_FILE = ROOT / "dataset" / "security_benchmark_final.jsonl"
+
+
+def benchmark_path() -> Path:
+    return BENCHMARK_FINAL_FILE if BENCHMARK_FINAL_FILE.exists() else BENCHMARK_FILE
 
 # ── Open-coding review files ───────────────────────────────────────────────────
 OC_CODES_FILE = ROOT / "dataset" / "open_codes.jsonl"
@@ -288,8 +295,9 @@ benchmark_records: list[dict] = []
 def load_benchmark_data() -> None:
     global benchmark_records
     benchmark_records = []
-    if BENCHMARK_FILE.exists():
-        with BENCHMARK_FILE.open(encoding="utf-8") as f:
+    path = benchmark_path()
+    if path.exists():
+        with path.open(encoding="utf-8") as f:
             for line in f:
                 line = line.strip()
                 if line:
@@ -297,8 +305,9 @@ def load_benchmark_data() -> None:
 
 
 def save_benchmark_data() -> None:
-    BENCHMARK_FILE.parent.mkdir(parents=True, exist_ok=True)
-    with BENCHMARK_FILE.open("w", encoding="utf-8") as f:
+    path = benchmark_path()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8") as f:
         for record in benchmark_records:
             f.write(json.dumps(record) + "\n")
 
@@ -1064,6 +1073,7 @@ async def benchmark_index():
 @app.get("/api/benchmark/records")
 def get_benchmark_records(
     repo: Optional[str] = None,
+    knowledge: Optional[str] = None,
     q: Optional[str] = None,
     page: int = 1,
     page_size: int = 50,
@@ -1072,6 +1082,10 @@ def get_benchmark_records(
     for i, r in enumerate(benchmark_records):
         if repo and r.get("repo") != repo:
             continue
+        if knowledge:
+            kinds = {p.get("knowledge_type") for p in (r.get("qa_pairs") or [])}
+            if knowledge not in kinds:
+                continue
         if q:
             ql = q.lower()
             searchable = " ".join([
@@ -1083,18 +1097,24 @@ def get_benchmark_records(
             if ql not in searchable:
                 continue
         hf = r.get("hard_facts", {})
+        qa_pairs = r.get("qa_pairs", []) or []
         filtered.append({
             "index": i,
             "id": r["id"],
             "repo": r.get("repo"),
             "number": r.get("number"),
             "title": r.get("title"),
+            "state": r.get("state"),
             "security_topic": r.get("security_topic"),
             "qa_summary": r.get("qa_summary"),
             "answerer_role": r.get("answerer_role"),
             "llm_confidence": r.get("llm_confidence"),
             "has_cve": bool(hf.get("cve_ids")),
+            "has_ghsa": bool(hf.get("ghsa_ids")),
             "has_fix": bool(hf.get("fix_prs") or hf.get("fix_commits")),
+            "has_advisory": bool(hf.get("advisory_urls")),
+            "n_pairs": len(qa_pairs),
+            "knowledge_types": sorted({p.get("knowledge_type") for p in qa_pairs if p.get("knowledge_type")}),
             "human_note": r.get("human_note", ""),
         })
     total = len(filtered)
@@ -1135,6 +1155,30 @@ def update_benchmark_record(index: int, body: BenchmarkEditRequest):
         r["hard_facts"] = existing
     save_benchmark_data()
     return {"ok": True}
+
+
+@app.get("/api/benchmark/stats")
+def get_benchmark_stats():
+    kinds: dict[str, int] = {"parametric": 0, "grounded": 0}
+    n_pairs = 0
+    rec_with = {"parametric": 0, "grounded": 0}
+    for r in benchmark_records:
+        present = set()
+        for p in r.get("qa_pairs") or []:
+            k = p.get("knowledge_type")
+            n_pairs += 1
+            if k in kinds:
+                kinds[k] += 1
+                present.add(k)
+        for k in present:
+            rec_with[k] += 1
+    return {
+        "records": len(benchmark_records),
+        "n_pairs": n_pairs,
+        "kinds": kinds,                 # pair counts by type
+        "records_with": rec_with,       # record counts containing ≥1 of type
+        "repos": len({r.get("repo") for r in benchmark_records}),
+    }
 
 
 @app.get("/api/benchmark/repos")
