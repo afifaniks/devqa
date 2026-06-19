@@ -1,0 +1,57 @@
+/* A few things Mantine doesn't give us out of the box: the page backdrop, the
+   verdict spine down each run, line-clamped snippets, and the dynamic-column
+   comparison grid. Everything else is Mantine components + theme. */
+
+body {
+  background:
+    radial-gradient(1100px 560px at 82% -12%, #16203660 0%, transparent 60%),
+    var(--mantine-color-dark-8);
+}
+
+.mono { font-family: var(--mantine-font-family-monospace); }
+
+/* Verdict spine — a 3px colored edge on a run card. */
+.verdict-spine { position: relative; }
+.verdict-spine::before {
+  content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  border-top-left-radius: var(--mantine-radius-md);
+  border-bottom-left-radius: var(--mantine-radius-md);
+  background: var(--spine-color, var(--mantine-color-dark-4));
+}
+
+/* Clamp long text to N lines (set --lines inline). */
+.clamp {
+  display: -webkit-box; -webkit-box-orient: vertical;
+  -webkit-line-clamp: var(--lines, 3); overflow: hidden;
+}
+
+/* Comparison grid: one question column + one column per selected run. The
+   column template is set inline (grid-template-columns) since it's dynamic.
+   The grid scrolls inside a bounded box so the header can stay pinned in both
+   axes without fighting the page scroll. */
+.cmp {
+  overflow: auto;
+  max-height: calc(100vh - 230px);
+  border: 1px solid var(--mantine-color-dark-4);
+  border-radius: var(--mantine-radius-md);
+  background: var(--mantine-color-dark-7);
+}
+.cmp-grid { min-width: max-content; }
+.cmp-row { display: grid; border-bottom: 1px solid var(--mantine-color-dark-4); }
+.cmp-row:last-child { border-bottom: none; }
+.cmp-head {
+  position: sticky; top: 0; z-index: 3;
+  background: var(--mantine-color-dark-6);
+}
+.cmp-cell {
+  padding: 11px 13px; min-width: 0; overflow: hidden;
+  border-left: 1px solid var(--mantine-color-dark-4);
+}
+.cmp-cell:first-child { border-left: none; }
+.cmp-qcell { cursor: pointer; }
+.cmp-qcell:hover { background: var(--mantine-color-dark-6); }
+.cmp-detail { grid-column: 1 / -1; border-left: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+}

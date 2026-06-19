@@ -1,0 +1,31 @@
+// Thin, typed wrapper over the harness monitor HTTP API. One function per
+// endpoint so components never hand-build URLs or repeat fetch boilerplate.
+
+async function request(path, opts) {
+  const r = await fetch(path, opts);
+  if (!r.ok) {
+    const detail = (await r.json().catch(() => ({}))).detail || r.statusText;
+    throw new Error(detail);
+  }
+  return r.json();
+}
+
+const postJSON = (path, body) =>
+  request(path, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+
+const q = encodeURIComponent;
+
+export const api = {
+  options: () => request("/api/options"),
+  runs: () => request("/api/runs"),
+  runDetail: name => request(`/api/runs/${q(name)}`),
+  compare: names => request(`/api/compare?runs=${names.map(q).join(",")}`),
+  transcript: (name, slug) => request(`/api/transcript/${q(name)}/${q(slug)}`),
+  procs: () => request("/api/procs"),
+  launch: body => postJSON("/api/launch", body),
+  stopProc: id => postJSON(`/api/procs/${q(id)}/stop`, {}),
+};
