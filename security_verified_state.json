@@ -3043,5 +3043,255 @@
     "status": "accepted",
     "note": "",
     "verified_at": "2026-06-10T20:02:23.570829Z"
+  },
+  "kubernetes/kubernetes/issue/137409": {
+    "status": "rejected",
+    "note": "Reject - regression bug in StatefulSet rollout logic; availability/recovery issue, not a security risk or vulnerability despite concrete version anchors",
+    "verified_at": "2026-06-19T22:17:41.105224Z"
+  },
+  "kubernetes/kubernetes/issue/137381": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-19T22:17:58.658662Z"
+  },
+  "kubernetes/kubernetes/issue/137367": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-19T22:18:07.659996Z"
+  },
+  "kubernetes/kubernetes/issue/137195": {
+    "status": "rejected",
+    "note": "reject - deflection response without confirming CVE applicability or providing a concrete fix verification despite CVE/version context",
+    "verified_at": "2026-06-19T22:18:26.627707Z"
+  },
+  "kubernetes/kubernetes/issue/136919": {
+    "status": "accepted",
+    "note": "accept - managedFields loss during webhook failure is security-relevant API state integrity issue; answer is well-anchored with code path and patch fix",
+    "verified_at": "2026-06-19T22:18:48.363062Z"
+  },
+  "kubernetes/kubernetes/issue/136910": {
+    "status": "accepted",
+    "note": "accept - confirmed kubelet restart regression fixed by specific commit with reproducible validation; well-anchored and directly answers fix applicability/backport question",
+    "verified_at": "2026-06-19T22:19:13.551467Z"
+  },
+  "kubernetes/kubernetes/issue/136899": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-19T22:19:25.670633Z"
+  },
+  "kubernetes/kubernetes/issue/136789": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-19T22:19:32.883389Z"
+  },
+  "kubernetes/kubernetes/issue/136680": {
+    "status": "accepted",
+    "note": "accept - valid CVE mitigation advisory with explicit fixed versions and direct upgrade guidance for DoS vulnerability in ingress-nginx",
+    "verified_at": "2026-06-19T22:19:50.317208Z"
+  },
+  "kubernetes/kubernetes/issue/136679": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-19T22:20:04.240211Z"
+  },
+  "kubernetes/kubernetes/issue/136678": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-19T22:20:14.259463Z"
+  },
+  "kubernetes/kubernetes/issue/136677": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-19T22:20:21.723612Z"
+  },
+  "kubernetes/kubernetes/issue/136338": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-19T22:20:27.913820Z"
+  },
+  "kubernetes/kubernetes/issue/136331": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-19T22:20:34.697541Z"
+  },
+  "kubernetes/kubernetes/issue/135858": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-19T22:20:43.092932Z"
+  },
+  "kubernetes/kubernetes/issue/135795": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-19T22:20:51.065978Z"
+  },
+  "kubernetes/kubernetes/issue/135661": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-19T22:20:58.643644Z"
+  },
+  "kubernetes/kubernetes/issue/135525": {
+    "status": "accepted",
+    "note": "accept - CVE-based SSRF vulnerability with explicit fixed version matrix and feature-gate mitigation; strong security relevance and concrete remediation guidance",
+    "verified_at": "2026-06-19T22:21:10.856314Z"
+  },
+  "kubernetes/kubernetes/issue/135459": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-19T22:21:28.260176Z"
+  },
+  "kubernetes/kubernetes/issue/135404": {
+    "status": "accepted",
+    "note": "accept - quota bypass in DRA is security-relevant resource accounting issue; answer is PR-anchored and confirms fix with direct resolution statement",
+    "verified_at": "2026-06-19T22:22:03.447332Z"
+  },
+  "kubernetes/kubernetes/issue/135384": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-19T22:22:39.042735Z"
+  },
+  "kubernetes/kubernetes/issue/135352": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-19T22:26:53.879766Z"
+  },
+  "kubernetes/kubernetes/issue/135333": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-19T22:27:03.543659Z"
+  },
+  "kubernetes/kubernetes/issue/135329": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-19T22:27:13.378520Z"
+  },
+  "kubernetes/kubernetes/issue/135083": {
+    "status": "accepted",
+    "note": "accept - Go stdlib CVE mitigation confirmed via .go-version bump and commit reference; clear supply-chain security relevance with concrete version resolution",
+    "verified_at": "2026-06-19T22:27:29.558854Z"
+  },
+  "kubernetes/kubernetes/issue/134998": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-19T22:27:43.928924Z"
+  },
+  "kubernetes/kubernetes/issue/134929": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-19T22:27:53.251879Z"
+  },
+  "kubernetes/kubernetes/issue/134884": {
+    "status": "accepted",
+    "note": "accept - kube-proxy hairpin SNAT behavior is clearly explained with concrete packet flow logic and sysctl dependency; strong implementation-level networking grounding",
+    "verified_at": "2026-06-19T22:28:26.522998Z"
+  },
+  "kubernetes/kubernetes/issue/134789": {
+    "status": "accepted",
+    "note": "Accept - DRA ResourceClaim config attribution bug is security-relevant due to potential misrouting; answer clearly states cross-version impact and backport necessity",
+    "verified_at": "2026-06-19T22:28:51.632278Z"
+  },
+  "kubernetes/kubernetes/issue/134482": {
+    "status": "accepted",
+    "note": "accept - DRA ResourceHealthStatus bug confirmed with explicit fix PR and corrected claim-name logic; strong implementation-level anchoring and validation via added e2e tests",
+    "verified_at": "2026-06-19T22:29:13.395120Z"
+  },
+  "kubernetes/kubernetes/issue/134343": {
+    "status": "accepted",
+    "note": "accept - consistent-read cache issue correctly tied to etcd version bug; concrete fixed version (3.5.13+) and authoritative Kubernetes documentation support",
+    "verified_at": "2026-06-19T22:29:42.917094Z"
+  },
+  "kubernetes/kubernetes/issue/134215": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-19T22:29:55.843594Z"
+  },
+  "kubernetes/kubernetes/issue/134141": {
+    "status": "accepted",
+    "note": "accept - cgroup memory.high PSI metric reproduction issue is well-anchored with PR evidence and runtime validation; clear kubelet/CRI-O behavior explanation with working workaround",
+    "verified_at": "2026-06-19T22:30:09.561930Z"
+  },
+  "kubernetes/kubernetes/issue/134063": {
+    "status": "accepted",
+    "note": "accept - CVE-2025-9708 is a valid MITM vulnerability with clear fixed version (v17.0.14) and authoritative security advisory confirming remediation",
+    "verified_at": "2026-06-19T22:30:51.349144Z"
+  },
+  "kubernetes/kubernetes/issue/133897": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-19T22:31:12.358442Z"
+  },
+  "kubernetes/kubernetes/issue/133861": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-19T22:31:21.514913Z"
+  },
+  "kubernetes/kubernetes/issue/133764": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-19T22:31:29.769264Z"
+  },
+  "kubernetes/kubernetes/issue/133689": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-19T22:31:42.292449Z"
+  },
+  "kubernetes/kubernetes/issue/133671": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-19T22:31:50.084935Z"
+  },
+  "kubernetes/kubernetes/issue/133561": {
+    "status": "accepted",
+    "note": "accept - Go CVE deemed non-impacting and already mitigated via Go version bump; confirmed via release PRs and maintainer statement",
+    "verified_at": "2026-06-19T22:32:02.568308Z"
+  },
+  "kubernetes/kubernetes/issue/133532": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-19T22:32:15.405966Z"
+  },
+  "kubernetes/kubernetes/issue/133515": {
+    "status": "accepted",
+    "note": "accept - kubectl exec RBAC semantics clarified via PR 134577; create permission requirement restored in 1.35+, preventing perceived downgrade in authorization boundary",
+    "verified_at": "2026-06-19T22:33:37.066885Z"
+  },
+  "kubernetes/kubernetes/issue/133488": {
+    "status": "accepted",
+    "note": "accept - device plugin resource cleanup issue confirmed as kubelet bug; behavior grounded in Device Plugin KEP expectations for capacity/allocatable consistency",
+    "verified_at": "2026-06-19T22:34:30.899520Z"
+  },
+  "kubernetes/kubernetes/issue/133478": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-19T22:37:50.847046Z"
+  },
+  "kubernetes/kubernetes/issue/133471": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-19T22:37:58.620792Z"
+  },
+  "kubernetes/kubernetes/issue/133441": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-19T22:38:07.006719Z"
+  },
+  "kubernetes/kubernetes/issue/133405": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-19T22:38:14.398611Z"
+  },
+  "kubernetes/kubernetes/issue/133365": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-19T22:38:22.203287Z"
+  },
+  "kubernetes/kubernetes/issue/133361": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-19T22:38:30.683777Z"
+  },
+  "kubernetes/kubernetes/issue/133115": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-19T22:38:40.043940Z"
   }
 }
