@@ -1,13 +1,13 @@
 # Fdb version 4
-["bibtex main"] 1781625362.82865 "main.aux" "main.bbl" "main" 1781625377.21932 0
+["bibtex main"] 1781843479.12044 "main.aux" "main.bbl" "main" 1781843479.53577 0
   "./references.bib" 1781216726 4148 2789d5aeae353069740ebcb5dcc71f7d ""
   "/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/bibtex/bst/ieeetran/IEEEtran.bst" 1440712899 57748 7c8250ecf02814ce6ddc0cdbb63df1dd ""
-  "main.aux" 1781625377.15163 7848 807b4cfb7efafe2abf236883cf9390bb "pdflatex"
+  "main.aux" 1781843479.46759 7353 95b98710248b40348bdd2b55a3385bbc "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1781625376.73938 "main.tex" "main.pdf" "main" 1781625377.21948 0
+["pdflatex"] 1781843479.13824 "main.tex" "main.pdf" "main" 1781843479.53596 0
   "/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/enc/dvips/base/8r.enc" 1165713224 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/tfm/adobe/courier/pcrr7t.tfm" 1136768653 960 379cc0019370a9e0208a0a3f949f847a ""
@@ -41,7 +41,6 @@
   "/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/tfm/public/cm/cmsy8.tfm" 1136768653 1120 8b7d695260f3cff42e636090a8002094 ""
   "/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb" 1248133631 36299 5f9df58c2139e7edcf37c8fca4bd384d ""
   "/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb" 1248133631 36281 c355509802a035cadc5f15869451dcee ""
-  "/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb" 1248133631 35469 70d41d2b9ea31d5d813066df7c99281c ""
   "/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb" 1248133631 35752 024fb6c41858982481f6968b5fc26508 ""
   "/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb" 1248133631 32569 5e5ddc8df908dea60932f3c484a54c0d ""
   "/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb" 1248133631 32716 08e384dc442464e7285e891af9f45947 ""
@@ -147,6 +146,10 @@
   "/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/latex/ieeetran/IEEEtran.cls" 1440712899 281957 5b2e4fa15b0f7eabb840ebf67df4c0f7 ""
   "/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def" 1774899586 30909 7dedb28cb21a1e79c47a35a35ae3c507 ""
   "/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg" 1279039959 678 4792914a8f45be57bb98413425e4c7af ""
+  "/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/latex/listings/listings.cfg" 1763671178 1865 73df61e45e2dfdc239ef37ab16d87d6a ""
+  "/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/latex/listings/listings.sty" 1763671178 81627 6a9c17f89f356724d1c9813b7025f0c1 ""
+  "/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/latex/listings/lstmisc.sty" 1763671178 77105 002e983b638eadbf04e580642335f689 ""
+  "/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/latex/listings/lstpatch.sty" 1710360531 353 9024412f43e92cd5b21fe9ded82d0610 ""
   "/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/latex/pgf/basiclayer/pgf.sty" 1601326656 1090 bae35ef70b3168089ef166db3e66f5b2 ""
   "/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/latex/pgf/basiclayer/pgfcore.sty" 1673816307 373 00b204b1d7d095b892ad31a7494b0373 ""
   "/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/latex/pgf/compatibility/pgfcomp-version-0-65.sty" 1601326656 21013 f4ff83d25bb56552493b030f27c075ae ""
@@ -167,11 +170,14 @@
   "/local/home/amamun/apps/latex/.TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1780944430 415199 c6339c74f173e6042cd0e9b1bd5eb63d ""
   "/local/home/amamun/apps/latex/.TinyTeX/texmf-var/web2c/pdftex/pdflatex.fmt" 1780944484 3456436 4a03727f7431e29a4552b70f2db1814b ""
   "/local/home/amamun/apps/latex/.TinyTeX/texmf.cnf" 1780893697 637 edd806fb06a89761a6034e1968af9017 ""
-  "figures/benchmark-pipeline.tex" 1781594478.14398 3781 f09ae683ff0d73250b20a7f17eebb0a1 ""
-  "main.aux" 1781625377.15163 7848 807b4cfb7efafe2abf236883cf9390bb "pdflatex"
-  "main.bbl" 1781625362.84288 2521 19f14fcd95a247897d8e20ef1c00f2f9 "bibtex main"
-  "main.tex" 1781625346.75215 4267 2fb08d884a83d1ad28fcb496355145d8 ""
-  "sections/benchmark-construction.tex" 1781625363.07787 18310 7c3b5cd2b4da12ba04357eead9105319 ""
+  "figures/benchmark-pipeline.pdf" 1781843456.07502 528604 6cf73792a0fbcc269f53d317993583bc ""
+  "figures/benchmark-pipeline.tex" 1781843474.36668 210 9b8615236841bc65c5536cab26924aeb ""
+  "figures/normalization-example.tex" 1781843363.59575 6303 87a255d8459f7b4297a0f4b63ab6c65e ""
+  "figures/secdevqa-normalization.pdf" 1781842024.36675 107008 a598ac9f653bebb292e1c1d109b61163 ""
+  "main.aux" 1781843479.46759 7353 95b98710248b40348bdd2b55a3385bbc "pdflatex"
+  "main.bbl" 1781843479.13459 2521 19f14fcd95a247897d8e20ef1c00f2f9 "bibtex main"
+  "main.tex" 1781670640.01641 4839 b2c4f4ac51d5a4500ac8ebe9b35105be ""
+  "sections/benchmark-construction.tex" 1781670716.94811 18507 796a34d1dbae51849fd756fcdc140f98 ""
   "sections/experimental-setup.tex" 1781625353.82303 13917 299511f70b854a351349bbe9a4439fd2 ""
   "sections/introduction.tex" 1781625371.66073 8310 c38813a00d815c4af76ad30700d63f0a ""
   "sections/related-work.tex" 1781625350.61209 4196 9523aa83c730478342b92112da37e6d1 ""

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.6.8)  16 JUN 2026 11:56
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.6.8)  19 JUN 2026 00:31
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -447,47 +447,73 @@ File: tikzlibraryfit.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 File: tikzlibrarybackgrounds.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 \pgf@layerbox@background=\box68
 \pgf@layerboxsaved@background=\box69
-) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
+) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/latex/listings/listings.sty
+\lst@mode=\count332
+\lst@gtempboxa=\box70
+\lst@token=\toks36
+\lst@length=\count333
+\lst@currlwidth=\dimen308
+\lst@column=\count334
+\lst@pos=\count335
+\lst@lostspace=\dimen309
+\lst@width=\dimen310
+\lst@newlines=\count336
+\lst@lineno=\count337
+\lst@maxwidth=\dimen311
+ (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/latex/listings/lstpatch.sty
+File: lstpatch.sty 2025/11/14 1.11b (Carsten Heinz)
+) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/latex/listings/lstmisc.sty
+File: lstmisc.sty 2025/11/14 1.11b (Carsten Heinz)
+\c@lstnumber=\count338
+\lst@skipnumbers=\count339
+\lst@framebox=\box71
+) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/latex/listings/listings.cfg
+File: listings.cfg 2025/11/14 1.11b listings configuration
+))
+Package: listings 2025/11/14 1.11b (Carsten Heinz)
+ (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
 File: l3backend-pdftex.def 2026-02-18 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count332
+\l__color_backend_stack_int=\count340
 ) (./main.aux)
 \openout1 = `main.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 54.
+LaTeX Font Info:    ... okay on input line 54.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 54.
+LaTeX Font Info:    ... okay on input line 54.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 54.
+LaTeX Font Info:    ... okay on input line 54.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 54.
+LaTeX Font Info:    ... okay on input line 54.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 54.
+LaTeX Font Info:    ... okay on input line 54.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 54.
+LaTeX Font Info:    ... okay on input line 54.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 54.
+LaTeX Font Info:    ... okay on input line 54.
 
 -- Lines per column: 56 (exact).
 (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count333
-\scratchdimen=\dimen308
-\scratchbox=\box70
-\nofMPsegments=\count334
-\nofMParguments=\count335
-\everyMPshowfont=\toks36
-\MPscratchCnt=\count336
-\MPscratchDim=\dimen309
-\MPnumerator=\count337
-\makeMPintoPDFobject=\count338
-\everyMPtoPDFconversion=\toks37
+\scratchcounter=\count341
+\scratchdimen=\dimen312
+\scratchbox=\box72
+\nofMPsegments=\count342
+\nofMParguments=\count343
+\everyMPshowfont=\toks37
+\MPscratchCnt=\count344
+\MPscratchDim=\dimen313
+\MPnumerator=\count345
+\makeMPintoPDFobject=\count346
+\everyMPtoPDFconversion=\toks38
 ) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 485.
  (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
-)) (./sections/introduction.tex [1{/local/home/amamun/apps/latex/.TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/enc/dvips/base/8r.enc}
+))
+\c@lstlisting=\count347
+ (./sections/introduction.tex [1{/local/home/amamun/apps/latex/.TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/enc/dvips/base/8r.enc}
 
 
 ]
@@ -503,10 +529,16 @@ LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 18
  (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/latex/psnfss/ts1ptm.fd
 File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
 )) (./sections/benchmark-construction.tex (./figures/benchmark-pipeline.tex
-LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 51.
+<figures/benchmark-pipeline.pdf, id=13, 725.8317pt x 151.5261pt>
+File: figures/benchmark-pipeline.pdf Graphic file (type pdf)
+<use figures/benchmark-pipeline.pdf>
+Package pdftex.def Info: figures/benchmark-pipeline.pdf  used on input line 3.
+(pdftex.def)             Requested size: 516.0pt x 107.72299pt.
+) [2]
+LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 53.
  (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/latex/psnfss/ot1pcr.fd
 File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
-)) [2]
+)
 Underfull \hbox (badness 6125) in paragraph at lines 49--62
 []\OT1/ptm/m/n/10 From this pool we are min-ing repos-i-to-ries in-cre-
  []
@@ -521,16 +553,28 @@ Underfull \hbox (badness 3579) in paragraph at lines 49--62
 \OT1/ptm/m/n/10 i-to-ries in Ta-ble I[], span-ning []\OT1/ptm/b/n/10 three[] \OT1/ptm/m/n/10 lan-guages (Python,
  []
 
-[3] [4] (./tables/repo-stats.tex) (./tables/artifacts.tex) (./tables/axial-categories.tex)) (./sections/experimental-setup.tex [5] [6]
+[3 <./figures/benchmark-pipeline.pdf>] (./figures/normalization-example.tex
+<figures/secdevqa-normalization.pdf, id=66, 460.6008pt x 297.02968pt>
+File: figures/secdevqa-normalization.pdf Graphic file (type pdf)
+<use figures/secdevqa-normalization.pdf>
+Package pdftex.def Info: figures/secdevqa-normalization.pdf  used on input line 101.
+(pdftex.def)             Requested size: 252.0pt x 162.51021pt.
+) [4 <./figures/secdevqa-normalization.pdf>] (./tables/repo-stats.tex) (./tables/artifacts.tex) (./tables/axial-categories.tex)) (./sections/experimental-setup.tex [5]
 LaTeX Font Info:    Trying to load font information for OT1+phv on input line 76.
  (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/latex/psnfss/ot1phv.fd
 File: ot1phv.fd 2020/03/25 scalable font definitions for OT1/phv.
-) [7]) (./sections/threats-to-validity.tex [8]) (./sections/related-work.tex
+) [6]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [7]) (./sections/threats-to-validity.tex [8]) (./sections/related-work.tex
 Underfull \hbox (badness 1810) in paragraph at lines 26--41
 \OT1/ptm/m/n/10 the question-answering task de-vel-op-ers ac-tu-ally pose to
  []
 
-(./tables/related-benchmarks.tex)) (./main.bbl [9])
+(./tables/related-benchmarks.tex)) (./main.bbl
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [9])
 
 ** Conference Paper **
 Before submitting the final camera ready copy, remember to:
@@ -551,18 +595,18 @@ L3 programming layer <2026-05-26>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 15781 strings out of 468300
- 325951 string characters out of 5426743
- 744285 words of memory out of 5000000
- 44545 multiletter control sequences out of 15000+600000
- 680651 words of font info for 133 fonts, out of 8000000 for 9000
+ 16932 strings out of 468300
+ 341936 string characters out of 5426743
+ 754543 words of memory out of 5000000
+ 45684 multiletter control sequences out of 15000+600000
+ 677312 words of font info for 130 fonts, out of 8000000 for 9000
  430 hyphenation exceptions out of 8191
- 84i,9n,94p,2357b,983s stack positions out of 10000i,1000n,20000p,200000b,200000s
-</local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on main.pdf (10 pages, 210413 bytes).
+ 84i,9n,94p,2357b,295s stack positions out of 10000i,1000n,20000p,200000b,200000s
+</local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on main.pdf (10 pages, 829135 bytes).
 PDF statistics:
- 111 PDF objects out of 1000 (max. 8388607)
- 70 compressed objects within 1 object stream
+ 285 PDF objects out of 1000 (max. 8388607)
+ 87 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 13 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 23 words of extra memory for PDF output out of 10000 (max. 10000000)
 

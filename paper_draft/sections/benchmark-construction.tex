@@ -187,6 +187,10 @@ below, the artifact types the answer drew on (\S\ref{sec:annotation}), and the
 verifiable-fact record---partitioned into \emph{subject} facts (CVE/GHSA/CWE/OSV
 identifiers a reporter cites as a premise) and \emph{fix} facts (fixed versions,
 fix PRs/commits, advisory URLs that constitute the resolution).
+Figure~\ref{fig:normalization} contrasts a raw mined thread with the item it
+becomes, and makes the transformation concrete; we describe its components next.
+
+\input{figures/normalization-example}
 
 \noindent\textbf{Self-contained, resolution-free questions.}
 The question preserves every reporter-supplied specific verbatim (versions,

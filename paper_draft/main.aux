@@ -17,39 +17,41 @@
 \newlabel{sec:phase-sourcing}{{\mbox  {II-A}}{2}{}{subsection.2.1}{}}
 \newlabel{sec:repo-selection}{{\mbox  {II-A}1}{2}{}{subsubsection.2.1.1}{}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {II-A}1}Repository Selection}{2}{}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces \textbf  {SecDevQA construction pipeline.} Three phases (\S  \ref {sec:phase-sourcing}--\S  \ref {sec:phase-normalization}). Phase~1 sources candidate threads from \textcolor {red!75!black}{\textbf  {10}} repositories; Phase~2 extracts candidate Q\&A pairs with a two-stage LLM pipeline and screens them down to \textcolor {red!75!black}{\textbf  {158}} human-verified pairs (\textcolor {red!75!black}{\textbf  {105}} stating an externally checkable hard fact); Phase~3 normalizes \textcolor {red!75!black}{\textbf  {56}} pairs into self-contained, resolution-free evaluation items (\textcolor {red!75!black}{\textbf  {44}} contextual, \textcolor {red!75!black}{\textbf  {12}} parametric) under independent dual annotation, and codes the corpus (open then axial) toward a question taxonomy. Blue steps are automated (LLM); orange steps are human-in-the-loop; green cylinders are released artifacts. Counts reflect the current state of construction and grow as the protocol is applied to more repositories.}}{3}{}\protected@file@percent }
-\newlabel{fig:pipeline}{{1}{3}{}{figure.1}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces The SecDevQA benchmark construction pipeline.}}{3}{}\protected@file@percent }
+\newlabel{fig:benchmark-pipeline}{{1}{3}{}{figure.1}{}}
 \newlabel{sec:mining}{{\mbox  {II-A}2}{3}{}{subsubsection.2.1.2}{}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {II-A}2}Thread Mining}{3}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-B}}QA Pair Extraction and Verification}{3}{}\protected@file@percent }
 \newlabel{sec:phase-extraction}{{\mbox  {II-B}}{3}{}{subsection.2.2}{}}
 \newlabel{sec:extraction}{{\mbox  {II-B}1}{3}{}{subsubsection.2.2.1}{}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {II-B}1}LLM Detection and Extraction}{3}{}\protected@file@percent }
-\newlabel{sec:verification}{{\mbox  {II-B}2}{4}{}{subsubsection.2.2.2}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {II-B}2}Manual Verification}{4}{}\protected@file@percent }
+\newlabel{sec:verification}{{\mbox  {II-B}2}{3}{}{subsubsection.2.2.2}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {II-B}2}Manual Verification}{3}{}\protected@file@percent }
 \newlabel{sec:annotation}{{\mbox  {II-B}3}{4}{}{subsubsection.2.2.3}{}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {II-B}3}Artifact-Type and Verifiable-Fact Annotation}{4}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-C}}Normalization and Coding}{4}{}\protected@file@percent }
 \newlabel{sec:phase-normalization}{{\mbox  {II-C}}{4}{}{subsection.2.3}{}}
 \newlabel{sec:normalization}{{\mbox  {II-C}1}{4}{}{subsubsection.2.3.1}{}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {II-C}1}Question Normalization}{4}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Normalization turns a verified thread into a gradeable item (\texttt  {python-pillow/Pillow}~\#6955; \S  \ref {sec:normalization}). Color marks the three roles in both panels: \colorbox {cPrem}{premises / context}, the \colorbox {cAsk}{question / problem statement}, and the \colorbox {cAns}{answer}.}}{4}{}\protected@file@percent }
+\newlabel{fig:normalization}{{2}{4}{}{figure.2}{}}
 \newlabel{sec:open-coding}{{\mbox  {II-C}2}{5}{}{subsubsection.2.3.2}{}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {II-C}2}Open and Axial Coding}{5}{}\protected@file@percent }
 \@writefile{lot}{\contentsline {table}{\numberline {I}{\ignorespaces Repositories in the current SecDevQA corpus. \textbf  {Pairs} = Q\&A pairs retained after manual verification; \textbf  {Hard} = subset whose answer carries at least one externally verifiable fact (\textcolor {red!75!black}{\textbf  {2026-06-08}}).}}{5}{}\protected@file@percent }
 \newlabel{tab:repos}{{I}{5}{}{table.1}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {II}{\ignorespaces Artifact types the maintainer's answer drew on, across the \textcolor {red!75!black}{\textbf  {158}} verified pairs (a pair may draw on several).}}{5}{}\protected@file@percent }
-\newlabel{tab:artifacts}{{II}{5}{}{table.2}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {III}Experimental Design}{5}{}\protected@file@percent }
 \newlabel{sec:experimental-setup}{{III}{5}{}{section.3}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-A}}Research Questions}{5}{}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {III}{\ignorespaces Axial grouping of the open codes into candidate higher-level categories. \textbf  {Pairs} counts verified pairs touching the category (a two-code pair may fall in two categories, so the column sums to more than \textcolor {red!75!black}{\textbf  {158}}).}}{6}{}\protected@file@percent }
-\newlabel{tab:axial}{{III}{6}{}{table.3}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {II}{\ignorespaces Artifact types the maintainer's answer drew on, across the \textcolor {red!75!black}{\textbf  {158}} verified pairs (a pair may draw on several).}}{6}{}\protected@file@percent }
+\newlabel{tab:artifacts}{{II}{6}{}{table.2}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-B}}Evaluation at the Moment of Asking: Time-Capped Snapshots}{6}{}\protected@file@percent }
 \newlabel{sec:snapshot}{{\mbox  {III-B}}{6}{}{subsection.3.2}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-C}}Systems Under Test}{6}{}\protected@file@percent }
 \newlabel{sec:systems}{{\mbox  {III-C}}{6}{}{subsection.3.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-D}}Context Conditions and Selective Artifact Provision}{7}{}\protected@file@percent }
-\newlabel{sec:conditions}{{\mbox  {III-D}}{7}{}{subsection.3.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-D}}Context Conditions and Selective Artifact Provision}{6}{}\protected@file@percent }
+\newlabel{sec:conditions}{{\mbox  {III-D}}{6}{}{subsection.3.4}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {III}{\ignorespaces Axial grouping of the open codes into candidate higher-level categories. \textbf  {Pairs} counts verified pairs touching the category (a two-code pair may fall in two categories, so the column sums to more than \textcolor {red!75!black}{\textbf  {158}}).}}{7}{}\protected@file@percent }
+\newlabel{tab:axial}{{III}{7}{}{table.3}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-E}}Grading}{7}{}\protected@file@percent }
 \newlabel{sec:grading}{{\mbox  {III-E}}{7}{}{subsection.3.5}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-F}}Metrics}{8}{}\protected@file@percent }
@@ -74,17 +76,17 @@
 \bibstyle{IEEEtran}
 \bibdata{references}
 \bibcite{acar2016information}{1}
-\bibcite{fischer2017stackoverflow}{2}
-\bibcite{sweqa2026}{3}
-\bibcite{coreqa2025}{4}
-\bibcite{stackrepoqa2025}{5}
 \@writefile{toc}{\contentsline {section}{\numberline {V}Related Work}{9}{}\protected@file@percent }
 \newlabel{sec:related}{{V}{9}{}{section.5}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {IV}{\ignorespaces Comparison with related work. \textbf  {Sec.}~=~security-specific corpus; \textbf  {Adv.}~=~external advisory artifacts as context; \textbf  {Grd.}~=~fact-grounded grading; \textbf  {Abl.}~=~artifact-type ablation. \text  {$\mathsurround \z@ \mathchar "458$}~full; P~partial; $\times $~none.}}{9}{}\protected@file@percent }
 \newlabel{tab:related}{{IV}{9}{}{table.4}{}}
-\@writefile{toc}{\contentsline {section}{References}{9}{}\protected@file@percent }
+\bibcite{fischer2017stackoverflow}{2}
+\bibcite{sweqa2026}{3}
+\bibcite{coreqa2025}{4}
+\bibcite{stackrepoqa2025}{5}
 \bibcite{secvuleval2025}{6}
 \bibcite{codeseceval2024}{7}
 \bibcite{secureagentbench2025}{8}
 \bibcite{secqa2023}{9}
+\@writefile{toc}{\contentsline {section}{References}{10}{}\protected@file@percent }
 \gdef \@abspage@last{10}
