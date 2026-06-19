@@ -83,6 +83,7 @@ export function App() {
               totals={totals}
               procs={procs}
               onLaunched={refresh}
+              onRefresh={refresh}
               onStopProc={async id => { await api.stopProc(id); refresh(); }}
             />
           </Box>

@@ -23,6 +23,7 @@ export const api = {
   options: () => request("/api/options"),
   runs: () => request("/api/runs"),
   runDetail: name => request(`/api/runs/${q(name)}`),
+  deleteRun: name => request(`/api/runs/${q(name)}`, { method: "DELETE" }),
   compare: names => request(`/api/compare?runs=${names.map(q).join(",")}`),
   transcript: (name, slug) => request(`/api/transcript/${q(name)}/${q(slug)}`),
   procs: () => request("/api/procs"),

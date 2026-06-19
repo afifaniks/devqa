@@ -2,11 +2,11 @@ import { useMemo, useState } from "react";
 import { Text } from "@mantine/core";
 import { usePolling } from "../../hooks/usePolling.js";
 import { api } from "../../api.js";
-import { OUTCOME_ORDER, outcomeOf } from "../../lib/outcomes.js";
+import { outcomeOf } from "../../lib/outcomes.js";
 import { SectionLabel } from "../SectionLabel.jsx";
 import { RunPicker } from "./RunPicker.jsx";
 import { FilterBar } from "./FilterBar.jsx";
-import { SummaryStrip } from "./SummaryStrip.jsx";
+import { CompareStats } from "./CompareStats.jsx";
 import { CompareGrid } from "./CompareGrid.jsx";
 
 const EMPTY_FILTERS = {
@@ -59,16 +59,6 @@ export function CompareView({ runs }) {
     });
   }, [data, filters, key]);
 
-  const tally = useMemo(() => {
-    const t = {};
-    sel.forEach(rn => { t[rn] = Object.fromEntries(OUTCOME_ORDER.map(o => [o, 0])); });
-    rows.forEach(row => sel.forEach(rn => {
-      const o = outcomeOf(row.cells[rn]) || "ungraded";
-      t[rn][o]++;
-    }));
-    return t;
-  }, [rows, key]);
-
   return (
     <>
       <SectionLabel mt="xs" count={selected.length ? `${selected.length} selected` : null}>
@@ -83,7 +73,7 @@ export function CompareView({ runs }) {
           <SectionLabel>Filters</SectionLabel>
           <FilterBar f={filters} set={setF} repos={repos} />
 
-          {data && sel.length > 0 && <SummaryStrip runs={sel} tally={tally} />}
+          {data && sel.length > 0 && <CompareStats rows={rows} runs={sel} />}
 
           <SectionLabel count={`${rows.length} question${rows.length === 1 ? "" : "s"}`}>
             Predictions

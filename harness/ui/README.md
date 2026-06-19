@@ -41,6 +41,7 @@ src/
   lib/
     outcomes.js         OUTCOME_ORDER, outcomeOf(), dominantOutcome(), claimColor()
     format.js           age(), pct()
+    stats.js            computeStats() — per-run accuracy/score/hallucination/facts/tools
   components/
     App.jsx             shell: header, tabs, global runs/procs polling
     MonitorView.jsx     launcher + processes + run list
@@ -54,7 +55,8 @@ src/
       CompareView.jsx   orchestration: selection, live compare polling, filtering
       RunPicker.jsx     multi-select run cards
       FilterBar.jsx     knowledge-type / outcome / repo / search / toggles
-      SummaryStrip.jsx  per-run stacked verdict bars over the filtered set
+      CompareStats.jsx  stat cards + charts (@mantine/charts): accuracy by knowledge
+                        type, hard-fact match rate, tool calls by group
       CompareGrid.jsx   the side-by-side matrix + expandable row detail
       DetailColumn.jsx  one run's full prediction inside an expanded row
 ```

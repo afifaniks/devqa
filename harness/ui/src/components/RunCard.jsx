@@ -1,4 +1,8 @@
-import { Paper, Group, Badge, Text, Progress, Box, Collapse } from "@mantine/core";
+import { useState } from "react";
+import {
+  Paper, Group, Badge, Text, Progress, Box, Collapse, Menu, ActionIcon, Loader,
+} from "@mantine/core";
+import { IconTrash, IconDots } from "@tabler/icons-react";
 import { usePolling } from "../hooks/usePolling.js";
 import { api } from "../api.js";
 import { age, pct } from "../lib/format.js";
@@ -12,7 +16,22 @@ const SPINE = {
   incorrect: "var(--mantine-color-red-5)",
 };
 
-export function RunCard({ run, totals, open, onToggle }) {
+export function RunCard({ run, totals, open, onToggle, onDeleted }) {
+  const [deleting, setDeleting] = useState(false);
+  const [delErr, setDelErr] = useState(null);
+
+  const handleDelete = async () => {
+    setDeleting(true);
+    setDelErr(null);
+    try {
+      await api.deleteRun(run.name);
+      onDeleted?.(run.name);
+    } catch (e) {
+      setDelErr(String(e.message || e));
+      setDeleting(false);
+    }
+  };
+
   // Items poll live only while the card is expanded — no point fetching detail
   // for collapsed runs. usePolling re-creates when the run name changes.
   const { data } = usePolling(
@@ -63,6 +82,33 @@ export function RunCard({ run, totals, open, onToggle }) {
             </Text>
           )}
           <Text size="xs" c="dimmed">{age(run.updated_secs_ago)}</Text>
+
+          {delErr && <Text size="xs" c="red.4" maw={220} truncate title={delErr}>{delErr}</Text>}
+          {deleting ? (
+            <Loader size="xs" color="red" />
+          ) : (
+            <Menu shadow="md" position="bottom-end" withinPortal>
+              <Menu.Target>
+                <ActionIcon
+                  variant="subtle" color="gray" size="sm"
+                  aria-label="Run actions"
+                  onClick={e => e.stopPropagation()}
+                >
+                  <IconDots size={16} />
+                </ActionIcon>
+              </Menu.Target>
+              <Menu.Dropdown onClick={e => e.stopPropagation()}>
+                <Menu.Label>{run.running ? "Run looks active" : "Delete run files"}</Menu.Label>
+                <Menu.Item
+                  color="red" leftSection={<IconTrash size={14} />}
+                  disabled={run.running}
+                  onClick={e => { e.stopPropagation(); handleDelete(); }}
+                >
+                  Delete run
+                </Menu.Item>
+              </Menu.Dropdown>
+            </Menu>
+          )}
         </Group>
       </Group>
 

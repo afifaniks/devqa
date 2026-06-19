@@ -7,8 +7,13 @@ import { SectionLabel } from "./SectionLabel.jsx";
 
 // Launch evaluations and watch them run, live. Runs + procs arrive already
 // polled from <App/>, so this view re-renders as the data updates.
-export function MonitorView({ options, runs, totals, procs, onLaunched, onStopProc }) {
+export function MonitorView({ options, runs, totals, procs, onLaunched, onStopProc, onRefresh }) {
   const [open, setOpen] = useState(null);
+
+  const handleDeleted = name => {
+    if (open === name) setOpen(null);
+    onRefresh?.();
+  };
 
   return (
     <>
@@ -34,6 +39,7 @@ export function MonitorView({ options, runs, totals, procs, onLaunched, onStopPr
             key={r.name} run={r} totals={totals}
             open={open === r.name}
             onToggle={n => setOpen(open === n ? null : n)}
+            onDeleted={handleDeleted}
           />
         ))
       )}
