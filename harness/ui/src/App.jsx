@@ -2,14 +2,15 @@ import { useEffect, useState } from "react";
 import {
   AppShell, Group, Tabs, Text, Badge, Box, Container, Indicator,
 } from "@mantine/core";
-import { IconFlask, IconActivity, IconColumns3 } from "@tabler/icons-react";
+import { IconFlask, IconActivity, IconColumns3, IconDatabase } from "@tabler/icons-react";
 import { usePolling } from "./hooks/usePolling.js";
 import { api } from "./api.js";
 import { MonitorView } from "./components/MonitorView.jsx";
 import { CompareView } from "./components/compare/CompareView.jsx";
+import { BenchmarkView } from "./components/benchmark/BenchmarkView.jsx";
 
 export function App() {
-  const [tab, setTab] = useState("monitor");
+  const [tab, setTab] = useState("benchmark");
   const [options, setOptions] = useState({});
 
   // Options change rarely — fetch once. Runs + procs poll live and are shared
@@ -44,6 +45,9 @@ export function App() {
 
           <Tabs value={tab} onChange={setTab} variant="default">
             <Tabs.List style={{ borderBottom: "none" }}>
+              <Tabs.Tab value="benchmark" leftSection={<IconDatabase size={15} />}>
+                Benchmark
+              </Tabs.Tab>
               <Tabs.Tab value="monitor" leftSection={<IconActivity size={15} />}>
                 Monitor
               </Tabs.Tab>
@@ -76,6 +80,9 @@ export function App() {
 
       <AppShell.Main>
         <Container size={1500} py="lg" px="md">
+          <Box display={tab === "benchmark" ? "block" : "none"}>
+            <BenchmarkView />
+          </Box>
           <Box display={tab === "monitor" ? "block" : "none"}>
             <MonitorView
               options={options}

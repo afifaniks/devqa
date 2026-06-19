@@ -43,7 +43,15 @@ src/
     format.js           age(), pct()
     stats.js            computeStats() — per-run accuracy/score/hallucination/facts/tools
   components/
-    App.jsx             shell: header, tabs, global runs/procs polling
+    App.jsx             shell: header, tabs (Benchmark / Monitor / Compare), polling
+    Markdown.jsx        GFM markdown via react-markdown + TypographyStylesProvider
+    benchmark/
+      BenchmarkView.jsx     orchestration: load once, filter, paginate, list↔detail
+      BenchmarkOverview.jsx dataset stats + knowledge-type donut + artifact bar
+      BenchmarkFilters.jsx  repo / knowledge-type / artifact / search / has-ID
+      BenchmarkTable.jsx    HF-style listing; rows open the detail view
+      BenchmarkDetail.jsx   reading view: question/answer/thread + metadata sidebar
+      HardFactBadges.jsx    hard_facts dict → verdict-colored chips
     MonitorView.jsx     launcher + processes + run list
     Launcher.jsx        launch form → POST /api/launch
     ProcessList.jsx     live process cards with streaming log tail
