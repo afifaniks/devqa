@@ -3293,5 +3293,155 @@
     "status": "accepted",
     "note": "",
     "verified_at": "2026-06-19T22:38:40.043940Z"
+  },
+  "hashicorp/terraform/issue/38695": {
+    "status": "accepted",
+    "note": "accept - Terraform null module source panic confirmed fixed with clear release boundary (1.15.6) and maintainer confirmation of resolution",
+    "verified_at": "2026-06-20T02:07:00.158905Z"
+  },
+  "hashicorp/terraform/issue/38694": {
+    "status": "accepted",
+    "note": "accept - sensitive module-source panic confirmed fixed in Terraform 1.15.6 with maintainer confirmation of resolution",
+    "verified_at": "2026-06-20T02:07:23.110433Z"
+  },
+  "hashicorp/terraform/issue/38576": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-20T02:08:16.612283Z"
+  },
+  "hashicorp/terraform/issue/38451": {
+    "status": "rejected",
+    "note": "The answer is unanchored and opinion-like, giving a generic \u201cupgrade to 1.12+\u201d recommendation without citing a source, confirming the specific bug, or clearly tying it to a documented fix or duplicate issue.",
+    "verified_at": "2026-06-20T02:08:34.410268Z"
+  },
+  "hashicorp/terraform/issue/38418": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-20T02:08:46.803933Z"
+  },
+  "hashicorp/terraform/issue/38404": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-20T02:08:54.672319Z"
+  },
+  "hashicorp/terraform/issue/38273": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-20T02:09:03.436264Z"
+  },
+  "hashicorp/terraform/issue/38074": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-20T02:09:10.928588Z"
+  },
+  "hashicorp/terraform/issue/37601": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-20T02:10:19.817878Z"
+  },
+  "hashicorp/terraform/issue/37568": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-20T02:10:34.237481Z"
+  },
+  "hashicorp/terraform/issue/37562": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-20T02:12:10.506614Z"
+  },
+  "hashicorp/terraform/issue/37431": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-20T02:12:18.995733Z"
+  },
+  "hashicorp/terraform/issue/37261": {
+    "status": "rejected",
+    "note": "The answer is speculative (\u201cbest guess\u201d) and does not clearly confirm a fix with a concrete version or authoritative reference tied to the SSH issue or #30962, making it insufficiently anchored for acceptance.",
+    "verified_at": "2026-06-20T02:12:34.519844Z"
+  },
+  "hashicorp/terraform/issue/37151": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-20T02:12:44.112750Z"
+  },
+  "hashicorp/terraform/issue/37139": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-20T02:12:52.297235Z"
+  },
+  "hashicorp/terraform/issue/36866": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-20T02:13:05.651003Z"
+  },
+  "hashicorp/terraform/issue/36519": {
+    "status": "accepted",
+    "note": "The answer is well-anchored with protocol documentation, a specific upcoming fix (v1.11 .netrc support), and a relevant tracking issue (#29349), clearly explaining the credential-handling behavior in provider installation requests.",
+    "verified_at": "2026-06-20T02:13:39.516147Z"
+  },
+  "hashicorp/terraform/issue/36492": {
+    "status": "accepted",
+    "note": "Question is security-relevant (CVE applicability in Terraform vendored deps) and answer is anchored (maintainer explicitly states CVEs don\u2019t directly apply and references release upgrade path beyond v1.10). Both Q and A align and are consistent with a concrete release/version context.",
+    "verified_at": "2026-06-20T02:15:30.952576Z"
+  },
+  "hashicorp/terraform/issue/36319": {
+    "status": "rejected",
+    "note": "Question is security-relevant (dependency CVE applicability), but the answer is a general statement about scanner false positives and maintenance priority with no concrete confirmation, no version upgrade (v3.10.0 not mentioned), and no direct linkage to the reported vulnerability resolution, so it is not sufficiently anchored.",
+    "verified_at": "2026-06-20T02:16:32.589542Z"
+  },
+  "hashicorp/terraform/issue/36133": {
+    "status": "accepted",
+    "note": "Question is security-relevant (handling secrets in Terraform state), and the answer is anchored to concrete sources\u2014the provider plugin protocol constraint and HashiCorp\u2019s Ephemeral Values initiative\u2014providing a specific technical explanation rather than opinion or deflection.",
+    "verified_at": "2026-06-20T02:17:02.419843Z"
+  },
+  "hashicorp/terraform/issue/36113": {
+    "status": "accepted",
+    "note": "Question is security-relevant (S3 state locking/Object Lock integrity requirements), and the answer is anchored by a concrete fix version (Terraform 1.10.1) that directly resolves the reported behavior; Q and A are aligned and actionable.",
+    "verified_at": "2026-06-20T02:17:38.457360Z"
+  },
+  "hashicorp/terraform/issue/36067": {
+    "status": "accepted",
+    "note": "Question is security-relevant (whether reported CVEs apply to Terraform CLI), and the answer is anchored by a maintainer assessment that the CVEs are not applicable to Terraform CLI plus a concrete release reference (v1.10 dependency updates); Q and A match the thread\u2019s security applicability discussion.",
+    "verified_at": "2026-06-20T02:18:57.541516Z"
+  },
+  "hashicorp/terraform/issue/36011": {
+    "status": "accepted",
+    "note": "Question is security-relevant (authentication token handling for private registry downloads), and the answer is anchored by a concrete merged fix/workaround with a specific release target (Terraform v1.11); Q and A are directly aligned.",
+    "verified_at": "2026-06-20T02:19:17.978682Z"
+  },
+  "hashicorp/terraform/issue/35821": {
+    "status": "accepted",
+    "note": "Question is security-relevant (protecting secrets in tfstate), and the answer is anchored to a specific tracking issue (#516) plus the concrete ephemeral-values initiative; it directly addresses why hashing is not viable and points to the documented solution path.",
+    "verified_at": "2026-06-20T02:20:05.472528Z"
+  },
+  "hashicorp/terraform/issue/35690": {
+    "status": "accepted",
+    "note": "Question is security-relevant (Go runtime/CVE applicability to Terraform CLI), and the answer is anchored by a maintainer statement explicitly saying the CVEs do not directly affect Terraform plus noting a forthcoming runtime update; both Q and A align with a clear security applicability assessment.",
+    "verified_at": "2026-06-20T02:20:25.019286Z"
+  },
+  "hashicorp/terraform/issue/35515": {
+    "status": "accepted",
+    "note": "Question is clearly security-relevant (crash from malformed S3 module source leading to panic), and answer is anchored to a concrete upstream fix (go-getter PR #501) that directly resolves the crash; both Q and A align and include a verifiable remediation source.",
+    "verified_at": "2026-06-20T03:49:10.838064Z"
+  },
+  "hashicorp/terraform/issue/35011": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-20T03:49:28.656770Z"
+  },
+  "hashicorp/terraform/issue/34992": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-20T03:49:39.782796Z"
+  },
+  "hashicorp/terraform/issue/34897": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-20T03:49:46.960716Z"
+  },
+  "hashicorp/terraform/issue/34584": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-20T03:49:53.735107Z"
   }
 }
