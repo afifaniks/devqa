@@ -1074,6 +1074,7 @@ async def benchmark_index():
 def get_benchmark_records(
     repo: Optional[str] = None,
     knowledge: Optional[str] = None,
+    resolution: Optional[str] = None,
     q: Optional[str] = None,
     page: int = 1,
     page_size: int = 50,
@@ -1086,6 +1087,8 @@ def get_benchmark_records(
             kinds = {p.get("knowledge_type") for p in (r.get("qa_pairs") or [])}
             if knowledge not in kinds:
                 continue
+        if resolution and (r.get("resolution_case") or "unset") != resolution:
+            continue
         if q:
             ql = q.lower()
             searchable = " ".join([
@@ -1113,6 +1116,9 @@ def get_benchmark_records(
             "has_ghsa": bool(hf.get("ghsa_ids")),
             "has_fix": bool(hf.get("fix_prs") or hf.get("fix_commits")),
             "has_advisory": bool(hf.get("advisory_urls")),
+            "resolution_case": r.get("resolution_case"),
+            "n_fix_artifacts": len(r.get("fix_artifacts") or []),
+            "has_base_commit": bool(r.get("base_commit")),
             "n_pairs": len(qa_pairs),
             "knowledge_types": sorted({p.get("knowledge_type") for p in qa_pairs if p.get("knowledge_type")}),
             "human_note": r.get("human_note", ""),

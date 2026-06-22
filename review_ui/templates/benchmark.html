@@ -284,6 +284,14 @@
         <option value="grounded">Contextual only</option>
         <option value="parametric">Parametric only</option>
       </select>
+      <select class="select" x-model="filterResolution" @change="loadList()">
+        <option value="">All resolution cases</option>
+        <option value="fix_before">fix_before</option>
+        <option value="fix_after">fix_after</option>
+        <option value="explanation_only">explanation_only</option>
+        <option value="undetermined">undetermined</option>
+        <option value="unset">unset (not extracted)</option>
+      </select>
     </div>
     <div id="bm-list">
       <template x-for="item in items" :key="item.index">
@@ -297,6 +305,9 @@
             <span x-show="item.has_ghsa"  class="badge2 b-ghsa">GHSA</span>
             <span x-show="item.has_fix"   class="badge2 b-fix">Fix</span>
             <span x-show="item.has_advisory" class="badge2 b-adv">Advisory</span>
+            <span x-show="item.resolution_case" class="badge2"
+                  :class="resCaseClass(item.resolution_case)"
+                  x-text="item.resolution_case"></span>
             <span x-show="item.n_pairs"   class="badge2 b-pairs"
                   x-text="`${item.n_pairs} Q&A`"></span>
           </div>
@@ -370,6 +381,78 @@
           <span class="badge2 b-pairs" x-text="`${(selected.qa_pairs||[]).length} normalized Q&A`"></span>
         </div>
 
+        <!-- ★ Resolution & fix timeline -->
+        <div class="bm-section">
+          <div class="bm-section-title">Resolution &amp; fix timeline</div>
+          <template x-if="!selected.resolution_case">
+            <div style="color:var(--muted);font-size:13px;font-style:italic">
+              Not extracted yet — run <code>dataset/extract_fixes.py</code>.
+            </div>
+          </template>
+          <template x-if="selected.resolution_case">
+            <div>
+              <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px">
+                <span class="badge2" :class="resCaseClass(selected.resolution_case)"
+                      x-text="selected.resolution_case"></span>
+                <span style="font-size:12px;color:var(--muted)">
+                  report time <strong x-text="selected.created_at"></strong>
+                </span>
+              </div>
+
+              <!-- base commit -->
+              <div style="font-size:12.5px;margin-bottom:10px">
+                <span style="color:var(--muted)">snapshot base commit:&nbsp;</span>
+                <template x-if="selected.base_commit && selected.base_commit.sha">
+                  <span>
+                    <a :href="selected.base_commit.url" target="_blank" rel="noopener"
+                       style="font-family:monospace"
+                       x-text="selected.base_commit.sha.slice(0,12)"></a>
+                    <span x-text="`@ ${selected.base_commit.committed_at} (${selected.base_commit.branch})`"
+                          style="color:var(--muted)"></span>
+                  </span>
+                </template>
+                <template x-if="!(selected.base_commit && selected.base_commit.sha)">
+                  <span style="color:var(--muted)">—</span>
+                </template>
+              </div>
+
+              <!-- fix artifacts -->
+              <template x-if="(selected.fix_artifacts||[]).length">
+                <div>
+                  <template x-for="(a, ai) in (selected.fix_artifacts||[])" :key="ai">
+                    <div style="border:1px solid var(--border);border-radius:8px;padding:8px 10px;margin-bottom:6px">
+                      <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:12.5px">
+                        <span class="badge2 b-fix" x-text="a.type"></span>
+                        <a :href="a.url" target="_blank" rel="noopener" style="font-family:monospace"
+                           x-text="a.id"></a>
+                        <span style="color:var(--muted)"
+                              x-text="`fix_time ${a.fix_time || '—'} (${a.fix_time_basis || '?'})`"></span>
+                        <span x-show="a.merged === false" class="badge2 b-closed">not merged</span>
+                        <template x-for="fl in (a.flags||[])" :key="fl">
+                          <span class="badge2 b-cwe" x-text="fl"></span>
+                        </template>
+                        <span style="color:var(--muted)" x-text="`${(a.files||[]).length} files`"></span>
+                      </div>
+                      <details x-show="(a.files||[]).length" style="margin-top:6px">
+                        <summary style="cursor:pointer;font-size:12px;color:var(--muted)">show diff</summary>
+                        <template x-for="(f, fi) in (a.files||[])" :key="fi">
+                          <div style="margin-top:6px">
+                            <div style="font-family:monospace;font-size:11.5px;color:var(--muted)" x-text="f.path"></div>
+                            <pre style="background:#0d1117;color:#c9d1d9;padding:8px;border-radius:6px;overflow:auto;font-size:11px;max-height:280px" x-text="f.patch || '(no patch)'"></pre>
+                          </div>
+                        </template>
+                      </details>
+                    </div>
+                  </template>
+                </div>
+              </template>
+              <template x-if="!(selected.fix_artifacts||[]).length">
+                <div style="color:var(--muted);font-size:12.5px">No fix commit/PR cited (explanation-only).</div>
+              </template>
+            </div>
+          </template>
+        </div>
+
         <!-- Security topic -->
         <div class="bm-section">
           <div class="bm-section-title">Security Topic</div>
@@ -417,12 +500,10 @@
                   <div class="qa-grounding-row" x-show="(p.grounding_sources||[]).length">
                     <span class="qa-grounding-label">Source</span>
                     <template x-for="src in (p.grounding_sources || [])" :key="src">
-                      <template x-if="isUrl(src)">
-                        <a class="src-chip" :href="src" target="_blank" rel="noopener" x-text="src"></a>
-                      </template>
-                      <template x-if="!isUrl(src)">
-                        <span class="src-chip" x-text="src"></span>
-                      </template>
+                      <span class="src-chip-wrap">
+                        <a x-show="isUrl(src)" class="src-chip" :href="src" target="_blank" rel="noopener" x-text="src"></a>
+                        <span x-show="!isUrl(src)" class="src-chip" x-text="src"></span>
+                      </span>
                     </template>
                   </div>
                   <div class="qa-grounding-row" x-show="p.answer_grounded_in">
@@ -443,19 +524,17 @@
               <template x-for="[key, label] in hardFactFields" :key="key">
                 <div class="bm-fact-item">
                   <span class="bm-fact-label" x-text="label"></span>
-                  <template x-if="(selected.hard_facts[key] || []).length">
+                  <template x-if="((selected.hard_facts || {})[key] || []).length">
                     <span class="bm-fact-value">
-                      <template x-for="v in selected.hard_facts[key]" :key="v">
-                        <template x-if="isUrl(v)">
-                          <a class="src-chip" :href="v" target="_blank" rel="noopener" x-text="v"></a>
-                        </template>
-                        <template x-if="!isUrl(v)">
-                          <span class="src-chip" x-text="v"></span>
-                        </template>
+                      <template x-for="v in ((selected.hard_facts || {})[key] || [])" :key="v">
+                        <span class="src-chip-wrap">
+                          <a x-show="isUrl(v)" class="src-chip" :href="v" target="_blank" rel="noopener" x-text="v"></a>
+                          <span x-show="!isUrl(v)" class="src-chip" x-text="v"></span>
+                        </span>
                       </template>
                     </span>
                   </template>
-                  <template x-if="!(selected.hard_facts[key] || []).length">
+                  <template x-if="!((selected.hard_facts || {})[key] || []).length">
                     <span class="bm-fact-value bm-fact-empty">—</span>
                   </template>
                 </div>
@@ -657,7 +736,7 @@
 function app() {
   return {
     items: [], total: 0, repos: [], stats: null,
-    searchQ: '', filterRepo: '', filterKnowledge: '',
+    searchQ: '', filterRepo: '', filterKnowledge: '', filterResolution: '',
     selected: null, rawOpen: false,
     editMode: false, edit: {}, saving: false, saveMsg: '', reloading: false,
     isDark: document.documentElement.classList.contains('dark'),
@@ -707,6 +786,13 @@ function app() {
     // Display label: data still uses "grounded"; paper/UI term is "contextual".
     ktLabel(kt) { return kt === 'grounded' ? 'contextual' : kt; },
 
+    resCaseClass(c) {
+      return {
+        fix_before: 'b-ver', fix_after: 'b-fix',
+        explanation_only: 'b-adv', undetermined: 'b-closed',
+      }[c] || 'b-cwe';
+    },
+
     ktTip(kt) {
       return kt === 'parametric'
         ? 'Parametric: the answer was given from general knowledge alone, without grounding in any additional resource.'
@@ -717,6 +803,7 @@ function app() {
       const params = new URLSearchParams({ page_size: 300 });
       if (this.filterRepo)      params.set('repo', this.filterRepo);
       if (this.filterKnowledge) params.set('knowledge', this.filterKnowledge);
+      if (this.filterResolution) params.set('resolution', this.filterResolution);
       if (this.searchQ)         params.set('q', this.searchQ);
       const data = await fetch(`/api/benchmark/records?${params}`).then(r => r.json());
       this.items = data.items;
