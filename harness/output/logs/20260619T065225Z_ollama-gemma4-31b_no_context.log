@@ -1,0 +1,385 @@
+$ /local/home/amamun/envs/devqa/bin/python -m harness answer --model ollama/gemma4:31b --condition no_context && /local/home/amamun/envs/devqa/bin/python -m harness grade --answers /local/home/amamun/projects/dev-questions/harness/output/answers_ollama-gemma4-31b_no_context.jsonl --judge ollama/gemma4:31b
+
+Model: ollama/gemma4:31b | condition: no_context | items: 182
+[1/182] ImageMagick/ImageMagick/issue/8690#1 ... ok (1753 chars)
+[2/182] ImageMagick/ImageMagick/issue/8584#1 ... ok (1472 chars)
+[3/182] ImageMagick/ImageMagick/issue/8582#1 ... ok (501 chars)
+[4/182] ImageMagick/ImageMagick/issue/8567#1 ... ok (2892 chars)
+[5/182] ImageMagick/ImageMagick/issue/8557#1 ... ok (1753 chars)
+[6/182] ImageMagick/ImageMagick/issue/8538#1 ... ok (2692 chars)
+[7/182] ImageMagick/ImageMagick/issue/8535#1 ... ok (1836 chars)
+[8/182] ImageMagick/ImageMagick/issue/8494#1 ... ok (131 chars)
+[9/182] ImageMagick/ImageMagick/issue/8318#1 ... ok (164 chars)
+[10/182] ImageMagick/ImageMagick/issue/8186#2 ... ok (1902 chars)
+[11/182] ImageMagick/ImageMagick/issue/8186#3 ... ok (1772 chars)
+[12/182] ImageMagick/ImageMagick/issue/8184#1 ... ok (879 chars)
+[13/182] ImageMagick/ImageMagick/issue/8038#1 ... ok (2106 chars)
+[14/182] ImageMagick/ImageMagick/issue/7941#1 ... ok (721 chars)
+[15/182] ImageMagick/ImageMagick/issue/7837#1 ... ok (2917 chars)
+[16/182] ImageMagick/ImageMagick/issue/7832#1 ... ok (1496 chars)
+[17/182] ImageMagick/ImageMagick/issue/7568#1 ... ok (699 chars)
+[18/182] ImageMagick/ImageMagick/issue/7562#1 ... ok (1093 chars)
+[19/182] ImageMagick/ImageMagick/issue/7446#1 ... ok (2856 chars)
+[20/182] auth0/node-jsonwebtoken/issue/957#1 ... ok (1001 chars)
+[21/182] auth0/node-jsonwebtoken/issue/921#1 ... ok (1227 chars)
+[22/182] auth0/node-jsonwebtoken/issue/914#1 ... ok (641 chars)
+[23/182] auth0/node-jsonwebtoken/issue/739#1 ... ok (2252 chars)
+[24/182] auth0/node-jsonwebtoken/issue/728#1 ... ok (2486 chars)
+[25/182] auth0/node-jsonwebtoken/issue/706#1 ... ok (1447 chars)
+[26/182] auth0/node-jsonwebtoken/issue/665#1 ... ok (1060 chars)
+[27/182] auth0/node-jsonwebtoken/issue/656#1 ... ok (2245 chars)
+[28/182] axios/axios/issue/10731#1 ... ok (384 chars)
+[29/182] axios/axios/issue/10707#1 ... ok (1312 chars)
+[30/182] axios/axios/issue/10643#1 ... ok (1547 chars)
+[31/182] axios/axios/issue/10636#1 ... ok (2104 chars)
+[32/182] axios/axios/issue/10614#1 ... ok (924 chars)
+[33/182] axios/axios/issue/7417#1 ... ok (2146 chars)
+[34/182] axios/axios/discussion/7302#1 ... ok (2649 chars)
+[35/182] axios/axios/issue/7228#1 ... ok (1330 chars)
+[36/182] axios/axios/issue/6975#1 ... ok (971 chars)
+[37/182] axios/axios/issue/6969#1 ... ok (924 chars)
+[38/182] axios/axios/issue/6931#1 ... ok (802 chars)
+[39/182] axios/axios/discussion/6924#1 ... ok (1531 chars)
+[40/182] axios/axios/issue/6821#1 ... ok (1669 chars)
+[41/182] axios/axios/issue/6816#1 ... ok (1945 chars)
+[42/182] axios/axios/issue/6806#1 ... ok (892 chars)
+[43/182] axios/axios/issue/6776#1 ... ok (919 chars)
+[44/182] axios/axios/issue/6597#1 ... ok (2594 chars)
+[45/182] axios/axios/issue/6545#1 ... ok (1521 chars)
+[46/182] axios/axios/discussion/6542#1 ... ok (449 chars)
+[47/182] axios/axios/issue/6497#1 ... ok (2017 chars)
+[48/182] axios/axios/issue/6463#1 ... ok (453 chars)
+[49/182] expressjs/express/issue/7143#1 ... ok (1513 chars)
+[50/182] expressjs/express/issue/7016#1 ... ok (825 chars)
+[51/182] expressjs/express/issue/6978#1 ... ok (1042 chars)
+[52/182] expressjs/express/issue/6751#1 ... ok (1736 chars)
+[53/182] expressjs/express/issue/6614#1 ... ok (1360 chars)
+[54/182] expressjs/express/issue/6458#3 ... ok (1215 chars)
+[55/182] expressjs/express/issue/6222#1 ... ok (489 chars)
+[56/182] expressjs/express/issue/6204#1 ... ok (467 chars)
+[57/182] expressjs/express/issue/6067#1 ... ok (536 chars)
+[58/182] expressjs/express/issue/6053#1 ... ok (1242 chars)
+[59/182] expressjs/express/issue/5970#1 ... ok (700 chars)
+[60/182] expressjs/express/issue/5948#1 ... ok (2062 chars)
+[61/182] expressjs/express/issue/5947#1 ... ok (1154 chars)
+[62/182] expressjs/express/discussion/5852#1 ... ok (2028 chars)
+[63/182] expressjs/express/issue/5688#1 ... ok (1887 chars)
+[64/182] expressjs/express/issue/5459#1 ... ok (2025 chars)
+[65/182] expressjs/express/issue/5353#1 ... ok (2086 chars)
+[66/182] expressjs/express/issue/5344#1 ... ok (1641 chars)
+[67/182] expressjs/express/issue/5292#1 ... ok (1894 chars)
+[68/182] expressjs/express/issue/5275#1 ... ok (1452 chars)
+[69/182] fastapi/fastapi/issue/5837#1 ... ok (2627 chars)
+[70/182] fastapi/fastapi/issue/5831#1 ... ok (2948 chars)
+[71/182] fastapi/fastapi/issue/5723#1 ... ok (2654 chars)
+[72/182] fastapi/fastapi/issue/5386#1 ... ok (2804 chars)
+[73/182] fastapi/fastapi/issue/5334#1 ... ok (1812 chars)
+[74/182] fastapi/fastapi/issue/5017#1 ... ok (1932 chars)
+[75/182] fastapi/fastapi/issue/4990#1 ... ok (2169 chars)
+[76/182] fastapi/fastapi/issue/4962#1 ... ok (1125 chars)
+[77/182] jenkinsci/jenkins/issue/26507#1 ... ok (1424 chars)
+[78/182] jenkinsci/jenkins/issue/26204#1 ... ok (2331 chars)
+[79/182] jenkinsci/jenkins/issue/26027#1 ... ok (810 chars)
+[80/182] kubernetes/kubernetes/issue/139515#1 ... ok (1133 chars)
+[81/182] kubernetes/kubernetes/issue/139044#1 ... ok (957 chars)
+[82/182] kubernetes/kubernetes/issue/138461#1 ... ok (238 chars)
+[83/182] kubernetes/kubernetes/issue/138431#1 ... ok (2012 chars)
+[84/182] kubernetes/kubernetes/issue/138374#1 ... ok (1445 chars)
+[85/182] kubernetes/kubernetes/issue/138329#1 ... ok (1328 chars)
+[86/182] kubernetes/kubernetes/issue/137895#1 ... ok (3159 chars)
+[87/182] kubernetes/kubernetes/issue/137893#1 ... ok (773 chars)
+[88/182] kubernetes/kubernetes/issue/137891#1 ... ok (291 chars)
+[89/182] kubernetes/kubernetes/issue/137797#1 ... ok (447 chars)
+[90/182] kubernetes/kubernetes/issue/137560#1 ... ok (1293 chars)
+[91/182] magento/magento2/issue/40236#1 ... ok (946 chars)
+[92/182] magento/magento2/issue/40226#1 ... ok (1479 chars)
+[93/182] magento/magento2/issue/40190#1 ... ok (1585 chars)
+[94/182] magento/magento2/issue/40154#1 ... ok (997 chars)
+[95/182] magento/magento2/issue/40093#1 ... ok (1204 chars)
+[96/182] magento/magento2/issue/40039#1 ... ok (1519 chars)
+[97/182] psf/requests/issue/7335#1 ... ok (1740 chars)
+[98/182] psf/requests/issue/7209#1 ... ok (2120 chars)
+[99/182] psf/requests/issue/7085#1 ... ok (2046 chars)
+[100/182] psf/requests/issue/7035#1 ... ok (1222 chars)
+[101/182] psf/requests/issue/6981#1 ... ok (2060 chars)
+[102/182] psf/requests/issue/6978#1 ... ok (2899 chars)
+[103/182] psf/requests/issue/6976#1 ... ok (586 chars)
+[104/182] psf/requests/issue/6974#1 ... ok (2446 chars)
+[105/182] psf/requests/issue/6969#1 ... ok (1576 chars)
+[106/182] psf/requests/issue/6964#1 ... ok (148 chars)
+[107/182] psf/requests/issue/6945#1 ... ok (1536 chars)
+[108/182] psf/requests/issue/6928#1 ... ok (2226 chars)
+[109/182] psf/requests/issue/6872#1 ... ok (2197 chars)
+[110/182] psf/requests/issue/6868#1 ... ok (3055 chars)
+[111/182] psf/requests/issue/6810#1 ... ok (1511 chars)
+[112/182] psf/requests/issue/6784#1 ... ok (1605 chars)
+[113/182] psf/requests/issue/6764#1 ... ok (2753 chars)
+[114/182] psf/requests/issue/6745#1 ... ok (764 chars)
+[115/182] psf/requests/issue/6736#1 ... ok (2162 chars)
+[116/182] psf/requests/issue/6733#1 ... ok (960 chars)
+[117/182] psf/requests/issue/6726#1 ... ok (1835 chars)
+[118/182] psf/requests/issue/6726#3 ... ok (1297 chars)
+[119/182] psf/requests/issue/6717#1 ... ok (2123 chars)
+[120/182] psf/requests/issue/6690#1 ... ok (495 chars)
+[121/182] psf/requests/issue/6669#1 ... ok (1992 chars)
+[122/182] psf/requests/issue/6660#1 ... ok (2077 chars)
+[123/182] pyca/cryptography/issue/14690#1 ... ok (1440 chars)
+[124/182] pyca/cryptography/issue/14592#1 ... ok (1751 chars)
+[125/182] pyca/cryptography/issue/14477#1 ... ok (2069 chars)
+[126/182] pyca/cryptography/issue/14207#1 ... ok (998 chars)
+[127/182] pyca/cryptography/issue/14173#1 ... ok (2584 chars)
+[128/182] pyca/cryptography/issue/14048#1 ... ok (1744 chars)
+[129/182] pyca/cryptography/issue/14013#1 ... ok (1633 chars)
+[130/182] pyca/cryptography/issue/13349#1 ... ok (2097 chars)
+[131/182] pyca/cryptography/issue/13125#1 ... ok (2064 chars)
+[132/182] pyca/cryptography/issue/13051#1 ... ok (1660 chars)
+[133/182] pyca/cryptography/issue/13002#1 ... ok (1171 chars)
+[134/182] pyca/cryptography/issue/12969#1 ... ok (1059 chars)
+[135/182] pyca/cryptography/issue/12963#1 ... ok (2535 chars)
+[136/182] pyca/cryptography/issue/12949#1 ... ok (791 chars)
+[137/182] pyca/cryptography/issue/12824#1 ... ok (1586 chars)
+[138/182] pyca/cryptography/issue/12780#1 ... ok (973 chars)
+[139/182] pyca/cryptography/issue/12748#1 ... ok (1225 chars)
+[140/182] pyca/cryptography/issue/12359#1 ... ok (2220 chars)
+[141/182] pyca/cryptography/issue/12332#1 ... ok (1105 chars)
+[142/182] pyca/cryptography/issue/12301#1 ... ok (2066 chars)
+[143/182] python-pillow/Pillow/issue/9439#1 ... ok (816 chars)
+[144/182] python-pillow/Pillow/issue/9361#1 ... ok (2059 chars)
+[145/182] python-pillow/Pillow/issue/8935#1 ... ok (2139 chars)
+[146/182] python-pillow/Pillow/issue/8706#1 ... ok (937 chars)
+[147/182] python-pillow/Pillow/issue/8546#1 ... ok (2657 chars)
+[148/182] python-pillow/Pillow/issue/8439#1 ... ok (1542 chars)
+[149/182] python-pillow/Pillow/issue/7876#1 ... ok (2734 chars)
+[150/182] python-pillow/Pillow/issue/7626#1 ... ok (1296 chars)
+[151/182] python-pillow/Pillow/issue/7518#1 ... ok (405 chars)
+[152/182] python-pillow/Pillow/issue/7179#1 ... ok (579 chars)
+[153/182] python-pillow/Pillow/issue/7137#1 ... ok (333 chars)
+[154/182] python-pillow/Pillow/issue/6955#1 ... ok (562 chars)
+[155/182] python-pillow/Pillow/issue/6687#1 ... ok (837 chars)
+[156/182] python-pillow/Pillow/issue/6665#1 ... ok (1005 chars)
+[157/182] rails/rails/issue/56736#1 ... ok (1592 chars)
+[158/182] rails/rails/issue/56452#1 ... ok (2299 chars)
+[159/182] rails/rails/issue/56158#1 ... ok (2451 chars)
+[160/182] rails/rails/issue/55886#1 ... ok (2692 chars)
+[161/182] rails/rails/issue/55866#1 ... ok (1409 chars)
+[162/182] rails/rails/issue/55508#1 ... ok (1830 chars)
+[163/182] rails/rails/issue/55245#1 ... ok (2620 chars)
+[164/182] rails/rails/issue/55185#1 ... ok (2564 chars)
+[165/182] stripe/stripe-node/issue/1490#1 ... ok (1130 chars)
+[166/182] stripe/stripe-node/issue/1294#1 ... ok (3358 chars)
+[167/182] stripe/stripe-node/issue/1264#1 ... ok (1670 chars)
+[168/182] stripe/stripe-node/issue/1254#1 ... ok (2792 chars)
+[169/182] stripe/stripe-node/issue/1224#1 ... ok (2164 chars)
+[170/182] stripe/stripe-node/issue/1161#1 ... ok (1245 chars)
+[171/182] stripe/stripe-node/issue/1110#1 ... ok (1098 chars)
+[172/182] stripe/stripe-node/issue/1067#1 ... ok (1748 chars)
+[173/182] stripe/stripe-node/issue/1043#1 ... ok (1972 chars)
+[174/182] stripe/stripe-node/issue/935#1 ... ok (1002 chars)
+[175/182] stripe/stripe-node/issue/932#1 ... ok (2230 chars)
+[176/182] urllib3/urllib3/issue/3745#1 ... ok (3089 chars)
+[177/182] urllib3/urllib3/issue/3665#1 ... ok (2874 chars)
+[178/182] urllib3/urllib3/issue/3632#1 ... ok (3221 chars)
+[179/182] urllib3/urllib3/issue/3465#1 ... ok (1366 chars)
+[180/182] urllib3/urllib3/issue/3102#1 ... ok (1091 chars)
+[181/182] urllib3/urllib3/issue/2809#1 ... ok (867 chars)
+[182/182] urllib3/urllib3/issue/2802#1 ... ok (603 chars)
+
+Done: 182 new answers, 0 skipped (already done), 0 errors
+Output: /local/home/amamun/projects/dev-questions/harness/output/answers_ollama-gemma4-31b_no_context.jsonl
+Next: python -m harness grade --answers /local/home/amamun/projects/dev-questions/harness/output/answers_ollama-gemma4-31b_no_context.jsonl
+Judge: ollama/gemma4:31b | answers: 182 from /local/home/amamun/projects/dev-questions/harness/output/answers_ollama-gemma4-31b_no_context.jsonl
+[1/182] ImageMagick/ImageMagick/issue/8690#1 ... partial
+[2/182] ImageMagick/ImageMagick/issue/8584#1 ... partial
+[3/182] ImageMagick/ImageMagick/issue/8582#1 ... incorrect
+[4/182] ImageMagick/ImageMagick/issue/8567#1 ... incorrect
+[5/182] ImageMagick/ImageMagick/issue/8557#1 ... partial
+[6/182] ImageMagick/ImageMagick/issue/8538#1 ... correct
+[7/182] ImageMagick/ImageMagick/issue/8535#1 ... partial
+[8/182] ImageMagick/ImageMagick/issue/8494#1 ... incorrect judge_incorrect_but_hard_fact_matched
+[9/182] ImageMagick/ImageMagick/issue/8318#1 ... incorrect
+[10/182] ImageMagick/ImageMagick/issue/8186#2 ... incorrect HALLUC
+[11/182] ImageMagick/ImageMagick/issue/8186#3 ... correct
+[12/182] ImageMagick/ImageMagick/issue/8184#1 ... incorrect HALLUC
+[13/182] ImageMagick/ImageMagick/issue/8038#1 ... incorrect HALLUC
+[14/182] ImageMagick/ImageMagick/issue/7941#1 ... correct
+[15/182] ImageMagick/ImageMagick/issue/7837#1 ... incorrect
+[16/182] ImageMagick/ImageMagick/issue/7832#1 ... incorrect
+[17/182] ImageMagick/ImageMagick/issue/7568#1 ... partial
+[18/182] ImageMagick/ImageMagick/issue/7562#1 ... incorrect
+[19/182] ImageMagick/ImageMagick/issue/7446#1 ... partial
+[20/182] auth0/node-jsonwebtoken/issue/957#1 ... correct
+[21/182] auth0/node-jsonwebtoken/issue/921#1 ... incorrect judge_incorrect_but_hard_fact_matched
+[22/182] auth0/node-jsonwebtoken/issue/914#1 ... partial
+[23/182] auth0/node-jsonwebtoken/issue/739#1 ... correct
+[24/182] auth0/node-jsonwebtoken/issue/728#1 ... incorrect HALLUC
+[25/182] auth0/node-jsonwebtoken/issue/706#1 ... correct
+[26/182] auth0/node-jsonwebtoken/issue/665#1 ... correct
+[27/182] auth0/node-jsonwebtoken/issue/656#1 ... correct
+[28/182] axios/axios/issue/10731#1 ... incorrect judge_incorrect_but_hard_fact_matched
+[29/182] axios/axios/issue/10707#1 ... partial
+[30/182] axios/axios/issue/10643#1 ... incorrect HALLUC
+[31/182] axios/axios/issue/10636#1 ... partial
+[32/182] axios/axios/issue/10614#1 ... correct
+[33/182] axios/axios/issue/7417#1 ... incorrect HALLUC judge_incorrect_but_hard_fact_matched
+[34/182] axios/axios/discussion/7302#1 ... partial HALLUC
+[35/182] axios/axios/issue/7228#1 ... incorrect
+[36/182] axios/axios/issue/6975#1 ... incorrect
+[37/182] axios/axios/issue/6969#1 ... correct
+[38/182] axios/axios/issue/6931#1 ... partial
+[39/182] axios/axios/discussion/6924#1 ... correct
+[40/182] axios/axios/issue/6821#1 ... incorrect HALLUC
+[41/182] axios/axios/issue/6816#1 ... partial
+[42/182] axios/axios/issue/6806#1 ... incorrect HALLUC
+[43/182] axios/axios/issue/6776#1 ... correct
+[44/182] axios/axios/issue/6597#1 ... correct
+[45/182] axios/axios/issue/6545#1 ... incorrect HALLUC judge_incorrect_but_hard_fact_matched
+[46/182] axios/axios/discussion/6542#1 ... correct
+[47/182] axios/axios/issue/6497#1 ... partial
+[48/182] axios/axios/issue/6463#1 ... correct judge_correct_but_no_hard_fact_matched
+[49/182] expressjs/express/issue/7143#1 ... incorrect HALLUC
+[50/182] expressjs/express/issue/7016#1 ... partial HALLUC
+[51/182] expressjs/express/issue/6978#1 ... incorrect
+[52/182] expressjs/express/issue/6751#1 ... incorrect HALLUC
+[53/182] expressjs/express/issue/6614#1 ... partial
+[54/182] expressjs/express/issue/6458#3 ... incorrect HALLUC
+[55/182] expressjs/express/issue/6222#1 ... incorrect judge_incorrect_but_hard_fact_matched
+[56/182] expressjs/express/issue/6204#1 ... incorrect
+[57/182] expressjs/express/issue/6067#1 ... incorrect HALLUC
+[58/182] expressjs/express/issue/6053#1 ... incorrect HALLUC judge_incorrect_but_hard_fact_matched
+[59/182] expressjs/express/issue/5970#1 ... incorrect
+[60/182] expressjs/express/issue/5948#1 ... correct
+[61/182] expressjs/express/issue/5947#1 ... partial
+[62/182] expressjs/express/discussion/5852#1 ... correct
+[63/182] expressjs/express/issue/5688#1 ... correct
+[64/182] expressjs/express/issue/5459#1 ... incorrect HALLUC
+[65/182] expressjs/express/issue/5353#1 ... partial
+[66/182] expressjs/express/issue/5344#1 ... partial
+[67/182] expressjs/express/issue/5292#1 ... incorrect
+[68/182] expressjs/express/issue/5275#1 ... partial HALLUC
+[69/182] fastapi/fastapi/issue/5837#1 ... correct
+[70/182] fastapi/fastapi/issue/5831#1 ... partial
+[71/182] fastapi/fastapi/issue/5723#1 ... correct
+[72/182] fastapi/fastapi/issue/5386#1 ... incorrect
+[73/182] fastapi/fastapi/issue/5334#1 ... correct
+[74/182] fastapi/fastapi/issue/5017#1 ... correct
+[75/182] fastapi/fastapi/issue/4990#1 ... correct
+[76/182] fastapi/fastapi/issue/4962#1 ... correct
+[77/182] jenkinsci/jenkins/issue/26507#1 ... correct HALLUC
+[78/182] jenkinsci/jenkins/issue/26204#1 ... incorrect HALLUC
+[79/182] jenkinsci/jenkins/issue/26027#1 ... correct
+[80/182] kubernetes/kubernetes/issue/139515#1 ... incorrect
+[81/182] kubernetes/kubernetes/issue/139044#1 ... partial HALLUC
+[82/182] kubernetes/kubernetes/issue/138461#1 ... incorrect
+[83/182] kubernetes/kubernetes/issue/138431#1 ... incorrect HALLUC
+[84/182] kubernetes/kubernetes/issue/138374#1 ... incorrect HALLUC
+[85/182] kubernetes/kubernetes/issue/138329#1 ... correct
+[86/182] kubernetes/kubernetes/issue/137895#1 ... incorrect HALLUC
+[87/182] kubernetes/kubernetes/issue/137893#1 ... incorrect judge_incorrect_but_hard_fact_matched
+[88/182] kubernetes/kubernetes/issue/137891#1 ... incorrect
+[89/182] kubernetes/kubernetes/issue/137797#1 ... incorrect judge_incorrect_but_hard_fact_matched
+[90/182] kubernetes/kubernetes/issue/137560#1 ... correct judge_correct_but_no_hard_fact_matched
+[91/182] magento/magento2/issue/40236#1 ... incorrect
+[92/182] magento/magento2/issue/40226#1 ... partial
+[93/182] magento/magento2/issue/40190#1 ... partial HALLUC
+[94/182] magento/magento2/issue/40154#1 ... incorrect HALLUC
+[95/182] magento/magento2/issue/40093#1 ... incorrect
+[96/182] magento/magento2/issue/40039#1 ... partial HALLUC
+[97/182] psf/requests/issue/7335#1 ... correct
+[98/182] psf/requests/issue/7209#1 ... partial HALLUC
+[99/182] psf/requests/issue/7085#1 ... correct
+[100/182] psf/requests/issue/7035#1 ... incorrect HALLUC
+[101/182] psf/requests/issue/6981#1 ... incorrect HALLUC
+[102/182] psf/requests/issue/6978#1 ... partial
+[103/182] psf/requests/issue/6976#1 ... partial
+[104/182] psf/requests/issue/6974#1 ... correct
+[105/182] psf/requests/issue/6969#1 ... partial
+[106/182] psf/requests/issue/6964#1 ... incorrect judge_incorrect_but_hard_fact_matched
+[107/182] psf/requests/issue/6945#1 ... correct
+[108/182] psf/requests/issue/6928#1 ... partial
+[109/182] psf/requests/issue/6872#1 ... correct
+[110/182] psf/requests/issue/6868#1 ... incorrect
+[111/182] psf/requests/issue/6810#1 ... incorrect
+[112/182] psf/requests/issue/6784#1 ... incorrect HALLUC
+[113/182] psf/requests/issue/6764#1 ... incorrect
+[114/182] psf/requests/issue/6745#1 ... partial HALLUC
+[115/182] psf/requests/issue/6736#1 ... partial
+[116/182] psf/requests/issue/6733#1 ... partial HALLUC
+[117/182] psf/requests/issue/6726#1 ... correct HALLUC
+[118/182] psf/requests/issue/6726#3 ... incorrect
+[119/182] psf/requests/issue/6717#1 ... incorrect HALLUC
+[120/182] psf/requests/issue/6690#1 ... incorrect HALLUC judge_incorrect_but_hard_fact_matched
+[121/182] psf/requests/issue/6669#1 ... correct
+[122/182] psf/requests/issue/6660#1 ... correct
+[123/182] pyca/cryptography/issue/14690#1 ... incorrect
+[124/182] pyca/cryptography/issue/14592#1 ... correct
+[125/182] pyca/cryptography/issue/14477#1 ... correct HALLUC
+[126/182] pyca/cryptography/issue/14207#1 ... correct
+[127/182] pyca/cryptography/issue/14173#1 ... incorrect
+[128/182] pyca/cryptography/issue/14048#1 ... partial
+[129/182] pyca/cryptography/issue/14013#1 ... partial HALLUC
+[130/182] pyca/cryptography/issue/13349#1 ... partial
+[131/182] pyca/cryptography/issue/13125#1 ... correct
+[132/182] pyca/cryptography/issue/13051#1 ... correct
+[133/182] pyca/cryptography/issue/13002#1 ... partial
+[134/182] pyca/cryptography/issue/12969#1 ... partial
+[135/182] pyca/cryptography/issue/12963#1 ... partial
+[136/182] pyca/cryptography/issue/12949#1 ... incorrect HALLUC
+[137/182] pyca/cryptography/issue/12824#1 ... correct
+[138/182] pyca/cryptography/issue/12780#1 ... incorrect
+[139/182] pyca/cryptography/issue/12748#1 ... partial
+[140/182] pyca/cryptography/issue/12359#1 ... partial HALLUC
+[141/182] pyca/cryptography/issue/12332#1 ... incorrect HALLUC
+[142/182] pyca/cryptography/issue/12301#1 ... correct
+[143/182] python-pillow/Pillow/issue/9439#1 ... incorrect HALLUC judge_incorrect_but_hard_fact_matched
+[144/182] python-pillow/Pillow/issue/9361#1 ... incorrect HALLUC
+[145/182] python-pillow/Pillow/issue/8935#1 ... correct
+[146/182] python-pillow/Pillow/issue/8706#1 ... partial
+[147/182] python-pillow/Pillow/issue/8546#1 ... partial
+[148/182] python-pillow/Pillow/issue/8439#1 ... incorrect
+[149/182] python-pillow/Pillow/issue/7876#1 ... partial
+[150/182] python-pillow/Pillow/issue/7626#1 ... correct
+[151/182] python-pillow/Pillow/issue/7518#1 ... partial
+[152/182] python-pillow/Pillow/issue/7179#1 ... partial HALLUC
+[153/182] python-pillow/Pillow/issue/7137#1 ... partial HALLUC
+[154/182] python-pillow/Pillow/issue/6955#1 ... correct
+[155/182] python-pillow/Pillow/issue/6687#1 ... correct
+[156/182] python-pillow/Pillow/issue/6665#1 ... incorrect HALLUC judge_incorrect_but_hard_fact_matched
+[157/182] rails/rails/issue/56736#1 ... incorrect
+[158/182] rails/rails/issue/56452#1 ... correct
+[159/182] rails/rails/issue/56158#1 ... partial
+[160/182] rails/rails/issue/55886#1 ... partial
+[161/182] rails/rails/issue/55866#1 ... partial
+[162/182] rails/rails/issue/55508#1 ... incorrect HALLUC
+[163/182] rails/rails/issue/55245#1 ... correct
+[164/182] rails/rails/issue/55185#1 ... partial
+[165/182] stripe/stripe-node/issue/1490#1 ... incorrect HALLUC
+[166/182] stripe/stripe-node/issue/1294#1 ... correct
+[167/182] stripe/stripe-node/issue/1264#1 ... partial HALLUC
+[168/182] stripe/stripe-node/issue/1254#1 ... correct
+[169/182] stripe/stripe-node/issue/1224#1 ... partial
+[170/182] stripe/stripe-node/issue/1161#1 ... incorrect HALLUC
+[171/182] stripe/stripe-node/issue/1110#1 ... incorrect HALLUC
+[172/182] stripe/stripe-node/issue/1067#1 ... correct
+[173/182] stripe/stripe-node/issue/1043#1 ... correct
+[174/182] stripe/stripe-node/issue/935#1 ... correct HALLUC
+[175/182] stripe/stripe-node/issue/932#1 ... correct
+[176/182] urllib3/urllib3/issue/3745#1 ... incorrect
+[177/182] urllib3/urllib3/issue/3665#1 ... partial HALLUC
+[178/182] urllib3/urllib3/issue/3632#1 ... partial
+[179/182] urllib3/urllib3/issue/3465#1 ... incorrect HALLUC
+[180/182] urllib3/urllib3/issue/3102#1 ... correct
+[181/182] urllib3/urllib3/issue/2809#1 ... correct
+[182/182] urllib3/urllib3/issue/2802#1 ... incorrect
+
+Graded: 182 total (0 errors this run) → /local/home/amamun/projects/dev-questions/harness/output/grades_ollama-gemma4-31b_no_context.jsonl
+
+Outcome by knowledge type:
+  grounded    correct    43
+  grounded    incorrect  59
+  grounded    partial    49
+  parametric  correct    14
+  parametric  incorrect  12
+  parametric  partial    5
+Hallucination rate: 54/182
+Hard-fact recall (gradeable under condition): 31/59
+Cross-check flags for human review: 15 records

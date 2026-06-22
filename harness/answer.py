@@ -1,10 +1,10 @@
 """
 SecDevQA — Stage 2: run a model under test against normalized eval questions.
 
-Reads the human-approved threads in dataset/eval_pairs.jsonl (output of eval/normalize.py),
-flattens their qa_pairs, and asks the candidate model each question under a controlled
-context condition. Responses are written one-per-line and the run is resumable (already-
-answered qids are skipped unless --force).
+Reads the released benchmark dataset/security_benchmark_final.jsonl, flattens its qa_pairs,
+and asks the candidate model each question under a controlled context condition. Responses
+are written one-per-line and the run is resumable (already-answered qids are skipped unless
+--force).
 
 Conditions (research_plan_v6.md §4.2):
   * no_context       — question text only; model answers from training knowledge.   [implemented]
@@ -31,12 +31,12 @@ from pathlib import Path
 import litellm
 from dotenv import load_dotenv
 
-from harness.llm import load_jsonl
+from harness.llm import load_jsonl, load_benchmark
 
 load_dotenv()
 
 ROOT = Path(__file__).parent.parent
-DEFAULT_INPUT = ROOT / "dataset" / "eval_pairs.jsonl"
+DEFAULT_INPUT = ROOT / "dataset" / "security_benchmark_final.jsonl"
 DEFAULT_OUTPUT_DIR = ROOT / "harness" / "output"
 
 CONDITIONS = ("no_context", "single_artifact", "multi_artifact", "agent")
@@ -101,14 +101,12 @@ def run(input_path: Path, output_dir: Path, model: str, condition: str,
             f"Condition '{condition}' is not implemented yet (Phase 4 in PLAN.md). "
             f"Implemented: {', '.join(IMPLEMENTED_CONDITIONS)}")
 
-    threads = load_jsonl(input_path)
+    threads = load_benchmark(input_path)
     items = iter_items(threads, include_unapproved)
     if limit:
         items = items[:limit]
     if not items:
-        raise SystemExit(
-            "No eval items selected. Approve threads in the /normalized review UI "
-            "(or pass --include-unapproved for a smoke test).")
+        raise SystemExit(f"No eval items found in {input_path}.")
 
     output_dir.mkdir(parents=True, exist_ok=True)
     output_path = output_dir / f"answers_{slugify(model)}_{condition}.jsonl"
@@ -160,7 +158,7 @@ def run(input_path: Path, output_dir: Path, model: str, condition: str,
 def main() -> None:
     ap = argparse.ArgumentParser(description="Stage 2: answer eval questions with a model.")
     ap.add_argument("--input", type=Path, default=DEFAULT_INPUT,
-                    help="eval_pairs.jsonl from eval/normalize.py")
+                    help="benchmark jsonl with qa_pairs (default: security_benchmark_final.jsonl)")
     ap.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     ap.add_argument("--model", required=True,
                     help="LiteLLM model id, e.g. openai/gpt-5.4-mini, anthropic/claude-sonnet-4-6, ollama/qwen3.6:latest")
@@ -168,7 +166,7 @@ def main() -> None:
     ap.add_argument("--limit", type=int, default=None, help="Answer only first N items")
     ap.add_argument("--include-unapproved", action="store_true",
                     help="Also answer items from threads not yet human-approved (smoke tests)")
-    ap.add_argument("--max-tokens", type=int, default=2000)
+    ap.add_argument("--max-tokens", type=int, default=4096)
     ap.add_argument("--force", action="store_true", help="Re-answer everything")
     args = ap.parse_args()
     run(args.input, args.output_dir, args.model, args.condition,

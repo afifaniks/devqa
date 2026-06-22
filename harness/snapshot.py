@@ -30,7 +30,7 @@ ROOT = Path(__file__).parent.parent
 CACHE = ROOT / "harness" / "cache"
 OUTPUT_DIR = ROOT / "output"
 ADVISORY_DB = ROOT / "advisory-database"
-BENCHMARK = ROOT / "dataset" / "security_benchmark.jsonl"
+BENCHMARK = ROOT / "dataset" / "security_benchmark_final.jsonl"
 
 
 def _git(cwd: Path, *args: str, check: bool = True) -> str:

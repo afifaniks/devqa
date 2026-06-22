@@ -1,7 +1,8 @@
 """
 SecDevQA harness — web UI: launch evaluation runs and monitor them live.
 
-A standalone FastAPI app (port 8766) over harness/output/. Two halves:
+A standalone FastAPI app (port 8766) over harness/output/, distinct from the
+benchmark/review UI (review_ui/app.py, port 8765). Three halves:
 
   * Launcher — pick a system (bare LLM / built-in snapshot agent / claude-code /
     opencode), model, artifact-group context selection, limit, and optional
@@ -10,6 +11,9 @@ A standalone FastAPI app (port 8766) over harness/output/. Two halves:
     reproducible from the shell.
   * Monitor — read-only polling over the answers_*/grades_* JSONL files and transcripts;
     tolerant of half-written lines, needs no coordination with runs.
+  * Compare — per-question matrix across selected runs (GET /api/compare), joining each
+    run's answer + grade with the gold maintainer answer so predictions can be browsed
+    side by side and filtered by knowledge type, outcome, repo, or disagreement.
 
 Usage:
   python -m harness ui              # http://localhost:8766
@@ -20,7 +24,9 @@ from __future__ import annotations
 
 import argparse
 import json
+import logging
 import os
+import re
 import shlex
 import shutil
 import signal
@@ -32,6 +38,7 @@ from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from harness.agent import condition_name as agent_condition_name
@@ -42,8 +49,21 @@ from harness.tools import ALL_GROUPS
 ROOT = Path(__file__).parent.parent
 OUTPUT_DIR = ROOT / "harness" / "output"
 LOGS_DIR = OUTPUT_DIR / "logs"
-PAIRS_FILE = ROOT / "dataset" / "eval_pairs.jsonl"
-HTML_FILE = Path(__file__).parent / "ui.html"
+PAIRS_FILE = ROOT / "dataset" / "security_benchmark_final.jsonl"
+MODELS_CONFIG = Path(__file__).parent / "models.json"   # launcher dropdown suggestions
+UI_DIR = Path(__file__).parent / "ui"          # Vite project (source)
+DIST_DIR = UI_DIR / "dist"                      # built bundle served in production
+HTML_FILE = DIST_DIR / "index.html"
+
+BUILD_HINT = (
+    "<html><body style='font-family:system-ui;background:#0b0e14;color:#e6eaf2;"
+    "padding:60px;line-height:1.6'><h2>Harness UI not built</h2><p>The React app "
+    "under <code>harness/ui/</code> hasn't been built yet. From that directory run:"
+    "</p><pre style='background:#19202e;padding:14px;border-radius:8px'>"
+    "npm install\nnpm run build</pre><p>then reload. For live development instead, "
+    "run <code>npm run dev</code> (proxies the API to this server on :8766).</p>"
+    "</body></html>"
+)
 
 DEFAULT_PORT = 8766
 ACTIVE_SECS = 90       # answers file modified within this window → run shown as live
@@ -72,14 +92,37 @@ def read_jsonl(path: Path) -> list[dict]:
     return out
 
 
+# Minimal fallback if models.json is missing or unreadable — the real lists live there.
+_MODELS_FALLBACK = {
+    "model_suggestions": ["openai/gpt-5.4-mini", "anthropic/claude-sonnet-4-6",
+                          "ollama/gemma4:31b"],
+    "judge_suggestions": ["openai/gpt-5.4", "anthropic/claude-opus-4-8"],
+}
+
+
+def model_config() -> dict:
+    """Launcher dropdown suggestions, read live from models.json (so edits need no
+    restart). Falls back to a small built-in list if the file is missing/broken."""
+    try:
+        cfg = json.loads(MODELS_CONFIG.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return dict(_MODELS_FALLBACK)
+    return {
+        "model_suggestions": cfg.get("model_suggestions") or _MODELS_FALLBACK["model_suggestions"],
+        "judge_suggestions": cfg.get("judge_suggestions") or _MODELS_FALLBACK["judge_suggestions"],
+    }
+
+
 def totals() -> dict:
+    # The released benchmark has no approval gate (it is final), so a missing
+    # `approved` field counts as approved.
     threads = read_jsonl(PAIRS_FILE)
     return {
         "items_total": sum(len(t.get("qa_pairs") or [])
                            for t in threads if not t.get("error")),
         "items_approved": sum(len(t.get("qa_pairs") or [])
                               for t in threads
-                              if t.get("approved") and not t.get("error")),
+                              if t.get("approved", True) and not t.get("error")),
     }
 
 
@@ -89,7 +132,14 @@ def totals() -> dict:
 
 @app.get("/", response_class=HTMLResponse)
 async def page():
+    if not HTML_FILE.exists():
+        return HTMLResponse(BUILD_HINT, status_code=503)
     return HTMLResponse(HTML_FILE.read_text(encoding="utf-8"))
+
+
+# The built Vite bundle references its assets under /static/ (see ui/vite.config.js).
+if DIST_DIR.exists():
+    app.mount("/static", StaticFiles(directory=str(DIST_DIR)), name="static")
 
 
 @app.get("/api/runs")
@@ -158,8 +208,8 @@ def run_detail(name: str, tail: int = 50):
             "tool_calls_by_group": r.get("tool_calls_by_group"),
             "runtime_secs": r.get("runtime_secs"),
             "snapshot": r.get("snapshot"),
-            "question": (r.get("question") or "")[:600],
-            "response": (r.get("response") or "")[:4000],
+            "question": r.get("question") or "",
+            "response": r.get("response") or "",
             "outcome": (g or {}).get("outcome"),
             "hallucinated": (g or {}).get("hallucinated"),
             "flags": (g or {}).get("flags"),
@@ -171,12 +221,259 @@ def run_detail(name: str, tail: int = 50):
     return {"name": name, "items": items}
 
 
+# Run names are produced by slugify() + condition_name(): word chars, dot, dash only.
+# Validate against that charset so a path param can never escape OUTPUT_DIR.
+_RUN_NAME_RE = re.compile(r"^[A-Za-z0-9._-]+$")
+
+
+@app.delete("/api/runs/{name}")
+def delete_run(name: str):
+    """Delete a run's artifacts: answers_<name>.jsonl, grades_<name>.jsonl, and
+    transcripts/<name>/. Refuses while the run looks active (recently written) so we
+    never race a live writer — stop it first."""
+    if not _RUN_NAME_RE.match(name):
+        raise HTTPException(400, "invalid run name")
+    answers = OUTPUT_DIR / f"answers_{name}.jsonl"
+    if not answers.exists():
+        raise HTTPException(404, f"no run named {name}")
+    if (time.time() - answers.stat().st_mtime) < ACTIVE_SECS:
+        raise HTTPException(409, "run looks active (written within the last "
+                                 f"{ACTIVE_SECS}s) — stop it before deleting")
+    removed = []
+    for p in (answers, OUTPUT_DIR / f"grades_{name}.jsonl"):
+        if p.exists():
+            p.unlink()
+            removed.append(p.name)
+    tdir = OUTPUT_DIR / "transcripts" / name
+    if tdir.is_dir():
+        shutil.rmtree(tdir)
+        removed.append(f"transcripts/{name}/")
+    return {"ok": True, "removed": removed}
+
+
 @app.get("/api/transcript/{name}/{qid_slug}")
 def transcript(name: str, qid_slug: str):
     path = OUTPUT_DIR / "transcripts" / name / f"{qid_slug}.json"
     if not path.exists():
         raise HTTPException(404, "no transcript for this item")
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+# ---------------------------------------------------------------------------
+# Benchmark API — browse the released QA pairs (security_benchmark_final.jsonl)
+# ---------------------------------------------------------------------------
+
+# Hard-fact fields that count as an externally-verifiable identifier.
+_HARD_ID_FIELDS = ("cve_ids", "ghsa_ids", "cwe_ids", "osv_ids")
+
+
+def _nonempty_hard_facts(hf: dict) -> dict:
+    return {k: v for k, v in (hf or {}).items() if v}
+
+
+@app.get("/api/benchmark")
+def benchmark_list():
+    """All QA pairs with the fields the list view needs, plus filter facets."""
+    items, repos, artifacts, kinds = [], set(), set(), set()
+    for t in read_jsonl(PAIRS_FILE):
+        if t.get("error"):
+            continue
+        hf = _nonempty_hard_facts(t.get("hard_facts") or {})
+        for qa in t.get("qa_pairs") or []:
+            arts = t.get("artifacts_needed") or []
+            repos.add(t.get("repo"))
+            artifacts.update(arts)
+            kinds.add(qa.get("knowledge_type"))
+            items.append({
+                "qid": qa.get("qid"),
+                "repo": t.get("repo"),
+                "number": t.get("number"),
+                "url": t.get("url"),
+                "title": t.get("title"),
+                "state": t.get("state"),
+                "knowledge_type": qa.get("knowledge_type"),
+                "security_topic": t.get("security_topic"),
+                "qa_summary": t.get("qa_summary"),
+                "artifacts_needed": arts,
+                "answerer_role": t.get("answerer_role"),
+                "labels": t.get("labels") or [],
+                "hard_facts": hf,
+                "has_hard_id": any(t.get("hard_facts", {}).get(f) for f in _HARD_ID_FIELDS),
+                "n_comments": len(t.get("comments") or []),
+                "question": qa.get("question") or "",
+            })
+    return {
+        "count": len(items),
+        "items": items,
+        "facets": {
+            "repos": sorted(r for r in repos if r),
+            "artifacts": sorted(a for a in artifacts if a),
+            "knowledge_types": sorted(k for k in kinds if k),
+        },
+    }
+
+
+@app.get("/api/benchmark/item")
+def benchmark_item(qid: str):
+    """Full detail for one QA pair: question/answer + thread metadata + comments."""
+    for t in read_jsonl(PAIRS_FILE):
+        if t.get("error"):
+            continue
+        for qa in t.get("qa_pairs") or []:
+            if qa.get("qid") != qid:
+                continue
+            return {
+                "qid": qid,
+                "repo": t.get("repo"), "number": t.get("number"), "url": t.get("url"),
+                "title": t.get("title"), "state": t.get("state"),
+                "created_at": t.get("created_at"), "closed_at": t.get("closed_at"),
+                "reporter": t.get("reporter"), "labels": t.get("labels") or [],
+                "security_topic": t.get("security_topic"), "qa_summary": t.get("qa_summary"),
+                "question_author": t.get("question_author"),
+                "answer_author": t.get("answer_author"),
+                "answerer_role": t.get("answerer_role"),
+                "question_comment_id": t.get("question_comment_id"),
+                "answer_comment_id": t.get("answer_comment_id"),
+                "artifacts_needed": t.get("artifacts_needed") or [],
+                "hard_facts": _nonempty_hard_facts(t.get("hard_facts") or {}),
+                "llm_confidence": t.get("llm_confidence"),
+                "human_note": t.get("human_note"),
+                "review_note": t.get("review_note"),
+                "leak_flags": t.get("leak_flags") or [],
+                # qa-pair fields
+                "question": qa.get("question") or "",
+                "answer": qa.get("answer") or "",
+                "knowledge_type": qa.get("knowledge_type"),
+                "grounding_sources": qa.get("grounding_sources"),
+                "answer_grounded_in": qa.get("answer_grounded_in"),
+                "answer_in_thread_refs": t.get("answer_in_thread_refs") or [],
+                "comments": t.get("comments") or [],
+            }
+    raise HTTPException(404, f"no QA pair with qid {qid}")
+
+
+# ---------------------------------------------------------------------------
+# Comparison API — predictions across runs, side by side
+# ---------------------------------------------------------------------------
+
+def _gold_map() -> dict[str, dict]:
+    """qid → reference question/answer/hard-facts, from the eval corpus."""
+    gold: dict[str, dict] = {}
+    for thread in read_jsonl(PAIRS_FILE):
+        if thread.get("error"):
+            continue
+        for qa in thread.get("qa_pairs") or []:
+            qid = qa.get("qid")
+            if not qid:
+                continue
+            gold[qid] = {
+                "thread_id": thread.get("thread_id") or thread.get("id"),
+                "repo": thread.get("repo"),
+                "url": thread.get("url"),
+                "title": thread.get("title"),
+                "knowledge_type": qa.get("knowledge_type"),
+                "question": qa.get("question"),
+                "gold_answer": qa.get("answer"),
+                "grounding_sources": qa.get("grounding_sources"),
+                "hard_facts": thread.get("hard_facts"),
+                "approved": bool(thread.get("approved", True)),
+            }
+    return gold
+
+
+def _run_index(name: str) -> tuple[dict[str, dict], dict[str, dict]] | None:
+    """(answers-by-qid, grades-by-qid) for a run, or None if it doesn't exist."""
+    apath = OUTPUT_DIR / f"answers_{name}.jsonl"
+    if not apath.exists():
+        return None
+    answers = {r["qid"]: r for r in read_jsonl(apath) if r.get("qid")}
+    grades = {g["qid"]: g for g in read_jsonl(OUTPUT_DIR / f"grades_{name}.jsonl")
+              if g.get("qid")}
+    return answers, grades
+
+
+@app.get("/api/compare")
+def compare(runs: str = ""):
+    """Side-by-side predictions for the given runs (comma-separated names),
+    joined per question. Includes gold answer and per-run grading when present."""
+    names = [n for n in (runs.split(",") if runs else []) if n]
+    indexed: dict[str, tuple[dict, dict]] = {}
+    meta = []
+    for name in names:
+        idx = _run_index(name)
+        if idx is None:
+            continue
+        indexed[name] = idx
+        answers, grades = idx
+        sample = next(iter(answers.values()), {})
+        meta.append({
+            "name": name,
+            "model": sample.get("model", "?"),
+            "condition": sample.get("condition", "?"),
+            "is_agent": str(sample.get("condition", "")).startswith(
+                ("snapshot_agent", "agent", "external_")),
+            "n_done": len(answers),
+            "n_graded": len(grades),
+        })
+
+    gold = _gold_map()
+    # Row order: every qid any selected run answered, gold-known first then extras.
+    qids: list[str] = []
+    seen = set()
+    for qid in gold:
+        if any(qid in answers for answers, _ in indexed.values()):
+            qids.append(qid)
+            seen.add(qid)
+    for answers, _ in indexed.values():
+        for qid in answers:
+            if qid not in seen:
+                qids.append(qid)
+                seen.add(qid)
+
+    rows = []
+    for qid in qids:
+        g = gold.get(qid, {})
+        cells = {}
+        for name, (answers, grades) in indexed.items():
+            a = answers.get(qid)
+            if a is None:
+                cells[name] = None
+                continue
+            gr = grades.get(qid) or {}
+            judge = gr.get("judge") or {}
+            slug = str(qid).replace("/", "__")
+            cells[name] = {
+                "response": a.get("response") or "",
+                "error": a.get("error"),
+                "runtime_secs": a.get("runtime_secs"),
+                "n_tool_calls": a.get("n_tool_calls"),
+                "tool_calls_by_group": a.get("tool_calls_by_group"),
+                "usage": a.get("usage"),
+                "outcome": gr.get("outcome"),
+                "hallucinated": gr.get("hallucinated"),
+                "flags": gr.get("flags"),
+                "hard_facts": gr.get("hard_facts"),
+                "claims": judge.get("claims"),
+                "hallucinations": judge.get("hallucinations"),
+                "graded": bool(gr),
+                "has_transcript": (OUTPUT_DIR / "transcripts" / name
+                                   / f"{slug}.json").exists(),
+            }
+        rows.append({
+            "qid": qid,
+            "qid_slug": str(qid).replace("/", "__"),
+            "repo": g.get("repo") or (qid.rsplit("/issue", 1)[0] if qid else None),
+            "url": g.get("url"),
+            "title": g.get("title"),
+            "knowledge_type": g.get("knowledge_type"),
+            "question": g.get("question"),
+            "gold_answer": g.get("gold_answer"),
+            "grounding_sources": g.get("grounding_sources"),
+            "hard_facts": g.get("hard_facts"),
+            "in_corpus": qid in gold,
+            "cells": cells,
+        })
+    return {"runs": meta, "rows": rows}
 
 
 # ---------------------------------------------------------------------------
@@ -198,11 +495,9 @@ def options():
               for a, spec in EXTERNAL_AGENTS.items()],
         ],
         "groups": list(ALL_GROUPS),
-        "model_suggestions": ["gpt-5.4-mini", "gpt-5.4",
-                              "anthropic/claude-sonnet-4-6",
-                              "anthropic/claude-opus-4-8",
-                              "ollama/qwen3.6:latest"],
-        "judge_suggestions": ["gpt-5.4", "anthropic/claude-opus-4-8"],
+        # LiteLLM model/judge suggestions, grouped by provider in the UI. From
+        # models.json; any custom <provider>/<model> id can still be typed.
+        **model_config(),
         "totals": totals(),
     }
 
@@ -323,12 +618,35 @@ def stop(proc_id: str):
     return {"ok": True, "returncode": p.poll()}
 
 
+# The UI polls these endpoints on a timer to stay live (runs/procs ~3s, run detail
+# ~4s, compare ~5s). That's one access-log line per poll per open tab — pure noise.
+# Drop the successful polling requests from uvicorn's access log; keep launches,
+# errors, asset loads, and anything non-2xx so real events stay visible.
+_QUIET_POLL_PATHS = ("/api/runs", "/api/procs", "/api/compare", "/api/transcript")
+
+
+class _QuietPollingFilter(logging.Filter):
+    def filter(self, record: logging.LogRecord) -> bool:
+        # uvicorn access records carry args = (client, method, path, http_ver, status).
+        args = record.args
+        if isinstance(args, tuple) and len(args) >= 5:
+            path, status = str(args[2]), args[4]
+            if isinstance(status, int) and 200 <= status < 400 \
+                    and path.startswith(_QUIET_POLL_PATHS):
+                return False
+        return True
+
+
 def main() -> None:
     import uvicorn
     ap = argparse.ArgumentParser(description="Harness web UI (launcher + monitor).")
     ap.add_argument("--port", type=int, default=DEFAULT_PORT)
     ap.add_argument("--host", default="0.0.0.0")
+    ap.add_argument("--verbose-access", action="store_true",
+                    help="Log every request, including the UI's live polling.")
     args = ap.parse_args()
+    if not args.verbose_access:
+        logging.getLogger("uvicorn.access").addFilter(_QuietPollingFilter())
     print(f"SecDevQA harness UI → http://localhost:{args.port}")
     uvicorn.run(app, host=args.host, port=args.port)
 

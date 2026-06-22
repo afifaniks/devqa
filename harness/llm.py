@@ -3,8 +3,8 @@ SecDevQA harness — shared LLM and JSONL utilities.
 
 Kept inside the harness package so the benchmarking module has no dependency on the
 benchmark-construction code (eval/, pipeline/): the harness only consumes the released
-artifacts (dataset/eval_pairs.jsonl, dataset/security_benchmark.jsonl, output/<repo>/
-mined corpora) as data files.
+artifacts (dataset/security_benchmark_final.jsonl and the mined corpora under
+output/<repo>/) as data files.
 """
 
 from __future__ import annotations
@@ -30,6 +30,20 @@ def load_jsonl(path: Path) -> list[dict]:
             except json.JSONDecodeError as exc:
                 raise ValueError(f"Bad JSON at {path}:{lineno}: {exc}") from exc
     return rows
+
+
+def load_benchmark(path: Path) -> list[dict]:
+    """Load the eval benchmark and normalize each thread so downstream code can rely
+    on `thread_id` and `approved` regardless of the source schema. The released
+    benchmark (dataset/security_benchmark_final.jsonl) keys threads by `id` and carries
+    no approval gate — it is final, so every thread counts as approved. The older
+    eval_pairs schema (`thread_id` + an `approved` flag) is left untouched."""
+    threads = load_jsonl(path)
+    for t in threads:
+        if "thread_id" not in t and "id" in t:
+            t["thread_id"] = t["id"]
+        t.setdefault("approved", True)
+    return threads
 
 
 def chat_json(model: str, system: str, user: str, max_tokens: int = 6000) -> dict:

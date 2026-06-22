@@ -46,7 +46,7 @@ from harness.llm import load_jsonl, chat_json
 load_dotenv()
 
 ROOT = Path(__file__).parent.parent
-DEFAULT_PAIRS = ROOT / "dataset" / "eval_pairs.jsonl"
+DEFAULT_PAIRS = ROOT / "dataset" / "security_benchmark_final.jsonl"
 DEFAULT_JUDGE = "gpt-5.4"
 
 # Hard-fact fields by knowability (methodology_review.md §5.1).
@@ -269,7 +269,7 @@ def main() -> None:
     ap.add_argument("--answers", type=Path, required=True,
                     help="answers_*.jsonl produced by the harness (answer/agent/external)")
     ap.add_argument("--pairs", type=Path, default=DEFAULT_PAIRS,
-                    help="eval_pairs.jsonl with the gold answers")
+                    help="benchmark jsonl with the gold answers (default: security_benchmark_final.jsonl)")
     ap.add_argument("--judge", default=DEFAULT_JUDGE,
                     help="LiteLLM judge model id (must differ from the candidate model)")
     ap.add_argument("--output", type=Path, default=None,

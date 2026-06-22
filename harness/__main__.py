@@ -8,8 +8,8 @@ SecDevQA evaluation harness — a self-contained benchmarking module.
   python -m harness grade     [...]   condition-aware grading (harness/grade.py)
   python -m harness ui        [...]   web UI: launch runs + live monitoring (harness/monitor.py)
 
-The harness consumes dataset/eval_pairs.jsonl (+ benchmark/mined corpora as data files)
-and writes to harness/output/. It does not import benchmark-construction code.
+The harness consumes dataset/security_benchmark_final.jsonl (+ mined corpora as data
+files) and writes to harness/output/. It does not import benchmark-construction code.
 """
 
 from __future__ import annotations

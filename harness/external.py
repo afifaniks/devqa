@@ -38,11 +38,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from harness.answer import iter_items, slugify
-from harness.llm import load_jsonl
+from harness.llm import load_jsonl, load_benchmark
 from harness.snapshot import build_snapshot
 
 ROOT = Path(__file__).parent.parent
-DEFAULT_INPUT = ROOT / "dataset" / "eval_pairs.jsonl"
+DEFAULT_INPUT = ROOT / "dataset" / "security_benchmark_final.jsonl"
 DEFAULT_OUTPUT_DIR = ROOT / "harness" / "output"
 SANDBOX_ROOT = ROOT / "harness" / "cache" / "sandbox"
 
@@ -150,13 +150,12 @@ def run(input_path: Path, output_dir: Path, agent: str, model: str | None,
     if shutil.which(AGENTS[agent]["cmd"][0]) is None:
         raise SystemExit(f"'{AGENTS[agent]['cmd'][0]}' not found on PATH — install "
                          f"{agent} first")
-    threads = load_jsonl(input_path)
+    threads = load_benchmark(input_path)
     items = iter_items(threads, include_unapproved)
     if limit:
         items = items[:limit]
     if not items:
-        raise SystemExit("No eval items selected (approve threads in /normalized, "
-                         "or pass --include-unapproved).")
+        raise SystemExit(f"No eval items found in {input_path}.")
 
     condition = f"external_{agent.replace('-', '_')}"
     run_name = f"{slugify(model) + '_' if model else ''}{condition}"
