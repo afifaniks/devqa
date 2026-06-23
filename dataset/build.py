@@ -112,7 +112,10 @@ def build(
 
         for entry_key, verified_entry in repo_entries:
             number = int(entry_key.split("/")[-1])
-            qa_pair = qa_index.get(number)
+            qa_pair = qa_index.get(number)            
+            if qa_pair["state"] == "open":
+                print(f"Skipping open issue/PR: {entry_key}", file=sys.stderr)
+                continue
             if qa_pair is None:
                 missing_qa.append(entry_key)
                 continue

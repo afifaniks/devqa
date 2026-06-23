@@ -1,5 +1,5 @@
 """
-SecDevQA — Stage 1: normalize GitHub security threads into gradeable QA pairs.
+SecDevQA — Stage 1: synthesize gradeable QA pairs from GitHub security threads.
 
 Objective (deliberately minimal — this is the only stage for now):
   thread  ->  one or more (question, answer) pairs where
@@ -32,9 +32,9 @@ Input:  dataset/security_benchmark_filtered.jsonl  (one thread per line)
 Output: dataset/eval_pairs.jsonl                   (one thread per line, with qa_pairs[])
 
 Usage:
-  python -m eval.normalize
-  python -m eval.normalize --limit 5
-  python -m eval.normalize --model openai/gpt-5.4-mini --force
+  python -m dataset.synthesize
+  python -m dataset.synthesize --limit 5
+  python -m dataset.synthesize --model openai/gpt-5.4-mini --force
 """
 
 from __future__ import annotations
@@ -55,7 +55,7 @@ load_dotenv()
 ROOT = Path(__file__).parent.parent
 DEFAULT_INPUT = ROOT / "dataset" / "security_benchmark_filtered.jsonl"
 DEFAULT_OUTPUT = ROOT / "dataset" / "eval_pairs.jsonl"
-DEFAULT_MODEL = "gpt-5.4"
+DEFAULT_MODEL = "openai/gpt-5.5"
 
 # In-thread reference patterns — used to (a) detect whether an answer is grounded and
 # (b) flag the fix being leaked into the question.
@@ -158,14 +158,16 @@ THE QUESTION (one per developer information-need):
   or affected version the reporter themselves cites as their SUBJECT may stay.
 
 THE ANSWER (grounded EXACTLY on the thread):
-- State, in 1-4 sentences, how the maintainer/community actually answered — distilled \
-  faithfully from the thread. Do NOT add facts, fixes, or reasoning that are not in the \
+- Concisely state the complete answer to the question how the maintainer/community actually answered — distilled \
+  faithfully from the thread. Include any additional artifacts (e.g., code snippets, links) that are used in the answer. \
+  Do NOT add fillers, facts, fixes, or reasoning that are not in the \
   thread. If the thread answer is terse or points elsewhere, reflect that honestly \
-  (e.g. "It is fixed and points to PR #932").
+  (e.g. "It is fixed and points to PR #932", "A fix to this issue is {{code}}").
 
 KNOWLEDGE TYPE (judge from what the answer's correctness actually rests on)
 - "parametric": the answer is a security/engineering fact or remediation any expert \
-  could give from general knowledge, or from a public standard/advisory the QUESTION \
+  could give from general knowledge and no repository artifacts are linked (e.g., issue, PR, commit, external advisory, references, etc.)
+  , or from a public standard/advisory the QUESTION \
   itself already cites — WITHOUT this project's source, releases, or internals. E.g. \
   "an RSA key must be >= 2048 bits for JOSE", "never trust a JWT with alg=none". \
   Correct, specific general knowledge is still parametric: an LLM could answer it alone.
@@ -185,7 +187,7 @@ community") are NEVER sources. Use [] for parametric.
 
 DECOMPOSITION:
 - Emit MULTIPLE pairs ONLY when the reporter raised distinct questions AND the answer \
-  addresses more than one of them. Otherwise emit a single pair. Never invent a \
+  addresses more than one of them. Otherwise emit only a single pair. Never invent a \
   question the thread does not answer.
 
 Output ONLY a JSON object — no preamble, no markdown:
@@ -229,7 +231,7 @@ def chat_json(model: str, system: str, user: str, max_tokens: int = 6000) -> dic
 
 
 # ---------------------------------------------------------------------------
-# Per-thread normalization
+# Per-thread synthesis
 # ---------------------------------------------------------------------------
 
 def fix_leak_flags(question: str, hard_facts: dict, context_text: str = "") -> list[str]:
@@ -268,7 +270,7 @@ def answer_states_fix(answer_body: str, hard_facts: dict) -> list[str]:
     return stated
 
 
-def normalize_thread(thread: dict, model: str) -> dict:
+def synthesize_thread(thread: dict, model: str) -> dict:
     parsed = chat_json(model, NORMALIZE_PROMPT, build_thread_view(thread))
     raw_pairs = parsed.get("qa_pairs") or []
     if not isinstance(raw_pairs, list) or not raw_pairs:
@@ -368,7 +370,7 @@ def run(input_path: Path, output_path: Path, model: str, force: bool,
     if output_path.exists() and not force:
         for rec in load_jsonl(output_path):
             existing[rec["thread_id"]] = rec
-        print(f"Resuming: {len(existing)} already normalized")
+        print(f"Resuming: {len(existing)} already synthesized")
 
     results, errors = [], 0
     for i, thread in enumerate(threads):
@@ -378,7 +380,7 @@ def run(input_path: Path, output_path: Path, model: str, force: bool,
             continue
         print(f"[{i+1}/{len(threads)}] {tid} ...", end=" ", flush=True)
         try:
-            rec = normalize_thread(thread, model)
+            rec = synthesize_thread(thread, model)
         except Exception as exc:
             print(f"ERROR: {exc}")
             errors += 1
@@ -412,7 +414,7 @@ def run(input_path: Path, output_path: Path, model: str, force: bool,
 
 
 def main() -> None:
-    ap = argparse.ArgumentParser(description="Stage 1: normalize threads into QA pairs.")
+    ap = argparse.ArgumentParser(description="Stage 1: synthesize QA pairs from threads.")
     ap.add_argument("--input", type=Path, default=DEFAULT_INPUT)
     ap.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     ap.add_argument("--model", default=DEFAULT_MODEL)
