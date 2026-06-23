@@ -2078,5 +2078,975 @@
     "status": "accepted",
     "note": "",
     "verified_at": "2026-06-07T17:24:23.570933Z"
+  },
+  "urllib3/urllib3/issue/2680": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:24:23.570933Z"
+  },
+  "tensorflow/tensorflow/issue/112207": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:47:17.757960Z"
+  },
+  "tensorflow/tensorflow/issue/107125": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:47:31.288075Z"
+  },
+  "tensorflow/tensorflow/issue/104359": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:47:40.096457Z"
+  },
+  "tensorflow/tensorflow/issue/104260": {
+    "status": "rejected",
+    "note": "false positive \u2014 malformed/invalid SparseTensor inputs caused sanitizer OOB warning; maintainer says SparseConcat is not the issue; input invariant violation, not security vulnerability",
+    "verified_at": "2026-06-09T18:48:00.182021Z"
+  },
+  "tensorflow/tensorflow/issue/104258": {
+    "status": "rejected",
+    "note": "false positive \u2014 invalid segment_ids violate documented constraints; GPU OOB write is a downstream effect of bad input, not a confirmed vulnerability or security-relevant bug",
+    "verified_at": "2026-06-09T18:48:22.921432Z"
+  },
+  "tensorflow/tensorflow/issue/104080": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:48:35.951437Z"
+  },
+  "tensorflow/tensorflow/issue/104079": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:48:43.163028Z"
+  },
+  "tensorflow/tensorflow/issue/104078": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:48:50.115476Z"
+  },
+  "tensorflow/tensorflow/issue/104076": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:49:03.587366Z"
+  },
+  "tensorflow/tensorflow/issue/102490": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:49:11.010201Z"
+  },
+  "tensorflow/tensorflow/issue/101746": {
+    "status": "rejected",
+    "note": "reject \u2014 GPU architecture/driver PTX incompatibility (Blackwell RTX 5080); tracking issue pointer and JIT/XLA workaround are compatibility guidance, not security vulnerability content",
+    "verified_at": "2026-06-09T18:49:28.010034Z"
+  },
+  "tensorflow/tensorflow/issue/101397": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:49:41.047528Z"
+  },
+  "tensorflow/tensorflow/issue/99592": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:50:05.205931Z"
+  },
+  "tensorflow/tensorflow/issue/98996": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:50:14.973190Z"
+  },
+  "tensorflow/tensorflow/issue/97941": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:50:22.622640Z"
+  },
+  "tensorflow/tensorflow/issue/97165": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:50:28.898498Z"
+  },
+  "tensorflow/tensorflow/issue/94709": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:50:35.824451Z"
+  },
+  "tensorflow/tensorflow/issue/87669": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:50:45.388119Z"
+  },
+  "tensorflow/tensorflow/issue/87468": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:50:51.811107Z"
+  },
+  "tensorflow/tensorflow/issue/86048": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:50:57.820848Z"
+  },
+  "tensorflow/tensorflow/issue/85174": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:51:05.967185Z"
+  },
+  "tensorflow/tensorflow/issue/84104": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:51:12.539760Z"
+  },
+  "tensorflow/tensorflow/issue/83379": {
+    "status": "rejected",
+    "note": "reject \u2014 CUDA/cuDNN compatibility crash on Manjaro resolved in tf-nightly/stable 2.20; installation/version guidance only, not a security vulnerability",
+    "verified_at": "2026-06-09T18:51:27.312080Z"
+  },
+  "tensorflow/tensorflow/issue/80951": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:51:41.356441Z"
+  },
+  "tensorflow/tensorflow/issue/80736": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:51:48.425237Z"
+  },
+  "tensorflow/tensorflow/issue/77843": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:51:53.883859Z"
+  },
+  "tensorflow/tensorflow/issue/76826": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:52:02.505462Z"
+  },
+  "magento/magento2/issue/40792": {
+    "status": "rejected",
+    "note": "reject \u2014 Magento customer grid indexing delay due to cron-based update mode; commit and release notes describe intended behavior change, not a security vulnerability",
+    "verified_at": "2026-06-09T19:49:34.181960Z"
+  },
+  "magento/magento2/issue/40785": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T19:49:45.459944Z"
+  },
+  "magento/magento2/issue/40762": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T19:49:53.335025Z"
+  },
+  "magento/magento2/issue/40616": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T19:50:16.883439Z"
+  },
+  "magento/magento2/issue/40591": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T19:50:33.373242Z"
+  },
+  "magento/magento2/issue/40568": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T19:50:42.308257Z"
+  },
+  "magento/magento2/issue/40551": {
+    "status": "rejected",
+    "note": "reject \u2014 sri-hashes.json race condition is a deployment/build integrity issue; response only states commit closure without verified security impact or detailed fix validation",
+    "verified_at": "2026-06-09T19:50:49.787515Z"
+  },
+  "magento/magento2/issue/40548": {
+    "status": "rejected",
+    "note": "reject \u2014 Magento REST product query slowdown is a database indexing/performance regression; fix is a query optimization (new index in 2.4.9), not a security vulnerability",
+    "verified_at": "2026-06-09T19:51:19.306458Z"
+  },
+  "magento/magento2/issue/40521": {
+    "status": "rejected",
+    "note": "reject \u2014 customer city field disallowed character validation is a functional input validation rule fix (AC-16504 commit reference), not a confirmed security vulnerability or exploit",
+    "verified_at": "2026-06-09T19:51:44.712747Z"
+  },
+  "magento/magento2/issue/40520": {
+    "status": "rejected",
+    "note": "reject \u2014 Magento MediaStorage nginx try_files / get.php routing behavior; response only confirms non-reproducibility in latest develop, no validated security vulnerability or exploit",
+    "verified_at": "2026-06-09T19:52:15.304938Z"
+  },
+  "magento/magento2/issue/40492": {
+    "status": "rejected",
+    "note": "reject \u2014 reported DivisionByZeroError in credit memo tax calculation was not reproducible by maintainer; no confirmed security vulnerability or exploitable condition established",
+    "verified_at": "2026-06-09T19:52:46.819870Z"
+  },
+  "magento/magento2/issue/40474": {
+    "status": "rejected",
+    "note": "reject \u2014 Magento FPC identifier change (IdentifierForSave vs Identifier) is a cache behavior/DI configuration issue; no confirmed customer data leakage or security vulnerability demonstrated",
+    "verified_at": "2026-06-09T19:53:20.735263Z"
+  },
+  "magento/magento2/issue/40437": {
+    "status": "rejected",
+    "note": "reject \u2014 SQL injection report in Magento collection filters is still in triage stage; response only requests reproduction details without confirming vulnerability or fix",
+    "verified_at": "2026-06-09T19:53:44.197099Z"
+  },
+  "magento/magento2/issue/40394": {
+    "status": "rejected",
+    "note": "reject \u2014 USPS OAuth token caching/backport AC-15210 is a performance/API efficiency patch for rate limiting, not a confirmed security vulnerability or exploit",
+    "verified_at": "2026-06-09T19:53:59.993059Z"
+  },
+  "magento/magento2/issue/40351": {
+    "status": "rejected",
+    "note": "reject \u2014 Magento PayPal_Braintree SalesOrderGridPlugin SQL rewrite causes invalid query; resolved by KB KA-27163 patch, but no confirmed security vulnerability or exploit scenario",
+    "verified_at": "2026-06-09T19:54:25.454534Z"
+  },
+  "magento/magento2/issue/40346": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-09T19:54:55.696302Z"
+  },
+  "magento/magento2/issue/40309": {
+    "status": "rejected",
+    "note": "reject \u2014 Magento sales_email disabled flag incorrectly ignored; fixed in AC-16059 (2.4.9-beta1), but no demonstrated security vulnerability or exploit impact",
+    "verified_at": "2026-06-09T19:55:16.282601Z"
+  },
+  "magento/magento2/issue/40308": {
+    "status": "rejected",
+    "note": "reject \u2014 Magento UPS SOAP integration deprecation and OAuth2 migration is a platform upgrade requirement, not a confirmed security vulnerability or exploit scenario",
+    "verified_at": "2026-06-09T19:55:37.432665Z"
+  },
+  "magento/magento2/issue/40304": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T19:55:48.934630Z"
+  },
+  "magento/magento2/issue/40297": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T19:55:54.223323Z"
+  },
+  "magento/magento2/issue/40287": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T19:56:06.289860Z"
+  },
+  "magento/magento2/issue/40270": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T19:56:16.491733Z"
+  },
+  "magento/magento2/issue/40247": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T19:56:29.788993Z"
+  },
+  "magento/magento2/issue/40241": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T19:56:54.172955Z"
+  },
+  "magento/magento2/issue/40236": {
+    "status": "accepted",
+    "note": "borderline: deployment pipeline regression affecting checkout rendering, but lacks confirmed security impact or official fix anchor; patch is user-proposed, not validated upstream fix; security framing (SRI regression) is plausible but not substantiated as vulnerability class",
+    "verified_at": "2026-06-09T19:59:14.138522Z"
+  },
+  "magento/magento2/issue/40230": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T19:59:50.333076Z"
+  },
+  "magento/magento2/issue/40226": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-09T20:00:24.843781Z"
+  },
+  "magento/magento2/issue/40211": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T20:00:34.647033Z"
+  },
+  "magento/magento2/issue/40190": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-09T20:00:52.843821Z"
+  },
+  "magento/magento2/issue/40189": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T20:01:13.714124Z"
+  },
+  "magento/magento2/issue/40187": {
+    "status": "accepted",
+    "note": "This is a clear functional correctness + inventory integrity issue exposed via GraphQL, which is security-relevant in e-commerce contexts (incorrect stock visibility can affect ordering logic and system trust boundaries).",
+    "verified_at": "2026-06-09T20:01:47.343649Z"
+  },
+  "magento/magento2/issue/40165": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T20:02:05.509526Z"
+  },
+  "magento/magento2/issue/40154": {
+    "status": "accepted",
+    "note": "This is a clear object state integrity bug in core order/invoice workflow, which can lead to incorrect business logic execution (order object being mutated into invoice state).",
+    "verified_at": "2026-06-09T20:02:33.383957Z"
+  },
+  "magento/magento2/issue/40146": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T20:02:51.724373Z"
+  },
+  "magento/magento2/issue/40138": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T20:05:17.464361Z"
+  },
+  "magento/magento2/issue/40120": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-09T20:06:06.663430Z"
+  },
+  "magento/magento2/issue/40117": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-09T20:06:36.843134Z"
+  },
+  "magento/magento2/issue/40102": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T20:07:22.891657Z"
+  },
+  "magento/magento2/issue/40099": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-09T20:07:39.491907Z"
+  },
+  "magento/magento2/issue/40093": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-09T20:08:04.940256Z"
+  },
+  "magento/magento2/issue/40044": {
+    "status": "accepted",
+    "note": "Clear security-relevant data integrity issue (store-view label overwrite) with valid Jira anchor AC-15208 and versioned fix target (2.4.9-alpha3); answer consistently maps issue to resolved internal ticket and release.",
+    "verified_at": "2026-06-09T20:08:34.436069Z"
+  },
+  "magento/magento2/issue/40039": {
+    "status": "accepted",
+    "note": "Security-relevant stale full-page cache issue after login with clear reproducible behavior; answer is anchored to PR #40008 and linked issue #40007, and provides a concrete patch-based resolution signal consistent with Magento fix workflows.",
+    "verified_at": "2026-06-09T20:09:04.695371Z"
+  },
+  "magento/magento2/issue/40029": {
+    "status": "accepted",
+    "note": "Clear security-relevant REST API authorization bypass (cross-website product add-to-cart and order placement); properly anchored with internal Jira AC-15054, related commits reference, and fixed version 2.4.9-alpha3, with consistent reproduction-to-fix mapping.",
+    "verified_at": "2026-06-09T20:09:32.476948Z"
+  },
+  "magento/magento2/issue/40028": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T20:09:49.910252Z"
+  },
+  "magento/magento2/issue/40021": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T20:10:00.072933Z"
+  },
+  "magento/magento2/issue/40019": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T20:10:30.229912Z"
+  },
+  "magento/magento2/issue/40006": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T20:10:41.618676Z"
+  },
+  "magento/magento2/issue/40002": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T20:10:53.768765Z"
+  },
+  "magento/magento2/issue/39995": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T20:11:10.263042Z"
+  },
+  "magento/magento2/issue/39994": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-09T20:11:34.661342Z"
+  },
+  "jenkinsci/jenkins/issue/26822": {
+    "status": "rejected",
+    "note": "This is a feature request / architectural security discussion, not a concrete security issue in Jenkins. The answer is security-aware (restrict to admin-only controllers because of risk), but it is opinion/guidance without a concrete fix anchor (no CVE, advisory, commit, or implemented change).",
+    "verified_at": "2026-06-10T01:31:19.527481Z"
+  },
+  "jenkinsci/jenkins/issue/26851": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T01:31:59.113173Z"
+  },
+  "jenkinsci/jenkins/issue/26810": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T01:32:40.205036Z"
+  },
+  "jenkinsci/jenkins/issue/26750": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T01:32:45.321540Z"
+  },
+  "jenkinsci/jenkins/issue/26716": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T01:33:09.590001Z"
+  },
+  "jenkinsci/jenkins/issue/26693": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T01:33:32.382833Z"
+  },
+  "jenkinsci/jenkins/issue/26592": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T01:33:52.169341Z"
+  },
+  "jenkinsci/jenkins/issue/26563": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T01:34:18.485624Z"
+  },
+  "jenkinsci/jenkins/issue/26507": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T01:35:34.978743Z"
+  },
+  "jenkinsci/jenkins/issue/26489": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T01:36:16.898173Z"
+  },
+  "jenkinsci/jenkins/issue/26204": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T01:36:43.140583Z"
+  },
+  "jenkinsci/jenkins/issue/26196": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T01:37:19.775958Z"
+  },
+  "jenkinsci/jenkins/issue/26097": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T01:38:05.807261Z"
+  },
+  "jenkinsci/jenkins/issue/26027": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T01:38:43.336960Z"
+  },
+  "jenkinsci/jenkins/issue/25958": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T01:39:02.959336Z"
+  },
+  "jenkinsci/jenkins/issue/25903": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T01:39:22.873575Z"
+  },
+  "kubernetes/kubernetes/issue/139515": {
+    "status": "accepted",
+    "note": "borderline: reliability/availability issue but security-relevant due to cluster-wide kube-proxy sync failure; answer well-anchored via nft reproduction and 128-char limit evidence",
+    "verified_at": "2026-06-10T16:18:23.937298Z"
+  },
+  "kubernetes/kubernetes/issue/139391": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:18:44.545300Z"
+  },
+  "kubernetes/kubernetes/issue/139389": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:18:56.809669Z"
+  },
+  "kubernetes/kubernetes/issue/139263": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:19:06.311563Z"
+  },
+  "kubernetes/kubernetes/issue/139069": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:19:20.892940Z"
+  },
+  "kubernetes/kubernetes/issue/139044": {
+    "status": "accepted",
+    "note": "accept \u2014 scheduler data race confirmed fixed via PR #139057 with supporting CI run evidence; concurrency correctness issue with security-adjacent implications (race condition in core scheduling path)",
+    "verified_at": "2026-06-10T16:19:38.355416Z"
+  },
+  "kubernetes/kubernetes/issue/138962": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:19:54.933913Z"
+  },
+  "kubernetes/kubernetes/issue/138952": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:20:01.275596Z"
+  },
+  "kubernetes/kubernetes/issue/138936": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:20:17.771626Z"
+  },
+  "kubernetes/kubernetes/issue/138826": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:20:52.190651Z"
+  },
+  "kubernetes/kubernetes/issue/138763": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:21:01.022895Z"
+  },
+  "kubernetes/kubernetes/issue/138707": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:22:12.504404Z"
+  },
+  "kubernetes/kubernetes/issue/138689": {
+    "status": "accepted",
+    "note": "accept \u2014 security-relevant workload identity/token rotation behavior in kubelet; well-anchored in specific kubelet token manager code and explains retry semantics under transient failures",
+    "verified_at": "2026-06-10T16:22:25.122016Z"
+  },
+  "kubernetes/kubernetes/issue/138607": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:22:36.425705Z"
+  },
+  "kubernetes/kubernetes/issue/138595": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:22:42.351242Z"
+  },
+  "kubernetes/kubernetes/issue/138556": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:22:56.119097Z"
+  },
+  "kubernetes/kubernetes/issue/138534": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:23:02.714012Z"
+  },
+  "kubernetes/kubernetes/issue/138489": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:23:12.971849Z"
+  },
+  "kubernetes/kubernetes/issue/138461": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:23:25.404674Z"
+  },
+  "kubernetes/kubernetes/issue/138436": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:23:32.492462Z"
+  },
+  "kubernetes/kubernetes/issue/138431": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:23:38.623575Z"
+  },
+  "kubernetes/kubernetes/issue/138402": {
+    "status": "accepted",
+    "note": "accept \u2014 kubelet/containerd CPU stats edge case (zero UsageNanoCores) affects resource reporting correctness; well-anchored in containerd issues #13138/#12629 and Kubernetes PR #138423 with explicit fallback fix",
+    "verified_at": "2026-06-10T16:23:55.452359Z"
+  },
+  "kubernetes/kubernetes/issue/138374": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:24:04.526892Z"
+  },
+  "kubernetes/kubernetes/issue/138329": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:24:16.956124Z"
+  },
+  "kubernetes/kubernetes/issue/138315": {
+    "status": "accepted",
+    "note": "accept \u2014 CVE applicability analysis correctly determined as non-exploitable in Kubernetes due to unsupported BSD/Solaris platform scope; well-anchored in OpenTelemetry source and Kubernetes platform support policy",
+    "verified_at": "2026-06-10T16:25:25.502815Z"
+  },
+  "kubernetes/kubernetes/issue/138225": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:25:39.482052Z"
+  },
+  "kubernetes/kubernetes/issue/138073": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:25:53.027552Z"
+  },
+  "kubernetes/kubernetes/issue/137915": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:27:11.510597Z"
+  },
+  "kubernetes/kubernetes/issue/137912": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:27:19.021132Z"
+  },
+  "kubernetes/kubernetes/issue/137895": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:27:27.192849Z"
+  },
+  "kubernetes/kubernetes/issue/137894": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:27:34.368277Z"
+  },
+  "kubernetes/kubernetes/issue/137893": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:27:42.006289Z"
+  },
+  "kubernetes/kubernetes/issue/137891": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:27:50.321568Z"
+  },
+  "kubernetes/kubernetes/issue/137886": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:28:00.004552Z"
+  },
+  "kubernetes/kubernetes/issue/137855": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:28:08.764138Z"
+  },
+  "kubernetes/kubernetes/issue/137853": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:28:21.190920Z"
+  },
+  "kubernetes/kubernetes/issue/137842": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:28:35.633647Z"
+  },
+  "kubernetes/kubernetes/issue/137841": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:28:45.056393Z"
+  },
+  "kubernetes/kubernetes/issue/137797": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:28:52.298046Z"
+  },
+  "kubernetes/kubernetes/issue/137782": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:29:01.877453Z"
+  },
+  "kubernetes/kubernetes/issue/137758": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:29:11.062375Z"
+  },
+  "kubernetes/kubernetes/issue/137737": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:29:24.382650Z"
+  },
+  "kubernetes/kubernetes/issue/137724": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:30:54.890855Z"
+  },
+  "kubernetes/kubernetes/issue/137705": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:31:04.551902Z"
+  },
+  "kubernetes/kubernetes/issue/137697": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:31:11.149723Z"
+  },
+  "kubernetes/kubernetes/issue/137686": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:31:18.588576Z"
+  },
+  "kubernetes/kubernetes/issue/137618": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:31:30.738004Z"
+  },
+  "kubernetes/kubernetes/issue/137617": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:31:54.532514Z"
+  },
+  "kubernetes/kubernetes/issue/137560": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:32:02.586910Z"
+  },
+  "kubernetes/kubernetes/issue/137459": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:32:14.870761Z"
+  },
+  "ImageMagick/ImageMagick/issue/8707": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:49:52.952571Z"
+  },
+  "ImageMagick/ImageMagick/issue/8706": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:49:59.175490Z"
+  },
+  "ImageMagick/ImageMagick/issue/8690": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T19:50:07.151777Z"
+  },
+  "ImageMagick/ImageMagick/issue/8609": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:50:12.664744Z"
+  },
+  "ImageMagick/ImageMagick/issue/8584": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T19:50:25.518366Z"
+  },
+  "ImageMagick/ImageMagick/issue/8582": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T19:50:38.383334Z"
+  },
+  "ImageMagick/ImageMagick/issue/8574": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:50:46.402538Z"
+  },
+  "ImageMagick/ImageMagick/issue/8567": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T19:50:59.810167Z"
+  },
+  "ImageMagick/ImageMagick/issue/8557": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T19:51:07.256932Z"
+  },
+  "ImageMagick/ImageMagick/issue/8538": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T19:51:13.021688Z"
+  },
+  "ImageMagick/ImageMagick/issue/8535": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T19:51:19.539726Z"
+  },
+  "ImageMagick/ImageMagick/issue/8508": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T19:51:25.683944Z"
+  },
+  "ImageMagick/ImageMagick/issue/8494": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T19:51:43.631158Z"
+  },
+  "ImageMagick/ImageMagick/issue/8460": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:51:55.531886Z"
+  },
+  "ImageMagick/ImageMagick/issue/8440": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:52:03.289729Z"
+  },
+  "ImageMagick/ImageMagick/issue/8375": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:52:11.289592Z"
+  },
+  "ImageMagick/ImageMagick/issue/8318": {
+    "status": "accepted",
+    "note": "ImageMagick release integrity verification via SHA256 checksum comparison and digest.rdf reference; addresses supply-chain consistency and CI validation mismatch; accepted as security-relevant artifact integrity and verification response",
+    "verified_at": "2026-06-10T19:52:29.807233Z"
+  },
+  "ImageMagick/ImageMagick/issue/8301": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T19:53:00.601917Z"
+  },
+  "ImageMagick/ImageMagick/issue/8265": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:53:07.336506Z"
+  },
+  "ImageMagick/ImageMagick/issue/8255": {
+    "status": "accepted",
+    "note": "GHSA-cfh4-9f7v-fhrc advisory updated to include fixing commits; confirms security fix provenance recorded in official advisory metadata; accepted as valid security traceability update without explicit commit enumeration but authoritative advisory-level confirmation",
+    "verified_at": "2026-06-10T19:53:30.982850Z"
+  },
+  "ImageMagick/ImageMagick/issue/8239": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T19:53:41.162780Z"
+  },
+  "ImageMagick/ImageMagick/issue/8234": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:53:53.992802Z"
+  },
+  "ImageMagick/ImageMagick/issue/8186": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T19:54:01.394360Z"
+  },
+  "ImageMagick/ImageMagick/issue/8184": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T19:54:17.672327Z"
+  },
+  "ImageMagick/ImageMagick/issue/8149": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:54:30.710040Z"
+  },
+  "ImageMagick/ImageMagick/issue/8135": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:54:39.045675Z"
+  },
+  "ImageMagick/ImageMagick/issue/8124": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:54:55.154001Z"
+  },
+  "ImageMagick/ImageMagick/issue/8109": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:55:06.237164Z"
+  },
+  "ImageMagick/ImageMagick/issue/8038": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T19:55:14.690629Z"
+  },
+  "ImageMagick/ImageMagick/issue/8022": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T19:55:22.620542Z"
+  },
+  "ImageMagick/ImageMagick/issue/8013": {
+    "status": "accepted",
+    "note": "Ghostscript delegate default pngalpha rendering introduces alpha channel causing Fax/Group4 TIFF compression to be skipped in PDF rasterization pipeline; mitigated via delegates.xml device change to png16m; accepted as security-relevant image processing pipeline regression affecting compression behavior and external delegate trust boundary",
+    "verified_at": "2026-06-10T19:55:39.393292Z"
+  },
+  "ImageMagick/ImageMagick/issue/8003": {
+    "status": "accepted",
+    "note": "BMP parser incorrectly accepts negative biHeight for compressed formats violating BITMAPINFOHEADER specification; confirmed reproducible parsing validation issue with active patch scheduled for main branch and beta releases; accepted as security-relevant image parser input validation flaw",
+    "verified_at": "2026-06-10T19:56:02.273357Z"
+  },
+  "ImageMagick/ImageMagick/issue/7978": {
+    "status": "accepted",
+    "note": "SVG MSVG/XML renderer hang due to crafted input causing infinite processing loop leading to denial of service; confirmed reproducible and patched in main branch with beta release propagation; accepted as security-relevant resource exhaustion vulnerability in image parsing pipeline",
+    "verified_at": "2026-06-10T19:56:20.090074Z"
+  },
+  "ImageMagick/ImageMagick/issue/7947": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:56:40.688227Z"
+  },
+  "ImageMagick/ImageMagick/issue/7941": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T19:56:54.453657Z"
+  },
+  "ImageMagick/ImageMagick/issue/7881": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:57:04.311326Z"
+  },
+  "ImageMagick/ImageMagick/issue/7837": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T19:57:14.601695Z"
+  },
+  "ImageMagick/ImageMagick/issue/7832": {
+    "status": "accepted",
+    "note": "MNG parser memory exhaustion caused by malicious LOOP value leading to excessive frame allocation (up to 2^31 images); mitigated via policy.xml list-length resource cap; accepted as security-relevant resource exhaustion vulnerability in image decoding pipeline",
+    "verified_at": "2026-06-10T19:57:55.968043Z"
+  },
+  "ImageMagick/ImageMagick/issue/7825": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:58:07.015707Z"
+  },
+  "ImageMagick/ImageMagick/issue/7751": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:58:19.256821Z"
+  },
+  "ImageMagick/ImageMagick/issue/7724": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:59:19.228477Z"
+  },
+  "ImageMagick/ImageMagick/issue/7628": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:59:55.400892Z"
+  },
+  "ImageMagick/ImageMagick/issue/7616": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T20:00:10.077979Z"
+  },
+  "ImageMagick/ImageMagick/issue/7610": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T20:00:35.314108Z"
+  },
+  "ImageMagick/ImageMagick/issue/7568": {
+    "status": "accepted",
+    "note": "CVE-2024-41817 scoped as Linux AppImage-only issue affecting pre-7.1.1-36 builds; Windows binaries confirmed unaffected; accepted as security-relevant vulnerability applicability clarification with platform-specific false-positive determination",
+    "verified_at": "2026-06-10T20:00:48.981718Z"
+  },
+  "ImageMagick/ImageMagick/issue/7562": {
+    "status": "accepted",
+    "note": "SVG parser hang due to crafted input causing infinite CPU consumption during conversion pipeline; confirmed reproducible DoS condition with upstream patch scheduled for main branch and beta release inclusion; accepted as security-relevant resource exhaustion vulnerability in SVG processing pipeline",
+    "verified_at": "2026-06-10T20:01:29.932022Z"
+  },
+  "ImageMagick/ImageMagick/issue/7542": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T20:01:43.962794Z"
+  },
+  "ImageMagick/ImageMagick/issue/7521": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T20:01:54.420813Z"
+  },
+  "ImageMagick/ImageMagick/issue/7513": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T20:02:02.577510Z"
+  },
+  "ImageMagick/ImageMagick/issue/7446": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T20:02:23.570829Z"
   }
 }
