@@ -249,6 +249,30 @@
 
     .bm-topbar-count { font-size: 13px; color: var(--muted); margin-left: 8px; }
     .btn-edit-active { background: var(--accent) !important; color: #fff !important; }
+
+    /* ── rubric ─────────────────────────────────────────────────── */
+    .rub { margin-top: 12px; border-top: 1px dashed var(--border); padding-top: 10px; }
+    .rub-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+    .rub-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+    .rub-empty { color: var(--muted); font-size: 12.5px; font-style: italic; }
+    .rub-line { display: flex; gap: 8px; align-items: flex-start; padding: 6px 0; border-bottom: 1px solid var(--border); }
+    .rub-ax { font-size: 10.5px; font-weight: 700; padding: 2px 6px; border-radius: 5px; white-space: nowrap; flex-shrink: 0; }
+    .rub-ax-c { background: #b91c1c; color: #fff; }
+    .rub-ax-p { background: #1d4ed8; color: #fff; }
+    .rub-body { flex: 1; font-size: 13px; }
+    .rub-src { margin-top: 3px; font-size: 11px; color: var(--muted); }
+    .rub-loc { font-family: monospace; background: var(--border); padding: 1px 5px; border-radius: 4px; margin-right: 6px; }
+    .rub-quote { font-style: italic; }
+    .rub-note { margin-top: 8px; font-size: 12px; color: var(--fg); }
+    .rub-note-rev { background: var(--border); padding: 6px 8px; border-radius: 6px; }
+    .rub-rejected { margin-top: 8px; font-size: 12px; color: var(--muted); }
+    .rub-rej { margin: 4px 0; }
+    .rub-edit { display: flex; flex-direction: column; gap: 8px; }
+    .rub-eline { border: 1px solid var(--border); border-radius: 8px; padding: 8px; display: flex; flex-direction: column; gap: 6px; }
+    .rub-eline-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .rub-ck { font-size: 11px; display: flex; align-items: center; gap: 4px; }
+    .rub-elbl { font-size: 11px; font-weight: 600; color: var(--muted); margin-top: 4px; }
+    .rub-ebtns { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 4px; }
   </style>
 </head>
 
@@ -512,6 +536,107 @@
                   </div>
                 </div>
               </template>
+
+              <!-- ★ Grading rubric -->
+              <div class="rub">
+                <div class="rub-head">
+                  <span class="rub-title">Grading rubric</span>
+                  <template x-if="rub(p.qid)">
+                    <span style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+                      <span class="badge2 b-cwe" x-text="`ref: ${rub(p.qid).reference_type||'?'}`"></span>
+                      <span class="badge2" :class="vsClass(rub(p.qid).verify_status)" x-text="rub(p.qid).verify_status"></span>
+                      <span x-show="(rub(p.qid).rubric||[]).length < 2" class="badge2 b-closed">low-res</span>
+                      <span style="color:var(--muted);font-size:11px" x-text="`${(rub(p.qid).rubric||[]).length} lines`"></span>
+                    </span>
+                  </template>
+                  <template x-if="rub(p.qid) && !rubEditing(p.qid)">
+                    <button class="btn" style="margin-left:auto" @click="startRubric(p.qid)">Edit / verify</button>
+                  </template>
+                </div>
+
+                <template x-if="!rub(p.qid)">
+                  <div class="rub-empty">No rubric drafted — run <code>dataset/build_rubrics.py</code>.</div>
+                </template>
+
+                <!-- view mode -->
+                <template x-if="rub(p.qid) && !rubEditing(p.qid)">
+                  <div>
+                    <template x-for="(ln, li) in (rub(p.qid).rubric||[])" :key="li">
+                      <div class="rub-line">
+                        <span class="rub-ax" :class="ln.axis==='correctness'?'rub-ax-c':'rub-ax-p'"
+                              x-text="`${(ln.axis||'?').slice(0,4)} w${ln.weight}`"></span>
+                        <span x-show="ln.knowable_at_report===false" class="badge2 b-fix"
+                              title="future fact at report time — dropped from no-context denominator">¬knowable</span>
+                        <div class="rub-body">
+                          <div x-text="ln.text"></div>
+                          <div class="rub-src"><span class="rub-loc" x-text="ln.source_loc"></span>
+                            <span class="rub-quote" x-text="`“${(ln.source_quote||'').slice(0,200)}”`"></span></div>
+                        </div>
+                      </div>
+                    </template>
+                    <template x-if="rub(p.qid).acceptable_alternatives">
+                      <div class="rub-note"><b>Acceptable alternatives:</b> <span x-text="rub(p.qid).acceptable_alternatives"></span></div>
+                    </template>
+                    <template x-if="rub(p.qid).ceiling_note">
+                      <div class="rub-note"><b>Ceiling:</b> <span x-text="rub(p.qid).ceiling_note"></span></div>
+                    </template>
+                    <template x-if="rub(p.qid).note">
+                      <div class="rub-note rub-note-rev"><b>Reviewer note:</b> <span x-text="rub(p.qid).note"></span></div>
+                    </template>
+                    <template x-if="rub(p.qid)._validation && (rub(p.qid)._validation.rejected||[]).length">
+                      <details class="rub-rejected">
+                        <summary x-text="`${rub(p.qid)._validation.rejected.length} line(s) dropped by validation gate`"></summary>
+                        <template x-for="(rj, ri) in rub(p.qid)._validation.rejected" :key="ri">
+                          <div class="rub-rej"><span class="badge2 b-closed" x-text="rj.reason"></span>
+                            <span x-text="rj.text"></span></div>
+                        </template>
+                      </details>
+                    </template>
+                  </div>
+                </template>
+
+                <!-- edit mode -->
+                <template x-if="rubEditing(p.qid)">
+                  <div class="rub-edit">
+                    <template x-for="(ln, li) in rubEdits[p.qid].rubric" :key="li">
+                      <div class="rub-eline">
+                        <div class="rub-eline-row">
+                          <select class="edit-field" x-model="ln.axis" style="width:auto">
+                            <option value="correctness">correctness</option>
+                            <option value="completeness">completeness</option>
+                          </select>
+                          <select class="edit-field" x-model.number="ln.weight" style="width:auto">
+                            <option :value="2">w2</option><option :value="1">w1</option>
+                          </select>
+                          <label class="rub-ck"><input type="checkbox"
+                            :checked="ln.knowable_at_report!==false"
+                            @change="ln.knowable_at_report=$event.target.checked"> knowable@report</label>
+                          <button class="btn" style="margin-left:auto"
+                            @click="rubEdits[p.qid].rubric.splice(li,1)">✕</button>
+                        </div>
+                        <textarea class="edit-field" rows="2" x-model="ln.text" placeholder="claim (paraphrased, checkable)"></textarea>
+                        <input class="edit-field" type="text" x-model="ln.source_loc"
+                          placeholder="source_loc — gold_answer | answer_reply | fix_diff:path | hard_facts | advisory">
+                        <textarea class="edit-field" rows="2" x-model="ln.source_quote" placeholder="source_quote (verbatim provenance span)"></textarea>
+                      </div>
+                    </template>
+                    <button class="btn" @click="addRubricLine(p.qid)">+ Add line</button>
+                    <label class="rub-elbl">Acceptable alternatives</label>
+                    <textarea class="edit-field" rows="2" x-model="rubEdits[p.qid].acceptable_alternatives"></textarea>
+                    <label class="rub-elbl">Ceiling note</label>
+                    <textarea class="edit-field" rows="2" x-model="rubEdits[p.qid].ceiling_note"></textarea>
+                    <label class="rub-elbl">Reviewer note</label>
+                    <textarea class="edit-field" rows="2" x-model="rubEdits[p.qid].note"></textarea>
+                    <div class="rub-ebtns">
+                      <button class="btn btn-primary" @click="saveRubric(p.qid,'accepted')">✓ Accept</button>
+                      <button class="btn" @click="saveRubric(p.qid,'edited')">Save edits</button>
+                      <button class="btn" @click="saveRubric(p.qid,'rejected')">Reject</button>
+                      <button class="btn" @click="cancelRubric(p.qid)">Cancel</button>
+                      <span style="font-size:11px;color:var(--muted)" x-text="rubMsg[p.qid]||''"></span>
+                    </div>
+                  </div>
+                </template>
+              </div>
             </div>
           </template>
         </div>
@@ -739,6 +864,7 @@ function app() {
     searchQ: '', filterRepo: '', filterKnowledge: '', filterResolution: '',
     selected: null, rawOpen: false,
     editMode: false, edit: {}, saving: false, saveMsg: '', reloading: false,
+    rubEdits: {}, rubMsg: {},
     isDark: document.documentElement.classList.contains('dark'),
 
     hardFactFields: [
@@ -863,6 +989,54 @@ function app() {
       const idx = this.edit.artifacts_needed.indexOf(a);
       if (idx === -1) this.edit.artifacts_needed.push(a);
       else this.edit.artifacts_needed.splice(idx, 1);
+    },
+
+    // ── Rubric verification ──────────────────────────────────────
+    rub(qid) { return ((this.selected && this.selected.rubrics) || {})[qid]; },
+    rubEditing(qid) { return !!this.rubEdits[qid]; },
+    vsClass(s) {
+      return { accepted: 'b-ver', edited: 'b-fix', rejected: 'b-closed', draft: 'b-cwe' }[s] || 'b-cwe';
+    },
+    startRubric(qid) {
+      const r = this.rub(qid) || {};
+      this.rubEdits[qid] = {
+        rubric: JSON.parse(JSON.stringify(r.rubric || [])),
+        acceptable_alternatives: r.acceptable_alternatives || '',
+        ceiling_note: r.ceiling_note || '',
+        note: r.note || '',
+      };
+      this.rubMsg[qid] = '';
+    },
+    addRubricLine(qid) {
+      this.rubEdits[qid].rubric.push({
+        text: '', axis: 'completeness', weight: 1,
+        source_loc: 'gold_answer', source_quote: '', knowable_at_report: true,
+      });
+    },
+    cancelRubric(qid) { delete this.rubEdits[qid]; this.rubMsg[qid] = ''; },
+    async saveRubric(qid, status) {
+      const e = this.rubEdits[qid];
+      this.rubMsg[qid] = 'Saving…';
+      try {
+        const resp = await fetch('/api/benchmark/rubric', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            qid, status,
+            rubric: e.rubric.map(l => ({ ...l, weight: Number(l.weight) })),
+            acceptable_alternatives: e.acceptable_alternatives,
+            ceiling_note: e.ceiling_note,
+            note: e.note,
+          }),
+        });
+        if (!resp.ok) throw new Error(await resp.text());
+        // refresh merged rubric (and verify_status) from the server
+        this.selected = await fetch(`/api/benchmark/records/${this.selected.index}`).then(r => r.json());
+        delete this.rubEdits[qid];
+        this.rubMsg[qid] = '';
+      } catch (err) {
+        this.rubMsg[qid] = `Error: ${err.message}`;
+      }
     },
 
     async reload() {

@@ -41,6 +41,10 @@ BENCHMARK_FILE = ROOT / "dataset" / "security_benchmark.jsonl"
 # qa_pairs); falls back to the legacy file if the final one is absent.
 BENCHMARK_FINAL_FILE = ROOT / "dataset" / "security_benchmark_final.jsonl"
 
+# Per-item grading rubrics (build_rubrics.py output) + human verification state.
+RUBRICS_DRAFT_FILE = ROOT / "dataset" / "rubrics_draft.jsonl"
+RUBRICS_VERIFIED_FILE = ROOT / "dataset" / "rubrics_verified.json"
+
 
 def benchmark_path() -> Path:
     return BENCHMARK_FINAL_FILE if BENCHMARK_FINAL_FILE.exists() else BENCHMARK_FILE
@@ -225,6 +229,15 @@ class BenchmarkEditRequest(BaseModel):
     hard_facts: Optional[dict] = None
 
 
+class RubricSaveRequest(BaseModel):
+    qid: str
+    status: Optional[str] = None            # accepted | edited | rejected
+    rubric: Optional[list] = None           # full edited line list
+    acceptable_alternatives: Optional[str] = None
+    ceiling_note: Optional[str] = None
+    note: Optional[str] = None
+
+
 class OCSaveRequest(BaseModel):
     status: str           # "accepted" | "rejected" | "pending"
     codes: list[str]      # edited codes list
@@ -312,6 +325,47 @@ def save_benchmark_data() -> None:
             f.write(json.dumps(record) + "\n")
 
 
+# ── Grading rubric drafts + verification ────────────────────────────────────────
+
+rubrics_by_qid: dict[str, dict] = {}     # qid -> draft rubric (build_rubrics.py output)
+rubrics_verified: dict[str, dict] = {}   # qid -> human-edited overlay {status, rubric, ...}
+
+
+def load_rubrics_data() -> None:
+    global rubrics_by_qid, rubrics_verified
+    rubrics_by_qid = {}
+    if RUBRICS_DRAFT_FILE.exists():
+        with RUBRICS_DRAFT_FILE.open(encoding="utf-8") as f:
+            for line in f:
+                if line.strip():
+                    r = json.loads(line)
+                    if r.get("qid"):
+                        rubrics_by_qid[r["qid"]] = r
+    rubrics_verified = {}
+    if RUBRICS_VERIFIED_FILE.exists():
+        rubrics_verified = json.loads(RUBRICS_VERIFIED_FILE.read_text(encoding="utf-8"))
+
+
+def save_rubrics_verified() -> None:
+    RUBRICS_VERIFIED_FILE.write_text(json.dumps(rubrics_verified, indent=2), encoding="utf-8")
+
+
+def merged_rubric(qid: str) -> Optional[dict]:
+    """Draft rubric with the human verification overlay applied (edits win)."""
+    draft = rubrics_by_qid.get(qid)
+    ver = rubrics_verified.get(qid)
+    if draft is None and ver is None:
+        return None
+    base = dict(draft or {"qid": qid, "rubric": []})
+    base["verify_status"] = "draft"
+    if ver:
+        for k in ("rubric", "acceptable_alternatives", "ceiling_note", "note"):
+            if ver.get(k) is not None:
+                base[k] = ver[k]
+        base["verify_status"] = ver.get("status", "edited")
+    return base
+
+
 # ── Normalized eval-pairs data ──────────────────────────────────────────────────
 
 norm_records: list[dict] = []            # eval_pairs.jsonl records (in file order)
@@ -377,6 +431,7 @@ async def lifespan(app: FastAPI):
     load_open_data()
     load_security_data()
     load_benchmark_data()
+    load_rubrics_data()
     load_oc_data()
     load_norm_data()
     print(
@@ -1133,7 +1188,15 @@ def get_benchmark_records(
 def get_benchmark_record(index: int):
     if index < 0 or index >= len(benchmark_records):
         raise HTTPException(status_code=404, detail="Record not found")
-    return dict(benchmark_records[index]) | {"index": index}
+    r = benchmark_records[index]
+    rubrics = {}
+    for p in r.get("qa_pairs") or []:
+        qid = p.get("qid")
+        if qid:
+            mr = merged_rubric(qid)
+            if mr is not None:
+                rubrics[qid] = mr
+    return dict(r) | {"index": index, "rubrics": rubrics}
 
 
 @app.patch("/api/benchmark/records/{index}")
@@ -1195,7 +1258,32 @@ def get_benchmark_repos():
 @app.post("/api/benchmark/reload")
 def reload_benchmark():
     load_benchmark_data()
+    load_rubrics_data()
     return {"ok": True, "total": len(benchmark_records)}
+
+
+@app.post("/api/benchmark/rubric")
+def save_rubric(body: RubricSaveRequest):
+    """Persist the human verification overlay for one qid's rubric."""
+    cur = dict(rubrics_verified.get(body.qid) or {})
+    draft = rubrics_by_qid.get(body.qid) or {}
+    cur["rubric"] = body.rubric if body.rubric is not None else cur.get("rubric", draft.get("rubric", []))
+    if body.acceptable_alternatives is not None:
+        cur["acceptable_alternatives"] = body.acceptable_alternatives
+    if body.ceiling_note is not None:
+        cur["ceiling_note"] = body.ceiling_note
+    if body.note is not None:
+        cur["note"] = body.note
+    cur["status"] = body.status or cur.get("status", "edited")
+    rubrics_verified[body.qid] = cur
+    save_rubrics_verified()
+    return {"ok": True, "status": cur["status"]}
+
+
+@app.post("/api/benchmark/rubric-reload")
+def reload_rubrics():
+    load_rubrics_data()
+    return {"ok": True, "n_drafts": len(rubrics_by_qid), "n_verified": len(rubrics_verified)}
 
 
 # ══════════════════════════════════════════════════════════════════════════════
