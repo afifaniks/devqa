@@ -66,7 +66,7 @@ We evaluate three system classes. Each agent backbone is also evaluated as a
 bare LLM, so every with-context result has a paired no-context control from the
 same model.
 
-\textbf{Bare LLMs (no context).} The model receives only the normalized
+\textbf{Bare LLMs (no context).} The model receives only the synthesized
 question $q$ and answers from parametric knowledge. We evaluate frontier
 closed-weight models and open-weight models under identical prompts
 (temperature~0 where the API permits).
@@ -155,10 +155,10 @@ denominator.
 
 \textbf{Tier 2: per-claim judge with a resolution oracle.}
 An LLM judge---never the model under evaluation, with candidate identity
-anonymized---decomposes the gold answer into atomic claims (a cause, a
-verdict, a user-actionable remediation, an identifier) and verdicts each claim
-as conveyed, partially conveyed, or not conveyed by the response, quoting the
-supporting response phrase so every verdict is spot-checkable. Because gold
+anonymized---scores the response against the item's prepared rubric
+(\S\ref{sec:rubric-prep}), verdicting each criterion (a cause, a verdict, a
+user-actionable remediation, an identifier) as met, partially met, or not met
+and quoting the supporting response phrase so every verdict is spot-checkable. Because gold
 answers are thread-grounded (\S\ref{sec:normalization}), a terse maintainer
 pointer (``fixed in \#932, released 9.0.2'') yields a terse gold; to let a
 richer-but-correct response earn credit such a gold cannot confirm, items
@@ -176,9 +176,15 @@ question's premises; under no context, any concrete project-specific assertion
 absent from the gold is flagged.
 
 \textbf{Outcomes.} Each (item, system, condition) triple receives an outcome in
-$\{\textsc{correct}, \textsc{partial}, \textsc{incorrect}\}$ from the claim
-verdicts, plus an orthogonal boolean \textsc{hallucinated} when the response
-asserts fabricated specifics. We keep hallucination separate rather than
+$\{\textsc{correct}, \textsc{partial}, \textsc{incorrect}\}$ by rolling the
+per-criterion verdicts up along the rubric axes (\S\ref{sec:rubric-prep}):
+correctness \emph{gates} the bucket---an item is \textsc{correct} only when every
+correctness criterion is met, \textsc{incorrect} when any is missed or
+contradicted, and \textsc{partial} otherwise (correctness only partially met, or
+met with thin completeness coverage). Completeness criteria refine within the
+bucket and are reported separately as a coverage rate, but never override
+correctness, so we need no numeric criterion weights. Orthogonally, a boolean
+\textsc{hallucinated} flags a response that asserts fabricated specifics. We keep hallucination separate rather than
 folding it into \textsc{incorrect}: an answer can convey the right remediation
 \emph{and} fabricate a CVE number, and the fabrication is the more
 safety-relevant signal.

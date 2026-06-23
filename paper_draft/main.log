@@ -1,7 +1,6 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.6.8)  19 JUN 2026 17:44
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.6.8)  23 JUN 2026 02:26
 entering extended mode
  restricted \write18 enabled.
- file:line:error style messages enabled.
  %&-line parsing enabled.
 **main.tex
 (./main.tex
@@ -540,21 +539,21 @@ File: figures/benchmark-pipeline.pdf Graphic file (type pdf)
 Package pdftex.def Info: figures/benchmark-pipeline.pdf  used on input line 3.
 (pdftex.def)             Requested size: 516.0pt x 107.72299pt.
 ) [2]
-LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 50.
+LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 51.
  (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/latex/psnfss/ot1pcr.fd
 File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
 )
-Underfull \hbox (badness 6125) in paragraph at lines 46--59
+Underfull \hbox (badness 6125) in paragraph at lines 47--60
 []\OT1/ptm/m/n/10 From this pool we are min-ing repos-i-to-ries in-cre-
  []
 
 
-Underfull \hbox (badness 2111) in paragraph at lines 46--59
+Underfull \hbox (badness 2111) in paragraph at lines 47--60
 \OT1/ptm/m/n/10 men-tally. The cur-rent cor-pus com-prises the []\OT1/ptm/b/n/10 ten[] \OT1/ptm/m/n/10 repos-
  []
 
 
-Underfull \hbox (badness 3579) in paragraph at lines 46--59
+Underfull \hbox (badness 3579) in paragraph at lines 47--60
 \OT1/ptm/m/n/10 i-to-ries in Ta-ble I[], span-ning []\OT1/ptm/b/n/10 three[] \OT1/ptm/m/n/10 lan-guages (Python,
  []
 
@@ -565,23 +564,38 @@ File: figures/secdevqa-normalization.pdf Graphic file (type pdf)
 Package pdftex.def Info: figures/secdevqa-normalization.pdf  used on input line 101.
 (pdftex.def)             Requested size: 252.0pt x 189.80827pt.
 )
-Underfull \hbox (badness 1552) in paragraph at lines 201--214
+Underfull \hbox (badness 1552) in paragraph at lines 202--215
 \OT1/ptm/b/n/10 Self-contained, resolution-free queries. \OT1/ptm/m/n/10 The query pre-
  []
 
-[4 <./figures/secdevqa-normalization.pdf>] (./tables/repo-stats.tex) (./tables/artifacts.tex) (./tables/axial-categories.tex)) (./sections/experimental-setup.tex
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [5]
+[4 <./figures/secdevqa-normalization.pdf>] [5] (./tables/repo-stats.tex) (./tables/artifacts.tex) (./tables/axial-categories.tex)) (./sections/experimental-setup.tex [6]
 LaTeX Font Info:    Trying to load font information for OT1+phv on input line 76.
  (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/latex/psnfss/ot1phv.fd
 File: ot1phv.fd 2020/03/25 scalable font definitions for OT1/phv.
-) [6] [7]) (./sections/threats-to-validity.tex [8]) (./sections/related-work.tex
+) [7]
+Underfull \vbox (badness 1062) has occurred while \output is active []
+
+ [8]) (./sections/threats-to-validity.tex [9]) (./sections/related-work.tex
 Underfull \hbox (badness 1810) in paragraph at lines 26--41
 \OT1/ptm/m/n/10 the question-answering task de-vel-op-ers ac-tu-ally pose to
  []
 
-[9] (./tables/related-benchmarks.tex)) (./main.bbl)
+(./tables/related-benchmarks.tex)) (./main.bbl [10]
+Underfull \hbox (badness 3861) in paragraph at lines 42--43
+\OT1/ptm/m/n/8 mod-els on se-cure code gen-er-a-tion with codese-ce-val,'' Preprint,
+ []
+
+
+Underfull \hbox (badness 2181) in paragraph at lines 48--49
+[]\OT1/ptm/m/n/8 Z. Liu, ``Secqa: A con-cise question-answering dataset for eval-
+ []
+
+
+Underfull \hbox (badness 5637) in paragraph at lines 48--49
+\OT1/ptm/m/n/8 u-at-ing large lan-guage mod-els in com-puter se-cu-rity,'' Preprint,
+ []
+
+)
 
 ** Conference Paper **
 Before submitting the final camera ready copy, remember to:
@@ -593,7 +607,7 @@ Before submitting the final camera ready copy, remember to:
  uses only Type 1 fonts and that every step in the generation
  process uses the appropriate paper size.
 
-[10
+[11
 
 ] (./main.aux)
  ***********
@@ -602,18 +616,18 @@ L3 programming layer <2026-05-26>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 16932 strings out of 468300
- 341936 string characters out of 5426743
- 757146 words of memory out of 5000000
- 45684 multiletter control sequences out of 15000+600000
+ 16939 strings out of 468300
+ 342055 string characters out of 5426743
+ 753745 words of memory out of 5000000
+ 45691 multiletter control sequences out of 15000+600000
  677312 words of font info for 130 fonts, out of 8000000 for 9000
  430 hyphenation exceptions out of 8191
- 84i,9n,94p,2355b,295s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 84i,9n,94p,2356b,295s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on main.pdf (10 pages, 848751 bytes).
+Output written on main.pdf (11 pages, 854836 bytes).
 PDF statistics:
- 340 PDF objects out of 1000 (max. 8388607)
- 90 compressed objects within 1 object stream
+ 343 PDF objects out of 1000 (max. 8388607)
+ 92 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  23 words of extra memory for PDF output out of 10000 (max. 10000000)
 

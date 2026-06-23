@@ -9,11 +9,12 @@ Advisory Database and mines their issue and discussion threads.
 runs a two-stage LLM pipeline that detects and extracts candidate security
 query--answer (Q\&A) pairs---together with the artifact types and externally
 verifiable facts each answer draws on---after which the authors
-manually verify every candidate for inclusion. \textbf{(3)~Normalization and
+manually verify every candidate for inclusion. \textbf{(3)~Synthesis and
 coding} (\S\ref{sec:phase-normalization}) turns each verified pair into one or
-more self-contained, gradeable evaluation items under independent dual review,
-and inductively codes the pairs---open coding followed by higher-level axial
-coding---toward a taxonomy of developer security queries.
+more self-contained, gradeable evaluation items---each carrying a dual-verified
+per-item grading rubric (\S\ref{sec:rubric-prep})---under independent dual
+review, and inductively codes the pairs---open coding followed by higher-level
+axial coding---toward a taxonomy of developer security queries.
 
 \input{figures/benchmark-pipeline}
 
@@ -169,25 +170,25 @@ context conditions in the evaluation (\S\ref{sec:experimental-setup}): different
 query categories lean on different artifact types, and the annotation makes
 that dependency measurable.
 
-\subsection{Normalization and Coding}
+\subsection{Synthesis and Coding}
 \label{sec:phase-normalization}
 
-\subsubsection{Query Normalization}
+\subsubsection{QA Synthesis}
 \label{sec:normalization}
 
 A verified thread is not yet a gradeable item: the query is embedded in a
 multi-comment exchange, leans on earlier comments (``the error above''), and
 often sits in a thread whose later comments---or title---already disclose the
 resolution. Handing such a thread to a model under test would leak the answer and
-conflate reading comprehension with security reasoning. We therefore normalize
+conflate reading comprehension with security reasoning. We therefore synthesize
 each verified pair into one or more self-contained \emph{(query, answer)}
 items with a single \texttt{GPT-5.5} pass that is then human-verified, under one
 governing constraint: each item must stay faithful to what was really raised and
 answered. Because a security query surfaces as often as a vulnerability or bug
-report as it does as an explicit question, normalization renders the developer's
+report as it does as an explicit question, synthesis renders the developer's
 information need as a self-contained query regardless of its original surface
 form, without importing any detail the thread does not contain.
-Each item carries the normalized query and thread-grounded gold answer, the
+Each item carries the synthesized query and thread-grounded gold answer, the
 report time $t_\theta$ (the issue's creation time), the knowledge-type label
 below, the artifact types the answer drew on (\S\ref{sec:annotation}), and the
 verifiable-fact record---partitioned into \emph{subject} facts (CVE/GHSA/CWE/OSV
@@ -214,7 +215,7 @@ corrected in the human pass, and we report the residual leak rate.
 
 \noindent\textbf{Thread-grounded answers.}
 The gold answer faithfully distills how the maintainer answered, drawn strictly
-from the thread; the normalizer may not add facts, fixes, or reasoning the thread
+from the thread; the synthesis must not add facts, fixes, or reasoning the thread
 lacks. A terse pointer---``fixed in \#932, released 9.0.2''---is kept as exactly
 that. We do not fetch external advisories or patch diffs to enrich the gold
 answer, which would fabricate ground truth the thread never contained; instead
@@ -260,6 +261,75 @@ retains its verbatim original, and \emph{two researchers independently review
 every pair}, letting us report Cohen's $\kappa$ on the knowledge-type label and
 the leak and context-completeness judgments over the whole benchmark and
 reconcile all disagreements before evaluation.
+
+\subsubsection{Per-Item Grading Rubrics}
+\label{sec:rubric-prep}
+
+Model answers to these queries are open-ended free text. An $n$-gram overlap
+with the gold answer is therefore an inadequate measure of correctness, and a
+single holistic quality score from an LLM judge is both noisy and difficult to
+audit~\cite{zheng2023judging,liu2023geval}. We adopt \emph{rubric-based}
+evaluation, which decomposes each judgment into atomic, separately verifiable
+criteria and has become established practice for making LLM-as-judge scoring
+more reliable and interpretable~\cite{ye2024flask,kim2024prometheus2}. Because
+every security query has its own notion of a correct answer, one item turning on
+a specific cookie attribute and another on a particular fixed release, the
+criteria must be \emph{instance-specific} rather than drawn from a fixed global
+scale~\cite{kim2025biggen}. We accordingly author one rubric per evaluation item
+during construction, following the use of expert-written, per-example rubrics to
+anchor evaluation in other high-stakes grounded domains~\cite{arora2025healthbench}.
+
+\noindent\textbf{Criteria.}
+Each criterion carries an \emph{axis}. \emph{Correctness} criteria state the
+load-bearing facts or verdicts that must hold, such as whether the project is
+affected, the fixed version, or the root cause the answer establishes.
+\emph{Completeness} criteria state the supporting coverage a thorough answer
+adds, such as the underlying mechanism, a scope caveat, or an alternative valid
+fix. The axis is a kind rather than a numeric weight: correctness \emph{gates}
+the item outcome while completeness only contributes coverage, so a missed
+load-bearing fact cannot be offset by surrounding detail, reflecting that
+incorrect security guidance is unsafe however thorough it is. No reported result
+therefore depends on an arbitrary weighting constant (\S\ref{sec:grading}). Every
+criterion must be supported by a verbatim span of \emph{answer-side} evidence,
+namely the gold answer, the maintainer's reply, a referenced fix diff, an
+advisory, or a recorded verifiable fact, and a criterion grounded only in the
+query (which the candidate already receives) is discarded so that the rubric
+cannot reward a model for restating the question. We keep each rubric short, at
+most \dnum{five} criteria, so that a long checklist of easy criteria does not
+saturate and flatten the differences between systems.
+
+\noindent\textbf{Resolution timing.}
+Criteria are graded as facts a competent developer could supply rather than
+strings to reproduce, and each rubric is keyed to when the fix existed relative
+to the report time $t_\theta$ (\S\ref{sec:normalization}) so that it matches how
+the maintainer answered. When the fix predated $t_\theta$ it was already
+retrievable from the project, and the expected contribution, as it was for the
+maintainer, is to \emph{identify} it. The rubric then credits naming the fix (a
+pull request, commit, or release) and records equivalent acceptable forms,
+rather than requiring that the patch be reproduced. When the fix landed only
+afterward it was not retrievable at query time, so the rubric instead asks
+whether a proposed remediation moves in the \emph{same direction} as the
+eventual fix, and it marks that criterion unknowable at $t_\theta$ so that it is
+never scored under conditions that lacked the artifact. For
+\texttt{node-jsonwebtoken}~\#921, whose maintainer answer points to an upstream
+fix, the resulting rubric pairs a correctness criterion (establish that the issue
+is fixed and name pull request~\#932 or release~9.0.2) with a completeness
+criterion naming the weakness it addresses. A response that conveys the
+resolution by another route satisfies the former through its recorded
+alternatives, whereas one that merely echoes the reporter's symptom satisfies
+neither.
+
+\noindent\textbf{Preparation and verification.}
+We draft each rubric with \texttt{GPT-5.5}, prompting it with the synthesized
+query, the thread-grounded gold answer, and every artifact the answer draws on,
+namely the maintainer's reply, any referenced fix diff, the advisory, and the
+verifiable-fact record, subject to the axis, grounding, and length constraints
+above. Two researchers then independently verify every rubric criterion, editing
+or removing any criterion not grounded in the answer-side evidence, and we
+reconcile all disagreements before grading. We report inter-rater agreement on
+the criteria as Cohen's $\kappa = \dnum{0.00}$. A rubric is frozen once both
+reviewers accept it, and the rare item whose fix diff is too large to ground a
+criterion automatically is flagged for manual authoring rather than dropped.
 
 \subsubsection{Open and Axial Coding}
 \label{sec:open-coding}
