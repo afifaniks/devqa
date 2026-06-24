@@ -1,45 +1,32 @@
+"""Filter the verified benchmark down to threads whose open codes were NOT rejected.
+
+Input:  dataset/security_benchmark_v3.jsonl  (one thread per line)
+        dataset/open_codes_verified.json     (per-id open-coding decisions)
+Output: dataset/security_benchmark_filtered.jsonl  (written fresh, deduped by id)
+"""
 import json
 
-benchmark = "dataset/security_benchmark_v3.jsonl"
-open_codes = "dataset/open_codes_verified.json"
+BENCHMARK = "dataset/security_benchmark_v3.jsonl"
+OPEN_CODES = "dataset/open_codes_verified.json"
+OUTPUT = "dataset/security_benchmark_filtered.jsonl"
 
-with open(open_codes) as f:
+with open(OPEN_CODES) as f:
     open_codes_set = json.load(f)
 
-benchmark_ids = set()
-with open(benchmark) as f:
-    benchmark_data = [json.loads(line) for line in f]
+with open(BENCHMARK) as f:
+    benchmark_data = [json.loads(line) for line in f if line.strip()]
 
+seen = set()
+kept = 0
+with open(OUTPUT, "w") as out_f:  # truncate: never append (avoids duplicate lines)
     for item in benchmark_data:
-        benchmark_ids.add(item["id"])
+        item_id = item["id"]
+        if open_codes_set.get(item_id, {}).get("status") == "rejected":
+            continue
+        if item_id in seen:  # guard against duplicate ids in the source
+            continue
+        seen.add(item_id)
+        out_f.write(json.dumps(item) + "\n")
+        kept += 1
 
-ids = [id for id in benchmark_ids if not open_codes_set.get(id, {}).get("status") == "rejected"]
-
-with open(benchmark) as f:
-    for line in f:
-        item = json.loads(line)
-        id = item["id"]
-        if id in ids:
-            # Save to a new jsonl file
-            with open("dataset/security_benchmark_filtered.jsonl", "a") as out_f:
-                out_f.write(json.dumps(item) + "\n")
-
-
-# d1 = "dataset/security_benchmark.jsonl"
-# d2 = "dataset/security_benchmark_v2.jsonl"
-
-# d1_ids = set()
-# with open(d1) as f1:
-#     for line in f1:
-#         item = json.loads(line)
-#         d1_ids.add(item["id"])
-
-# d2_ids = set()
-# with open(d2) as f2:
-#     for line in f2:
-#         item = json.loads(line)
-#         id = item["id"]
-#         d2_ids.add(id)
-
-# print(f"Total in d1: {len(d1_ids)}")
-# print(f"Total in d2: {len(d2_ids)}")
+print(f"{len(benchmark_data)} threads in -> {kept} kept (rejected/dup dropped) -> {OUTPUT}")

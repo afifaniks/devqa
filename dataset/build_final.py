@@ -16,7 +16,7 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
-V2_PATH = ROOT / "dataset" / "security_benchmark_v2.jsonl"
+BENCHMARK_DATA_PATH = ROOT / "dataset" / "security_benchmark_v3.jsonl"
 EVAL_PAIRS_PATH = ROOT / "dataset" / "eval_pairs.jsonl"
 OUTPUT_PATH = ROOT / "dataset" / "security_benchmark_final.jsonl"
 
@@ -60,7 +60,7 @@ def merge(v2_record, eval_record):
 
 
 def main():
-    v2_by_id = {r["id"]: r for r in load_jsonl(V2_PATH)}
+    v2_by_id = {r["id"]: r for r in load_jsonl(BENCHMARK_DATA_PATH)}
     eval_pairs = load_jsonl(EVAL_PAIRS_PATH)
     approved = [r for r in eval_pairs if r.get("approved")]
 
