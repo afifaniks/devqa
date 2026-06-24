@@ -55,68 +55,105 @@ OVERSIZED_DIFF_CHARS = 20_000
 MAX_RUBRIC_CRITERIA = 5
 
 # --------------------------------------------------------------------------- #
-SYSTEM_PROMPT = """You are an expert security engineer building a GRADING RUBRIC for one developer security query.
+# --- shared base: identical for every item, condition-independent ---------------
+SYSTEM_BASE = """You are a security engineer writing a grading rubric for one developer security question.
 
-A rubric is a short checklist of claims a GOOD ANSWER should make. Each criterion is graded later as met/partial/not-met by a judge.
-Your job is ONLY to author the criteria that capture the information content the ANSWER contributes.
+The rubric is a short checklist of things a good answer should get right. Later, a judge takes a candidate answer and marks each item met, partly met, or missed. Your job is to write those items.
 
-WHAT COUNTS AS THE ANSWER (the only thing a rubric criterion may assert):
-- the GOLD ANSWER text and the answerer's reply, AND
-- the substance of whatever that answer references — the FIX DIFF, the advisory, the fixed version, the hard facts.
-The fix diff/advisory ARE the answer when the reply is a bare pointer ("see PR #N", "patch: <url>"): the answer is telling the reader "the resolution is there", so its content is that resolution.
+Grade only what the answer adds:
+- The "answer" is the maintainer's reply plus whatever it leans on — a fix diff, an advisory, a fixed version, or the hard facts listed below.
+- If the reply is just a pointer ("fixed in #123", "see this advisory"), then the thing it points to is the answer. Grade that content.
+- The question and the rest of the thread are background. The candidate already has the question, so don't write an item that just repeats it. If the reporter already explained the bug and the maintainer only agreed, grade the agreement (the verdict), not the explanation.
 
-WHAT IS CONTEXT, NOT A SOURCE:
-- the QUESTION and any other thread comments are CONTEXT so you can interpret the answer. The candidate being graded ALREADY RECEIVES THE QUESTION. NEVER author a rubric criterion whose content comes from the question or from a non-answer commenter — that would credit the candidate for repeating its own input. If the reporter already diagnosed the root cause in the question and the answer merely confirms it, the gradeable contribution is the CONFIRMATION/VERDICT, not the diagnosis.
+Grade the conclusion, not the process:
+- Skip workflow. "We reproduced it", "a patch is coming", "merged", "will be released" — none of that is part of the answer.
+- By default, do NOT write a "this is a real bug" item. Most reports here come with the reporter's own analysis (a crash, a source-level NULL-deref, an overflow they found), and a maintainer agreeing is the expected, low-information outcome. Saying "yes, it's real" to such a report is not a graded skill — grade the technical substance instead (root cause, what a fix must do).
+- Add a verdict item ONLY as an exception: when the call was genuinely in doubt and a competent responder could reasonably have gone the other way — by-design, not-affected, intended behavior, disputed severity, won't-fix, or "this isn't actually exploitable." Then write it as the verdict ("correctly judges this is a real <type> bug, not by-design") — never as "reproduced it". If you can't name a plausible opposite conclusion, there is no verdict item.
 
-HARD RULES:
-- Every criterion MUST be supported by a span you copy from the ANSWER-SIDE evidence (gold answer / answerer reply / fix diff / advisory / hard facts) into "source_quote". Copy it as closely as you can. If you cannot point to answer-side evidence for a claim, DO NOT write the criterion. Never invent versions, CVEs, files, or behavior not present in the evidence.
-- The rubric "text" is a PARAPHRASED, checkable claim (a criterion), NOT a verbatim sentence. "source_quote" is the verbatim-as-possible provenance span; "text" is the normalized claim a judge checks.
-- Two axes only (a KIND, not a weight — correctness gates the outcome, completeness adds coverage; do NOT emit numeric weights):
-    "correctness" = a load-bearing fact/verdict that must be RIGHT (the real-vs-by-design call, the fixed version, whether the user is affected, the root-cause location AS ESTABLISHED BY THE ANSWER/FIX). A missed correctness criterion fails the item regardless of coverage.
-    "completeness" = supporting coverage a thorough answer gives (the mechanism, a caveat/scope, an alternative valid fix).
-- 1 to 5 criteria. A terse answer gets few criteria — that is correct. DO NOT pad to reach a count. Prefer fewer, load-bearing criteria: too many criteria saturate the rubric.
-- Grade soundness, not diff-identity: a remediation criterion should describe WHAT any correct fix must achieve, so any valid approach can satisfy it.
-- REFERENCE-ONLY ANSWERS (answer is essentially a pointer). Handle by what it points to:
-    (A/B) CODE-FIX pointer with a FIX DIFF present → DERIVE the correctness (root cause) and completeness (remediation) criteria FROM THE FIX DIFF — that diff is the answer's real substance.
-    (C) VERSION / ADVISORY pointer ("fixed in 2.32.4", "see GHSA-..."): name the fixed VERSION as a CORRECTNESS criterion (it is the load-bearing fact for "which version fixes this"), sourced from HARD FACTS; the advisory becomes a COMPLETENESS pointer criterion. No diff needed.
-    (D) EXPLANATION-WITH-LINK ("this depends on the runtime, see <docs>", "keep a blacklist of tokens"): the answer's OWN PROSE is the substance — author criteria from the reply text. NEVER invent the linked document's contents; you cannot see them.
-  In every reference-only case the reference itself becomes EXACTLY ONE completeness pointer criterion ("points to the fix: <commit/PR/version/advisory>"); leave its grading to the temporal gate (it may be a future fact). Do NOT score the answer as empty just because its prose is thin. If there is no diff, no version, and only a bare link, it is fine to emit only that one pointer criterion.
-- "acceptable_alternatives": note valid non-maintainer answers that should still count.
-- "ceiling_note": which criteria the answerer's own reply already satisfies."""
+Two kinds of items:
+- correctness — something that has to be right: the verdict, who is affected, the root cause, what a fix has to do. Getting one of these wrong should sink the answer.
+- completeness — extra depth a strong answer adds: the mechanism, a caveat, an alternative fix.
+This is just a label, not a score. Don't attach numbers.
 
-TEMPLATE = """================ CONTEXT (to interpret the answer — DO NOT author rubric criteria from this section) ================
-QUERY (self-contained — the candidate already receives this; never credit a criterion for repeating it):
+Keep items grounded and short:
+- Every item needs a real quote from the answer side (reply, diff, advisory, or hard facts) in "source_quote". If you can't quote it, don't write it. Never invent versions, CVEs, files, or behavior.
+- "text" is your plain restatement of the claim; "source_quote" is where it came from.
+- Write 1 to 5 items. A short answer gets a short rubric — that's fine. Don't pad.
+
+Also fill in "acceptable_alternatives": other answers that should still count as correct."""
+
+# --- per-condition specialization, appended to SYSTEM_BASE ----------------------
+COND_FIX_BEFORE = """This question is a "fix already existed" case.
+
+The fix was already in the repo when the question was asked, so this is really a "can you find it" task — and you are not shown the diff. Reward the answer for pointing to that existing fix.
+- Write one correctness item: identifies the existing fix (the PR, commit, or fixed version), taken from the hard facts or the reply.
+- If the reply also explains the root cause, you may add one completeness item for that.
+- Don't ask the answer to reproduce or quote the patch — it isn't available to you.
+- Put close-enough answers (the right version, an accurate description of the change) in "acceptable_alternatives"."""
+
+COND_FIX_AFTER = """This question is a "fix came later" case.
+
+The fix landed after the question was asked, so the candidate couldn't have looked it up — it didn't exist yet. You're shown the diff only so you know which direction a correct fix should go. Grade whether the answer heads that way.
+- Write items for what any correct fix has to do — e.g. "checks the result of <fn> for NULL before using it", "does the size math in a wider type so it can't overflow". Describe the goal, not the exact patch; any sound approach should pass.
+- If the answer takes a side on whether the bug is real, add the verdict item.
+- Don't point at the specific fix that eventually landed: no "see PR #123", no "fixed in 7.1.2". The PR, commit, release, and version number all came after the question, so they're off limits — only the direction of the fix is fair game."""
+
+COND_EXPLANATION = """This question has no code fix — it's resolved by an explanation, a fixed version, or an advisory.
+
+Build the rubric from the reply, the advisory, and the hard facts only.
+- If it names a fixed version or advisory ("fixed in 2.32.4", "see GHSA-..."): make the version a correctness item (that's the key fact), and the advisory link a completeness item.
+- If it's an explanation with a link ("depends on your runtime, see the docs"): grade the reply's own words. You can't see the linked page, so don't guess what's on it.
+- A short answer is fine. If all there is is one link, one item is enough — don't mark it empty just for being brief."""
+
+_COND_BLOCKS = {
+    "fix_before": COND_FIX_BEFORE,
+    "fix_after": COND_FIX_AFTER,
+    "explanation_only": COND_EXPLANATION,
+}
+
+
+def system_prompt(resolution_case):
+    """Compose the condition-specific system prompt. `undetermined` (fix cited but no
+    usable timestamp) is treated as fix_after — the safe default that never credits a
+    possibly-future fix identifier."""
+    block = _COND_BLOCKS.get(resolution_case, COND_FIX_AFTER)
+    return SYSTEM_BASE + "\n\n" + block
+
+
+TEMPLATE = """# Background (for understanding only — don't write rubric items from this)
+
+The developer's question (the candidate already gets this, so don't reward repeating it):
 {question}
 
-FULL THREAD (background only):
+The full thread, for context:
 {thread}
 
-================ ANSWER SIDE (the ONLY source for rubric criteria) ================
-GOLD ANSWER (answerer role: {answerer_role}):
+# The answer (this is what your rubric items come from)
+
+Gold answer (from the {answerer_role}):
 {answer}
 
-ANSWERER'S RAW REPLY:
+The maintainer's raw reply:
 {answer_comment}
 
-REPO: {repo}    ISSUE TITLE: {title}
-RESOLUTION CASE: {resolution_case}   (fix_before = fix predates the report; fix_after = fix landed after; explanation_only = no code fix)
-{grading_policy}
-HARD FACTS: {hard_facts}
-ADVISORY URLS: {advisory_urls}
+Repo: {repo}   Issue: {title}
+Resolution case: {resolution_case}
+Hard facts: {hard_facts}
+Advisory URLs: {advisory_urls}
 
-FIX DIFFS (the code the answer references — its real substance):
+The fix diff the answer relies on:
 {diffs}
 
 ---
-Author the rubric. Return ONLY valid JSON (no markdown fences):
+Write the rubric for this resolution case, following the case-specific guidance in your instructions.
+Reply with JSON only, no markdown fences:
 {{
   "rubric": [
-    {{"text": "<one checkable claim>", "axis": "correctness",
-      "source_quote": "<span copied as-closely-as-possible from the ANSWER SIDE above>",
+    {{"text": "the claim, in plain words", "axis": "correctness",
+      "source_quote": "a quote copied from the answer above",
       "source_loc": "gold_answer | answer_reply | fix_diff:<path> | advisory | hard_facts"}}
   ],
-  "acceptable_alternatives": "<note or empty string>",
-  "ceiling_note": "<which criteria the maintainer reply satisfies>"
+  "acceptable_alternatives": "other answers that should still count, or empty"
 }}"""
 
 
@@ -221,7 +258,6 @@ _CITE_FIX = re.compile(r"github\.com/[\w.-]+/[\w.-]+/(?:commit|pull)/|\bPR\b\s*#
 _CITE_VER = re.compile(r"\bv?\d+\.\d+(?:\.\d+)?\b|GHSA-[\w-]+|CVE-\d{4}-\d+|advisor", re.I)
 _HAS_URL = re.compile(r"https?://\S+")
 
-
 def _has_usable_diff(record):
     for a in record.get("fix_artifacts") or []:
         if any((f.get("patch") or "").strip() for f in a.get("files") or []):
@@ -293,9 +329,10 @@ def validate(draft, corpus, resolution_case):
     for crit in (draft.get("rubric") or []):
         reason = None
         axis = crit.get("axis")
+        crit_text = crit.get("text") or ""
         if axis not in ("correctness", "completeness"):
             reason = f"bad axis {axis!r}"
-        elif not (crit.get("text") or "").strip():
+        elif not crit_text.strip():
             reason = "empty text"
         elif not span_supported(crit.get("source_quote"), corpus_norm, corpus_tokens):
             reason = "source_quote not grounded in answer-side evidence"
@@ -303,18 +340,24 @@ def validate(draft, corpus, resolution_case):
             rejected.append({"text": crit.get("text"), "reason": reason,
                              "source_quote": crit.get("source_quote")})
             continue
-        # deterministic temporal gate: a criterion that REFERENCES the fix is a future fact
-        # under fix_after — the diff criteria, the one pointer criterion, and hard_facts/advisory
-        # version & fix-PR/commit criteria. fix_before / explanation_only keep the drafter's
-        # value (default True) for the human to confirm.
+        # Deterministic temporal gate. Two resolution cases, two different graded tasks:
+        #   fix_before — a SEARCH/LINKING task: the fix already exists at report time, so the
+        #     gradeable thing is correctly linking to the prior artifact (PR/commit/issue/
+        #     version). Those identifiers are retrievable → knowable.
+        #   fix_after  — a REMEDIATION-REASONING task: the specific fix is a future fact, but
+        #     "what a correct fix must achieve / which direction it goes" is knowable by
+        #     reasoning about the bug WITHOUT retrieving that fix. So only criteria that name
+        #     the SPECIFIC future fix (exact PR/commit/version/advisory) are gated out;
+        #     remediation criteria derived from the diff stay knowable.
         loc = (crit.get("source_loc") or "").lower()
         text = (crit.get("text") or "").lower()
-        references_fix = (
-            loc.startswith("fix_diff")
-            or loc in ("hard_facts", "advisory")
-            or "point to the fix" in text or "points to" in text or "identifies the fix" in text
+        names_specific_fix = (
+            loc in ("hard_facts", "advisory")
+            or "points to the fix" in text or "point to the fix" in text
+            or "identifies the fix" in text or "identifies the existing fix" in text
+            or "cites the fix" in text
         )
-        if references_fix and resolution_case == "fix_after":
+        if resolution_case == "fix_after" and names_specific_fix:
             crit["knowable_at_report"] = False
         else:
             crit.setdefault("knowable_at_report", True)
@@ -339,28 +382,6 @@ def cap_rubric(criteria, limit):
     return ordered[:limit], len(criteria) - limit
 
 
-def grading_policy(resolution_case):
-    """Per-case authoring policy injected into the prompt — keyed on the fix's temporal
-    relation to the report. fix_before = retrieval task; fix_after = remediation-reasoning."""
-    if resolution_case == "fix_before":
-        return ("GRADING POLICY (fix_before): the fix ALREADY LANDED before this query and is "
-                "retrievable from the repo at report time. Mirror the maintainer: the gradeable "
-                "contribution is IDENTIFYING the existing resolution. Author ONE correctness "
-                "pointer criterion — 'identifies the existing fix: <PR/commit/fixed version>' "
-                "sourced from HARD FACTS — plus, if the reply explains it, at most one completeness "
-                "criterion on the root cause/verdict. Do NOT author criteria that require "
-                "reproducing the patch; "
-                "the diff is withheld on purpose. Put equivalent valid forms (correct fixed version, "
-                "correct description of the landed change) in acceptable_alternatives.")
-    if resolution_case == "fix_after":
-        return ("GRADING POLICY (fix_after): the fix landed AFTER this query — it is NOT retrievable "
-                "at report time. Grade whether a proposed remediation goes in the SAME DIRECTION as "
-                "the eventual fix. Author SEMANTIC criteria describing WHAT any correct fix must achieve "
-                "(derived from the diff), never the literal patch; any valid approach should satisfy them.")
-    return ("GRADING POLICY: no code fix is cited — author criteria from the answer's own prose / "
-            "advisory / hard facts only.")
-
-
 def oversized_review_criterion(record):
     """Deterministic rubric criterion for records whose fix diff was too large to auto-ground.
 
@@ -380,16 +401,23 @@ def oversized_review_criterion(record):
 
 
 # --------------------------------------------------------------------------- #
-def call_litellm(prompt, model, api_base=None):
+def call_litellm(prompt, model, system, api_base=None):
     import litellm
+    # Use ollama's CHAT endpoint, not the generate endpoint: the generate path returns
+    # empty content for some models (e.g. gpt-oss) under JSON mode.
+    if model.startswith("ollama/"):
+        model = "ollama_chat/" + model[len("ollama/"):]
     kwargs = {
         "model": model,
-        "messages": [{"role": "system", "content": SYSTEM_PROMPT},
+        "messages": [{"role": "system", "content": system},
                      {"role": "user", "content": prompt}],
         "max_tokens": 8192,
-        "temperature": 0.2,
         "response_format": {"type": "json_object"},
     }
+    # Only local ollama models take a custom temperature; reasoning models
+    # (gpt-5.x, o-series) reject any value but the default.
+    if model.startswith("ollama_chat/"):
+        kwargs["temperature"] = 0.2
     if api_base:
         kwargs["api_base"] = api_base
     for attempt in range(3):
@@ -420,7 +448,6 @@ def build_prompt(record, qa):
         answerer_role=record.get("answerer_role", "unknown"),
         answer_comment=answer_reply(record) or "(no separate maintainer reply comment)",
         resolution_case=record.get("resolution_case", "(not yet extracted — run extract_fixes.py)"),
-        grading_policy=grading_policy(record.get("resolution_case")),
         hard_facts=format_hard_facts(hf),
         advisory_urls=", ".join(hf.get("advisory_urls") or []) or "none",
         thread=format_thread(record),
@@ -470,7 +497,8 @@ def main():
                 qid = qa.get("qid")
                 if qid in done:
                     continue
-                draft = call_litellm(build_prompt(record, qa), args.model, args.api_base)
+                sysprompt = system_prompt(record.get("resolution_case"))
+                draft = call_litellm(build_prompt(record, qa), args.model, sysprompt, args.api_base)
                 if draft is None:
                     print(f"  SKIP {qid}: drafter returned nothing")
                     continue
@@ -500,7 +528,6 @@ def main():
                     "oversized_diff": oversized,
                     "rubric": criteria,
                     "acceptable_alternatives": draft.get("acceptable_alternatives", ""),
-                    "ceiling_note": draft.get("ceiling_note", ""),
                     "model": args.model,
                     "_validation": info,
                     "status": "draft",      # → human verification sets accepted/edited
