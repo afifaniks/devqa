@@ -3443,5 +3443,505 @@
     "status": "rejected",
     "note": "",
     "verified_at": "2026-06-20T03:49:53.735107Z"
+  },
+  "BerriAI/litellm/issue/30235": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-25T21:39:19.019074Z"
+  },
+  "BerriAI/litellm/issue/30210": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-25T21:39:25.244298Z"
+  },
+  "BerriAI/litellm/issue/30200": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-25T21:39:33.652190Z"
+  },
+  "BerriAI/litellm/issue/30198": {
+    "status": "accepted",
+    "note": "budget_enforcement_bypass; resource_governance_control_failure; fixed_in_pr_30201",
+    "verified_at": "2026-06-25T21:39:51.479014Z"
+  },
+  "BerriAI/litellm/issue/29923": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-25T21:40:12.407781Z"
+  },
+  "BerriAI/litellm/issue/29463": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-25T21:40:19.362075Z"
+  },
+  "BerriAI/litellm/issue/29145": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-25T21:40:28.437861Z"
+  },
+  "BerriAI/litellm/issue/29073": {
+    "status": "accepted",
+    "note": "budget_ceiling_bypass; delegated_authority_inconsistency; privilege_escalation_via_key_update",
+    "verified_at": "2026-06-25T21:40:40.979577Z"
+  },
+  "BerriAI/litellm/issue/28993": {
+    "status": "accepted",
+    "note": "dependency_cve_applicability; starlette_host_header_vulnerability; fixed_in_v1_84_plus",
+    "verified_at": "2026-06-25T21:40:56.138757Z"
+  },
+  "BerriAI/litellm/issue/28884": {
+    "status": "accepted",
+    "note": "streaming_parser_edge_case; metadata_only_chunk_handling; fixed_in_pr_29167",
+    "verified_at": "2026-06-25T21:41:11.020833Z"
+  },
+  "BerriAI/litellm/issue/28283": {
+    "status": "accepted",
+    "note": "redis_race_condition_spend_counter; distributed_metering_inflation; fixed_by_atomic_setnx_init",
+    "verified_at": "2026-06-25T21:41:30.172588Z"
+  },
+  "BerriAI/litellm/issue/28146": {
+    "status": "accepted",
+    "note": "internal_parameter_leakage; request_sanitization_failure; fixed_in_pr_27913_29447",
+    "verified_at": "2026-06-25T21:42:09.090818Z"
+  },
+  "BerriAI/litellm/issue/27855": {
+    "status": "accepted",
+    "note": "distributed_state_inconsistency; alerting_false_positive_bug; cross_worker_cache_mismatch",
+    "verified_at": "2026-06-25T21:42:33.218010Z"
+  },
+  "BerriAI/litellm/issue/27745": {
+    "status": "accepted",
+    "note": "billing_negative_cost_vulnerability; prompt_caching_metering_bug; fixed_in_v1_83_14_commit_3c9bf32611",
+    "verified_at": "2026-06-25T21:42:51.801768Z"
+  },
+  "BerriAI/litellm/issue/27657": {
+    "status": "accepted",
+    "note": "access_control_sync_bug; object_permission_missing_upsert; mcp_authorization_enforcement_failure",
+    "verified_at": "2026-06-25T21:43:15.516908Z"
+  },
+  "BerriAI/litellm/issue/27394": {
+    "status": "accepted",
+    "note": "budget_enforcement_bypass; team_associated_key_logic_flaw; user_budget_not_enforced_with_team_id",
+    "verified_at": "2026-06-25T21:43:46.647340Z"
+  },
+  "BerriAI/litellm/issue/27118": {
+    "status": "accepted",
+    "note": "streaming_metadata_loss; safety_ratings_propagation_fix; fixed_in_v1_83_14_stable",
+    "verified_at": "2026-06-25T21:44:06.830857Z"
+  },
+  "BerriAI/litellm/issue/26777": {
+    "status": "accepted",
+    "note": "dependency_pin_risk; blocked_cve_patch_adoption; supply_chain_version_constraints_issue",
+    "verified_at": "2026-06-25T21:44:24.162868Z"
+  },
+  "BerriAI/litellm/issue/26407": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-25T21:44:37.368119Z"
+  },
+  "BerriAI/litellm/issue/26154": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-25T21:44:48.000163Z"
+  },
+  "BerriAI/litellm/issue/24952": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-25T21:44:57.129749Z"
+  },
+  "BerriAI/litellm/issue/24843": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-25T21:45:05.160864Z"
+  },
+  "BerriAI/litellm/issue/24542": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-25T21:45:11.985171Z"
+  },
+  "BerriAI/litellm/issue/24517": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-25T21:45:18.160185Z"
+  },
+  "BerriAI/litellm/issue/24515": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-25T21:45:24.110514Z"
+  },
+  "BerriAI/litellm/issue/24512": {
+    "status": "accepted",
+    "note": "supply_chain_pypi_malware; pth_autorun_credential_theft; confirmed_package_compromise_incident",
+    "verified_at": "2026-06-25T21:45:40.844806Z"
+  },
+  "BerriAI/litellm/issue/24348": {
+    "status": "accepted",
+    "note": "guardrail_response_status_mismatch; security_control_signal_fix; fixed_in_pr_27617",
+    "verified_at": "2026-06-25T21:45:56.770888Z"
+  },
+  "BerriAI/litellm/issue/24234": {
+    "status": "accepted",
+    "note": "request_routing_prefix_bug_fix; openrouter_model_name_handling; fixed_in_main_v1_83_10_stable",
+    "verified_at": "2026-06-25T21:46:17.573763Z"
+  },
+  "BerriAI/litellm/issue/24160": {
+    "status": "accepted",
+    "note": "pii_redaction_offset_mismatch; anonymization_pipeline_leak; fixed_in_pr_24998",
+    "verified_at": "2026-06-25T21:47:45.315271Z"
+  },
+  "BerriAI/litellm/issue/23648": {
+    "status": "accepted",
+    "note": "authorization_header_leak_to_upstream; oauth_token_misrouting; credential_forwarding_vulnerability",
+    "verified_at": "2026-06-25T21:48:07.449229Z"
+  },
+  "BerriAI/litellm/issue/23572": {
+    "status": "accepted",
+    "note": "auth_header_precedence_bug; credential_overwrite_prevention; adc_auth_bypass_fix",
+    "verified_at": "2026-06-25T21:48:25.933917Z"
+  },
+  "BerriAI/litellm/issue/23561": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-25T21:48:31.014389Z"
+  },
+  "BerriAI/litellm/issue/23540": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-25T21:48:38.566248Z"
+  },
+  "BerriAI/litellm/issue/23150": {
+    "status": "accepted",
+    "note": "spend_tracking_bypass_callback_interference; metrics_logging_loss; streaming_accounting_integrity_failure",
+    "verified_at": "2026-06-25T21:48:55.569735Z"
+  },
+  "BerriAI/litellm/issue/22949": {
+    "status": "accepted",
+    "note": "bedrock_guardrail_enforcement_bypass; malformed_url_path_control_failure; guardrail_intervention_not_detected",
+    "verified_at": "2026-06-25T21:49:14.777956Z"
+  },
+  "BerriAI/litellm/issue/22478": {
+    "status": "accepted",
+    "note": "model_metadata_token_limit_misconfiguration; bedrock_request_validation_failure; fixed_in_pr_23334",
+    "verified_at": "2026-06-25T21:50:04.619483Z"
+  },
+  "BerriAI/litellm/issue/22205": {
+    "status": "accepted",
+    "note": "cve_assignment_confirmation; privilege_escalation_tracking; sandbox_escape_vulnerability_acknowledged",
+    "verified_at": "2026-06-25T21:50:41.984595Z"
+  },
+  "BerriAI/litellm/issue/21959": {
+    "status": "accepted",
+    "note": "dependency_cve_remediation_nodejs; docker_image_security_patch; version_upgrade_fix_cve_2025_55130",
+    "verified_at": "2026-06-25T21:51:01.404918Z"
+  },
+  "BerriAI/litellm/issue/21814": {
+    "status": "accepted",
+    "note": "azure_entra_auth_header_misuse; bearer_token_vs_api_key_confusion; authentication_scheme_mismatch_bug",
+    "verified_at": "2026-06-25T21:51:23.573219Z"
+  },
+  "BerriAI/litellm/issue/21377": {
+    "status": "accepted",
+    "note": "fallback_routing_not_found_bypass; order_based_failover_fix; router_retry_logic_correction",
+    "verified_at": "2026-06-25T21:51:42.595229Z"
+  },
+  "BerriAI/litellm/issue/21249": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-25T21:51:50.520811Z"
+  },
+  "BerriAI/litellm/issue/20419": {
+    "status": "accepted",
+    "note": "internal_metadata_request_leakage; api_bridge_parameter_sanitization_fix; litellm_params_boundary_enforcement",
+    "verified_at": "2026-06-25T21:52:09.776710Z"
+  },
+  "BerriAI/litellm/issue/20325": {
+    "status": "accepted",
+    "note": "mcp_server_information_disclosure_risk; virtual_key_access_control_limitation; endpoint_enumeration_leakage_concern",
+    "verified_at": "2026-06-25T21:52:29.098774Z"
+  },
+  "BerriAI/litellm/issue/20242": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-25T21:52:46.452660Z"
+  },
+  "BerriAI/litellm/issue/19977": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-25T21:52:57.121209Z"
+  },
+  "BerriAI/litellm/issue/19909": {
+    "status": "accepted",
+    "note": "stream_timeout_ttft_enforcement_fix; streaming_request_timeout_control; pr_19389_first_token_abort_behavior",
+    "verified_at": "2026-06-25T21:56:42.204597Z"
+  },
+  "BerriAI/litellm/issue/19663": {
+    "status": "accepted",
+    "note": "jwt_login_response_body_exposure; reverse_proxy_cookie_httpOnly_workaround; authentication_flow_session_handling_fix",
+    "verified_at": "2026-06-25T21:57:05.615335Z"
+  },
+  "BerriAI/litellm/issue/19418": {
+    "status": "accepted",
+    "note": "multi_tag_routing_isolation_fix; data_residency_routing_policy_correction; fixed_in_1_81_15",
+    "verified_at": "2026-06-25T21:58:44.034929Z"
+  },
+  "BerriAI/litellm/issue/19194": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-25T21:58:57.598675Z"
+  },
+  "BerriAI/litellm/issue/18953": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-25T21:59:26.249094Z"
+  },
+  "keycloak/keycloak/issue/46879": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-25T23:25:05.279342Z"
+  },
+  "keycloak/keycloak/issue/46845": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-25T23:25:18.192294Z"
+  },
+  "keycloak/keycloak/issue/46757": {
+    "status": "accepted",
+    "note": "This is a clear security-relevant dependency vulnerability assessment in Keycloak involving a flagged Jackson core deserialization/parsing vulnerability (GHSA-72hv-8253-57qq)",
+    "verified_at": "2026-06-25T22:17:25.693428Z"
+  },
+  "keycloak/keycloak/issue/46742": {
+    "status": "accepted",
+    "note": "This is a clear security design flaw discussion involving potential SSRF-like behavior via certificate revocation lookups in Keycloak.",
+    "verified_at": "2026-06-25T22:17:45.713074Z"
+  },
+  "keycloak/keycloak/issue/50316": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-25T22:55:20.374345Z"
+  },
+  "keycloak/keycloak/issue/49993": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-25T22:55:43.792676Z"
+  },
+  "keycloak/keycloak/issue/49960": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-25T22:55:52.666507Z"
+  },
+  "keycloak/keycloak/issue/49794": {
+    "status": "accepted",
+    "note": "This is a security-relevant authorization validation issue in Keycloak involving token introspection audience (aud) enforcement, which directly affects OAuth2/OIDC access control correctness.",
+    "verified_at": "2026-06-25T22:56:03.741227Z"
+  },
+  "keycloak/keycloak/issue/49766": {
+    "status": "accepted",
+    "note": "This is a clear authorization regression affecting role-based access control (RBAC) in Keycloak, which is a core security control mechanism.",
+    "verified_at": "2026-06-25T22:56:20.323732Z"
+  },
+  "keycloak/keycloak/issue/49753": {
+    "status": "accepted",
+    "note": "This is a security-relevant OAuth2/OIDC token validation issue in Keycloak involving bearer token introspection and audience (aud) enforcement, which directly affects authorization correctness between clients.",
+    "verified_at": "2026-06-25T22:56:55.590535Z"
+  },
+  "keycloak/keycloak/issue/49720": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-25T22:57:29.747217Z"
+  },
+  "keycloak/keycloak/issue/49693": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-25T22:57:39.954810Z"
+  },
+  "keycloak/keycloak/issue/49139": {
+    "status": "accepted",
+    "note": "This is a clear security-relevant build-time initialization issue in Keycloak involving FIPS crypto provider setup, which directly affects cryptographic security guarantees and system integrity.",
+    "verified_at": "2026-06-25T22:58:39.652837Z"
+  },
+  "keycloak/keycloak/issue/49137": {
+    "status": "accepted",
+    "note": "This is a security-relevant authentication bootstrap issue in Keycloak involving initial admin account creation bypass, which is a high-impact security control (privileged access setup).",
+    "verified_at": "2026-06-25T22:59:00.884377Z"
+  },
+  "keycloak/keycloak/issue/49094": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-25T22:59:16.198319Z"
+  },
+  "keycloak/keycloak/issue/48828": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-25T22:59:23.743469Z"
+  },
+  "keycloak/keycloak/issue/48827": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-25T22:59:29.948897Z"
+  },
+  "keycloak/keycloak/issue/48825": {
+    "status": "accepted",
+    "note": "This is a security-relevant cryptographic design discussion in Keycloak concerning SAML 2.0 signature and encryption mechanisms, which are core to federated authentication security.",
+    "verified_at": "2026-06-25T22:59:44.798015Z"
+  },
+  "keycloak/keycloak/issue/48805": {
+    "status": "accepted",
+    "note": "This is a valid security vulnerability applicability assessment involving HTTP request smuggling (CVE-2026-42581 / GHSA-xxqh-mfjm-7mv9) in the context of Keycloak.",
+    "verified_at": "2026-06-25T23:00:08.869658Z"
+  },
+  "keycloak/keycloak/issue/48802": {
+    "status": "rejected",
+    "note": "The extracted answer is too minimal and non-substantive, providing no technical explanation of applicability, no affected versions, and no concrete security analysis for Keycloak or its runtime stack.",
+    "verified_at": "2026-06-25T23:00:44.963256Z"
+  },
+  "keycloak/keycloak/issue/48593": {
+    "status": "accepted",
+    "note": "This is a security-relevant TLS/mTLS configuration behavior issue in Keycloak involving truststore inheritance for the management HTTPS interface, which directly affects authentication and transport security boundaries.",
+    "verified_at": "2026-06-25T23:01:06.198346Z"
+  },
+  "keycloak/keycloak/issue/48592": {
+    "status": "accepted",
+    "note": "This is a valid security-relevant performance + data exposure behavior issue in Keycloak involving LDAP user federation lookups during UMA/token issuance, which can impact authentication flow efficiency and backend load under authorization evaluation.",
+    "verified_at": "2026-06-25T23:01:29.929990Z"
+  },
+  "keycloak/keycloak/issue/48498": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-25T23:01:44.439487Z"
+  },
+  "keycloak/keycloak/issue/48432": {
+    "status": "accepted",
+    "note": "This is a security-relevant authentication/session management correctness issue in Keycloak involving logout behavior in client adapters, which directly affects session invalidation and front-channel logout security guarantees.",
+    "verified_at": "2026-06-25T23:02:04.082565Z"
+  },
+  "keycloak/keycloak/issue/48428": {
+    "status": "accepted",
+    "note": "This is a clear authentication and token-bound security control issue in Keycloak involving DPoP (Demonstration of Proof-of-Possession) enforcement, which is a core OAuth2/OIDC token security mechanism.",
+    "verified_at": "2026-06-25T23:02:47.694330Z"
+  },
+  "keycloak/keycloak/issue/48414": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-25T23:03:01.527332Z"
+  },
+  "keycloak/keycloak/issue/48412": {
+    "status": "accepted",
+    "note": "This is a security-relevant transport authentication design question in Keycloak involving mTLS truststore configuration and certificate validation strategy, which directly impacts how client authentication is enforced at the TLS layer.",
+    "verified_at": "2026-06-25T23:03:22.260071Z"
+  },
+  "keycloak/keycloak/issue/48388": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-25T23:03:34.518307Z"
+  },
+  "keycloak/keycloak/issue/48324": {
+    "status": "accepted",
+    "note": "This is a clear security-relevant authorization and data isolation issue in Keycloak involving UMA ticket filtering logic and cache consistency across resource servers, which can impact correct enforcement of access control boundaries.",
+    "verified_at": "2026-06-25T23:03:46.567506Z"
+  },
+  "keycloak/keycloak/issue/48275": {
+    "status": "accepted",
+    "note": "This is a clear dependency supply-chain security assessment in Keycloak involving a Bouncy Castle PKIX vulnerability (GHSA-wg6q-6289-32hp / CVE-2026-5588), which is a cryptographic validation issue affecting certificate handling.",
+    "verified_at": "2026-06-25T23:04:02.849250Z"
+  },
+  "keycloak/keycloak/issue/48273": {
+    "status": "accepted",
+    "note": "This is a clear authentication security behavior question in Keycloak involving login error handling for temporarily locked/disabled accounts, which directly relates to user enumeration risk.",
+    "verified_at": "2026-06-25T23:04:19.999497Z"
+  },
+  "keycloak/keycloak/issue/48272": {
+    "status": "accepted",
+    "note": "This is a security-relevant authentication and brute-force protection behavior issue in Keycloak involving concurrent login request handling under brute-force detection, which directly impacts account protection mechanisms.",
+    "verified_at": "2026-06-25T23:05:06.837088Z"
+  },
+  "keycloak/keycloak/issue/48269": {
+    "status": "accepted",
+    "note": "This is a clear security-relevant authentication configuration and trust-management issue in Keycloak involving client attestation (ABCA) and trusted key provisioning, which directly impacts authentication integrity and trust boundary enforcement.",
+    "verified_at": "2026-06-25T23:05:25.843274Z"
+  },
+  "keycloak/keycloak/issue/48049": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-25T23:05:51.375486Z"
+  },
+  "keycloak/keycloak/issue/48036": {
+    "status": "accepted",
+    "note": "This is a clear security-relevant CORS and token validation issue in Keycloak involving origin control derived from JWT claims (azp/web origins)",
+    "verified_at": "2026-06-25T23:06:11.837590Z"
+  },
+  "keycloak/keycloak/issue/48035": {
+    "status": "accepted",
+    "note": "This is a security-relevant cryptographic validation policy discussion in Keycloak involving OID4VCI key attestation and certificate trust verification (CWE-295).",
+    "verified_at": "2026-06-25T23:10:21.211720Z"
+  },
+  "keycloak/keycloak/issue/47935": {
+    "status": "accepted",
+    "note": "This is a clear security-relevant authorization and injection-style validation issue in Keycloak involving client-controlled client_session_host being used in backchannel logout URL construction, which directly impacts trust boundaries in logout flows.",
+    "verified_at": "2026-06-25T23:11:06.250604Z"
+  },
+  "keycloak/keycloak/issue/47915": {
+    "status": "accepted",
+    "note": "This is a clear template engine security hardening issue in Keycloak involving FreeMarker ?new() class instantiation, which can lead to arbitrary object creation and potential OS command execution (Execute utility)\u2014a well-known high-risk template injection class.",
+    "verified_at": "2026-06-25T23:12:05.058847Z"
+  },
+  "keycloak/keycloak/issue/47740": {
+    "status": "accepted",
+    "note": "This is a clear authentication identity-matching issue in Keycloak involving SAML attribute mapping and email verification logic, which directly affects user account state and authentication flows.",
+    "verified_at": "2026-06-25T23:21:59.703431Z"
+  },
+  "keycloak/keycloak/issue/47681": {
+    "status": "accepted",
+    "note": "This is a clear security-relevant logging and input sanitization issue in Keycloak involving OIDC authorization endpoint parameter handling and log injection (CWE-117)",
+    "verified_at": "2026-06-25T23:22:59.402625Z"
+  },
+  "keycloak/keycloak/issue/47545": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-25T23:23:10.499215Z"
+  },
+  "keycloak/keycloak/issue/47486": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-25T23:23:17.012190Z"
+  },
+  "keycloak/keycloak/issue/47485": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-25T23:23:23.894315Z"
+  },
+  "keycloak/keycloak/issue/47314": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-25T23:23:31.873275Z"
+  },
+  "keycloak/keycloak/issue/47276": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-25T23:23:38.796474Z"
+  },
+  "keycloak/keycloak/issue/47256": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-25T23:24:30.188701Z"
+  },
+  "keycloak/keycloak/issue/47084": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-25T23:24:37.965654Z"
+  },
+  "keycloak/keycloak/issue/47078": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-25T23:24:44.682339Z"
+  },
+  "keycloak/keycloak/issue/46997": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-25T23:24:53.233421Z"
+  },
+  "keycloak/keycloak/issue/46705": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-25T23:25:32.877743Z"
   }
 }
