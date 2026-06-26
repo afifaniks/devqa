@@ -31,4 +31,5 @@ export const api = {
   procs: () => request("/api/procs"),
   launch: body => postJSON("/api/launch", body),
   stopProc: id => postJSON(`/api/procs/${q(id)}/stop`, {}),
+  removeProc: id => request(`/api/procs/${q(id)}`, { method: "DELETE" }),
 };

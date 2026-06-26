@@ -122,6 +122,7 @@ export function App() {
               onLaunched={refresh}
               onRefresh={refresh}
               onStopProc={async id => { await api.stopProc(id); refresh(); }}
+              onRemoveProc={async id => { await api.removeProc(id); refresh(); }}
             />
           </Box>
           <Box display={tab === "compare" ? "block" : "none"}>

@@ -633,6 +633,34 @@ def launch(body: LaunchBody):
     return {"ok": True, "proc_id": proc_id, "run_name": run_name, "cmd": cmd[-1]}
 
 
+# Stage progress lines look like "[12/50] owner/repo/issue/3#1 ...". The last match
+# in the log tells us which item is in flight and how far along the run is.
+_PROGRESS_RE = re.compile(r"\[(\d+)/(\d+)\]\s+(\S+)")
+
+
+def _proc_progress(run_name: str, tail: str) -> dict:
+    matches = _PROGRESS_RE.findall(tail)
+    idx = total = None
+    current_qid = None
+    if matches:
+        idx, total, current_qid = matches[-1]
+        idx, total = int(idx), int(total)
+    # answered = records actually written (more reliable than the progress index)
+    n_answered = 0
+    try:
+        apath = OUTPUT_DIR / f"answers_{run_name}.jsonl"
+        if apath.exists():
+            n_answered = sum(1 for ln in apath.read_text(
+                encoding="utf-8", errors="replace").splitlines() if ln.strip())
+    except OSError:
+        pass
+    # crude phase: the launcher chains "answer && grade"
+    phase = "grading" if ("Judge:" in tail and "\nGraded:" not in tail) else (
+        "done" if "\nGraded:" in tail or total and idx == total else "answering")
+    return {"current_qid": current_qid, "idx": idx, "total": total,
+            "n_answered": n_answered, "phase": phase}
+
+
 @app.get("/api/procs")
 def procs():
     out = []
@@ -642,12 +670,13 @@ def procs():
         tail = ""
         try:
             tail = Path(info["log"]).read_text(
-                encoding="utf-8", errors="replace")[-3000:]
+                encoding="utf-8", errors="replace")[-4000:]
         except OSError:
             pass
         out.append({"proc_id": pid, "run_name": info["run_name"],
                     "cmd": info["cmd"], "started": info["started"],
-                    "running": rc is None, "returncode": rc, "log_tail": tail})
+                    "running": rc is None, "returncode": rc, "log_tail": tail,
+                    **_proc_progress(info["run_name"], tail)})
     return {"procs": out}
 
 
@@ -661,6 +690,22 @@ def stop(proc_id: str):
     if p.poll() is None:
         os.killpg(os.getpgid(p.pid), signal.SIGTERM)
     return {"ok": True, "returncode": p.poll()}
+
+
+@app.delete("/api/procs/{proc_id}")
+def remove_proc(proc_id: str):
+    """Drop a finished process from the list (and delete its captured log)."""
+    info = PROCS.get(proc_id)
+    if not info:
+        raise HTTPException(404, "unknown process")
+    if info["proc"].poll() is None:
+        raise HTTPException(409, "process still running — stop it first")
+    try:
+        Path(info["log"]).unlink(missing_ok=True)
+    except OSError:
+        pass
+    PROCS.pop(proc_id, None)
+    return {"ok": True}
 
 
 # The UI polls these endpoints on a timer to stay live (runs/procs ~3s, run detail

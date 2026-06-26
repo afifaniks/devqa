@@ -7,7 +7,7 @@ import { SectionLabel } from "./SectionLabel.jsx";
 
 // Launch evaluations and watch them run, live. Runs + procs arrive already
 // polled from <App/>, so this view re-renders as the data updates.
-export function MonitorView({ options, runs, totals, procs, onLaunched, onStopProc, onRefresh }) {
+export function MonitorView({ options, runs, totals, procs, onLaunched, onStopProc, onRemoveProc, onRefresh }) {
   const [open, setOpen] = useState(null);
 
   const handleDeleted = name => {
@@ -23,7 +23,7 @@ export function MonitorView({ options, runs, totals, procs, onLaunched, onStopPr
       {procs.length > 0 && (
         <>
           <SectionLabel count={`${procs.length} this session`}>Launched processes</SectionLabel>
-          <ProcessList procs={procs} onStop={onStopProc} />
+          <ProcessList procs={procs} onStop={onStopProc} onRemove={onRemoveProc} />
         </>
       )}
 
