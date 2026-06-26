@@ -14,3 +14,4 @@ harness/cache/
 node_modules/
 harness/ui/dist/
 dataset/.fix_cache/
+harness/output/

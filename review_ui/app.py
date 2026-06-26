@@ -9,6 +9,7 @@
 """
 
 import json
+import re
 import sys
 from contextlib import asynccontextmanager
 from datetime import datetime
@@ -225,6 +226,7 @@ class BenchmarkEditRequest(BaseModel):
     question_comment_id: Optional[str] = None
     answer_comment_id: Optional[str] = None
     answerer_role: Optional[str] = None
+    resolution_case: Optional[str] = None
     artifacts_needed: Optional[list[str]] = None
     hard_facts: Optional[dict] = None
     # This is the final manual-checking stage, so any field can be edited:
@@ -359,10 +361,12 @@ def save_rubrics_verified() -> None:
     RUBRICS_VERIFIED_FILE.write_text(json.dumps(rubrics_verified, indent=2), encoding="utf-8")
 
 
-def merged_rubric(qid: str) -> Optional[dict]:
-    """Draft rubric with the human verification overlay applied (edits win)."""
+def merged_rubric(qid: str, overlay: Optional[dict] = None) -> Optional[dict]:
+    """Draft rubric with a verification overlay applied (edits win). When `overlay`
+    is given (a per-reviewer rubric dict) it is used instead of the shared author
+    overlay `rubrics_verified` — so reviewers rate independently."""
     draft = rubrics_by_qid.get(qid)
-    ver = rubrics_verified.get(qid)
+    ver = overlay if overlay is not None else rubrics_verified.get(qid)
     if draft is None and ver is None:
         return None
     base = dict(draft or {"qid": qid, "rubric": []})
@@ -373,6 +377,57 @@ def merged_rubric(qid: str) -> Optional[dict]:
                 base[k] = ver[k]
         base["verify_status"] = ver.get("status", "edited")
     return base
+
+
+# ── Per-reviewer overlays (inter-rater review on /benchmark) ─────────────────────
+# When a request carries ?reviewer=<id>, benchmark edits + rubric edits are written to
+# that reviewer's OWN file, dataset/reviews/<id>.json, instead of mutating the shared
+# source-of-truth files. Each file is keyed by record id; every entry carries the
+# reviewer's edited fields AND rubrics (per qid) + the reviewer name + reviewed_at — so
+# one file fully holds that reviewer's work. agreement.py reads dataset/reviews/*.json.
+REVIEWS_DIR = ROOT / "dataset" / "reviews"
+_REVIEWER_RE = re.compile(r"^[A-Za-z0-9_-]{1,32}$")
+_OVERLAY_FIELDS = ("qa_summary", "security_topic", "human_note", "question_comment_id",
+                   "answer_comment_id", "answerer_role", "resolution_case",
+                   "artifacts_needed", "hard_facts", "qa_pairs")
+
+
+def valid_reviewer(reviewer: Optional[str]) -> Optional[str]:
+    if reviewer is None:
+        return None
+    if not _REVIEWER_RE.match(reviewer):
+        raise HTTPException(400, "reviewer must match [A-Za-z0-9_-]{1,32}, e.g. R1")
+    return reviewer
+
+
+def load_reviews(reviewer: str) -> dict:
+    """This reviewer's file (record_id -> entry). Empty dict if not started yet."""
+    p = REVIEWS_DIR / f"{reviewer}.json"
+    if p.exists():
+        try:
+            return json.loads(p.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            return {}
+    return {}
+
+
+def save_reviews(reviewer: str, data: dict) -> None:
+    REVIEWS_DIR.mkdir(parents=True, exist_ok=True)
+    (REVIEWS_DIR / f"{reviewer}.json").write_text(
+        json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
+
+
+def apply_overlay_fields(record: dict, entry: dict) -> dict:
+    """Return a copy of a benchmark record with a reviewer's saved field edits applied."""
+    r = dict(record)
+    for k, v in (entry.get("fields") or {}).items():
+        if k == "hard_facts":
+            hf = dict(r.get("hard_facts") or {})
+            hf.update(v or {})
+            r["hard_facts"] = hf
+        else:
+            r[k] = v
+    return r
 
 
 # ── Normalized eval-pairs data ──────────────────────────────────────────────────
@@ -1140,9 +1195,12 @@ def get_benchmark_records(
     knowledge: Optional[str] = None,
     resolution: Optional[str] = None,
     q: Optional[str] = None,
+    reviewer: Optional[str] = None,
     page: int = 1,
     page_size: int = 50,
 ):
+    reviewer = valid_reviewer(reviewer)
+    reviewed_ids = set(load_reviews(reviewer).keys()) if reviewer else set()
     filtered = []
     for i, r in enumerate(benchmark_records):
         if repo and r.get("repo") != repo:
@@ -1186,6 +1244,7 @@ def get_benchmark_records(
             "n_pairs": len(qa_pairs),
             "knowledge_types": sorted({p.get("knowledge_type") for p in qa_pairs if p.get("knowledge_type")}),
             "human_note": r.get("human_note", ""),
+            "reviewed": r["id"] in reviewed_ids,
         })
     total = len(filtered)
     start = (page - 1) * page_size
@@ -1194,24 +1253,59 @@ def get_benchmark_records(
 
 
 @app.get("/api/benchmark/records/{index}")
-def get_benchmark_record(index: int):
+def get_benchmark_record(index: int, reviewer: Optional[str] = None):
     if index < 0 or index >= len(benchmark_records):
         raise HTTPException(status_code=404, detail="Record not found")
-    r = benchmark_records[index]
+    reviewer = valid_reviewer(reviewer)
+    base = benchmark_records[index]
+    # In review mode, overlay this reviewer's own saved edits + rubrics (not the
+    # author's shared overlay), so each reviewer sees/continues their own work.
+    entry = load_reviews(reviewer).get(base["id"], {}) if reviewer else {}
+    r = apply_overlay_fields(base, entry) if reviewer else base
+    rub_overlay = entry.get("rubrics") or {}
     rubrics = {}
     for p in r.get("qa_pairs") or []:
         qid = p.get("qid")
         if qid:
-            mr = merged_rubric(qid)
+            mr = merged_rubric(qid, rub_overlay.get(qid) if reviewer else None)
             if mr is not None:
                 rubrics[qid] = mr
-    return dict(r) | {"index": index, "rubrics": rubrics}
+    return dict(r) | {"index": index, "rubrics": rubrics, "reviewer": reviewer,
+                      "reviewed": bool(entry), "confirmed": bool(entry.get("confirmed")),
+                      "edited": bool(entry.get("fields") or entry.get("rubrics"))}
 
 
 @app.patch("/api/benchmark/records/{index}")
-def update_benchmark_record(index: int, body: BenchmarkEditRequest):
+def update_benchmark_record(index: int, body: BenchmarkEditRequest,
+                            reviewer: Optional[str] = None):
     if index < 0 or index >= len(benchmark_records):
         raise HTTPException(status_code=404, detail="Record not found")
+    reviewer = valid_reviewer(reviewer)
+
+    # Review mode: write edited fields to this reviewer's section of dataset/reviews.json
+    # and DO NOT touch the shared benchmark file. Whole-record / arbitrary-field edits are
+    # disabled here to keep per-dimension agreement well-defined.
+    if reviewer:
+        rid = benchmark_records[index]["id"]
+        reviews = load_reviews(reviewer)
+        entry = reviews.setdefault(rid, {})
+        fields = entry.setdefault("fields", {})
+        for k in _OVERLAY_FIELDS:
+            v = getattr(body, k)
+            if v is None:
+                continue
+            if k == "hard_facts":
+                hf = dict(fields.get("hard_facts") or {})
+                hf.update(v)
+                fields["hard_facts"] = hf
+            else:
+                fields[k] = v
+        entry["reviewer"] = reviewer
+        entry["id"] = rid
+        entry["reviewed_at"] = datetime.utcnow().isoformat() + "Z"
+        save_reviews(reviewer, reviews)
+        return {"ok": True, "reviewer": reviewer}
+
     r = benchmark_records[index]
 
     # Whole-record overwrite (raw-JSON editor): replace in place, keep the existing
@@ -1235,6 +1329,8 @@ def update_benchmark_record(index: int, body: BenchmarkEditRequest):
         r["answer_comment_id"] = body.answer_comment_id
     if body.answerer_role is not None:
         r["answerer_role"] = body.answerer_role
+    if body.resolution_case is not None:
+        r["resolution_case"] = body.resolution_case
     if body.artifacts_needed is not None:
         r["artifacts_needed"] = body.artifacts_needed
     if body.hard_facts is not None:
@@ -1287,9 +1383,71 @@ def reload_benchmark():
     return {"ok": True, "total": len(benchmark_records)}
 
 
+def _record_id_for_qid(qid: str) -> Optional[str]:
+    for r in benchmark_records:
+        for p in r.get("qa_pairs") or []:
+            if p.get("qid") == qid:
+                return r["id"]
+    return None
+
+
+@app.post("/api/benchmark/records/{index}/review")
+def set_review_status(index: int, reviewer: Optional[str] = None, confirmed: bool = True):
+    """Mark a record reviewed without requiring a field edit — for the case where the
+    reviewer checked everything and it all looks correct. `confirmed=false` un-marks it
+    (removes the entry if the reviewer made no edits)."""
+    reviewer = valid_reviewer(reviewer)
+    if not reviewer:
+        raise HTTPException(400, "reviewer query param required")
+    if index < 0 or index >= len(benchmark_records):
+        raise HTTPException(404, "Record not found")
+    rid = benchmark_records[index]["id"]
+    reviews = load_reviews(reviewer)
+    entry = reviews.get(rid, {})
+    if confirmed:
+        entry["reviewer"] = reviewer
+        entry["id"] = rid
+        entry["confirmed"] = True
+        entry["reviewed_at"] = datetime.utcnow().isoformat() + "Z"
+        reviews[rid] = entry
+    else:
+        # un-confirm: drop the confirmed flag; remove the whole entry if no edits remain
+        entry.pop("confirmed", None)
+        if entry.get("fields") or entry.get("rubrics"):
+            reviews[rid] = entry
+        else:
+            reviews.pop(rid, None)
+    save_reviews(reviewer, reviews)
+    return {"ok": True, "confirmed": confirmed and bool(reviews.get(rid))}
+
+
 @app.post("/api/benchmark/rubric")
-def save_rubric(body: RubricSaveRequest):
-    """Persist the human verification overlay for one qid's rubric."""
+def save_rubric(body: RubricSaveRequest, reviewer: Optional[str] = None):
+    """Persist the verification overlay for one qid's rubric. With ?reviewer set, the
+    edit goes to that reviewer's section of dataset/reviews.json (keyed by record id),
+    not the shared author overlay."""
+    reviewer = valid_reviewer(reviewer)
+    if reviewer:
+        rid = _record_id_for_qid(body.qid)
+        if rid is None:
+            raise HTTPException(404, f"no benchmark record contains qid {body.qid}")
+        draft = rubrics_by_qid.get(body.qid) or {}
+        reviews = load_reviews(reviewer)
+        entry = reviews.setdefault(rid, {})
+        rub = dict((entry.get("rubrics") or {}).get(body.qid) or {})
+        rub["rubric"] = body.rubric if body.rubric is not None else rub.get("rubric", draft.get("rubric", []))
+        if body.acceptable_alternatives is not None:
+            rub["acceptable_alternatives"] = body.acceptable_alternatives
+        if body.note is not None:
+            rub["note"] = body.note
+        rub["status"] = body.status or rub.get("status", "edited")
+        entry.setdefault("rubrics", {})[body.qid] = rub
+        entry["reviewer"] = reviewer
+        entry["id"] = rid
+        entry["reviewed_at"] = datetime.utcnow().isoformat() + "Z"
+        save_reviews(reviewer, reviews)
+        return {"ok": True, "status": rub["status"], "reviewer": reviewer}
+
     cur = dict(rubrics_verified.get(body.qid) or {})
     draft = rubrics_by_qid.get(body.qid) or {}
     cur["rubric"] = body.rubric if body.rubric is not None else cur.get("rubric", draft.get("rubric", []))

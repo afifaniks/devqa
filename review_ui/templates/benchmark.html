@@ -283,6 +283,12 @@
   <span class="pipeline-badge pipeline-security">Security Benchmark</span>
   <span class="bm-topbar-count" x-text="`${total} questions`"></span>
   <div class="topbar-right">
+    <span x-show="reviewer" class="pipeline-badge"
+          style="background:#243;color:#20c997"
+          x-text="`reviewer: ${reviewer} · ${reviewedCount} reviewed`"></span>
+    <input class="input" style="width:130px" placeholder="reviewer id (R1)"
+           :value="reviewer" @change="setReviewer($event.target.value)"
+           title="Set a reviewer id to record edits independently in dataset/reviews.json (shared benchmark untouched)" />
     <a class="btn" href="/">← Review UI</a>
     <button class="btn" @click="toggleTheme()" x-text="isDark ? '☀ Light' : '🌙 Dark'"></button>
     <button class="btn" @click="reload()" x-text="reloading ? 'Reloading…' : '↺ Reload'"></button>
@@ -325,6 +331,8 @@
           <div class="bm-item-title" x-text="`#${item.number} ${item.title}`"></div>
           <div class="bm-item-topic" x-text="item.security_topic"></div>
           <div class="bm-item-badges">
+            <span x-show="reviewer && item.reviewed" class="badge2 b-ver"
+                  title="you have reviewed this record">✓ reviewed</span>
             <span x-show="item.has_cve"   class="badge2 b-cve">CVE</span>
             <span x-show="item.has_ghsa"  class="badge2 b-ghsa">GHSA</span>
             <span x-show="item.has_fix"   class="badge2 b-fix">Fix</span>
@@ -375,11 +383,20 @@
             <input x-show="editMode" class="edit-field" type="text" x-model="edit.title"
                    style="width:100%;font-size:18px;font-weight:600" />
           </div>
-          <div style="display:flex;gap:6px;flex-shrink:0">
+          <div style="display:flex;gap:6px;flex-shrink:0;align-items:center">
             <button class="btn" :class="editMode ? 'btn-edit-active' : ''" @click="toggleEdit()">
               <span x-text="editMode ? '✎ Editing' : '✎ Edit'"></span>
             </button>
-            <button class="btn" @click="startRawJson()" title="Edit every field as raw JSON">{ } JSON</button>
+            <button class="btn" x-show="!reviewer" @click="startRawJson()" title="Edit every field as raw JSON">{ } JSON</button>
+            <!-- Reviewer: mark the record reviewed even when nothing was changed. -->
+            <button class="btn" x-show="reviewer"
+                    :class="selected.reviewed ? 'btn-primary' : ''"
+                    @click="markReviewed(!selected.reviewed)"
+                    :title="selected.reviewed ? 'Click to un-mark' : 'Everything looks correct — mark this record reviewed'">
+              <span x-text="selected.reviewed
+                    ? (selected.edited ? '✓ Reviewed (edited)' : '✓ Reviewed')
+                    : '✓ Mark reviewed'"></span>
+            </button>
             <a class="btn btn-primary" :href="selected.url" target="_blank" rel="noopener">View on GitHub ↗</a>
           </div>
         </div>
@@ -429,6 +446,21 @@
         <!-- ★ Resolution & fix timeline -->
         <div class="bm-section">
           <div class="bm-section-title">Resolution &amp; fix timeline</div>
+          <template x-if="editMode">
+            <div style="margin-bottom:10px">
+              <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:3px">
+                Resolution case — was the fix in the repo <em>before</em> the report, landed
+                <em>after</em>, or no fix (explanation only)? Judge from the thread + base commit.
+              </label>
+              <select class="edit-field" x-model="edit.resolution_case" style="width:auto">
+                <option value="">— unset —</option>
+                <option value="fix_before">fix_before</option>
+                <option value="fix_after">fix_after</option>
+                <option value="explanation_only">explanation_only</option>
+                <option value="undetermined">undetermined</option>
+              </select>
+            </div>
+          </template>
           <template x-if="!selected.resolution_case">
             <div style="color:var(--muted);font-size:13px;font-style:italic">
               Not extracted yet — run <code>dataset/extract_fixes.py</code>.
@@ -915,6 +947,9 @@ function app() {
     rawJsonMode: false, rawJson: '', rawJsonErr: '',
     rubEdits: {}, rubMsg: {},
     isDark: document.documentElement.classList.contains('dark'),
+    reviewer: new URLSearchParams(location.search).get('reviewer')
+              || localStorage.getItem('bm_reviewer') || '',
+    reviewedCount: 0,
 
     hardFactFields: [
       ['cve_ids',        'CVE IDs'],
@@ -942,6 +977,21 @@ function app() {
 
     async loadStats() {
       this.stats = await fetch('/api/benchmark/stats').then(r => r.json());
+    },
+
+    // `?reviewer=` suffix appended to API calls so edits land in this reviewer's
+    // section of dataset/reviews.json instead of mutating the shared benchmark.
+    rvq(sep) { return this.reviewer ? `${sep}reviewer=${encodeURIComponent(this.reviewer)}` : ''; },
+
+    setReviewer(v) {
+      this.reviewer = (v || '').trim();
+      localStorage.setItem('bm_reviewer', this.reviewer);
+      const u = new URL(location);
+      if (this.reviewer) u.searchParams.set('reviewer', this.reviewer);
+      else u.searchParams.delete('reviewer');
+      history.replaceState(null, '', u);
+      this.loadList();
+      if (this.selected) this.selectRecord(this.selected.index);
     },
 
     pct(n) {
@@ -980,16 +1030,32 @@ function app() {
       if (this.filterKnowledge) params.set('knowledge', this.filterKnowledge);
       if (this.filterResolution) params.set('resolution', this.filterResolution);
       if (this.searchQ)         params.set('q', this.searchQ);
+      if (this.reviewer)        params.set('reviewer', this.reviewer);
       const data = await fetch(`/api/benchmark/records?${params}`).then(r => r.json());
       this.items = data.items;
       this.total = data.total;
+      this.reviewedCount = data.items.filter(it => it.reviewed).length;
     },
 
     async selectRecord(index) {
       this.editMode = false;
       this.rawOpen = false;
       this.saveMsg = '';
-      this.selected = await fetch(`/api/benchmark/records/${index}`).then(r => r.json());
+      this.selected = await fetch(`/api/benchmark/records/${index}${this.rvq('?')}`).then(r => r.json());
+    },
+
+    // Mark/un-mark a record reviewed without editing — for "everything looks correct".
+    async markReviewed(confirmed) {
+      if (!this.reviewer) return;
+      const sep = this.rvq('?') ? '&' : '?';
+      const resp = await fetch(
+        `/api/benchmark/records/${this.selected.index}/review${this.rvq('?')}${sep}confirmed=${confirmed}`,
+        { method: 'POST' });
+      if (!resp.ok) { this.saveMsg = `Error: ${await resp.text()}`; return; }
+      this.selected = await fetch(`/api/benchmark/records/${this.selected.index}${this.rvq('?')}`).then(r => r.json());
+      await this.loadList();
+      this.saveMsg = confirmed ? 'Marked reviewed' : 'Unmarked';
+      setTimeout(() => { this.saveMsg = ''; }, 1500);
     },
 
     toggleEdit() {
@@ -1002,6 +1068,7 @@ function app() {
           question_comment_id: s.question_comment_id || '',
           answer_comment_id:   s.answer_comment_id || '',
           answerer_role:       s.answerer_role || 'maintainer',
+          resolution_case:     s.resolution_case || '',
           artifacts_needed:    [...(s.artifacts_needed || [])],
           hard_facts:          JSON.parse(JSON.stringify(s.hard_facts || {})),
           qa_pairs:            JSON.parse(JSON.stringify(s.qa_pairs || [])),
@@ -1029,6 +1096,7 @@ function app() {
           qa_summary: e.qa_summary, security_topic: e.security_topic,
           human_note: e.human_note, question_comment_id: e.question_comment_id,
           answer_comment_id: e.answer_comment_id, answerer_role: e.answerer_role,
+          resolution_case: e.resolution_case || null,
           artifacts_needed: e.artifacts_needed, hard_facts: e.hard_facts,
           qa_pairs: e.qa_pairs,
           fields: {
@@ -1037,13 +1105,13 @@ function app() {
             state: e.state, labels: e.labels,
           },
         };
-        const resp = await fetch(`/api/benchmark/records/${this.selected.index}`, {
+        const resp = await fetch(`/api/benchmark/records/${this.selected.index}${this.rvq('?')}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(body),
         });
         if (!resp.ok) throw new Error(await resp.text());
-        this.selected = await fetch(`/api/benchmark/records/${this.selected.index}`).then(r => r.json());
+        this.selected = await fetch(`/api/benchmark/records/${this.selected.index}${this.rvq('?')}`).then(r => r.json());
         await this.loadList();
         this.editMode = false;
         this.saveMsg = 'Saved';
@@ -1070,13 +1138,13 @@ function app() {
       catch (err) { this.rawJsonErr = `Invalid JSON: ${err.message}`; return; }
       this.saving = true; this.rawJsonErr = '';
       try {
-        const resp = await fetch(`/api/benchmark/records/${this.selected.index}`, {
+        const resp = await fetch(`/api/benchmark/records/${this.selected.index}${this.rvq('?')}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ full: parsed }),
         });
         if (!resp.ok) throw new Error(await resp.text());
-        this.selected = await fetch(`/api/benchmark/records/${this.selected.index}`).then(r => r.json());
+        this.selected = await fetch(`/api/benchmark/records/${this.selected.index}${this.rvq('?')}`).then(r => r.json());
         await this.loadList();
         this.rawJsonMode = false;
         this.saveMsg = 'Saved (raw)';
@@ -1120,7 +1188,7 @@ function app() {
       const e = this.rubEdits[qid];
       this.rubMsg[qid] = 'Saving…';
       try {
-        const resp = await fetch('/api/benchmark/rubric', {
+        const resp = await fetch(`/api/benchmark/rubric${this.rvq('?')}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -1132,7 +1200,8 @@ function app() {
         });
         if (!resp.ok) throw new Error(await resp.text());
         // refresh merged rubric (and verify_status) from the server
-        this.selected = await fetch(`/api/benchmark/records/${this.selected.index}`).then(r => r.json());
+        this.selected = await fetch(`/api/benchmark/records/${this.selected.index}${this.rvq('?')}`).then(r => r.json());
+        await this.loadList();
         delete this.rubEdits[qid];
         this.rubMsg[qid] = '';
       } catch (err) {
