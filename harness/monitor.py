@@ -488,21 +488,26 @@ def _run_index(name: str, judge: str | None = None) -> tuple[dict[str, dict], di
 
 @app.get("/api/compare")
 def compare(runs: str = ""):
-    """Side-by-side predictions for the given runs (comma-separated names),
-    joined per question. Includes gold answer and per-run grading when present."""
-    names = [n for n in (runs.split(",") if runs else []) if n]
-    indexed: dict[str, tuple[dict, dict]] = {}
+    """Side-by-side predictions for the given columns, joined per question.
+
+    Each column is a spec `run` or `run@judge-slug`: the same run can appear under
+    several judges (one column each) so gradings by different LLM judges of the same
+    answers are comparable side by side. Includes gold answer and per-column grading."""
+    specs = [n for n in (runs.split(",") if runs else []) if n]
+    indexed: dict[str, tuple[dict, dict, str]] = {}   # spec -> (answers, grades, bare run)
     meta = []
-    for name in names:
-        idx = _run_index(name)
+    for spec in specs:
+        run, _, judge = spec.partition("@")
+        idx = _run_index(run, judge or None)
         if idx is None:
             continue
-        indexed[name] = idx
         answers, grades = idx
+        indexed[spec] = (answers, grades, run)
         sample = next(iter(answers.values()), {})
         judges = {g.get("judge_model") for g in grades.values() if g.get("judge_model")}
         meta.append({
-            "name": name,
+            "name": spec,
+            "run": run,
             "model": sample.get("model", "?"),
             "condition": sample.get("condition", "?"),
             "judge_model": ("mixed" if len(judges) > 1
@@ -518,10 +523,10 @@ def compare(runs: str = ""):
     qids: list[str] = []
     seen = set()
     for qid in gold:
-        if any(qid in answers for answers, _ in indexed.values()):
+        if any(qid in answers for answers, _, _ in indexed.values()):
             qids.append(qid)
             seen.add(qid)
-    for answers, _ in indexed.values():
+    for answers, _, _ in indexed.values():
         for qid in answers:
             if qid not in seen:
                 qids.append(qid)
@@ -531,15 +536,15 @@ def compare(runs: str = ""):
     for qid in qids:
         g = gold.get(qid, {})
         cells = {}
-        for name, (answers, grades) in indexed.items():
+        for spec, (answers, grades, run) in indexed.items():
             a = answers.get(qid)
             if a is None:
-                cells[name] = None
+                cells[spec] = None
                 continue
             gr = grades.get(qid) or {}
             judge = gr.get("judge") or {}   # legacy claim-based grades
             slug = str(qid).replace("/", "__")
-            cells[name] = {
+            cells[spec] = {
                 "response": a.get("response") or "",
                 "error": a.get("error"),
                 "runtime_secs": a.get("runtime_secs"),
@@ -555,7 +560,7 @@ def compare(runs: str = ""):
                 "hallucinations": gr.get("hallucinations") or judge.get("hallucinations"),
                 "claims": judge.get("claims"),   # legacy fallback
                 "graded": bool(gr),
-                "has_transcript": (OUTPUT_DIR / "transcripts" / name
+                "has_transcript": (OUTPUT_DIR / "transcripts" / run
                                    / f"{slug}.json").exists(),
             }
         rows.append({

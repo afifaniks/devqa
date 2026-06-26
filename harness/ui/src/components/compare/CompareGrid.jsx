@@ -1,4 +1,4 @@
-import { Group, Badge, Text, Box, Code, Paper, SimpleGrid } from "@mantine/core";
+import { Group, Badge, Text, Box, Code, Paper, Stack } from "@mantine/core";
 import { IconChevronRight, IconChevronDown } from "@tabler/icons-react";
 import { VERDICT_COLOR } from "../../theme.js";
 import { outcomeOf } from "../../lib/outcomes.js";
@@ -8,9 +8,18 @@ import { DetailColumn } from "./DetailColumn.jsx";
 
 const pre = { whiteSpace: "pre-wrap", wordBreak: "break-word", fontSize: 12, maxHeight: 320, overflow: "auto" };
 
+function ScoreBadge({ label, value, n, color }) {
+  return (
+    <Badge size="xs" variant="light" color={n ? color : "gray"}>
+      {label} {value == null ? "—" : `${Math.round(value * 100)}%`}
+    </Badge>
+  );
+}
+
 function Cell({ cell }) {
   if (!cell) return <Text className="cmp-cell" c="dimmed" fs="italic" size="xs">—</Text>;
   const o = outcomeOf(cell);
+  const s = cell.scores;
   return (
     <Box className="cmp-cell">
       <Group gap={6}>
@@ -19,6 +28,12 @@ function Cell({ cell }) {
         {cell.n_tool_calls != null && <Text size="xs" c="dimmed">{cell.n_tool_calls} tools</Text>}
         {cell.runtime_secs != null && <Text size="xs" c="dimmed">{cell.runtime_secs}s</Text>}
       </Group>
+      {s && (s.n_correctness || s.n_completeness) ? (
+        <Group gap={6} mt={4}>
+          <ScoreBadge label="corr" value={s.correctness} n={s.n_correctness} color="teal" />
+          <ScoreBadge label="compl" value={s.completeness} n={s.n_completeness} color="indigo" />
+        </Group>
+      ) : null}
       <Text
         className={"clamp" + (cell.error ? "" : "")}
         c={cell.error ? "red.4" : "dimmed"} size="xs" mt={6}
@@ -70,11 +85,12 @@ function Row({ row, runs, cols, open, onToggle }) {
                 )}
               </Paper>
             )}
-            <SimpleGrid cols={{ base: 1, md: Math.min(runs.length, 3) }} spacing="sm">
-              {runs.map(rn => (
-                <DetailColumn key={rn} runName={rn} cell={row.cells[rn]} qidSlug={row.qid_slug} />
+            <Stack gap="sm">
+              {runs.map((rn, i) => (
+                <DetailColumn key={rn} runName={rn} alias={`R${i + 1}`}
+                              cell={row.cells[rn]} qidSlug={row.qid_slug} />
               ))}
-            </SimpleGrid>
+            </Stack>
           </Box>
         </div>
       )}
@@ -92,10 +108,11 @@ export function CompareGrid({ rows, runMeta, selected, openQid, onToggleRow }) {
           <Box className="cmp-cell"><Text size="xs" fw={600}>Question</Text></Box>
           {runMeta.map(r => (
             <Box className="cmp-cell" key={r.name}>
-              <Text ff="monospace" size="xs" fw={600} style={{ wordBreak: "break-all" }}>{r.name}</Text>
+              <Text ff="monospace" size="xs" fw={600} style={{ wordBreak: "break-all" }}>{r.run || r.name}</Text>
               <Group gap={6} mt={2}>
                 <Text size="xs" c="dimmed">{r.model}</Text>
                 {r.is_agent && <Badge size="xs" variant="light" color="violet">agent</Badge>}
+                {r.judge_model && <Badge size="xs" variant="light" color="teal">judge: {r.judge_model}</Badge>}
               </Group>
             </Box>
           ))}

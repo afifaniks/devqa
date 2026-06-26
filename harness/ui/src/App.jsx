@@ -64,7 +64,7 @@ export function App() {
           <Group gap={8} wrap="nowrap">
             <IconFlask size={20} color="var(--c-azure)" />
             <Text fw={600} style={{ letterSpacing: ".2px" }}>
-              SecDevQA <Text span c="var(--c-azure)" fw={700}>harness</Text>
+              Sec<Text span c="var(--c-azure)" fw={700}>DevQA</Text>
             </Text>
           </Group>
 

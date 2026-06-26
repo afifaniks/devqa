@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Paper, Group, Badge, Text, Code, Stack, Button, Box } from "@mantine/core";
+import { Paper, Group, Badge, Text, Code, Stack, Button, Box, Collapse } from "@mantine/core";
+import { IconChevronRight, IconChevronDown } from "@tabler/icons-react";
 import { api } from "../../api.js";
 import { VERDICT_COLOR } from "../../theme.js";
 import { outcomeOf, claimColor } from "../../lib/outcomes.js";
@@ -10,13 +11,25 @@ const pre = { whiteSpace: "pre-wrap", wordBreak: "break-word", fontSize: 12, max
 
 // One run's full prediction for a question: response, deterministic hard-fact
 // tier, judge claims, hallucinations, and (for agents) the tool transcript.
-export function DetailColumn({ runName, cell, qidSlug }) {
+export function DetailColumn({ runName, alias, cell, qidSlug }) {
   const [tr, setTr] = useState(null);
+  const [showResp, setShowResp] = useState(false);
+  // runName is a compare column spec `run` or `run@judge-slug`; transcripts and answers
+  // live under the bare run name, so strip the judge before any path lookup.
+  const [bareRun, judge] = runName.split("@");
+
+  const header = (
+    <Group gap={6} mb={8} wrap="nowrap">
+      {alias && <Badge size="sm" variant="filled" color="azure">{alias}</Badge>}
+      <Text ff="monospace" size="xs" fw={600} style={{ wordBreak: "break-all" }}>{bareRun}</Text>
+      {judge && <Badge size="xs" variant="light" color="teal" style={{ flex: "none" }}>judge: {judge}</Badge>}
+    </Group>
+  );
 
   if (!cell) {
     return (
       <Paper withBorder p="sm" radius="md" bg="var(--mantine-color-default)">
-        <Text ff="monospace" size="xs" fw={600} mb={6}>{runName}</Text>
+        {header}
         <Text size="xs" c="dimmed" fs="italic">— not answered in this run —</Text>
       </Paper>
     );
@@ -24,13 +37,13 @@ export function DetailColumn({ runName, cell, qidSlug }) {
 
   const o = outcomeOf(cell);
   const loadTr = async () => {
-    try { setTr(await api.transcript(runName, qidSlug)); }
+    try { setTr(await api.transcript(bareRun, qidSlug)); }
     catch { setTr({ transcript: [{ step: 0, type: "no transcript found" }] }); }
   };
 
   return (
     <Paper withBorder p="sm" radius="md" bg="var(--mantine-color-default)">
-      <Text ff="monospace" size="xs" fw={600} mb={8}>{runName}</Text>
+      {header}
 
       <Group gap={6} mb={8}>
         <Badge size="sm" variant="light" color={VERDICT_COLOR[o] || "gray"}>{o}</Badge>
@@ -40,31 +53,21 @@ export function DetailColumn({ runName, cell, qidSlug }) {
         {cell.runtime_secs != null && <Text size="xs" c="dimmed">{cell.runtime_secs}s</Text>}
       </Group>
 
-      {cell.error
-        ? <Code block c="red" style={pre}>{cell.error}</Code>
-        : <Code block style={pre}>{cell.response}</Code>}
-
-      {cell.tool_calls_by_group && Object.keys(cell.tool_calls_by_group).length > 0 && (
-        <Text size="xs" c="dimmed" ff="monospace" mt={6}>
-          {Object.entries(cell.tool_calls_by_group).map(([g, n]) => `${g}:${n}`).join("  ")}
-        </Text>
-      )}
-
       {cell.hard_facts?.length > 0 && (
-        <Box mt="sm">
+        <Box mb="sm">
           <Text size="xs" tt="uppercase" fw={600} c="dimmed" mb={4}>Hard facts</Text>
           <FactChips facts={cell.hard_facts} />
         </Box>
       )}
 
       {cell.rubric_grades?.length > 0 ? (
-        <Box mt="sm">
+        <Box mb="sm">
           <Text size="xs" tt="uppercase" fw={600} c="dimmed" mb={4}>Rubric grading</Text>
           <RubricGrades grades={cell.rubric_grades} scores={cell.scores}
                         hallucinations={cell.hallucinations} compact />
         </Box>
       ) : cell.claims?.length > 0 && (
-        <Box mt="sm">
+        <Box mb="sm">
           <Text size="xs" tt="uppercase" fw={600} c="dimmed" mb={4}>Judge claims (legacy)</Text>
           <Stack gap={6}>
             {cell.claims.map((c, i) => (
@@ -81,6 +84,36 @@ export function DetailColumn({ runName, cell, qidSlug }) {
             ))}
           </Stack>
         </Box>
+      )}
+
+      {/* Response collapsed by default — rubric grading is the focus; open to read the
+          full answer. Errors always show (no point hiding a failure). */}
+      {cell.error ? (
+        <Code block c="red" style={pre}>{cell.error}</Code>
+      ) : (
+        <Box>
+          <Group
+            gap={6} mb={showResp ? 6 : 0} wrap="nowrap"
+            onClick={() => setShowResp(v => !v)} style={{ cursor: "pointer" }}
+          >
+            {showResp ? <IconChevronDown size={14} /> : <IconChevronRight size={14} />}
+            <Text size="xs" tt="uppercase" fw={600} c="dimmed">Response</Text>
+            {!showResp && (
+              <Text size="xs" c="dimmed" truncate style={{ flex: 1, minWidth: 0 }}>
+                {cell.response}
+              </Text>
+            )}
+          </Group>
+          <Collapse in={showResp}>
+            <Code block style={pre}>{cell.response}</Code>
+          </Collapse>
+        </Box>
+      )}
+
+      {cell.tool_calls_by_group && Object.keys(cell.tool_calls_by_group).length > 0 && (
+        <Text size="xs" c="dimmed" ff="monospace" mt={6}>
+          {Object.entries(cell.tool_calls_by_group).map(([g, n]) => `${g}:${n}`).join("  ")}
+        </Text>
       )}
 
       {cell.has_transcript && (

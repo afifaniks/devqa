@@ -33,12 +33,16 @@ function StatCard({ p }) {
       ]
     : [{ value: 100, color: "gray.3" }];
 
+  const [bareRun, judge] = p.name.split("@");
   return (
     <Paper withBorder p="md" radius="md">
       <Group gap={6} mb="sm" wrap="nowrap">
         <Badge color={p.color.split(".")[0]} variant="filled" size="sm">{p.alias}</Badge>
-        <Text ff="monospace" size="xs" fw={600} truncate>{p.name}</Text>
+        <Text ff="monospace" size="xs" fw={600} truncate>{bareRun}</Text>
       </Group>
+      {judge && (
+        <Badge size="xs" variant="light" color="teal" mb="sm">judge: {judge}</Badge>
+      )}
       <Group wrap="nowrap" align="center" gap="md">
         <RingProgress
           size={96} thickness={9} roundCaps sections={ring}
