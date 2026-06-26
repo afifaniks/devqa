@@ -13,7 +13,7 @@ import sys
 from contextlib import asynccontextmanager
 from datetime import datetime
 from pathlib import Path
-from typing import AsyncIterator, Optional
+from typing import AsyncIterator, Optional, Union
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse
@@ -55,7 +55,7 @@ OC_VERIFIED_FILE = ROOT / "dataset" / "open_codes_verified.json"
 OC_EXPORT_FILE = ROOT / "dataset" / "open_codes_verified.jsonl"
 
 # ── Normalized eval-pairs review files ──────────────────────────────────────────
-# Stage-1 normalizer output (eval/normalize.py). Reviewed in place: `approved` /
+# Stage-1 normalizer output (dataset/synthesize.py). Reviewed in place: `approved` /
 # `review_status` are written back into this file (the pipeline reads `approved`).
 EVAL_PAIRS_FILE = ROOT / "dataset" / "eval_pairs.jsonl"
 # Source threads (with full comments[]) joined in for side-by-side review.
@@ -227,14 +227,23 @@ class BenchmarkEditRequest(BaseModel):
     answerer_role: Optional[str] = None
     artifacts_needed: Optional[list[str]] = None
     hard_facts: Optional[dict] = None
+    # This is the final manual-checking stage, so any field can be edited:
+    # `qa_pairs` replaces the normalized Q&A list; `full` overwrites the whole
+    # record; `fields` patches arbitrary top-level keys.
+    qa_pairs: Optional[list[dict]] = None
+    fields: Optional[dict] = None
+    full: Optional[dict] = None
+
+
+# Keys the editor injects into a record for display — never persisted back.
+_TRANSIENT_KEYS = ("index", "rubrics")
 
 
 class RubricSaveRequest(BaseModel):
     qid: str
     status: Optional[str] = None            # accepted | edited | rejected
     rubric: Optional[list] = None           # full edited line list
-    acceptable_alternatives: Optional[str] = None
-    ceiling_note: Optional[str] = None
+    acceptable_alternatives: Optional[Union[str, list]] = None
     note: Optional[str] = None
 
 
@@ -359,7 +368,7 @@ def merged_rubric(qid: str) -> Optional[dict]:
     base = dict(draft or {"qid": qid, "rubric": []})
     base["verify_status"] = "draft"
     if ver:
-        for k in ("rubric", "acceptable_alternatives", "ceiling_note", "note"):
+        for k in ("rubric", "acceptable_alternatives", "note"):
             if ver.get(k) is not None:
                 base[k] = ver[k]
         base["verify_status"] = ver.get("status", "edited")
@@ -1204,6 +1213,16 @@ def update_benchmark_record(index: int, body: BenchmarkEditRequest):
     if index < 0 or index >= len(benchmark_records):
         raise HTTPException(status_code=404, detail="Record not found")
     r = benchmark_records[index]
+
+    # Whole-record overwrite (raw-JSON editor): replace in place, keep the existing
+    # `id` if the editor dropped it, and strip transient display-only keys.
+    if body.full is not None:
+        new = {k: v for k, v in body.full.items() if k not in _TRANSIENT_KEYS}
+        new.setdefault("id", r.get("id"))
+        benchmark_records[index] = new
+        save_benchmark_data()
+        return {"ok": True}
+
     if body.qa_summary is not None:
         r["qa_summary"] = body.qa_summary
     if body.security_topic is not None:
@@ -1222,6 +1241,12 @@ def update_benchmark_record(index: int, body: BenchmarkEditRequest):
         existing = r.get("hard_facts", {})
         existing.update(body.hard_facts)
         r["hard_facts"] = existing
+    if body.qa_pairs is not None:
+        r["qa_pairs"] = body.qa_pairs
+    # arbitrary top-level fields (title, authors, labels, state, …)
+    for k, v in (body.fields or {}).items():
+        if k not in _TRANSIENT_KEYS:
+            r[k] = v
     save_benchmark_data()
     return {"ok": True}
 
@@ -1270,8 +1295,6 @@ def save_rubric(body: RubricSaveRequest):
     cur["rubric"] = body.rubric if body.rubric is not None else cur.get("rubric", draft.get("rubric", []))
     if body.acceptable_alternatives is not None:
         cur["acceptable_alternatives"] = body.acceptable_alternatives
-    if body.ceiling_note is not None:
-        cur["ceiling_note"] = body.ceiling_note
     if body.note is not None:
         cur["note"] = body.note
     cur["status"] = body.status or cur.get("status", "edited")

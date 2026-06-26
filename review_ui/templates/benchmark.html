@@ -371,15 +371,36 @@
           <div style="min-width:0">
             <div style="font-size:12px;color:var(--muted);font-family:monospace;margin-bottom:6px;word-break:break-all"
                  x-text="selected.id"></div>
-            <h2 style="margin:0;font-size:20px;line-height:1.3" x-text="selected.title"></h2>
+            <h2 x-show="!editMode" style="margin:0;font-size:20px;line-height:1.3" x-text="selected.title"></h2>
+            <input x-show="editMode" class="edit-field" type="text" x-model="edit.title"
+                   style="width:100%;font-size:18px;font-weight:600" />
           </div>
           <div style="display:flex;gap:6px;flex-shrink:0">
             <button class="btn" :class="editMode ? 'btn-edit-active' : ''" @click="toggleEdit()">
               <span x-text="editMode ? '✎ Editing' : '✎ Edit'"></span>
             </button>
+            <button class="btn" @click="startRawJson()" title="Edit every field as raw JSON">{ } JSON</button>
             <a class="btn btn-primary" :href="selected.url" target="_blank" rel="noopener">View on GitHub ↗</a>
           </div>
         </div>
+
+        <!-- Raw full-record JSON editor — edit ANY field at the final checking stage -->
+        <template x-if="rawJsonMode">
+          <div style="margin-bottom:24px;border:1px solid var(--border);border-radius:8px;padding:12px;background:var(--card)">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+              <strong style="font-size:13px">Full record (raw JSON)</strong>
+              <span style="color:var(--muted);font-size:12px">edit any field — saved verbatim to the benchmark</span>
+              <span style="margin-left:auto;color:#d66;font-size:12px" x-text="rawJsonErr"></span>
+            </div>
+            <textarea class="edit-field" x-model="rawJson" spellcheck="false"
+                      style="width:100%;min-height:340px;font-family:monospace;font-size:12px;white-space:pre"></textarea>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <button class="btn btn-primary" @click="saveRawJson()" :disabled="saving"
+                      x-text="saving ? 'Saving…' : 'Save JSON'"></button>
+              <button class="btn" @click="cancelRawJson()">Cancel</button>
+            </div>
+          </div>
+        </template>
 
         <!-- Badge row -->
         <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:24px">
@@ -501,25 +522,38 @@
             <div class="qa-card">
               <div class="qa-card-head">
                 <span class="qa-card-num" x-text="`Q&A ${i+1}`"></span>
-                <span class="qa-kt" style="cursor:help"
+                <span x-show="!editMode" class="qa-kt" style="cursor:help"
                       :class="p.knowledge_type === 'parametric' ? 'qa-kt-parametric' : 'qa-kt-grounded'"
                       :title="ktTip(p.knowledge_type)"
                       x-text="ktLabel(p.knowledge_type)"></span>
+                <template x-if="editMode && edit.qa_pairs[i]">
+                  <select class="edit-field" style="width:auto"
+                          x-model="edit.qa_pairs[i].knowledge_type">
+                    <option value="grounded">contextual (grounded)</option>
+                    <option value="parametric">parametric</option>
+                  </select>
+                </template>
                 <span style="margin-left:auto;font-family:monospace;font-size:11px;color:var(--muted)"
                       x-text="p.qid"></span>
               </div>
 
               <div class="qa-block">
                 <div class="qa-role qa-role-q"><span class="qa-role-dot"></span>Question</div>
-                <div class="qa-md md" x-html="md(p.question)"></div>
+                <div class="qa-md md" x-show="!editMode" x-html="md(p.question)"></div>
+                <template x-if="editMode && edit.qa_pairs[i]">
+                  <textarea class="edit-field" rows="4" x-model="edit.qa_pairs[i].question"></textarea>
+                </template>
               </div>
 
               <div class="qa-block">
                 <div class="qa-role qa-role-a"><span class="qa-role-dot"></span>Answer</div>
-                <div class="qa-md md" x-html="md(p.answer)"></div>
+                <div class="qa-md md" x-show="!editMode" x-html="md(p.answer)"></div>
+                <template x-if="editMode && edit.qa_pairs[i]">
+                  <textarea class="edit-field" rows="6" x-model="edit.qa_pairs[i].answer"></textarea>
+                </template>
               </div>
 
-              <template x-if="(p.grounding_sources||[]).length || p.answer_grounded_in">
+              <template x-if="!editMode && ((p.grounding_sources||[]).length || p.answer_grounded_in)">
                 <div class="qa-grounding">
                   <div class="qa-grounding-row" x-show="(p.grounding_sources||[]).length">
                     <span class="qa-grounding-label">Source</span>
@@ -533,6 +567,28 @@
                   <div class="qa-grounding-row" x-show="p.answer_grounded_in">
                     <span class="qa-grounding-label">Answer comment</span>
                     <span class="src-chip" x-text="p.answer_grounded_in"></span>
+                  </div>
+                </div>
+              </template>
+
+              <template x-if="editMode && edit.qa_pairs[i]">
+                <div class="qa-grounding">
+                  <div class="qa-grounding-row">
+                    <span class="qa-grounding-label">Sources</span>
+                    <input class="edit-field" type="text" style="flex:1"
+                           :value="(edit.qa_pairs[i].grounding_sources || []).join(', ')"
+                           @input="edit.qa_pairs[i].grounding_sources = $event.target.value.split(',').map(s=>s.trim()).filter(Boolean)" />
+                  </div>
+                  <div class="qa-grounding-row">
+                    <span class="qa-grounding-label">Answer comment</span>
+                    <input class="edit-field" type="text" style="flex:1"
+                           x-model="edit.qa_pairs[i].answer_grounded_in" />
+                  </div>
+                  <div class="qa-grounding-row">
+                    <span class="qa-grounding-label">Leak flags</span>
+                    <input class="edit-field" type="text" style="flex:1"
+                           :value="(edit.qa_pairs[i].leak_flags || []).join(', ')"
+                           @input="edit.qa_pairs[i].leak_flags = $event.target.value.split(',').map(s=>s.trim()).filter(Boolean)" />
                   </div>
                 </div>
               </template>
@@ -564,7 +620,7 @@
                     <template x-for="(ln, li) in (rub(p.qid).rubric||[])" :key="li">
                       <div class="rub-line">
                         <span class="rub-ax" :class="ln.axis==='correctness'?'rub-ax-c':'rub-ax-p'"
-                              x-text="`${(ln.axis||'?').slice(0,4)} w${ln.weight}`"></span>
+                              x-text="ln.axis||'?'"></span>
                         <span x-show="ln.knowable_at_report===false" class="badge2 b-fix"
                               title="future fact at report time — dropped from no-context denominator">¬knowable</span>
                         <div class="rub-body">
@@ -576,9 +632,6 @@
                     </template>
                     <template x-if="rub(p.qid).acceptable_alternatives">
                       <div class="rub-note"><b>Acceptable alternatives:</b> <span x-text="rub(p.qid).acceptable_alternatives"></span></div>
-                    </template>
-                    <template x-if="rub(p.qid).ceiling_note">
-                      <div class="rub-note"><b>Ceiling:</b> <span x-text="rub(p.qid).ceiling_note"></span></div>
                     </template>
                     <template x-if="rub(p.qid).note">
                       <div class="rub-note rub-note-rev"><b>Reviewer note:</b> <span x-text="rub(p.qid).note"></span></div>
@@ -605,9 +658,6 @@
                             <option value="correctness">correctness</option>
                             <option value="completeness">completeness</option>
                           </select>
-                          <select class="edit-field" x-model.number="ln.weight" style="width:auto">
-                            <option :value="2">w2</option><option :value="1">w1</option>
-                          </select>
                           <label class="rub-ck"><input type="checkbox"
                             :checked="ln.knowable_at_report!==false"
                             @change="ln.knowable_at_report=$event.target.checked"> knowable@report</label>
@@ -623,8 +673,6 @@
                     <button class="btn" @click="addRubricLine(p.qid)">+ Add line</button>
                     <label class="rub-elbl">Acceptable alternatives</label>
                     <textarea class="edit-field" rows="2" x-model="rubEdits[p.qid].acceptable_alternatives"></textarea>
-                    <label class="rub-elbl">Ceiling note</label>
-                    <textarea class="edit-field" rows="2" x-model="rubEdits[p.qid].ceiling_note"></textarea>
                     <label class="rub-elbl">Reviewer note</label>
                     <textarea class="edit-field" rows="2" x-model="rubEdits[p.qid].note"></textarea>
                     <div class="rub-ebtns">
@@ -864,6 +912,7 @@ function app() {
     searchQ: '', filterRepo: '', filterKnowledge: '', filterResolution: '',
     selected: null, rawOpen: false,
     editMode: false, edit: {}, saving: false, saveMsg: '', reloading: false,
+    rawJsonMode: false, rawJson: '', rawJsonErr: '',
     rubEdits: {}, rubMsg: {},
     isDark: document.documentElement.classList.contains('dark'),
 
@@ -955,6 +1004,14 @@ function app() {
           answerer_role:       s.answerer_role || 'maintainer',
           artifacts_needed:    [...(s.artifacts_needed || [])],
           hard_facts:          JSON.parse(JSON.stringify(s.hard_facts || {})),
+          qa_pairs:            JSON.parse(JSON.stringify(s.qa_pairs || [])),
+          // arbitrary top-level meta, sent under `fields`
+          title:               s.title || '',
+          question_author:     s.question_author || '',
+          answer_author:       s.answer_author || '',
+          reporter:            s.reporter || '',
+          state:               s.state || '',
+          labels:              [...(s.labels || [])],
         };
         this.rawOpen = true;   // editing touches raw-section fields
       }
@@ -967,10 +1024,23 @@ function app() {
     async saveEdits() {
       this.saving = true; this.saveMsg = '';
       try {
+        const e = this.edit;
+        const body = {
+          qa_summary: e.qa_summary, security_topic: e.security_topic,
+          human_note: e.human_note, question_comment_id: e.question_comment_id,
+          answer_comment_id: e.answer_comment_id, answerer_role: e.answerer_role,
+          artifacts_needed: e.artifacts_needed, hard_facts: e.hard_facts,
+          qa_pairs: e.qa_pairs,
+          fields: {
+            title: e.title, question_author: e.question_author,
+            answer_author: e.answer_author, reporter: e.reporter,
+            state: e.state, labels: e.labels,
+          },
+        };
         const resp = await fetch(`/api/benchmark/records/${this.selected.index}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(this.edit),
+          body: JSON.stringify(body),
         });
         if (!resp.ok) throw new Error(await resp.text());
         this.selected = await fetch(`/api/benchmark/records/${this.selected.index}`).then(r => r.json());
@@ -980,6 +1050,39 @@ function app() {
         setTimeout(() => { this.saveMsg = ''; }, 2000);
       } catch (e) {
         this.saveMsg = `Error: ${e.message}`;
+      } finally {
+        this.saving = false;
+      }
+    },
+
+    // ── Raw full-record JSON editor (edit ANY field at the final stage) ──
+    startRawJson() {
+      const clean = { ...this.selected };
+      delete clean.index; delete clean.rubrics;
+      this.rawJson = JSON.stringify(clean, null, 2);
+      this.rawJsonErr = '';
+      this.rawJsonMode = true;
+    },
+    cancelRawJson() { this.rawJsonMode = false; this.rawJsonErr = ''; },
+    async saveRawJson() {
+      let parsed;
+      try { parsed = JSON.parse(this.rawJson); }
+      catch (err) { this.rawJsonErr = `Invalid JSON: ${err.message}`; return; }
+      this.saving = true; this.rawJsonErr = '';
+      try {
+        const resp = await fetch(`/api/benchmark/records/${this.selected.index}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ full: parsed }),
+        });
+        if (!resp.ok) throw new Error(await resp.text());
+        this.selected = await fetch(`/api/benchmark/records/${this.selected.index}`).then(r => r.json());
+        await this.loadList();
+        this.rawJsonMode = false;
+        this.saveMsg = 'Saved (raw)';
+        setTimeout(() => { this.saveMsg = ''; }, 2000);
+      } catch (err) {
+        this.rawJsonErr = `Error: ${err.message}`;
       } finally {
         this.saving = false;
       }
@@ -1002,14 +1105,13 @@ function app() {
       this.rubEdits[qid] = {
         rubric: JSON.parse(JSON.stringify(r.rubric || [])),
         acceptable_alternatives: r.acceptable_alternatives || '',
-        ceiling_note: r.ceiling_note || '',
         note: r.note || '',
       };
       this.rubMsg[qid] = '';
     },
     addRubricLine(qid) {
       this.rubEdits[qid].rubric.push({
-        text: '', axis: 'completeness', weight: 1,
+        text: '', axis: 'completeness',
         source_loc: 'gold_answer', source_quote: '', knowable_at_report: true,
       });
     },
@@ -1023,9 +1125,8 @@ function app() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             qid, status,
-            rubric: e.rubric.map(l => ({ ...l, weight: Number(l.weight) })),
+            rubric: e.rubric,
             acceptable_alternatives: e.acceptable_alternatives,
-            ceiling_note: e.ceiling_note,
             note: e.note,
           }),
         });
