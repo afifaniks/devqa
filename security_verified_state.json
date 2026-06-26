@@ -4133,5 +4133,255 @@
     "status": "accepted",
     "note": "unintended OpenAI API usage due to default LLM fallback in hierarchical process; fixed in 0.5.3 via manager_llm attribute correction, resolving cross-provider routing and quota leakage issue.",
     "verified_at": "2026-06-26T02:57:07.239312Z"
+  },
+  "open-webui/open-webui/issue/26244": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:11:39.498580Z"
+  },
+  "open-webui/open-webui/issue/25975": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:11:56.046002Z"
+  },
+  "open-webui/open-webui/issue/25920": {
+    "status": "accepted",
+    "note": "access-control vulnerability; recursive folder deletion bypassed chat.delete permission; maintainer-confirmed fix in dev branch",
+    "verified_at": "2026-06-26T16:12:13.811346Z"
+  },
+  "open-webui/open-webui/issue/25898": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:12:36.378353Z"
+  },
+  "open-webui/open-webui/issue/25496": {
+    "status": "accepted",
+    "note": "event-listener cleanup bug in shared socket; off(event) removes all listeners causing cross-instance interference; fixed via handler-bound off() pattern",
+    "verified_at": "2026-06-26T16:12:59.539826Z"
+  },
+  "open-webui/open-webui/issue/24992": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:26:02.117052Z"
+  },
+  "open-webui/open-webui/issue/24940": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:26:33.316589Z"
+  },
+  "open-webui/open-webui/issue/24893": {
+    "status": "accepted",
+    "note": "access control bypass via workspace model referencing private base model; prior security bug fixed; now enforces base-model permission inheritance",
+    "verified_at": "2026-06-26T16:26:51.933911Z"
+  },
+  "open-webui/open-webui/issue/24869": {
+    "status": "accepted",
+    "note": "workspace model access control regression; private base model dependency causes \"model not found\"; confirmed via issues #24829 and #23946",
+    "verified_at": "2026-06-26T16:27:11.894920Z"
+  },
+  "open-webui/open-webui/issue/24758": {
+    "status": "accepted",
+    "note": "tool-call reconstruction bug; KB rewrite/interrupted execution causes missing function_call_output; orphan tool_calls lead to provider validation failures; handled via convert_output_to_messages cleanup",
+    "verified_at": "2026-06-26T16:27:34.830270Z"
+  },
+  "open-webui/open-webui/issue/24751": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:27:59.945310Z"
+  },
+  "open-webui/open-webui/issue/24730": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:28:12.511024Z"
+  },
+  "open-webui/open-webui/issue/24714": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:28:22.019731Z"
+  },
+  "open-webui/open-webui/issue/24620": {
+    "status": "accepted",
+    "note": "MCP server trust boundary; user-supplied MCP treated as code-execution/exfiltration surface; admin gating required by design due to capability exposure (stdio, persistent sessions)",
+    "verified_at": "2026-06-26T16:29:11.032021Z"
+  },
+  "open-webui/open-webui/issue/24618": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:29:22.368836Z"
+  },
+  "open-webui/open-webui/issue/24565": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:29:31.128239Z"
+  },
+  "open-webui/open-webui/issue/24431": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:29:38.608506Z"
+  },
+  "open-webui/open-webui/issue/24348": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:29:45.726759Z"
+  },
+  "open-webui/open-webui/issue/24311": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:30:02.549217Z"
+  },
+  "open-webui/open-webui/issue/24168": {
+    "status": "accepted",
+    "note": "workspace model access control bug; indirect exposure of private base model via workspace model; known security issue fixed; enforce base-model permission inheritance",
+    "verified_at": "2026-06-26T16:30:17.799585Z"
+  },
+  "open-webui/open-webui/issue/24129": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:30:45.629153Z"
+  },
+  "open-webui/open-webui/issue/24096": {
+    "status": "accepted",
+    "note": "share-link authorization regression; chat_id vs share_id mismatch caused inconsistent access control; fixed in commit cde21b9f6dc11575a668484f42440824ec5a4fae",
+    "verified_at": "2026-06-26T16:31:08.160426Z"
+  },
+  "open-webui/open-webui/issue/23755": {
+    "status": "accepted",
+    "note": "SSL verification bypass configuration inconsistency; AIOHTTP_CLIENT_SESSION_SSL not applied consistently across urllib/websocket/aiohttp in ComfyUI integration; fix unifies SSL context handling",
+    "verified_at": "2026-06-26T16:31:38.511570Z"
+  },
+  "open-webui/open-webui/issue/23703": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:32:32.562410Z"
+  },
+  "open-webui/open-webui/issue/23406": {
+    "status": "accepted",
+    "note": "model visibility access control gap; client-side cache allows stale access after model becomes private; requires server-side authorization (403) enforcement and/or model update invalidation",
+    "verified_at": "2026-06-26T16:33:04.044124Z"
+  },
+  "open-webui/open-webui/issue/23400": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:33:20.219708Z"
+  },
+  "open-webui/open-webui/issue/23343": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:33:32.910169Z"
+  },
+  "open-webui/open-webui/issue/23175": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:33:40.201979Z"
+  },
+  "open-webui/open-webui/issue/23134": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:33:48.245636Z"
+  },
+  "open-webui/open-webui/issue/22965": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:34:05.006653Z"
+  },
+  "open-webui/open-webui/issue/22580": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:34:16.106023Z"
+  },
+  "open-webui/open-webui/issue/22526": {
+    "status": "accepted",
+    "note": "MCP tool output indirect prompt injection; untrusted tool data enters model context leading to instruction hijacking risk; aligns with OWASP Agentic AI Top 10 (goal hijack) and MCP CVE cluster; requires output isolation/mitigation",
+    "verified_at": "2026-06-26T16:34:56.523316Z"
+  },
+  "open-webui/open-webui/issue/22505": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:35:09.143645Z"
+  },
+  "open-webui/open-webui/issue/22217": {
+    "status": "accepted",
+    "note": "tool system is trusted-user only; tools execute arbitrary python code and can access filesystem including uploads; access must be restricted to admins/trusted users to prevent cross-user data exposure",
+    "verified_at": "2026-06-26T16:35:32.982004Z"
+  },
+  "open-webui/open-webui/issue/22206": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:35:51.076591Z"
+  },
+  "open-webui/open-webui/issue/21349": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:36:00.328375Z"
+  },
+  "open-webui/open-webui/issue/21348": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:36:10.571197Z"
+  },
+  "open-webui/open-webui/issue/20701": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:36:18.497671Z"
+  },
+  "open-webui/open-webui/issue/20641": {
+    "status": "accepted",
+    "note": "tool access control fix; builtin tools (including web search) can now be enabled/disabled per model via model editor; addresses native tool-calling tool availability control issue",
+    "verified_at": "2026-06-26T16:37:44.012550Z"
+  },
+  "open-webui/open-webui/issue/20595": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:37:58.127053Z"
+  },
+  "open-webui/open-webui/issue/20531": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:38:06.517981Z"
+  },
+  "open-webui/open-webui/issue/20048": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:38:17.759669Z"
+  },
+  "open-webui/open-webui/issue/19914": {
+    "status": "accepted",
+    "note": "authorization bypass in channels feature; global disable only affects UI visibility, not backend access control; users can still access /api/v1/channels/ and interact via direct URL/API calls",
+    "verified_at": "2026-06-26T16:38:43.217106Z"
+  },
+  "open-webui/open-webui/issue/19785": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:38:59.081038Z"
+  },
+  "open-webui/open-webui/issue/19778": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:39:08.122073Z"
+  },
+  "open-webui/open-webui/issue/19609": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:39:18.148176Z"
+  },
+  "open-webui/open-webui/issue/19556": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:39:34.537099Z"
+  },
+  "open-webui/open-webui/issue/19461": {
+    "status": "accepted",
+    "note": "Group model visibility/access-control inconsistency fixed in commit 69722ba9; affects private model visibility in group write contexts and /api/v1/models/list; fix targeted for .41 release; testing pending",
+    "verified_at": "2026-06-26T16:39:53.373552Z"
+  },
+  "open-webui/open-webui/issue/19360": {
+    "status": "accepted",
+    "note": "Cloned prompts/tools lose or reset access_control; prompts may incorrectly default to public or null permissions instead of inheriting original ACL; leads to potential unintended exposure; tools correctly default to private but inconsistency indicates access-control inheritance bug",
+    "verified_at": "2026-06-26T16:40:15.678377Z"
+  },
+  "open-webui/open-webui/issue/19328": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:40:39.741552Z"
   }
 }
