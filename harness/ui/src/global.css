@@ -4,11 +4,27 @@
 
 body {
   background:
-    radial-gradient(1100px 560px at 82% -12%, #16203660 0%, transparent 60%),
-    var(--mantine-color-dark-8);
+    radial-gradient(1100px 560px at 82% -12%,
+      light-dark(#4084fb12, #16203660) 0%, transparent 60%),
+    var(--mantine-color-body);
 }
 
 .mono { font-family: var(--mantine-font-family-monospace); }
+
+/* Accent colors that stay readable in both schemes: a deep shade on light
+   backgrounds, a bright shade on dark. Use via c="var(--c-azure)" / icon color. */
+:root {
+  --c-azure: light-dark(var(--mantine-color-azure-7), var(--mantine-color-azure-4));
+  --c-teal:  light-dark(var(--mantine-color-teal-8),  var(--mantine-color-teal-4));
+  --c-grape: light-dark(var(--mantine-color-grape-7), var(--mantine-color-grape-4));
+  --c-red:   light-dark(var(--mantine-color-red-7),   var(--mantine-color-red-5));
+  --c-green: light-dark(var(--mantine-color-green-9), var(--mantine-color-green-5));
+}
+
+/* Default "dimmed" is too washed out on white — deepen it for light mode only. */
+[data-mantine-color-scheme="light"] {
+  --mantine-color-dimmed: var(--mantine-color-gray-7);
+}
 
 /* Verdict spine — a 3px colored edge on a run card. */
 .verdict-spine { position: relative; }
@@ -16,7 +32,7 @@ body {
   content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
   border-top-left-radius: var(--mantine-radius-md);
   border-bottom-left-radius: var(--mantine-radius-md);
-  background: var(--spine-color, var(--mantine-color-dark-4));
+  background: var(--spine-color, var(--mantine-color-default-border));
 }
 
 /* Clamp long text to N lines (set --lines inline). */
@@ -32,24 +48,24 @@ body {
 .cmp {
   overflow: auto;
   max-height: calc(100vh - 230px);
-  border: 1px solid var(--mantine-color-dark-4);
+  border: 1px solid var(--mantine-color-default-border);
   border-radius: var(--mantine-radius-md);
-  background: var(--mantine-color-dark-7);
+  background: var(--mantine-color-body);
 }
 .cmp-grid { min-width: max-content; }
-.cmp-row { display: grid; border-bottom: 1px solid var(--mantine-color-dark-4); }
+.cmp-row { display: grid; border-bottom: 1px solid var(--mantine-color-default-border); }
 .cmp-row:last-child { border-bottom: none; }
 .cmp-head {
   position: sticky; top: 0; z-index: 3;
-  background: var(--mantine-color-dark-6);
+  background: var(--mantine-color-default);
 }
 .cmp-cell {
   padding: 11px 13px; min-width: 0; overflow: hidden;
-  border-left: 1px solid var(--mantine-color-dark-4);
+  border-left: 1px solid var(--mantine-color-default-border);
 }
 .cmp-cell:first-child { border-left: none; }
 .cmp-qcell { cursor: pointer; }
-.cmp-qcell:hover { background: var(--mantine-color-dark-6); }
+.cmp-qcell:hover { background: var(--mantine-color-default-hover); }
 .cmp-detail { grid-column: 1 / -1; border-left: none; }
 
 @media (prefers-reduced-motion: reduce) {

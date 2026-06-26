@@ -13,7 +13,7 @@ export function FilterBar({ f, set, repos }) {
           data={[
             { value: "all", label: "all" },
             { value: "parametric", label: "parametric" },
-            { value: "grounded", label: "grounded" },
+            { value: "grounded", label: "contextual" },
           ]}
         />
         <Select

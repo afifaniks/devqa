@@ -31,6 +31,12 @@ export const ROLE_COLOR = {
 
 export const KT_COLOR = { grounded: "teal", parametric: "violet" };
 
+// The "grounded" knowledge type is surfaced to readers as "contextual" (the data
+// value stays "grounded" — eval/grading depend on it). Use ktLabel() everywhere a
+// knowledge_type is shown.
+export const KT_LABEL = { grounded: "contextual", parametric: "parametric" };
+export const ktLabel = kt => KT_LABEL[kt] || kt || "";
+
 // Flatten a hard_facts dict to [{field, label, value, isId}] chips.
 export function hardFactChips(hf) {
   const out = [];
@@ -44,3 +50,31 @@ export function hardFactChips(hf) {
 
 export const totalHardFacts = hf =>
   Object.values(hf || {}).reduce((a, v) => a + (v?.length || 0), 0);
+
+// A rubric criterion's source_loc is an internal provenance token
+// (e.g. "answer_reply", "fix_diff:coders/heic.c"). Turn it into something a reader
+// understands, and flag whether the quoted span is *external evidence* (artifact the
+// reader can't see elsewhere on the page) vs. text already shown in the gold answer.
+const SOURCE_LABEL = {
+  answer_reply: "Maintainer's answer",
+  gold_answer: "Gold answer",
+  hard_facts: "Verified fact",
+  fix_diff: "Fix diff",
+  commit: "Commit",
+  advisory: "Advisory",
+  issues: "Issue thread",
+  prs: "PR thread",
+};
+// kinds whose quoted span duplicates the gold answer already rendered above
+const ANSWER_SIDE = new Set(["answer_reply", "gold_answer"]);
+
+export function sourceInfo(loc) {
+  const raw = String(loc || "").trim();
+  const [kind, ...rest] = raw.split(":");
+  const detail = rest.join(":").trim();
+  const base = SOURCE_LABEL[kind] || kind || "source";
+  return {
+    label: detail ? `${base} · ${detail}` : base,
+    external: !ANSWER_SIDE.has(kind) && !!kind,   // true → show quote as evidence
+  };
+}

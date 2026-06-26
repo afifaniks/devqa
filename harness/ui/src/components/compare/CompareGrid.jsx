@@ -2,6 +2,7 @@ import { Group, Badge, Text, Box, Code, Paper, SimpleGrid } from "@mantine/core"
 import { IconChevronRight, IconChevronDown } from "@tabler/icons-react";
 import { VERDICT_COLOR } from "../../theme.js";
 import { outcomeOf } from "../../lib/outcomes.js";
+import { ktLabel } from "../../lib/benchmark.js";
 import { FactChips } from "../FactChips.jsx";
 import { DetailColumn } from "./DetailColumn.jsx";
 
@@ -36,10 +37,10 @@ function Row({ row, runs, cols, open, onToggle }) {
         <Box className="cmp-cell cmp-qcell" onClick={onToggle}>
           <Group gap={6} wrap="nowrap" align="center">
             {open ? <IconChevronDown size={14} /> : <IconChevronRight size={14} />}
-            <Text ff="monospace" size="xs" c="azure.3" style={{ wordBreak: "break-all" }}>{row.qid}</Text>
+            <Text ff="monospace" size="xs" c="var(--c-azure)" style={{ wordBreak: "break-all" }}>{row.qid}</Text>
           </Group>
           <Group gap={8} mt={4}>
-            {row.knowledge_type && <Text size="xs" c="dimmed">{row.knowledge_type}</Text>}
+            {row.knowledge_type && <Text size="xs" c="dimmed">{ktLabel(row.knowledge_type)}</Text>}
             {row.repo && <Text size="xs" c="dimmed">{row.repo}</Text>}
             {!row.in_corpus && <Text size="xs" c="yellow.5">not in corpus</Text>}
           </Group>
@@ -53,18 +54,18 @@ function Row({ row, runs, cols, open, onToggle }) {
       {open && (
         <div className="cmp-row">
           <Box className="cmp-detail" p="md">
-            <Paper withBorder p="sm" radius="md" bg="dark.6" mb="sm">
+            <Paper withBorder p="sm" radius="md" bg="var(--mantine-color-default)" mb="sm">
               <Text size="xs" tt="uppercase" fw={600} c="dimmed" mb={6}>Question</Text>
               <Code block style={pre}>{row.question || "(not in corpus)"}</Code>
             </Paper>
             {row.gold_answer && (
-              <Paper withBorder p="sm" radius="md" bg="dark.6" mb="sm">
+              <Paper withBorder p="sm" radius="md" bg="var(--mantine-color-default)" mb="sm">
                 <Text size="xs" tt="uppercase" fw={600} c="dimmed" mb={6}>Gold answer (maintainer)</Text>
                 <Code block style={pre}>{row.gold_answer}</Code>
                 <FactChips facts={row.hard_facts} />
                 {row.grounding_sources?.length > 0 && (
                   <Text size="xs" c="dimmed" ff="monospace" mt={6}>
-                    grounded in: {row.grounding_sources.join(", ")}
+                    based on: {row.grounding_sources.join(", ")}
                   </Text>
                 )}
               </Paper>

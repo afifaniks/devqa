@@ -6,11 +6,12 @@ import { IconChevronRight, IconChevronDown } from "@tabler/icons-react";
 import { api } from "../api.js";
 import { VERDICT_COLOR } from "../theme.js";
 import { claimColor } from "../lib/outcomes.js";
+import { ktLabel } from "../lib/benchmark.js";
 import { FactChips } from "./FactChips.jsx";
 
 function Panel({ title, action, children }) {
   return (
-    <Paper bg="dark.6" p="sm" radius="sm" withBorder>
+    <Paper bg="var(--mantine-color-default)" p="sm" radius="sm" withBorder>
       <Group justify="space-between" mb={6}>
         <Text size="xs" tt="uppercase" fw={600} c="dimmed" lh={1}>{title}</Text>
         {action}
@@ -35,11 +36,11 @@ export function RunItem({ run, it }) {
   };
 
   return (
-    <Box style={{ borderBottom: "1px solid var(--mantine-color-dark-4)" }}>
+    <Box style={{ borderBottom: "1px solid var(--mantine-color-default-border)" }}>
       <Group gap="sm" px="md" py="sm" wrap="wrap"
              style={{ cursor: "pointer" }} onClick={() => setOpen(o => !o)}>
         {open ? <IconChevronDown size={14} /> : <IconChevronRight size={14} />}
-        <Text ff="monospace" size="xs" c="azure.3">{it.qid}</Text>
+        <Text ff="monospace" size="xs" c="var(--c-azure)">{it.qid}</Text>
         {it.outcome && (
           <Badge size="sm" variant="light" color={VERDICT_COLOR[it.outcome] || "gray"}>
             {it.outcome}
@@ -47,7 +48,7 @@ export function RunItem({ run, it }) {
         )}
         {it.hallucinated && <Badge size="sm" variant="light" color="pink">hallucinated</Badge>}
         {it.error && <Badge size="sm" variant="light" color="red">error</Badge>}
-        <Text size="xs" c="dimmed">{it.knowledge_type}</Text>
+        <Text size="xs" c="dimmed">{ktLabel(it.knowledge_type)}</Text>
         {it.n_tool_calls != null && <Text size="xs" c="dimmed">{it.n_tool_calls} tool calls</Text>}
         {it.runtime_secs != null && <Text size="xs" c="dimmed">{it.runtime_secs}s</Text>}
         <Text size="xs" c="dimmed" ml="auto">{it.chars} chars</Text>
@@ -94,7 +95,7 @@ export function RunItem({ run, it }) {
               {transcript ? (
                 <Stack gap={4}>
                   {(transcript.transcript || []).map((s, i) => (
-                    <Box key={i} pl="sm" style={{ borderLeft: "2px solid var(--mantine-color-dark-3)" }}>
+                    <Box key={i} pl="sm" style={{ borderLeft: "2px solid var(--mantine-color-default-border)" }}>
                       <Text ff="monospace" size="xs" fw={600}>
                         #{s.step} {s.type === "tool" ? `${s.tool} ${JSON.stringify(s.args)}` : s.type}
                       </Text>

@@ -13,12 +13,11 @@ const PAGE_SIZE = 25;
 // The released benchmark, browsable: a dataset overview + filterable list of QA pairs;
 // clicking a row opens a full detail/reading view. The data is static, so it's fetched
 // once (not polled).
-export function BenchmarkView() {
+export function BenchmarkView({ openSlug, onOpen, onCloseDetail }) {
   const [data, setData] = useState(null);
   const [err, setErr] = useState(null);
   const [filters, setFilters] = useState(EMPTY);
   const [page, setPage] = useState(1);
-  const [openQid, setOpenQid] = useState(null);
 
   useEffect(() => {
     api.benchmark().then(setData).catch(e => setErr(String(e.message || e)));
@@ -43,9 +42,9 @@ export function BenchmarkView() {
   const pageCount = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const pageItems = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
-  if (openQid) return <BenchmarkDetail qid={openQid} onBack={() => setOpenQid(null)} />;
+  if (openSlug) return <BenchmarkDetail slug={openSlug} onBack={onCloseDetail} />;
 
-  if (err) return <Text c="red.4" ta="center" py="xl">{err}</Text>;
+  if (err) return <Text c="var(--c-red)" ta="center" py="xl">{err}</Text>;
   if (!data) return <Center py={60}><Loader /></Center>;
 
   return (
@@ -57,7 +56,7 @@ export function BenchmarkView() {
       <BenchmarkFilters f={filters} set={setF} facets={data.facets} />
 
       <SectionLabel count={`${filtered.length} of ${data.count}`}>QA pairs</SectionLabel>
-      <BenchmarkTable items={pageItems} onOpen={setOpenQid} />
+      <BenchmarkTable items={pageItems} onOpen={onOpen} />
 
       {pageCount > 1 && (
         <Group justify="center" mt="md">

@@ -1,17 +1,42 @@
 import { useEffect, useState } from "react";
 import {
   AppShell, Group, Tabs, Text, Badge, Box, Container, Indicator,
+  ActionIcon, useMantineColorScheme, useComputedColorScheme, Tooltip,
 } from "@mantine/core";
-import { IconFlask, IconActivity, IconColumns3, IconDatabase } from "@tabler/icons-react";
+import {
+  IconFlask, IconActivity, IconColumns3, IconDatabase, IconSun, IconMoon,
+} from "@tabler/icons-react";
 import { usePolling } from "./hooks/usePolling.js";
+import { useHashRoute } from "./hooks/useHashRoute.js";
 import { api } from "./api.js";
 import { MonitorView } from "./components/MonitorView.jsx";
 import { CompareView } from "./components/compare/CompareView.jsx";
 import { BenchmarkView } from "./components/benchmark/BenchmarkView.jsx";
 
+function ColorSchemeToggle() {
+  const { setColorScheme } = useMantineColorScheme();
+  const computed = useComputedColorScheme("dark", { getInitialValueInEffect: true });
+  const dark = computed === "dark";
+  return (
+    <Tooltip label={dark ? "Switch to light" : "Switch to dark"} openDelay={300}>
+      <ActionIcon
+        variant="default" size="md" radius="md"
+        aria-label="Toggle color scheme"
+        onClick={() => setColorScheme(dark ? "light" : "dark")}
+      >
+        {dark ? <IconSun size={16} /> : <IconMoon size={16} />}
+      </ActionIcon>
+    </Tooltip>
+  );
+}
+
 export function App() {
-  const [tab, setTab] = useState("benchmark");
+  const { route, navigate } = useHashRoute();
+  const tab = route.tab;
   const [options, setOptions] = useState({});
+
+  const goTab = t => navigate({ tab: t });
+  const openSlug = slug => navigate({ tab: "benchmark", slug });
 
   // Options change rarely — fetch once. Runs + procs poll live and are shared
   // with both the header stats and the Monitor view.
@@ -31,19 +56,19 @@ export function App() {
       <AppShell.Header
         withBorder
         style={{
-          background: "rgba(20,24,33,.82)",
+          background: "light-dark(rgba(255,255,255,.82), rgba(20,24,33,.82))",
           backdropFilter: "blur(10px)",
         }}
       >
         <Group h="100%" px="md" gap="lg" wrap="nowrap">
           <Group gap={8} wrap="nowrap">
-            <IconFlask size={20} color="var(--mantine-color-azure-4)" />
+            <IconFlask size={20} color="var(--c-azure)" />
             <Text fw={600} style={{ letterSpacing: ".2px" }}>
-              SecDevQA <Text span c="azure.4" fw={700}>harness</Text>
+              SecDevQA <Text span c="var(--c-azure)" fw={700}>harness</Text>
             </Text>
           </Group>
 
-          <Tabs value={tab} onChange={setTab} variant="default">
+          <Tabs value={tab} onChange={goTab} variant="default">
             <Tabs.List style={{ borderBottom: "none" }}>
               <Tabs.Tab value="benchmark" leftSection={<IconDatabase size={15} />}>
                 Benchmark
@@ -74,6 +99,7 @@ export function App() {
               approved /{" "}
               <Text span ff="monospace">{totals.items_total ?? "…"}</Text> total
             </Text>
+            <ColorSchemeToggle />
           </Group>
         </Group>
       </AppShell.Header>
@@ -81,7 +107,11 @@ export function App() {
       <AppShell.Main>
         <Container size={1500} py="lg" px="md">
           <Box display={tab === "benchmark" ? "block" : "none"}>
-            <BenchmarkView />
+            <BenchmarkView
+              openSlug={route.slug}
+              onOpen={openSlug}
+              onCloseDetail={() => navigate({ tab: "benchmark" })}
+            />
           </Box>
           <Box display={tab === "monitor" ? "block" : "none"}>
             <MonitorView

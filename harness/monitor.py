@@ -50,6 +50,10 @@ ROOT = Path(__file__).parent.parent
 OUTPUT_DIR = ROOT / "harness" / "output"
 LOGS_DIR = OUTPUT_DIR / "logs"
 PAIRS_FILE = ROOT / "dataset" / "security_benchmark_final.jsonl"
+# The released benchmark: accepted-rubric qa_pairs only, rubric embedded
+# (dataset/build_release.py). The browse page serves this when present; the eval
+# corpus (grading/compare) still reads the full PAIRS_FILE.
+RELEASE_FILE = ROOT / "dataset" / "security_benchmark_release.jsonl"
 MODELS_CONFIG = Path(__file__).parent / "models.json"   # launcher dropdown suggestions
 UI_DIR = Path(__file__).parent / "ui"          # Vite project (source)
 DIST_DIR = UI_DIR / "dist"                      # built bundle served in production
@@ -92,6 +96,11 @@ def read_jsonl(path: Path) -> list[dict]:
     return out
 
 
+def benchmark_source() -> Path:
+    """The released benchmark when it has been built, else the full corpus."""
+    return RELEASE_FILE if RELEASE_FILE.exists() else PAIRS_FILE
+
+
 # Minimal fallback if models.json is missing or unreadable — the real lists live there.
 _MODELS_FALLBACK = {
     "model_suggestions": ["openai/gpt-5.4-mini", "anthropic/claude-sonnet-4-6",
@@ -114,9 +123,9 @@ def model_config() -> dict:
 
 
 def totals() -> dict:
-    # The released benchmark has no approval gate (it is final), so a missing
-    # `approved` field counts as approved.
-    threads = read_jsonl(PAIRS_FILE)
+    # Reflect the released benchmark the page browses (accepted-rubric qa_pairs only),
+    # not the full corpus. Missing `approved` counts as approved (release is final).
+    threads = read_jsonl(benchmark_source())
     return {
         "items_total": sum(len(t.get("qa_pairs") or [])
                            for t in threads if not t.get("error")),
@@ -271,11 +280,32 @@ def _nonempty_hard_facts(hf: dict) -> dict:
     return {k: v for k, v in (hf or {}).items() if v}
 
 
+def qa_slug(repo: str, number, qid: str) -> str:
+    """A readable, URL-safe id for one QA pair: ``owner_repo_<number>_q<k>``
+    (e.g. axios/axios/issue/6821#1 → axios_axios_6821_q1). Built from structured
+    fields, so the inverse is an unambiguous lookup, not string parsing."""
+    k = str(qid).split("#")[-1] if qid else ""
+    return f"{str(repo or '').replace('/', '_')}_{number}_q{k}"
+
+
+def _slug_to_qid() -> dict[str, str]:
+    """slug → canonical qid, scanned from the benchmark the page browses."""
+    out = {}
+    for t in read_jsonl(benchmark_source()):
+        if t.get("error"):
+            continue
+        for qa in t.get("qa_pairs") or []:
+            qid = qa.get("qid")
+            if qid:
+                out[qa_slug(t.get("repo"), t.get("number"), qid)] = qid
+    return out
+
+
 @app.get("/api/benchmark")
 def benchmark_list():
     """All QA pairs with the fields the list view needs, plus filter facets."""
     items, repos, artifacts, kinds = [], set(), set(), set()
-    for t in read_jsonl(PAIRS_FILE):
+    for t in read_jsonl(benchmark_source()):
         if t.get("error"):
             continue
         hf = _nonempty_hard_facts(t.get("hard_facts") or {})
@@ -285,7 +315,9 @@ def benchmark_list():
             artifacts.update(arts)
             kinds.add(qa.get("knowledge_type"))
             items.append({
+                "n_rubric": len(qa.get("rubric") or []),
                 "qid": qa.get("qid"),
+                "slug": qa_slug(t.get("repo"), t.get("number"), qa.get("qid")),
                 "repo": t.get("repo"),
                 "number": t.get("number"),
                 "url": t.get("url"),
@@ -314,15 +346,24 @@ def benchmark_list():
 
 
 @app.get("/api/benchmark/item")
-def benchmark_item(qid: str):
-    """Full detail for one QA pair: question/answer + thread metadata + comments."""
-    for t in read_jsonl(PAIRS_FILE):
+def benchmark_item(qid: str = None, slug: str = None):
+    """Full detail for one QA pair, addressed by canonical qid or readable slug
+    (owner_repo_<number>_q<k>)."""
+    if not qid and slug:
+        qid = _slug_to_qid().get(slug)
+    if not qid:
+        raise HTTPException(404, f"no QA pair for slug {slug!r}")
+    for t in read_jsonl(benchmark_source()):
         if t.get("error"):
             continue
         for qa in t.get("qa_pairs") or []:
             if qa.get("qid") != qid:
                 continue
             return {
+                "slug": qa_slug(t.get("repo"), t.get("number"), qid),
+                "rubric": qa.get("rubric") or [],
+                "acceptable_alternatives": qa.get("acceptable_alternatives") or [],
+                "rubric_note": qa.get("rubric_note") or "",
                 "qid": qid,
                 "repo": t.get("repo"), "number": t.get("number"), "url": t.get("url"),
                 "title": t.get("title"), "state": t.get("state"),

@@ -22,7 +22,7 @@ const q = encodeURIComponent;
 export const api = {
   options: () => request("/api/options"),
   benchmark: () => request("/api/benchmark"),
-  benchmarkItem: qid => request(`/api/benchmark/item?qid=${q(qid)}`),
+  benchmarkItem: slug => request(`/api/benchmark/item?slug=${q(slug)}`),
   runs: () => request("/api/runs"),
   runDetail: name => request(`/api/runs/${q(name)}`),
   deleteRun: name => request(`/api/runs/${q(name)}`, { method: "DELETE" }),

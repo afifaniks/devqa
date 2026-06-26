@@ -21,7 +21,7 @@ export function RunPicker({ runs, selected, onToggle }) {
               <Text ff="monospace" size="xs" fw={600} style={{ wordBreak: "break-all" }}>
                 {r.name}
               </Text>
-              {sel && <IconCheck size={15} color="var(--mantine-color-azure-4)" />}
+              {sel && <IconCheck size={15} color="var(--c-azure)" />}
             </Group>
             <Group gap={8}>
               <Text size="xs" c="dimmed">{r.model}</Text>

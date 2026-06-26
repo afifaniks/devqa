@@ -63,7 +63,7 @@ export function RunCard({ run, totals, open, onToggle, onDeleted }) {
         <Group gap="lg" ml="auto" wrap="wrap">
           <Text size="xs" c="dimmed">done <Text span fw={600} c="bright" ff="monospace">{run.n_done}</Text></Text>
           {run.n_errors > 0 && (
-            <Text size="xs" c="dimmed">errors <Text span fw={600} c="red.4" ff="monospace">{run.n_errors}</Text></Text>
+            <Text size="xs" c="dimmed">errors <Text span fw={600} c="var(--c-red)" ff="monospace">{run.n_errors}</Text></Text>
           )}
           <Text size="xs" c="dimmed">graded <Text span fw={600} c="bright" ff="monospace">{run.n_graded}</Text></Text>
           {run.n_graded > 0 && (
@@ -83,7 +83,7 @@ export function RunCard({ run, totals, open, onToggle, onDeleted }) {
           )}
           <Text size="xs" c="dimmed">{age(run.updated_secs_ago)}</Text>
 
-          {delErr && <Text size="xs" c="red.4" maw={220} truncate title={delErr}>{delErr}</Text>}
+          {delErr && <Text size="xs" c="var(--c-red)" maw={220} truncate title={delErr}>{delErr}</Text>}
           {deleting ? (
             <Loader size="xs" color="red" />
           ) : (
@@ -114,12 +114,12 @@ export function RunCard({ run, totals, open, onToggle, onDeleted }) {
 
       <Progress
         value={pct(run.n_done, totals.items_approved)}
-        size="xs" radius={0} color={run.running ? "azure" : "dark.3"}
+        size="xs" radius={0} color={run.running ? "azure" : "gray.5"}
         transitionDuration={500}
       />
 
       <Collapse in={open}>
-        <Box style={{ borderTop: "1px solid var(--mantine-color-dark-4)" }}>
+        <Box style={{ borderTop: "1px solid var(--mantine-color-default-border)" }}>
           {items.length === 0
             ? <Text size="sm" c="dimmed" ta="center" py="md">loading items…</Text>
             : items.map(it => <RunItem key={it.qid} run={run} it={it} />)}

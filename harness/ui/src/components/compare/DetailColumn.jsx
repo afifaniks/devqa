@@ -14,7 +14,7 @@ export function DetailColumn({ runName, cell, qidSlug }) {
 
   if (!cell) {
     return (
-      <Paper withBorder p="sm" radius="md" bg="dark.7">
+      <Paper withBorder p="sm" radius="md" bg="var(--mantine-color-default)">
         <Text ff="monospace" size="xs" fw={600} mb={6}>{runName}</Text>
         <Text size="xs" c="dimmed" fs="italic">— not answered in this run —</Text>
       </Paper>
@@ -28,7 +28,7 @@ export function DetailColumn({ runName, cell, qidSlug }) {
   };
 
   return (
-    <Paper withBorder p="sm" radius="md" bg="dark.7">
+    <Paper withBorder p="sm" radius="md" bg="var(--mantine-color-default)">
       <Text ff="monospace" size="xs" fw={600} mb={8}>{runName}</Text>
 
       <Group gap={6} mb={8}>
@@ -85,7 +85,7 @@ export function DetailColumn({ runName, cell, qidSlug }) {
           {tr && (
             <Stack gap={4}>
               {(tr.transcript || []).map((s, i) => (
-                <Box key={i} pl="sm" style={{ borderLeft: "2px solid var(--mantine-color-dark-3)" }}>
+                <Box key={i} pl="sm" style={{ borderLeft: "2px solid var(--mantine-color-default-border)" }}>
                   <Text ff="monospace" size="xs" fw={600}>
                     #{s.step} {s.type === "tool" ? `${s.tool} ${JSON.stringify(s.args)}` : s.type}
                   </Text>

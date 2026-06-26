@@ -12,8 +12,10 @@ const azure = [
 
 export const theme = createTheme({
   primaryColor: "azure",
-  primaryShade: 5,
+  // Light mode needs a deeper shade to read on white; dark mode stays bright.
+  primaryShade: { light: 7, dark: 5 },
   colors: { azure },
+  autoContrast: true,
   fontFamily: "'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
   fontFamilyMonospace: "'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace",
   headings: { fontFamily: "'IBM Plex Sans', system-ui, sans-serif", fontWeight: "600" },

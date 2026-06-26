@@ -31,7 +31,7 @@ function StatCard({ p }) {
         { value: pct1(p.partial / p.graded), color: "yellow" },
         { value: pct1(p.incorrect / p.graded), color: "red" },
       ]
-    : [{ value: 100, color: "dark.4" }];
+    : [{ value: 100, color: "gray.3" }];
 
   return (
     <Paper withBorder p="md" radius="md">
