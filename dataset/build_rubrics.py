@@ -58,27 +58,37 @@ MAX_RUBRIC_CRITERIA = 5
 # --- shared base: identical for every item, condition-independent ---------------
 SYSTEM_BASE = """You are a security engineer writing a grading rubric for one developer security question.
 
-The rubric is a short checklist of things a good answer should get right. Later, a judge takes a candidate answer and marks each item met, partly met, or missed. Your job is to write those items.
+The rubric is a short checklist of things a good and correct answer should get right. 
+Later, a judge takes a candidate answer and marks each item met, partly met, or missed. Your job is to write those items.
 
 Grade only what the answer adds:
 - The "answer" is the maintainer's reply plus whatever it leans on — a fix diff, an advisory, a fixed version, or the hard facts listed below.
 - If the reply is just a pointer ("fixed in #123", "see this advisory"), then the thing it points to is the answer. Grade that content.
-- The question and the rest of the thread are background. The candidate already has the question, so don't write an item that just repeats it. If the reporter already explained the bug and the maintainer only agreed, grade the agreement (the verdict), not the explanation.
+- The question and the rest of the thread are background. The candidate already has the question, so don't write an item that just repeats it. 
+If the reporter already explained the bug and the maintainer only agreed, grade the agreement (the verdict), not the explanation.
 
 Grade the conclusion, not the process:
-- Skip workflow. "We reproduced it", "a patch is coming", "merged", "will be released" — none of that is part of the answer.
+- Skip workflow and status entirely. None of these is ever an item, as correctness OR completeness:
+    * that the bug was reproduced, or "reproducible", or that a repro example/sandbox was provided;
+    * that a patch is coming / being prepared / merged / will be released / which branch it lands in;
+    * the release date, or that no release date is known;
+    * that a workaround is "temporary" or "until the next release", or that a fix is "permanent" — grade the workaround's technical content, never its temporary/permanent status;
+    * that the maintainer will coordinate with, contact, or notify anyone (GitHub Security, Snyk, a DB).
+  These describe how the work happened, not the security answer.
+- Don't smuggle that status back in as a TAIL on a good item. Keep each item to its technical claim and stop — do not append "...and confirms it was reproduced", "...and a patch was merged", or "...but doesn't know when it ships". State the security fact; drop the workflow clause.
 - By default, do NOT write a "this is a real bug" item. Most reports here come with the reporter's own analysis (a crash, a source-level NULL-deref, an overflow they found), and a maintainer agreeing is the expected, low-information outcome. Saying "yes, it's real" to such a report is not a graded skill — grade the technical substance instead (root cause, what a fix must do).
-- Add a verdict item ONLY as an exception: when the call was genuinely in doubt and a competent responder could reasonably have gone the other way — by-design, not-affected, intended behavior, disputed severity, won't-fix, or "this isn't actually exploitable." Then write it as the verdict ("correctly judges this is a real <type> bug, not by-design") — never as "reproduced it". If you can't name a plausible opposite conclusion, there is no verdict item.
+- Add a verdict item ONLY as an exception: when the call was genuinely in doubt and a competent responder could reasonably have gone the other way — by-design, not-affected, intended behavior, disputed severity, won't-fix, a false positive in a scanner/DB, or "this isn't actually exploitable." Then write it as the verdict ("correctly judges this is a real <type> bug, not by-design" / "correctly identifies this as a false positive") — never as "reproduced it". If you can't name a plausible opposite conclusion, there is no verdict item.
 
 Two kinds of items:
 - correctness — something that has to be right: the verdict, who is affected, the root cause, what a fix has to do. Getting one of these wrong should sink the answer.
 - completeness — extra depth a strong answer adds: the mechanism, a caveat, an alternative fix.
 This is just a label, not a score. Don't attach numbers.
 
-Keep items grounded and short:
+Keep items grounded, precise, and few:
 - Every item needs a real quote from the answer side (reply, diff, advisory, or hard facts) in "source_quote". If you can't quote it, don't write it. Never invent versions, CVEs, files, or behavior.
 - "text" is your plain restatement of the claim; "source_quote" is where it came from.
-- Write 1 to 5 items. A short answer gets a short rubric — that's fine. Don't pad.
+- One item = one idea that matters. When the answer is a single procedure with several mechanical steps (e.g. "add this manifest flag, create this folder, drop this config file, add these trust anchors"), do NOT make each step its own item — capture the essential security requirement in one item and let the steps live inside its text or in acceptable_alternatives. Splitting one fix into many near-duplicate items wrongly forces a candidate to hit every sub-step.
+- Write 1 to 5 items. A short answer gets a short rubric — that's fine. Don't pad. But never return an empty rubric: if the answer says anything substantive, at least one item must capture its core resolution claim.
 
 Also fill in "acceptable_alternatives": other answers that should still count as correct."""
 
@@ -87,6 +97,7 @@ COND_FIX_BEFORE = """This question is a "fix already existed" case.
 
 The fix was already in the repo when the question was asked, so this is really a "can you find it" task — and you are not shown the diff. Reward the answer for pointing to that existing fix.
 - Write one correctness item: identifies the existing fix (the PR, commit, or fixed version), taken from the hard facts or the reply.
+- The fix must be a DISTINCT resolving artifact — the PR/commit/version that fixed the bug. If the question already names a commit or version the reporter is running (the one they are reporting against), that is NOT the fix; never echo it back as "fixed in <that same commit/version>".
 - If the reply also explains the root cause, you may add one completeness item for that.
 - Don't ask the answer to reproduce or quote the patch — it isn't available to you.
 - Put close-enough answers (the right version, an accurate description of the change) in "acceptable_alternatives"."""
