@@ -44,6 +44,7 @@ from pydantic import BaseModel
 from harness.agent import condition_name as agent_condition_name
 from harness.answer import slugify
 from harness.external import AGENTS as EXTERNAL_AGENTS
+from harness.grade import DEFAULT_JUDGE as GRADE_DEFAULT_JUDGE
 from harness.tools import ALL_GROUPS
 
 ROOT = Path(__file__).parent.parent
@@ -99,6 +100,56 @@ def read_jsonl(path: Path) -> list[dict]:
 def benchmark_source() -> Path:
     """The released benchmark when it has been built, else the full corpus."""
     return RELEASE_FILE if RELEASE_FILE.exists() else PAIRS_FILE
+
+
+# --- Grades: one file per (run × judge) ------------------------------------
+# grades_<run>__judge-<slug>.jsonl, plus a legacy grades_<run>.jsonl from before
+# per-judge files existed. So a run can carry several gradings (one per judge).
+_JUDGE_SLUG_RE = re.compile(r"__judge-(.+)\.jsonl$")
+
+
+def grade_files(name: str) -> list[Path]:
+    """All grades files for a run, newest first."""
+    fs = list(OUTPUT_DIR.glob(f"grades_{name}__judge-*.jsonl"))
+    legacy = OUTPUT_DIR / f"grades_{name}.jsonl"
+    if legacy.exists():
+        fs.append(legacy)
+    return sorted(fs, key=lambda p: p.stat().st_mtime, reverse=True)
+
+
+def _slug_of(path: Path) -> str | None:
+    m = _JUDGE_SLUG_RE.search(path.name)
+    return m.group(1) if m else None
+
+
+def grading_summary(path: Path) -> dict:
+    outcomes: dict[str, int] = {}
+    judges: set[str] = set()
+    n = nh = nf = 0
+    for g in read_jsonl(path):
+        if g.get("error"):
+            continue
+        n += 1
+        outcomes[g.get("outcome", "?")] = outcomes.get(g.get("outcome", "?"), 0) + 1
+        nh += 1 if g.get("hallucinated") else 0
+        nf += 1 if g.get("flags") else 0
+        if g.get("judge_model"):
+            judges.add(g["judge_model"])
+    judge = "mixed" if len(judges) > 1 else (next(iter(judges)) if judges else None)
+    return {"slug": _slug_of(path), "judge_model": judge, "n_graded": n,
+            "outcomes": outcomes, "n_hallucinated": nh, "n_flagged": nf}
+
+
+def grades_for(name: str, judge: str | None = None) -> tuple[dict[str, dict], str | None]:
+    """(qid → grade record, judge-slug) for one run, choosing the requested judge
+    slug or the most recent grading."""
+    fs = grade_files(name)
+    if not fs:
+        return {}, None
+    chosen = next((p for p in fs if judge and _slug_of(p) == judge), fs[0])
+    grades = {g["qid"]: g for g in read_jsonl(chosen)
+              if g.get("qid") and not g.get("error")}
+    return grades, _slug_of(chosen)
 
 
 # Minimal fallback if models.json is missing or unreadable — the real lists live there.
@@ -159,15 +210,15 @@ def runs():
         name = path.stem.removeprefix("answers_")
         recs = read_jsonl(path)
         ok = [r for r in recs if not r.get("error")]
-        outcomes: dict[str, int] = {}
-        n_halluc = n_flags = n_graded = 0
-        for g in read_jsonl(OUTPUT_DIR / f"grades_{name}.jsonl"):
-            if g.get("error"):
-                continue
-            n_graded += 1
-            outcomes[g.get("outcome", "?")] = outcomes.get(g.get("outcome", "?"), 0) + 1
-            n_halluc += 1 if g.get("hallucinated") else 0
-            n_flags += 1 if g.get("flags") else 0
+        # Each run may have several gradings (one per judge). The default shown on the
+        # card is the most recent; the full list drives the per-run judge selector.
+        gradings = [grading_summary(p) for p in grade_files(name)]
+        default = gradings[0] if gradings else {}
+        outcomes = default.get("outcomes", {})
+        n_graded = default.get("n_graded", 0)
+        n_halluc = default.get("n_hallucinated", 0)
+        n_flags = default.get("n_flagged", 0)
+        judge_model = default.get("judge_model")
         tool_groups: dict[str, int] = {}
         for r in ok:
             for grp, n in (r.get("tool_calls_by_group") or {}).items():
@@ -181,6 +232,8 @@ def runs():
             "n_done": len(ok),
             "n_errors": len(recs) - len(ok),
             "n_graded": n_graded,
+            "judge_model": judge_model,
+            "gradings": gradings,
             "outcomes": outcomes,
             "n_hallucinated": n_halluc,
             "n_flagged": n_flags,
@@ -195,17 +248,15 @@ def runs():
 
 
 @app.get("/api/runs/{name}")
-def run_detail(name: str, tail: int = 50):
+def run_detail(name: str, tail: int = 50, judge: str | None = None):
     path = OUTPUT_DIR / f"answers_{name}.jsonl"
     if not path.exists():
         raise HTTPException(404, f"no run named {name}")
-    grades = {g["qid"]: g
-              for g in read_jsonl(OUTPUT_DIR / f"grades_{name}.jsonl")
-              if not g.get("error")}
+    grades, judge_slug = grades_for(name, judge)
     items = []
     for r in read_jsonl(path)[-tail:]:
         g = grades.get(r.get("qid"))
-        judge = (g or {}).get("judge") or {}   # legacy claim-based grades
+        legacy = (g or {}).get("judge") or {}   # legacy claim-based grades
         items.append({
             "qid": r.get("qid"),
             "qid_slug": str(r.get("qid", "")).replace("/", "__"),
@@ -224,12 +275,12 @@ def run_detail(name: str, tail: int = 50):
             "flags": (g or {}).get("flags"),
             "rubric_grades": (g or {}).get("rubric_grades"),
             "scores": (g or {}).get("scores"),
-            "hallucinations": (g or {}).get("hallucinations") or judge.get("hallucinations"),
-            "claims": judge.get("claims"),   # legacy fallback
+            "hallucinations": (g or {}).get("hallucinations") or legacy.get("hallucinations"),
+            "claims": legacy.get("claims"),   # legacy fallback
             "hard_facts": (g or {}).get("hard_facts"),
         })
     items.reverse()  # newest first
-    return {"name": name, "items": items}
+    return {"name": name, "items": items, "judge": judge_slug}
 
 
 # Run names are produced by slugify() + condition_name(): word chars, dot, dash only.
@@ -251,7 +302,7 @@ def delete_run(name: str):
         raise HTTPException(409, "run looks active (written within the last "
                                  f"{ACTIVE_SECS}s) — stop it before deleting")
     removed = []
-    for p in (answers, OUTPUT_DIR / f"grades_{name}.jsonl"):
+    for p in (answers, *grade_files(name)):   # all per-judge gradings + legacy
         if p.exists():
             p.unlink()
             removed.append(p.name)
@@ -424,14 +475,14 @@ def _gold_map() -> dict[str, dict]:
     return gold
 
 
-def _run_index(name: str) -> tuple[dict[str, dict], dict[str, dict]] | None:
-    """(answers-by-qid, grades-by-qid) for a run, or None if it doesn't exist."""
+def _run_index(name: str, judge: str | None = None) -> tuple[dict[str, dict], dict[str, dict]] | None:
+    """(answers-by-qid, grades-by-qid) for a run, or None if it doesn't exist.
+    Uses the requested judge's grading, else the most recent."""
     apath = OUTPUT_DIR / f"answers_{name}.jsonl"
     if not apath.exists():
         return None
     answers = {r["qid"]: r for r in read_jsonl(apath) if r.get("qid")}
-    grades = {g["qid"]: g for g in read_jsonl(OUTPUT_DIR / f"grades_{name}.jsonl")
-              if g.get("qid")}
+    grades, _ = grades_for(name, judge)
     return answers, grades
 
 
@@ -449,10 +500,13 @@ def compare(runs: str = ""):
         indexed[name] = idx
         answers, grades = idx
         sample = next(iter(answers.values()), {})
+        judges = {g.get("judge_model") for g in grades.values() if g.get("judge_model")}
         meta.append({
             "name": name,
             "model": sample.get("model", "?"),
             "condition": sample.get("condition", "?"),
+            "judge_model": ("mixed" if len(judges) > 1
+                            else next(iter(judges)) if judges else None),
             "is_agent": str(sample.get("condition", "")).startswith(
                 ("snapshot_agent", "agent", "external_")),
             "n_done": len(answers),
@@ -612,25 +666,68 @@ def _build_cmd(body: LaunchBody) -> tuple[list[str], str]:
         gcmd = [py, "-m", "harness", "grade", "--answers", str(answers)]
         if body.judge:
             gcmd += ["--judge", body.judge]
+        if body.force:                       # re-grade when the run is forced
+            gcmd += ["--force"]
         shell += " && " + " ".join(shlex.quote(c) for c in gcmd)
     return ["bash", "-c", shell], run_name
 
 
-@app.post("/api/launch")
-def launch(body: LaunchBody):
-    cmd, run_name = _build_cmd(body)
+def _spawn(cmd: list[str], run_name: str, display: str,
+           answers_path: Path | None, grades_path: Path | None) -> str:
+    """Start a tracked subprocess, capturing its output to a log. `answers_path` /
+    `grades_path` are the output files whose line counts drive the answering / grading
+    progress bars (a grade-after run writes both, in sequence)."""
     LOGS_DIR.mkdir(parents=True, exist_ok=True)
     ts = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     proc_id = f"{ts}_{run_name}"
     log_path = LOGS_DIR / f"{proc_id}.log"
     log_fh = open(log_path, "w", encoding="utf-8")
-    log_fh.write(f"$ {cmd[-1]}\n\n")
+    log_fh.write(f"$ {display}\n\n")
     log_fh.flush()
     proc = subprocess.Popen(cmd, cwd=ROOT, stdout=log_fh, stderr=subprocess.STDOUT,
                             start_new_session=True)
-    PROCS[proc_id] = {"proc": proc, "run_name": run_name, "cmd": cmd[-1],
-                      "log": str(log_path), "started": ts}
-    return {"ok": True, "proc_id": proc_id, "run_name": run_name, "cmd": cmd[-1]}
+    PROCS[proc_id] = {"proc": proc, "run_name": run_name, "cmd": display,
+                      "log": str(log_path), "started": ts,
+                      "answers_path": str(answers_path) if answers_path else None,
+                      "grades_path": str(grades_path) if grades_path else None}
+    return proc_id
+
+
+@app.post("/api/launch")
+def launch(body: LaunchBody):
+    cmd, run_name = _build_cmd(body)
+    display = cmd[-1]   # the bash -c shell string
+    answers = OUTPUT_DIR / f"answers_{run_name}.jsonl"
+    jslug = slugify(body.judge or GRADE_DEFAULT_JUDGE)
+    grades = OUTPUT_DIR / f"grades_{run_name}__judge-{jslug}.jsonl"   # written iff grade_after
+    proc_id = _spawn(cmd, run_name, display, answers, grades if body.grade_after else None)
+    return {"ok": True, "proc_id": proc_id, "run_name": run_name, "cmd": display}
+
+
+class GradeBody(BaseModel):
+    judge: str | None = None
+    force: bool = False
+
+
+@app.post("/api/runs/{name}/grade")
+def grade_run(name: str, body: GradeBody):
+    """Grade (or re-grade) an existing run's answers, as a tracked process."""
+    if not _RUN_NAME_RE.match(name):
+        raise HTTPException(400, "bad run name")
+    answers = OUTPUT_DIR / f"answers_{name}.jsonl"
+    if not answers.exists():
+        raise HTTPException(404, f"no answers for run {name}")
+    gcmd = [sys.executable, "-m", "harness", "grade", "--answers", str(answers)]
+    if body.judge:
+        gcmd += ["--judge", body.judge]
+    if body.force:
+        gcmd += ["--force"]
+    display = " ".join(shlex.quote(c) for c in gcmd)
+    # answers already exists (the full input → the total); the per-judge grades file grows live.
+    jslug = slugify(body.judge or GRADE_DEFAULT_JUDGE)
+    grades = OUTPUT_DIR / f"grades_{name}__judge-{jslug}.jsonl"
+    proc_id = _spawn(gcmd, f"{name}_grade", display, answers, grades)
+    return {"ok": True, "proc_id": proc_id, "run_name": f"{name}_grade", "cmd": display}
 
 
 # Stage progress lines look like "[12/50] owner/repo/issue/3#1 ...". The last match
@@ -638,27 +735,38 @@ def launch(body: LaunchBody):
 _PROGRESS_RE = re.compile(r"\[(\d+)/(\d+)\]\s+(\S+)")
 
 
-def _proc_progress(run_name: str, tail: str) -> dict:
+def _count_lines(path: str | None) -> int:
+    try:
+        if path and Path(path).exists():
+            return sum(1 for ln in Path(path).read_text(
+                encoding="utf-8", errors="replace").splitlines() if ln.strip())
+    except OSError:
+        pass
+    return 0
+
+
+def _proc_progress(info: dict, tail: str, running: bool) -> dict:
     matches = _PROGRESS_RE.findall(tail)
     idx = total = None
     current_qid = None
     if matches:
         idx, total, current_qid = matches[-1]
         idx, total = int(idx), int(total)
-    # answered = records actually written (more reliable than the progress index)
-    n_answered = 0
-    try:
-        apath = OUTPUT_DIR / f"answers_{run_name}.jsonl"
-        if apath.exists():
-            n_answered = sum(1 for ln in apath.read_text(
-                encoding="utf-8", errors="replace").splitlines() if ln.strip())
-    except OSError:
-        pass
-    # crude phase: the launcher chains "answer && grade"
-    phase = "grading" if ("Judge:" in tail and "\nGraded:" not in tail) else (
-        "done" if "\nGraded:" in tail or total and idx == total else "answering")
+    answered = _count_lines(info.get("answers_path"))
+    graded = _count_lines(info.get("grades_path"))
+    has_grading = info.get("grades_path") is not None
+    # The launcher chains "answer && grade"; the grade stage prints a "Judge:" banner.
+    if not running:
+        phase = "done"
+    elif "Judge:" in tail and "\nGraded:" not in tail:
+        phase = "grading"
+    else:
+        phase = "answering"
+    # The live bar tracks whichever stage is in flight.
+    live_done = graded if phase == "grading" else answered
     return {"current_qid": current_qid, "idx": idx, "total": total,
-            "n_answered": n_answered, "phase": phase}
+            "answered": answered, "graded": graded, "has_grading": has_grading,
+            "live_done": live_done, "phase": phase}
 
 
 @app.get("/api/procs")
@@ -676,7 +784,7 @@ def procs():
         out.append({"proc_id": pid, "run_name": info["run_name"],
                     "cmd": info["cmd"], "started": info["started"],
                     "running": rc is None, "returncode": rc, "log_tail": tail,
-                    **_proc_progress(info["run_name"], tail)})
+                    **_proc_progress(info, tail, rc is None)})
     return {"procs": out}
 
 

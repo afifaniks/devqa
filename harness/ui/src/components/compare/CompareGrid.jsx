@@ -15,7 +15,7 @@ function Cell({ cell }) {
     <Box className="cmp-cell">
       <Group gap={6}>
         <Badge size="sm" variant="light" color={VERDICT_COLOR[o] || "gray"}>{o}</Badge>
-        {cell.hallucinated && <Badge size="sm" variant="light" color="pink">☄</Badge>}
+        {cell.hallucinated && <Badge size="sm" variant="light" color="orange">☄</Badge>}
         {cell.n_tool_calls != null && <Text size="xs" c="dimmed">{cell.n_tool_calls} tools</Text>}
         {cell.runtime_secs != null && <Text size="xs" c="dimmed">{cell.runtime_secs}s</Text>}
       </Group>

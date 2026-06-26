@@ -24,7 +24,8 @@ export const api = {
   benchmark: () => request("/api/benchmark"),
   benchmarkItem: slug => request(`/api/benchmark/item?slug=${q(slug)}`),
   runs: () => request("/api/runs"),
-  runDetail: name => request(`/api/runs/${q(name)}`),
+  runDetail: (name, judge) =>
+    request(`/api/runs/${q(name)}${judge ? `?judge=${q(judge)}` : ""}`),
   deleteRun: name => request(`/api/runs/${q(name)}`, { method: "DELETE" }),
   compare: names => request(`/api/compare?runs=${names.map(q).join(",")}`),
   transcript: (name, slug) => request(`/api/transcript/${q(name)}/${q(slug)}`),
@@ -32,4 +33,5 @@ export const api = {
   launch: body => postJSON("/api/launch", body),
   stopProc: id => postJSON(`/api/procs/${q(id)}/stop`, {}),
   removeProc: id => request(`/api/procs/${q(id)}`, { method: "DELETE" }),
+  gradeRun: (name, body) => postJSON(`/api/runs/${q(name)}/grade`, body),
 };

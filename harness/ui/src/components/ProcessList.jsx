@@ -19,9 +19,11 @@ function ProcessCard({ p, onStop, onRemove }) {
     ? { color: "gray", label: "done" }
     : { color: "red", label: `exit ${p.returncode}` };
 
+  const grading = p.phase === "grading";
   const total = p.total || null;
-  const done = p.n_answered ?? 0;
-  const pct = total ? Math.min(100, (done / total) * 100) : (p.running ? 100 : 0);
+  const live = p.live_done ?? 0;
+  const pct = total ? Math.min(100, (live / total) * 100) : (p.running ? 100 : 0);
+  const barColor = grading ? "azure" : "teal";
 
   return (
     <Paper withBorder p="sm" radius="md">
@@ -35,19 +37,26 @@ function ProcessCard({ p, onStop, onRemove }) {
         <Box style={{ minWidth: 0, flex: 1 }}>
           <Group gap={8} wrap="nowrap">
             <Text ff="monospace" fw={600} size="sm" truncate>{p.run_name}</Text>
-            {p.running && <Badge color="teal" variant="light" size="xs">{status.label}</Badge>}
+            {p.running && (
+              <Badge color={barColor} variant="light" size="xs">{status.label}</Badge>
+            )}
+            {/* once answers are in, keep the answered count as a static chip */}
+            {p.answered > 0 && (grading || !p.running) && (
+              <Badge color="teal" variant="light" size="xs">✓ {p.answered} answered</Badge>
+            )}
             <Text size="xs" c="dimmed" style={{ flex: "none" }} title={p.started}>{fmtStamp(p.started)}</Text>
           </Group>
           {p.running && (
             <Group gap={8} wrap="nowrap" mt={3}>
               {p.current_qid && (
                 <Text size="xs" c="dimmed" ff="monospace" truncate title={p.current_qid}>
-                  ▶ {p.current_qid}
+                  {grading ? "⚖" : "▶"} {p.current_qid}
                 </Text>
               )}
               {total != null && (
-                <Text size="xs" c="dimmed" ff="monospace" style={{ flex: "none" }} ml="auto">
-                  {done} / {total}
+                <Text size="xs" c={grading ? "azure" : "dimmed"} ff="monospace"
+                      fw={grading ? 600 : 400} style={{ flex: "none" }} ml="auto">
+                  {grading ? "grading " : ""}{live} / {total}
                 </Text>
               )}
             </Group>
@@ -76,7 +85,7 @@ function ProcessCard({ p, onStop, onRemove }) {
       </Group>
 
       {p.running && total != null && (
-        <Progress value={pct} size="xs" radius={0} mt="sm" color="teal" transitionDuration={400} />
+        <Progress value={pct} size="xs" radius={0} mt="sm" color={barColor} transitionDuration={400} />
       )}
 
       <Collapse in={open}>

@@ -39,6 +39,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 from harness.llm import load_jsonl, chat_json
+from harness.answer import slugify
 
 load_dotenv()
 
@@ -280,7 +281,10 @@ def run(answers_path: Path, pairs_path: Path, judge_model: str, output_path: Pat
         answers = answers[:limit]
     gold = build_gold_index(pairs_path)
     if output_path is None:
-        output_path = answers_path.parent / ("grades_" + answers_path.name.removeprefix("answers_"))
+        # One grades file per (run × judge), so grading with a different judge never
+        # overwrites another judge's results: grades_<run>__judge-<slug>.jsonl
+        run_stem = answers_path.stem.removeprefix("answers_")
+        output_path = answers_path.parent / f"grades_{run_stem}__judge-{slugify(judge_model)}.jsonl"
 
     done: set[str] = set()
     if output_path.exists() and not force:

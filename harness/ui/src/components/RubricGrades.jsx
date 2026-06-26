@@ -46,7 +46,7 @@ export function RubricGrades({ grades, scores, hallucinations, compact = false }
 
       {(hallucinations || []).map((h, i) => (
         <Group key={`h${i}`} gap={8} align="flex-start" wrap="nowrap">
-          <Badge size="sm" variant="light" color="pink" style={{ flex: "none", minWidth: 64 }}>halluc</Badge>
+          <Badge size="sm" variant="light" color="orange" style={{ flex: "none", minWidth: 64 }}>halluc</Badge>
           <Text size={fs} c="dimmed">{h.assertion || String(h)}</Text>
         </Group>
       ))}

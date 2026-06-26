@@ -80,14 +80,14 @@ function Criterion({ c, n }) {
       {src.external && c.source_quote && (
         <Box pl={30}>
           <Text size="xs" ff="monospace" c="dimmed"
-                style={{ borderLeft: "2px solid var(--mantine-color-grape-7)", paddingLeft: 8, whiteSpace: "pre-wrap" }}>
+                style={{ borderLeft: "2px solid var(--mantine-color-default-border)", paddingLeft: 8, whiteSpace: "pre-wrap" }}>
             {c.source_quote}
           </Text>
         </Box>
       )}
       <Group gap={10} mt={6} pl={30}>
         <Badge size="xs" variant={src.external ? "light" : "outline"}
-               color={src.external ? "grape" : "gray"}
+               color={src.external ? "azure" : "gray"}
                styles={{ root: { textTransform: "none" } }}>
           {src.external ? "evidence" : "from"}: {src.label}
         </Badge>

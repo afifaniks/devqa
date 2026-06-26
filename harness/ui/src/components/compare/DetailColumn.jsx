@@ -34,7 +34,7 @@ export function DetailColumn({ runName, cell, qidSlug }) {
 
       <Group gap={6} mb={8}>
         <Badge size="sm" variant="light" color={VERDICT_COLOR[o] || "gray"}>{o}</Badge>
-        {cell.hallucinated && <Badge size="sm" variant="light" color="pink">hallucinated</Badge>}
+        {cell.hallucinated && <Badge size="sm" variant="light" color="orange">hallucinated</Badge>}
         {(cell.flags || []).map((f, i) => <Badge key={i} size="sm" variant="light" color="yellow">{f}</Badge>)}
         {cell.n_tool_calls != null && <Text size="xs" c="dimmed">{cell.n_tool_calls} tool calls</Text>}
         {cell.runtime_secs != null && <Text size="xs" c="dimmed">{cell.runtime_secs}s</Text>}
@@ -75,7 +75,7 @@ export function DetailColumn({ runName, cell, qidSlug }) {
             ))}
             {(cell.hallucinations || []).map((h, i) => (
               <Group key={`h${i}`} gap={8} align="baseline" wrap="nowrap">
-                <Badge size="sm" variant="light" color="pink">halluc</Badge>
+                <Badge size="sm" variant="light" color="orange">halluc</Badge>
                 <Text size="sm" c="dimmed">{h.assertion || String(h)}</Text>
               </Group>
             ))}

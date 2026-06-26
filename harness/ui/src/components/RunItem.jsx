@@ -47,7 +47,7 @@ export function RunItem({ run, it }) {
             {it.outcome}
           </Badge>
         )}
-        {it.hallucinated && <Badge size="sm" variant="light" color="pink">hallucinated</Badge>}
+        {it.hallucinated && <Badge size="sm" variant="light" color="orange">hallucinated</Badge>}
         {it.error && <Badge size="sm" variant="light" color="red">error</Badge>}
         <Text size="xs" c="dimmed">{ktLabel(it.knowledge_type)}</Text>
         {it.n_tool_calls != null && <Text size="xs" c="dimmed">{it.n_tool_calls} tool calls</Text>}
@@ -85,7 +85,7 @@ export function RunItem({ run, it }) {
                 ))}
                 {(it.hallucinations || []).map((h, i) => (
                   <Group key={`h${i}`} gap={8} align="baseline" wrap="nowrap">
-                    <Badge size="sm" variant="light" color="pink">halluc</Badge>
+                    <Badge size="sm" variant="light" color="orange">halluc</Badge>
                     <Text size="sm" c="dimmed">{h.assertion || String(h)}</Text>
                   </Group>
                 ))}

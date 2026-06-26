@@ -45,7 +45,7 @@ export function BenchmarkTable({ items, onOpen }) {
               </Table.Td>
               <Table.Td>
                 {it.n_rubric
-                  ? <Badge size="sm" variant="light" color="grape">{it.n_rubric} crit</Badge>
+                  ? <Badge size="sm" variant="light" color="gray">{it.n_rubric} crit</Badge>
                   : <Text size="xs" c="dimmed">—</Text>}
               </Table.Td>
               <Table.Td maw={260}>

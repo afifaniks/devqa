@@ -37,9 +37,11 @@ export function MonitorView({ options, runs, totals, procs, onLaunched, onStopPr
         runs.map(r => (
           <RunCard
             key={r.name} run={r} totals={totals}
+            judges={options.judge_suggestions || []}
             open={open === r.name}
             onToggle={n => setOpen(open === n ? null : n)}
             onDeleted={handleDeleted}
+            onGraded={onRefresh}
           />
         ))
       )}
