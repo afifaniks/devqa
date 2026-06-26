@@ -8,6 +8,7 @@ import { VERDICT_COLOR } from "../theme.js";
 import { claimColor } from "../lib/outcomes.js";
 import { ktLabel } from "../lib/benchmark.js";
 import { FactChips } from "./FactChips.jsx";
+import { RubricGrades } from "./RubricGrades.jsx";
 
 function Panel({ title, action, children }) {
   return (
@@ -68,8 +69,13 @@ export function RunItem({ run, it }) {
             </Panel>
           )}
 
-          {it.claims?.length > 0 && (
-            <Panel title="Judge claims">
+          {it.rubric_grades?.length > 0 ? (
+            <Panel title="Rubric grading">
+              <RubricGrades grades={it.rubric_grades} scores={it.scores}
+                            hallucinations={it.hallucinations} />
+            </Panel>
+          ) : it.claims?.length > 0 && (
+            <Panel title="Judge claims (legacy)">
               <Stack gap={6}>
                 {it.claims.map((c, i) => (
                   <Group key={i} gap={8} align="baseline" wrap="nowrap">

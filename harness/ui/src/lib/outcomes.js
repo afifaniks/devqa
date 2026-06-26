@@ -15,6 +15,14 @@ export function outcomeOf(cell) {
 export const claimColor = v =>
   v === "yes" ? "teal" : v === "partial" ? "yellow" : "red";
 
+// Rubric per-criterion verdicts: met / partial / not_met / not_gradeable.
+export const RUBRIC_COLOR = {
+  met: "teal", partial: "yellow", not_met: "red", not_gradeable: "gray",
+};
+export const RUBRIC_LABEL = {
+  met: "met", partial: "partial", not_met: "not met", not_gradeable: "n/a",
+};
+
 // Dominant graded outcome among a set of cells (drives the run verdict spine).
 export function dominantOutcome(cells) {
   const counts = {};

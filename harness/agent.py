@@ -37,14 +37,14 @@ import litellm
 from dotenv import load_dotenv
 
 from harness.answer import iter_items, slugify
-from harness.llm import load_jsonl, load_benchmark
+from harness.llm import load_jsonl, load_benchmark, default_benchmark
 from harness.snapshot import build_snapshot
 from harness.tools import ALL_GROUPS, ToolBox, schemas_for
 
 load_dotenv()
 
 ROOT = Path(__file__).parent.parent
-DEFAULT_INPUT = ROOT / "dataset" / "security_benchmark_final.jsonl"
+DEFAULT_INPUT = default_benchmark()
 DEFAULT_OUTPUT_DIR = ROOT / "harness" / "output"
 
 SYSTEM_PROMPT = """\

@@ -4,6 +4,7 @@ import { api } from "../../api.js";
 import { VERDICT_COLOR } from "../../theme.js";
 import { outcomeOf, claimColor } from "../../lib/outcomes.js";
 import { FactChips } from "../FactChips.jsx";
+import { RubricGrades } from "../RubricGrades.jsx";
 
 const pre = { whiteSpace: "pre-wrap", wordBreak: "break-word", fontSize: 12, maxHeight: 320, overflow: "auto" };
 
@@ -56,9 +57,15 @@ export function DetailColumn({ runName, cell, qidSlug }) {
         </Box>
       )}
 
-      {cell.claims?.length > 0 && (
+      {cell.rubric_grades?.length > 0 ? (
         <Box mt="sm">
-          <Text size="xs" tt="uppercase" fw={600} c="dimmed" mb={4}>Judge claims</Text>
+          <Text size="xs" tt="uppercase" fw={600} c="dimmed" mb={4}>Rubric grading</Text>
+          <RubricGrades grades={cell.rubric_grades} scores={cell.scores}
+                        hallucinations={cell.hallucinations} compact />
+        </Box>
+      ) : cell.claims?.length > 0 && (
+        <Box mt="sm">
+          <Text size="xs" tt="uppercase" fw={600} c="dimmed" mb={4}>Judge claims (legacy)</Text>
           <Stack gap={6}>
             {cell.claims.map((c, i) => (
               <Group key={i} gap={8} align="baseline" wrap="nowrap">

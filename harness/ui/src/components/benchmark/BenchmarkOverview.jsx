@@ -1,5 +1,5 @@
+import { Box, Divider, Grid, Group, Paper, Progress, Stack, Text } from "@mantine/core";
 import { useMemo } from "react";
-import { Paper, Grid, Group, Text, Stack, Progress, Box, Divider } from "@mantine/core";
 
 // One compact headline metric: big number + caption.
 function Metric({ value, label }) {
@@ -16,7 +16,7 @@ function Metric({ value, label }) {
 function Bar({ label, count, max }) {
   return (
     <Group gap="sm" wrap="nowrap">
-      <Text size="xs" w={150} ta="right" style={{ flex: "none" }} tt="capitalize">
+      <Text size="xs"  tt="uppercase" w={150} ta="right" style={{ flex: "none" }}>
         {label.replace(/_/g, " ")}
       </Text>
       <Box style={{ flex: 1 }}>

@@ -205,7 +205,7 @@ def run_detail(name: str, tail: int = 50):
     items = []
     for r in read_jsonl(path)[-tail:]:
         g = grades.get(r.get("qid"))
-        judge = (g or {}).get("judge") or {}
+        judge = (g or {}).get("judge") or {}   # legacy claim-based grades
         items.append({
             "qid": r.get("qid"),
             "qid_slug": str(r.get("qid", "")).replace("/", "__"),
@@ -222,8 +222,10 @@ def run_detail(name: str, tail: int = 50):
             "outcome": (g or {}).get("outcome"),
             "hallucinated": (g or {}).get("hallucinated"),
             "flags": (g or {}).get("flags"),
-            "claims": judge.get("claims"),
-            "hallucinations": judge.get("hallucinations"),
+            "rubric_grades": (g or {}).get("rubric_grades"),
+            "scores": (g or {}).get("scores"),
+            "hallucinations": (g or {}).get("hallucinations") or judge.get("hallucinations"),
+            "claims": judge.get("claims"),   # legacy fallback
             "hard_facts": (g or {}).get("hard_facts"),
         })
     items.reverse()  # newest first
@@ -400,7 +402,7 @@ def benchmark_item(qid: str = None, slug: str = None):
 def _gold_map() -> dict[str, dict]:
     """qid → reference question/answer/hard-facts, from the eval corpus."""
     gold: dict[str, dict] = {}
-    for thread in read_jsonl(PAIRS_FILE):
+    for thread in read_jsonl(benchmark_source()):
         if thread.get("error"):
             continue
         for qa in thread.get("qa_pairs") or []:
@@ -481,7 +483,7 @@ def compare(runs: str = ""):
                 cells[name] = None
                 continue
             gr = grades.get(qid) or {}
-            judge = gr.get("judge") or {}
+            judge = gr.get("judge") or {}   # legacy claim-based grades
             slug = str(qid).replace("/", "__")
             cells[name] = {
                 "response": a.get("response") or "",
@@ -494,8 +496,10 @@ def compare(runs: str = ""):
                 "hallucinated": gr.get("hallucinated"),
                 "flags": gr.get("flags"),
                 "hard_facts": gr.get("hard_facts"),
-                "claims": judge.get("claims"),
-                "hallucinations": judge.get("hallucinations"),
+                "rubric_grades": gr.get("rubric_grades"),
+                "scores": gr.get("scores"),
+                "hallucinations": gr.get("hallucinations") or judge.get("hallucinations"),
+                "claims": judge.get("claims"),   # legacy fallback
                 "graded": bool(gr),
                 "has_transcript": (OUTPUT_DIR / "transcripts" / name
                                    / f"{slug}.json").exists(),

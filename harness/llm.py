@@ -17,6 +17,19 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+_ROOT = Path(__file__).parent.parent
+FINAL_BENCHMARK = _ROOT / "dataset" / "security_benchmark_final.jsonl"
+# The released benchmark: accepted-rubric qa_pairs only, rubric embedded
+# (dataset/build_release.py). It is the single eval source — every stage
+# (answer/agent/external/snapshot/grade) reads it when present.
+RELEASE_BENCHMARK = _ROOT / "dataset" / "security_benchmark_release.jsonl"
+
+
+def default_benchmark() -> Path:
+    """The benchmark the harness evaluates over: the rubric-bearing release if it has
+    been built, else the full final corpus."""
+    return RELEASE_BENCHMARK if RELEASE_BENCHMARK.exists() else FINAL_BENCHMARK
+
 
 def load_jsonl(path: Path) -> list[dict]:
     rows = []

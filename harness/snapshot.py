@@ -30,7 +30,11 @@ ROOT = Path(__file__).parent.parent
 CACHE = ROOT / "harness" / "cache"
 OUTPUT_DIR = ROOT / "output"
 ADVISORY_DB = ROOT / "advisory-database"
-BENCHMARK = ROOT / "dataset" / "security_benchmark_final.jsonl"
+# Released benchmark (rubric-bearing) is the eval source; fall back to the full
+# corpus if it hasn't been built. Kept inline to avoid importing the LLM stack here.
+BENCHMARK = ROOT / "dataset" / "security_benchmark_release.jsonl"
+if not BENCHMARK.exists():
+    BENCHMARK = ROOT / "dataset" / "security_benchmark_final.jsonl"
 
 
 def _git(cwd: Path, *args: str, check: bool = True) -> str:

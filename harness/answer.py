@@ -31,12 +31,12 @@ from pathlib import Path
 import litellm
 from dotenv import load_dotenv
 
-from harness.llm import load_jsonl, load_benchmark
+from harness.llm import load_jsonl, load_benchmark, default_benchmark
 
 load_dotenv()
 
 ROOT = Path(__file__).parent.parent
-DEFAULT_INPUT = ROOT / "dataset" / "security_benchmark_final.jsonl"
+DEFAULT_INPUT = default_benchmark()
 DEFAULT_OUTPUT_DIR = ROOT / "harness" / "output"
 
 CONDITIONS = ("no_context", "single_artifact", "multi_artifact", "agent")
