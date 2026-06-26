@@ -77,9 +77,20 @@ def condition_name(groups: set[str]) -> str:
     return "snapshot_agent-groups_" + "+".join(sorted(groups))
 
 
+def _litellm_model(model: str) -> str:
+    """Model id for the litellm call. Tool calling over Ollama requires the chat
+    endpoint: litellm's `ollama/` (generate API) provider silently drops `tool_calls`,
+    so the agent would see no tools and return empty. Route Ollama through `ollama_chat/`.
+    The original `model` string is kept in records / run name."""
+    if model.startswith("ollama/"):
+        return "ollama_chat/" + model[len("ollama/"):]
+    return model
+
+
 def run_agent_loop(model: str, question: str, box: ToolBox, max_steps: int,
                    max_tokens: int) -> tuple[str, list[dict]]:
     """Tool-calling loop. Returns (final_answer, transcript)."""
+    call_model = _litellm_model(model)
     commit_note = (f" (checked out at commit {box.snap.commit_sha[:12]})"
                    if box.snap.commit_sha else "")
     messages = [
@@ -91,7 +102,7 @@ def run_agent_loop(model: str, question: str, box: ToolBox, max_steps: int,
     tools = schemas_for(box.groups)
     transcript: list[dict] = []
     for step in range(1, max_steps + 1):
-        resp = litellm.completion(model=model, messages=messages, tools=tools,
+        resp = litellm.completion(model=call_model, messages=messages, tools=tools,
                                   max_tokens=max_tokens)
         msg = resp.choices[0].message
         tool_calls = getattr(msg, "tool_calls", None) or []
@@ -116,7 +127,7 @@ def run_agent_loop(model: str, question: str, box: ToolBox, max_steps: int,
     # out of steps — force a final answer without tools
     messages.append({"role": "user", "content":
                      "You are out of tool budget. Give your final answer now."})
-    resp = litellm.completion(model=model, messages=messages, max_tokens=max_tokens)
+    resp = litellm.completion(model=call_model, messages=messages, max_tokens=max_tokens)
     final = (resp.choices[0].message.content or "").strip()
     transcript.append({"step": max_steps + 1, "type": "final_forced",
                        "chars": len(final)})
@@ -182,7 +193,8 @@ def run(input_path: Path, output_dir: Path, model: str, groups: set[str],
                      "report_time": snap.report_time, "transcript": transcript},
                     ensure_ascii=False, indent=1))
                 n_new += 1
-                print(f"ok ({len(box.calls)} tool calls, {len(text)} chars)")
+                flag = "  ⚠ EMPTY response" if not text.strip() else ""
+                print(f"ok ({len(box.calls)} tool calls, {len(text)} chars){flag}")
             except Exception as exc:
                 rec["error"] = str(exc)
                 n_err += 1

@@ -117,7 +117,7 @@ export function RunCard({ run, totals, judges = [], open, onToggle, onDeleted, o
       <Group gap="sm" px="md" py="sm" wrap="wrap"
              style={{ cursor: "pointer" }} onClick={() => onToggle(run.name)}>
         <Badge color={run.running ? "teal" : "gray"} variant={run.running ? "filled" : "light"} size="sm">
-          {run.running ? "live" : "idle"}
+          {run.running ? "live" : "Done"}
         </Badge>
         {run.is_agent && <Badge color="violet" variant="light" size="sm">agent</Badge>}
         <Text ff="monospace" fw={600} size="sm">{run.name}</Text>
@@ -196,11 +196,13 @@ export function RunCard({ run, totals, judges = [], open, onToggle, onDeleted, o
         </Group>
       </Group>
 
-      <Progress
-        value={pct(run.n_done, totals.items_approved)}
-        size="xs" radius={0} color={run.running ? "azure" : "gray.5"}
-        transitionDuration={500}
-      />
+      {run.running && (
+        <Progress
+          value={pct(run.n_done, totals.items_approved)}
+          size="xs" radius={0} color="azure"
+          transitionDuration={500}
+        />
+      )}
 
       <Collapse in={open}>
         <Box style={{ borderTop: "1px solid var(--mantine-color-default-border)" }}>
