@@ -3943,5 +3943,195 @@
     "status": "accepted",
     "note": "",
     "verified_at": "2026-06-25T23:25:32.877743Z"
+  },
+  "crewAIInc/crewAI/issue/5917": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T02:43:17.842332Z"
+  },
+  "crewAIInc/crewAI/issue/5561": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T02:43:23.952154Z"
+  },
+  "crewAIInc/crewAI/issue/5520": {
+    "status": "accepted",
+    "note": "dependency vulnerability remediation; GHSA-pjjw-68hj-v9mw; answer anchored by remediation commit 2f48937c and directly addresses downstream exposure concern.",
+    "verified_at": "2026-06-26T02:43:35.238469Z"
+  },
+  "crewAIInc/crewAI/issue/5517": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T02:43:46.737153Z"
+  },
+  "crewAIInc/crewAI/issue/5510": {
+    "status": "accepted",
+    "note": "availability/security-hardening issue; import-time external LLM call introduces startup failure risk; answer provides concrete mitigation (lazy init + fallback + timeout) aligned with deployment safety concerns.",
+    "verified_at": "2026-06-26T02:44:08.964815Z"
+  },
+  "crewAIInc/crewAI/issue/5470": {
+    "status": "accepted",
+    "note": "spoofable inter-agent handshake identified; lack of trust fields enables impersonation; mitigation proposed via Ed25519 signature binding and A2A Agent Card protocol for standardized authenticated agent identity.",
+    "verified_at": "2026-06-26T02:44:33.689685Z"
+  },
+  "crewAIInc/crewAI/issue/5368": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T02:44:51.733237Z"
+  },
+  "crewAIInc/crewAI/issue/5262": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T02:44:58.372077Z"
+  },
+  "crewAIInc/crewAI/issue/5102": {
+    "status": "accepted",
+    "note": "security-relevant mitigation for prompt-injection/unauthorized agent action chaining; anchored by concrete implementation artifacts (hdp-crewai PyPI package and PR #5135); provides deployment-level hook integration addressing delegation provenance and scope enforcement.",
+    "verified_at": "2026-06-26T02:45:09.809330Z"
+  },
+  "crewAIInc/crewAI/issue/4993": {
+    "status": "accepted",
+    "note": "confirmed SQL injection vulnerability in SnowflakeSearchTool due to unsafe identifier interpolation; includes reproducible attack example, maintainer acknowledgment, and concrete mitigation via identifier validation + quoting; also references related second-order injection risk in NL2SQL tool.",
+    "verified_at": "2026-06-26T02:45:24.809989Z"
+  },
+  "crewAIInc/crewAI/issue/4875": {
+    "status": "accepted",
+    "note": "valid security gap in MCP protocol tool-calling model; addresses message integrity, identity authentication, replay protection, and tool poisoning risks; answer grounded in layered security architecture aligned with IETF draft-sharif-mcps-secure-mcp and OWASP MCP Top 10 threat model.",
+    "verified_at": "2026-06-26T02:45:44.701642Z"
+  },
+  "crewAIInc/crewAI/issue/4865": {
+    "status": "accepted",
+    "note": "confirmed XXE and XML parser DoS risk in Python standard XML library; mitigation via defusedxml drop-in replacement correctly addresses external entity expansion and XML bomb attack vectors; concrete secure coding fix provided.",
+    "verified_at": "2026-06-26T02:46:03.448167Z"
+  },
+  "crewAIInc/crewAI/issue/4789": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T02:46:20.523543Z"
+  },
+  "crewAIInc/crewAI/issue/4754": {
+    "status": "accepted",
+    "note": "security-relevant provenance and audit integrity enhancement; cryptographic receipt system (AAR v1.1, commit 0a24988) introduces tamper-evident multi-agent execution tracing via evidenceRef hash-linked attestations; addresses agent action non-repudiation and handoff integrity.",
+    "verified_at": "2026-06-26T02:46:55.240932Z"
+  },
+  "crewAIInc/crewAI/issue/4558": {
+    "status": "accepted",
+    "note": "capability enforcement architecture with OS-level sandbox boundary (seccomp-bpf + bwrap); CI evidence provided for default-deny execution model; includes formal capability token schema and runtime enforcement path confirming hard-gate boundary at syscall layer.",
+    "verified_at": "2026-06-26T02:47:15.473895Z"
+  },
+  "crewAIInc/crewAI/issue/4525": {
+    "status": "accepted",
+    "note": "unintended telemetry transmission despite tracing being disabled; network exfiltration to telemetry endpoint observed; resolved in version 1.5.0 and above with upgrade mitigation.",
+    "verified_at": "2026-06-26T02:47:45.799351Z"
+  },
+  "crewAIInc/crewAI/issue/4523": {
+    "status": "accepted",
+    "note": "security-relevant authorization enforcement design; addresses bypass risk where agents skip governance tools; mitigation via infrastructure-level enforcement requiring signed attestations for downstream execution, ensuring unauthenticated actions are rejected.",
+    "verified_at": "2026-06-26T02:48:10.631024Z"
+  },
+  "crewAIInc/crewAI/issue/4516": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T02:48:21.754398Z"
+  },
+  "crewAIInc/crewAI/issue/4495": {
+    "status": "accepted",
+    "note": "regression in tool-call parsing causing retry loop / missing argument handling; resolved via PR #4518 one-line fix in crew_agent_executor.py L722; impacts execution flow integrity and can manifest as resource exhaustion behavior.",
+    "verified_at": "2026-06-26T02:48:41.969779Z"
+  },
+  "crewAIInc/crewAI/issue/4122": {
+    "status": "accepted",
+    "note": "integration-level access and configuration issue in GithubSearchTool; includes private repository access bug and embedding fallback misconfiguration; resolved via local cache reset and PR #4088 fix, with explicit Bedrock embedding configuration required to prevent incorrect provider fallback.",
+    "verified_at": "2026-06-26T02:49:23.596069Z"
+  },
+  "crewAIInc/crewAI/issue/3602": {
+    "status": "accepted",
+    "note": "dependency-level vulnerability mitigation for LiteLLM; CVEs addressed via relaxation and optional removal of dependency constraint in recent releases; maintainer confirms resolution of affected CVE exposure.",
+    "verified_at": "2026-06-26T02:49:43.477013Z"
+  },
+  "crewAIInc/crewAI/issue/2962": {
+    "status": "accepted",
+    "note": "tool-call execution failure in QdrantVectorSearchTool due to message-role handling edge case; resolved in CrewAI v0.150.0 per release note; upgrade provides workaround/fix for index-out-of-range error in agent tool invocation flow.",
+    "verified_at": "2026-06-26T02:51:13.939826Z"
+  },
+  "crewAIInc/crewAI/issue/2945": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T02:51:24.281290Z"
+  },
+  "crewAIInc/crewAI/issue/2688": {
+    "status": "accepted",
+    "note": "AWS credential misconfiguration issue in Bedrock/Boto3 session handling; missing aws_session_token in temporary credentials causes authentication failure; resolved by including AWS_SESSION_TOKEN in boto3.Session initialization per documented fix.",
+    "verified_at": "2026-06-26T02:51:39.242417Z"
+  },
+  "crewAIInc/crewAI/issue/2647": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T02:51:51.099740Z"
+  },
+  "crewAIInc/crewAI/issue/2051": {
+    "status": "accepted",
+    "note": "security-relevant workflow integrity issue in async HITL execution; addressed via enterprise webhook-based pause/resume mechanism ensuring stateful continuation of Crew/Flow after human approval, as documented in CrewAI HITL enterprise guide.",
+    "verified_at": "2026-06-26T02:52:08.857239Z"
+  },
+  "crewAIInc/crewAI/issue/1757": {
+    "status": "accepted",
+    "note": "knowledge ingestion bug causing metadata/document mismatch in upsert pipeline; confirmed fix scheduled in version 0.86.1 addressing StringKnowledgeSource chunking metadata generation inconsistency.",
+    "verified_at": "2026-06-26T02:52:31.739657Z"
+  },
+  "crewAIInc/crewAI/issue/1178": {
+    "status": "accepted",
+    "note": "privacy/telemetry governance clarification; maintainer confirms base_url removal and GDPR non-PII classification of collected telemetry; defines CVE scope as issue #1177 rather than broader telemetry disablement behavior.",
+    "verified_at": "2026-06-26T02:53:07.725024Z"
+  },
+  "crewAIInc/crewAI/issue/1072": {
+    "status": "accepted",
+    "note": "telemetry/privacy policy clarification; states telemetry is anonymous and non-private per official documentation; addresses user concern about default data collection and provides policy reference for validation.",
+    "verified_at": "2026-06-26T02:53:27.019221Z"
+  },
+  "crewAIInc/crewAI/issue/1022": {
+    "status": "accepted",
+    "note": "unintended telemetry transmission incident confirmed as maintainer-side error; caused runtime impact; acknowledged fix applied and follow-up library patch planned to prevent recurrence of telemetry endpoint calls.",
+    "verified_at": "2026-06-26T02:53:42.486469Z"
+  },
+  "crewAIInc/crewAI/issue/949": {
+    "status": "accepted",
+    "note": "tool invocation/dispatch bug in CrewAI causing missing or misinterpreted custom tool execution; resolved in PR #925 but not yet released to pip at time of report; impacts tool routing integrity and argument handling.",
+    "verified_at": "2026-06-26T02:54:02.545629Z"
+  },
+  "crewAIInc/crewAI/issue/524": {
+    "status": "accepted",
+    "note": "tool invocation/dispatch bug in CrewAI causing missing or misinterpreted custom tool execution; resolved in PR #925 but not yet released to pip at time of report; impacts tool routing integrity and argument handling.",
+    "verified_at": "2026-06-26T02:54:18.567328Z"
+  },
+  "crewAIInc/crewAI/issue/467": {
+    "status": "accepted",
+    "note": "dependency vulnerability remediation workflow; Trivy high findings addressed via Dependabot-enabled automated PRs updating poetry lockfile to patched versions; standard supply-chain security mitigation approach.",
+    "verified_at": "2026-06-26T02:54:42.183587Z"
+  },
+  "crewAIInc/crewAI/issue/439": {
+    "status": "accepted",
+    "note": "embedding provider schema validation bug affecting Ollama support in PDFSearchTool; resolved via embedchain>=0.1.107 upgrade enabling correct local embedding configuration and preserving data locality.",
+    "verified_at": "2026-06-26T02:55:18.559961Z"
+  },
+  "crewAIInc/crewAI/issue/372": {
+    "status": "accepted",
+    "note": "telemetry/privacy design discussion; confirms anonymous telemetry model and ongoing security hardening (HTTPS/encryption); indicates opt-out capability is under consideration but not finalized at time of response.",
+    "verified_at": "2026-06-26T02:55:55.528864Z"
+  },
+  "crewAIInc/crewAI/issue/254": {
+    "status": "accepted",
+    "note": "telemetry disablement supported via documented environment/configuration options; maintainer confirms updated documentation includes instructions for disabling telemetry to comply with network/proxy restrictions and prevent outbound calls to telemetry endpoint.",
+    "verified_at": "2026-06-26T02:56:20.259374Z"
+  },
+  "crewAIInc/crewAI/issue/241": {
+    "status": "accepted",
+    "note": "telemetry privacy issue involving unintended hostname collection; maintainer confirms removal in next release and migration to HTTPS with anonymization improvements, addressing sensitive-data leakage concerns in telemetry pipeline.",
+    "verified_at": "2026-06-26T02:56:36.644096Z"
+  },
+  "crewAIInc/crewAI/issue/222": {
+    "status": "accepted",
+    "note": "unintended OpenAI API usage due to default LLM fallback in hierarchical process; fixed in 0.5.3 via manager_llm attribute correction, resolving cross-provider routing and quota leakage issue.",
+    "verified_at": "2026-06-26T02:57:07.239312Z"
   }
 }
