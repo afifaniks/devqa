@@ -35,7 +35,8 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-from harness.answer import iter_items, slugify
+from harness.answer import (iter_items, select_items, make_run_name,
+                            resume_state, slugify)
 from harness.llm import load_jsonl, load_benchmark, default_benchmark
 from harness.snapshot import build_snapshot
 from harness.stream_agent import file_emitter, run_streaming_agent
@@ -87,29 +88,32 @@ def system_prompt_for(box: ToolBox) -> str:
 
 
 def run(input_path: Path, output_dir: Path, model: str, groups: set[str],
-        condition: str, force: bool, limit: int | None, include_unapproved: bool,
-        max_steps: int) -> None:
+        condition: str, limit: int | None, include_unapproved: bool,
+        max_steps: int, only_id: str | None = None,
+        run_name: str | None = None) -> None:
     threads = load_benchmark(input_path)
-    items = iter_items(threads, include_unapproved)
+    items = select_items(iter_items(threads, include_unapproved), only_id)
     if limit:
         items = items[:limit]
     if not items:
         raise SystemExit(f"No eval items found in {input_path}.")
 
-    run_name = f"{slugify(model)}_{condition}"
+    run_name = make_run_name(f"{slugify(model)}_{condition}", only_id, run_name)
     output_path = output_dir / f"answers_{run_name}.jsonl"
     transcripts_dir = output_dir / "transcripts" / run_name
     transcripts_dir.mkdir(parents=True, exist_ok=True)
-
-    done: set[str] = set()
-    if output_path.exists() and not force:
-        done = {r["qid"] for r in load_jsonl(output_path) if not r.get("error")}
-        print(f"Resuming: {len(done)} answers already in {output_path}")
+    good, done = resume_state(output_path)
+    if done:
+        print(f"Resuming {run_name}: {len(done)} already done, "
+              f"{len(items) - len(done)} remaining")
 
     print(f"Model: {model} | condition: {condition} | groups: {sorted(groups)} "
-          f"| items: {len(items)}")
+          f"| run: {run_name} | items: {len(items)}")
     n_new = n_err = 0
-    with open(output_path, "w" if force else "a", encoding="utf-8") as fh:
+    with open(output_path, "w", encoding="utf-8") as fh:
+        for r in good:
+            fh.write(json.dumps(r, ensure_ascii=False) + "\n")
+        fh.flush()
         for i, (thread, pair) in enumerate(items):
             qid = pair["qid"]
             if qid in done:
@@ -165,7 +169,7 @@ def run(input_path: Path, output_dir: Path, model: str, groups: set[str],
             if i < len(items) - 1:
                 time.sleep(0.3)
 
-    print(f"\nDone: {n_new} new answers, {len(done)} skipped, {n_err} errors")
+    print(f"\nDone: {n_new} answers, {n_err} errors")
     print(f"Output: {output_path}\nTranscripts: {transcripts_dir}")
     print(f"Next: python -m harness grade --answers {output_path}")
 
@@ -193,7 +197,10 @@ def main() -> None:
     ap.add_argument("--include-unapproved", action="store_true")
     ap.add_argument("--max-steps", type=int, default=15,
                     help="max tool-calling rounds before a forced final answer")
-    ap.add_argument("--force", action="store_true")
+    ap.add_argument("--only-id", default=None,
+                    help="Run a single benchmark instance by qid or thread_id")
+    ap.add_argument("--run-name", default=None,
+                    help="Explicit run name (default: model_condition[_instance]_timestamp)")
     args = ap.parse_args()
 
     without = {g.strip() for g in args.without.split(",") if g.strip()}
@@ -213,8 +220,8 @@ def main() -> None:
         raise SystemExit("at least one artifact group must be enabled")
 
     run(args.input, args.output_dir, args.model, groups,
-        condition_name(groups), args.force, args.limit,
-        args.include_unapproved, args.max_steps)
+        condition_name(groups), args.limit,
+        args.include_unapproved, args.max_steps, args.only_id, args.run_name)
 
 
 if __name__ == "__main__":

@@ -36,4 +36,5 @@ export const api = {
   stopProc: id => postJSON(`/api/procs/${q(id)}/stop`, {}),
   removeProc: id => request(`/api/procs/${q(id)}`, { method: "DELETE" }),
   gradeRun: (name, body) => postJSON(`/api/runs/${q(name)}/grade`, body),
+  resumeRun: name => postJSON(`/api/runs/${q(name)}/resume`, {}),
 };

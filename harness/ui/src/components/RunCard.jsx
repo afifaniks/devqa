@@ -3,7 +3,7 @@ import {
   Paper, Group, Badge, Text, Progress, Box, Collapse, Menu, ActionIcon, Loader,
   Popover, Select, Switch, Button, Stack,
 } from "@mantine/core";
-import { IconTrash, IconDots, IconGavel } from "@tabler/icons-react";
+import { IconTrash, IconDots, IconGavel, IconPlayerPlay } from "@tabler/icons-react";
 import { usePolling } from "../hooks/usePolling.js";
 import { api } from "../api.js";
 import { age, pct } from "../lib/format.js";
@@ -72,9 +72,10 @@ function GradeControl({ run, judges, onGraded }) {
   );
 }
 
-export function RunCard({ run, totals, judges = [], open, onToggle, onDeleted, onGraded }) {
+export function RunCard({ run, totals, judges = [], open, onToggle, onDeleted, onGraded, onResumed }) {
   const [deleting, setDeleting] = useState(false);
   const [delErr, setDelErr] = useState(null);
+  const [resuming, setResuming] = useState(false);
 
   const handleDelete = async () => {
     setDeleting(true);
@@ -85,6 +86,19 @@ export function RunCard({ run, totals, judges = [], open, onToggle, onDeleted, o
     } catch (e) {
       setDelErr(String(e.message || e));
       setDeleting(false);
+    }
+  };
+
+  const handleResume = async () => {
+    setResuming(true);
+    setDelErr(null);
+    try {
+      await api.resumeRun(run.name);
+      (onResumed || onGraded)?.();
+    } catch (e) {
+      setDelErr(String(e.message || e));
+    } finally {
+      setResuming(false);
     }
   };
 
@@ -164,6 +178,18 @@ export function RunCard({ run, totals, judges = [], open, onToggle, onDeleted, o
             </Text>
           )}
           <Text size="xs" c="dimmed">{age(run.updated_secs_ago)}</Text>
+
+          {!run.running && run.n_done < totals.items_approved && (
+            <Button
+              size="compact-xs" variant="light" color="teal"
+              leftSection={<IconPlayerPlay size={13} />}
+              loading={resuming}
+              onClick={e => { e.stopPropagation(); handleResume(); }}
+              title="Run the remaining (not-yet-done) benchmark items into this run"
+            >
+              resume
+            </Button>
+          )}
 
           {!run.running && <GradeControl run={run} judges={judges} onGraded={onGraded} />}
 

@@ -42,7 +42,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from harness.agent import condition_name as agent_condition_name
-from harness.answer import slugify
+from harness.answer import slugify, make_run_name
 from harness.external import AGENTS as EXTERNAL_AGENTS
 from harness.grade import DEFAULT_JUDGE as GRADE_DEFAULT_JUDGE
 from harness.tools import ALL_GROUPS
@@ -285,7 +285,7 @@ def run_detail(name: str, tail: int = 50, judge: str | None = None):
 
 # Run names are produced by slugify() + condition_name(): word chars, dot, dash only.
 # Validate against that charset so a path param can never escape OUTPUT_DIR.
-_RUN_NAME_RE = re.compile(r"^[A-Za-z0-9._-]+$")
+_RUN_NAME_RE = re.compile(r"^[A-Za-z0-9._+-]+$")
 
 
 @app.delete("/api/runs/{name}")
@@ -302,7 +302,7 @@ def delete_run(name: str):
         raise HTTPException(409, "run looks active (written within the last "
                                  f"{ACTIVE_SECS}s) — stop it before deleting")
     removed = []
-    for p in (answers, *grade_files(name)):   # all per-judge gradings + legacy
+    for p in (answers, _launch_meta_path(name), *grade_files(name)):
         if p.exists():
             p.unlink()
             removed.append(p.name)
@@ -629,13 +629,14 @@ class LaunchBody(BaseModel):
     groups: list[str] | None = None   # built-in agent only; None/all → full snapshot
     limit: int | None = None
     include_unapproved: bool = False
-    force: bool = False
     max_steps: int | None = None
     grade_after: bool = False
     judge: str | None = None
+    only_id: str | None = None        # run a single benchmark instance (qid/thread_id)
+    run_name: str | None = None       # set to resume an existing run (append the rest)
 
 
-def _expected_run_name(body: LaunchBody) -> str:
+def _base_run_name(body: LaunchBody) -> str:
     if body.system == "llm":
         return f"{slugify(body.model)}_no_context"
     if body.system == "agent":
@@ -645,15 +646,22 @@ def _expected_run_name(body: LaunchBody) -> str:
     return f"{slugify(body.model) + '_' if body.model else ''}{cond}"
 
 
-def _build_cmd(body: LaunchBody) -> tuple[list[str], str]:
+def _full_run_name(body: LaunchBody) -> str:
+    """Explicit run_name (resume) wins; else base + instance tag + timestamp. Computed
+    once here and passed to the CLI via --run-name so the spawned process writes the
+    exact file the monitor predicts."""
+    return make_run_name(_base_run_name(body), body.only_id, body.run_name)
+
+
+def _build_cmd(body: LaunchBody, run_name: str) -> list[str]:
     py = sys.executable
-    common: list[str] = []
+    common: list[str] = ["--run-name", run_name]
     if body.limit:
         common += ["--limit", str(body.limit)]
     if body.include_unapproved:
         common += ["--include-unapproved"]
-    if body.force:
-        common += ["--force"]
+    if body.only_id:
+        common += ["--only-id", body.only_id]
 
     if body.system == "llm":
         if not body.model:
@@ -681,17 +689,14 @@ def _build_cmd(body: LaunchBody) -> tuple[list[str], str]:
     else:
         raise HTTPException(400, f"unknown system: {body.system}")
 
-    run_name = _expected_run_name(body)
     shell = " ".join(shlex.quote(c) for c in cmd)
     if body.grade_after:
         answers = OUTPUT_DIR / f"answers_{run_name}.jsonl"
         gcmd = [py, "-m", "harness", "grade", "--answers", str(answers)]
         if body.judge:
             gcmd += ["--judge", body.judge]
-        if body.force:                       # re-grade when the run is forced
-            gcmd += ["--force"]
         shell += " && " + " ".join(shlex.quote(c) for c in gcmd)
-    return ["bash", "-c", shell], run_name
+    return ["bash", "-c", shell]
 
 
 def _spawn(cmd: list[str], run_name: str, display: str,
@@ -715,15 +720,47 @@ def _spawn(cmd: list[str], run_name: str, display: str,
     return proc_id
 
 
+def _launch_meta_path(run_name: str) -> Path:
+    return OUTPUT_DIR / f"answers_{run_name}.launch.json"
+
+
 @app.post("/api/launch")
 def launch(body: LaunchBody):
-    cmd, run_name = _build_cmd(body)
+    run_name = _full_run_name(body)
+    cmd = _build_cmd(body, run_name)
     display = cmd[-1]   # the bash -c shell string
     answers = OUTPUT_DIR / f"answers_{run_name}.jsonl"
     jslug = slugify(body.judge or GRADE_DEFAULT_JUDGE)
     grades = OUTPUT_DIR / f"grades_{run_name}__judge-{jslug}.jsonl"   # written iff grade_after
+    # Persist the launch config so the run can be resumed later with identical params.
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    _launch_meta_path(run_name).write_text(
+        json.dumps({**body.model_dump(), "run_name": run_name}, indent=1))
     proc_id = _spawn(cmd, run_name, display, answers, grades if body.grade_after else None)
     return {"ok": True, "proc_id": proc_id, "run_name": run_name, "cmd": display}
+
+
+@app.post("/api/runs/{name}/resume")
+def resume_run(name: str):
+    """Re-launch a run under its existing name: finished items are kept, the rest of the
+    benchmark is run. Reconstructs the original params from the launch-meta sidecar."""
+    if not _RUN_NAME_RE.match(name):
+        raise HTTPException(400, "invalid run name")
+    meta_path = _launch_meta_path(name)
+    if not meta_path.exists():
+        raise HTTPException(404, f"no launch metadata for run {name!r} — cannot resume "
+                                 f"(only runs launched from the UI can be resumed)")
+    meta = json.loads(meta_path.read_text())
+    meta["run_name"] = name          # force append into the same run
+    body = LaunchBody(**{k: v for k, v in meta.items()
+                         if k in LaunchBody.model_fields})
+    cmd = _build_cmd(body, name)
+    display = cmd[-1]
+    answers = OUTPUT_DIR / f"answers_{name}.jsonl"
+    jslug = slugify(body.judge or GRADE_DEFAULT_JUDGE)
+    grades = OUTPUT_DIR / f"grades_{name}__judge-{jslug}.jsonl"
+    proc_id = _spawn(cmd, name, display, answers, grades if body.grade_after else None)
+    return {"ok": True, "proc_id": proc_id, "run_name": name, "cmd": display}
 
 
 class GradeBody(BaseModel):

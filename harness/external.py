@@ -37,7 +37,8 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 
-from harness.answer import iter_items, slugify
+from harness.answer import (iter_items, select_items, make_run_name,
+                            resume_state, slugify)
 from harness.llm import load_jsonl, load_benchmark, default_benchmark
 from harness.snapshot import build_snapshot
 
@@ -145,33 +146,37 @@ def run_external(agent: str, model: str | None, sandbox: Path, prompt: str,
 
 
 def run(input_path: Path, output_dir: Path, agent: str, model: str | None,
-        force: bool, limit: int | None, include_unapproved: bool,
-        timeout: int, keep_sandbox: bool, agent_args: list[str]) -> None:
+        limit: int | None, include_unapproved: bool,
+        timeout: int, keep_sandbox: bool, agent_args: list[str],
+        only_id: str | None = None, run_name: str | None = None) -> None:
     if shutil.which(AGENTS[agent]["cmd"][0]) is None:
         raise SystemExit(f"'{AGENTS[agent]['cmd'][0]}' not found on PATH — install "
                          f"{agent} first")
     threads = load_benchmark(input_path)
-    items = iter_items(threads, include_unapproved)
+    items = select_items(iter_items(threads, include_unapproved), only_id)
     if limit:
         items = items[:limit]
     if not items:
         raise SystemExit(f"No eval items found in {input_path}.")
 
     condition = f"external_{agent.replace('-', '_')}"
-    run_name = f"{slugify(model) + '_' if model else ''}{condition}"
+    base = f"{slugify(model) + '_' if model else ''}{condition}"
+    run_name = make_run_name(base, only_id, run_name)
     output_path = output_dir / f"answers_{run_name}.jsonl"
     transcripts_dir = output_dir / "transcripts" / run_name
     transcripts_dir.mkdir(parents=True, exist_ok=True)
-
-    done: set[str] = set()
-    if output_path.exists() and not force:
-        done = {r["qid"] for r in load_jsonl(output_path) if not r.get("error")}
-        print(f"Resuming: {len(done)} answers already in {output_path}")
+    good, done = resume_state(output_path)
+    if done:
+        print(f"Resuming {run_name}: {len(done)} already done, "
+              f"{len(items) - len(done)} remaining")
 
     print(f"Agent: {agent} | model: {model or '(agent default)'} "
-          f"| condition: {condition} | items: {len(items)}")
+          f"| condition: {condition} | run: {run_name} | items: {len(items)}")
     n_new = n_err = 0
-    with open(output_path, "w" if force else "a", encoding="utf-8") as fh:
+    with open(output_path, "w", encoding="utf-8") as fh:
+        for r in good:
+            fh.write(json.dumps(r, ensure_ascii=False) + "\n")
+        fh.flush()
         for i, (thread, pair) in enumerate(items):
             qid = pair["qid"]
             if qid in done:
@@ -217,7 +222,7 @@ def run(input_path: Path, output_dir: Path, agent: str, model: str | None,
             fh.write(json.dumps(rec, ensure_ascii=False) + "\n")
             fh.flush()
 
-    print(f"\nDone: {n_new} new answers, {len(done)} skipped, {n_err} errors")
+    print(f"\nDone: {n_new} answers, {len(done)} kept, {n_err} errors")
     print(f"Output: {output_path}")
     print(f"Next: python -m harness grade --answers {output_path}")
 
@@ -236,11 +241,15 @@ def main() -> None:
                     help="keep per-item sandbox dirs for inspection")
     ap.add_argument("--agent-args", default="",
                     help="extra args appended to the agent command (space-separated)")
-    ap.add_argument("--force", action="store_true")
+    ap.add_argument("--only-id", default=None,
+                    help="Run a single benchmark instance by qid or thread_id")
+    ap.add_argument("--run-name", default=None,
+                    help="Explicit run name; reuse to resume an existing run")
     args = ap.parse_args()
-    run(args.input, args.output_dir, args.agent, args.model, args.force, args.limit,
+    run(args.input, args.output_dir, args.agent, args.model, args.limit,
         args.include_unapproved, args.timeout, args.keep_sandbox,
-        args.agent_args.split() if args.agent_args else [])
+        args.agent_args.split() if args.agent_args else [], args.only_id,
+        args.run_name)
 
 
 if __name__ == "__main__":

@@ -3,8 +3,8 @@ SecDevQA — Stage 2: run a model under test against normalized eval questions.
 
 Reads the released benchmark dataset/security_benchmark_final.jsonl, flattens its qa_pairs,
 and asks the candidate model each question under a controlled context condition. Responses
-are written one-per-line and the run is resumable (already-answered qids are skipped unless
---force).
+are written one-per-line. Every launch gets its own timestamped run file; relaunching
+with the same --run-name resumes it (finished qids kept, the rest run).
 
 Conditions (research_plan_v6.md §4.2):
   * no_context       — question text only; model answers from training knowledge.   [implemented]
@@ -93,31 +93,81 @@ def iter_items(threads: list[dict], include_unapproved: bool) -> list[tuple[dict
     return items
 
 
+def select_items(items: list[tuple[dict, dict]],
+                 only_id: str | None) -> list[tuple[dict, dict]]:
+    """Restrict to a single benchmark instance by qid or thread_id (UI 'run one')."""
+    if not only_id:
+        return items
+    keep = [(t, p) for (t, p) in items
+            if p.get("qid") == only_id or t.get("thread_id") == only_id]
+    if not keep:
+        raise SystemExit(
+            f"--only-id {only_id!r} matched no item — pass a qid or thread_id "
+            f"(add --include-unapproved if the thread is not yet approved)")
+    return keep
+
+
+def instance_slug(only_id: str) -> str:
+    """Compact tag for a single-instance run, e.g. 'issue_8494_q1'."""
+    s = only_id.replace("#", "_q")
+    parts = s.split("/")
+    tail = "_".join(parts[-2:]) if len(parts) >= 2 else s
+    return re.sub(r"[^A-Za-z0-9_.-]", "_", tail)
+
+
+def make_run_name(base: str, only_id: str | None = None,
+                  run_name: str | None = None) -> str:
+    """Unique, log-everything run name. Explicit `run_name` (from the UI launcher)
+    wins; otherwise base + instance tag (if any) + timestamp — so every launch lands
+    in its own answers_<run>.jsonl and nothing is ever overwritten."""
+    if run_name:
+        return run_name
+    ts = datetime.now().strftime("%Y%m%d-%H%M%S")
+    parts = [base] + ([instance_slug(only_id)] if only_id else []) + [ts]
+    return "_".join(parts)
+
+
+def resume_state(output_path: Path) -> tuple[list[dict], set[str]]:
+    """Resume support without truncation: if `output_path` already exists (a run
+    relaunched under the same --run-name), keep every SUCCESSFUL record and skip its
+    qid; error/missing items are retried. A fresh (timestamped) run sees no file and
+    starts empty. Returns (good_records_to_rewrite, done_qids)."""
+    existing = load_jsonl(output_path) if output_path.exists() else []
+    good = [r for r in existing if not r.get("error")]
+    done = {r["qid"] for r in good if r.get("qid")}
+    return good, done
+
+
 def run(input_path: Path, output_dir: Path, model: str, condition: str,
-        force: bool, limit: int | None, include_unapproved: bool,
-        max_tokens: int) -> None:
+        limit: int | None, include_unapproved: bool, max_tokens: int,
+        only_id: str | None = None, run_name: str | None = None) -> None:
     if condition not in IMPLEMENTED_CONDITIONS:
         raise SystemExit(
             f"Condition '{condition}' is not implemented yet (Phase 4 in PLAN.md). "
             f"Implemented: {', '.join(IMPLEMENTED_CONDITIONS)}")
 
     threads = load_benchmark(input_path)
-    items = iter_items(threads, include_unapproved)
+    items = select_items(iter_items(threads, include_unapproved), only_id)
     if limit:
         items = items[:limit]
     if not items:
         raise SystemExit(f"No eval items found in {input_path}.")
 
     output_dir.mkdir(parents=True, exist_ok=True)
-    output_path = output_dir / f"answers_{slugify(model)}_{condition}.jsonl"
-    done: set[str] = set()
-    if output_path.exists() and not force:
-        done = {r["qid"] for r in load_jsonl(output_path) if not r.get("error")}
-        print(f"Resuming: {len(done)} answers already in {output_path}")
+    run_name = make_run_name(f"{slugify(model)}_{condition}", only_id, run_name)
+    output_path = output_dir / f"answers_{run_name}.jsonl"
+    good, done = resume_state(output_path)
+    if done:
+        print(f"Resuming {run_name}: {len(done)} already done, "
+              f"{len(items) - len(done)} remaining")
 
-    print(f"Model: {model} | condition: {condition} | items: {len(items)}")
+    print(f"Model: {model} | condition: {condition} | run: {run_name} "
+          f"| items: {len(items)}")
     n_new = n_err = 0
-    with open(output_path, "w" if force else "a", encoding="utf-8") as fh:
+    with open(output_path, "w", encoding="utf-8") as fh:
+        for r in good:
+            fh.write(json.dumps(r, ensure_ascii=False) + "\n")
+        fh.flush()
         for i, (thread, pair) in enumerate(items):
             qid = pair["qid"]
             if qid in done:
@@ -150,7 +200,7 @@ def run(input_path: Path, output_dir: Path, model: str, condition: str,
             if i < len(items) - 1:
                 time.sleep(0.3)
 
-    print(f"\nDone: {n_new} new answers, {len(done)} skipped (already done), {n_err} errors")
+    print(f"\nDone: {n_new} answers, {n_err} errors")
     print(f"Output: {output_path}")
     print("Next: python -m harness grade --answers " + str(output_path))
 
@@ -167,10 +217,14 @@ def main() -> None:
     ap.add_argument("--include-unapproved", action="store_true",
                     help="Also answer items from threads not yet human-approved (smoke tests)")
     ap.add_argument("--max-tokens", type=int, default=4096)
-    ap.add_argument("--force", action="store_true", help="Re-answer everything")
+    ap.add_argument("--only-id", default=None,
+                    help="Run a single benchmark instance by qid or thread_id")
+    ap.add_argument("--run-name", default=None,
+                    help="Explicit run name (default: model_condition[_instance]_timestamp)")
     args = ap.parse_args()
     run(args.input, args.output_dir, args.model, args.condition,
-        args.force, args.limit, args.include_unapproved, args.max_tokens)
+        args.limit, args.include_unapproved, args.max_tokens,
+        args.only_id, args.run_name)
 
 
 if __name__ == "__main__":

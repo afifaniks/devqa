@@ -8,8 +8,10 @@ A Snapshot freezes the world at the moment the report was posted (thread created
                 capped at T, and the SOURCE THREAD ITSELF EXCLUDED (leak control —
                 pre-T duplicates remain findable by design: that is the retrieval task);
   * prs       — mined pull requests created <= T (reviews capped at T);
-  * advisories— GHSA records from the local advisory-database clone that reference this
-                repo, published <= T.
+  * advisories— GHSA records (OSV format) from the local advisory-database clone that
+                reference this repo OR carry a thread CVE/GHSA/OSV id as alias, published
+                <= T; each record embeds its CVE (aliases) and CWE (cwe_ids) — no separate
+                NVD/MITRE source needed.
 
 No live web access anywhere — live NVD/GHSA would disclose the resolution and void the
 time-cap (PLAN.md Phase 4).
@@ -24,7 +26,14 @@ from __future__ import annotations
 import json
 import subprocess
 from dataclasses import dataclass, field
+from datetime import datetime, timedelta
 from pathlib import Path
+
+# Artifacts are capped to a trailing window before report time T: issues/PRs/advisories
+# older than this are dropped (a developer at T would not be triaging ancient threads,
+# and it bounds the retrieval corpus for huge repos). Alias-matched advisories — the
+# specific CVE/GHSA the gold answer cites — bypass the floor (still <= T).
+WINDOW_DAYS = 730  # ~2 years
 
 ROOT = Path(__file__).parent.parent
 CACHE = ROOT / "harness" / "cache"
@@ -48,6 +57,16 @@ def repo_dirname(repo: str) -> str:
     return repo.replace("/", "__")
 
 
+def window_start(before: str) -> str:
+    """ISO timestamp WINDOW_DAYS before T; '' if T unparseable. Lower bound for the
+    trailing artifact window (same Z-suffixed format as the corpus, so string-comparable)."""
+    try:
+        t = datetime.fromisoformat((before or "").replace("Z", "+00:00"))
+    except ValueError:
+        return ""
+    return (t - timedelta(days=WINDOW_DAYS)).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
 # ---------------------------------------------------------------------------
 # Report-time metadata (thread created_at lives in the benchmark, not eval_pairs)
 # ---------------------------------------------------------------------------
@@ -64,7 +83,8 @@ def thread_meta(thread_id: str) -> dict:
             for line in fh:
                 r = json.loads(line)
                 _bench_meta[r["id"]] = {"created_at": r.get("created_at"),
-                                        "number": r.get("number"), "repo": r.get("repo")}
+                                        "number": r.get("number"), "repo": r.get("repo"),
+                                        "hard_facts": r.get("hard_facts") or {}}
     if thread_id not in _bench_meta:
         raise KeyError(f"{thread_id} not in {BENCHMARK} — rebuild the benchmark?")
     return _bench_meta[thread_id]
@@ -112,12 +132,16 @@ def load_issues(repo: str, before: str, exclude_number: int | None) -> list[dict
     path = OUTPUT_DIR / repo_dirname(repo) / "issues.jsonl"
     if not path.exists():
         return []
+    floor = window_start(before)
     out = []
     with open(path, encoding="utf-8") as fh:
         for line in fh:
             d = json.loads(line)
-            if (d.get("created_at") or "9999") > before:
+            ca = d.get("created_at") or "9999"
+            if ca > before:
                 continue
+            if floor and ca < floor:
+                continue  # outside the trailing window
             if exclude_number is not None and d.get("number") == exclude_number:
                 continue  # the question's own thread must not be visible
             comments = [c for c in (d.get("comments") or [])
@@ -133,11 +157,13 @@ def load_prs(repo: str, before: str) -> list[dict]:
     path = OUTPUT_DIR / repo_dirname(repo) / "pull_requests.jsonl"
     if not path.exists():
         return []
+    floor = window_start(before)
     out = []
     with open(path, encoding="utf-8") as fh:
         for line in fh:
             d = json.loads(line)
-            if (d.get("created_at") or "9999") > before:
+            ca = d.get("created_at") or "9999"
+            if ca > before or (floor and ca < floor):
                 continue
             reviews = [r for r in (d.get("reviews") or [])
                        if (r.get("submitted_at") or r.get("created_at") or "") <= before]
@@ -169,19 +195,58 @@ def _advisory_index(repo: str) -> list[str]:
     return paths
 
 
-def load_advisories(repo: str, before: str) -> list[dict]:
+def _advisory_paths_for_ids(ids: list[str] | None) -> list[str]:
+    """Advisory files whose id or alias matches any of `ids` (CVE/GHSA/OSV).
+    Catches advisories the gold answer cites that the repo-URL grep index misses —
+    a GHSA records its CVE under `aliases`, not necessarily a github.com/<repo> ref."""
     out = []
-    for p in _advisory_index(repo):
+    cache_dir = CACHE / "advisories" / "by_id"
+    for raw in ids or []:
+        gid = (raw or "").strip()
+        if not gid:
+            continue
+        cpath = cache_dir / f"{gid}.json"
+        if cpath.exists():
+            out += json.loads(cpath.read_text())
+            continue
+        if not ADVISORY_DB.exists():
+            continue
+        r = subprocess.run(["grep", "-rl", gid, str(ADVISORY_DB / "advisories")],
+                           capture_output=True, text=True)
+        paths = [p for p in r.stdout.splitlines() if p.endswith(".json")]
+        cache_dir.mkdir(parents=True, exist_ok=True)
+        cpath.write_text(json.dumps(paths))
+        out += paths
+    return out
+
+
+def load_advisories(repo: str, before: str, alias_ids: list[str] | None = None) -> list[dict]:
+    """GHSA records (OSV format) referencing this repo, published <= T. Each record
+    embeds its CVE (via `aliases`) and CWE (via `database_specific.cwe_ids`) — no
+    separate NVD/MITRE source needed. `alias_ids` (thread CVE/GHSA/OSV hard_facts)
+    pulls in advisories matched by id when the repo-URL index misses them; still
+    time-gated, so advisories disclosed after T stay out (leak control)."""
+    alias_paths = set(_advisory_paths_for_ids(alias_ids))
+    floor = window_start(before)
+    out, seen = [], set()
+    for p in list(_advisory_index(repo)) + list(alias_paths):
+        if p in seen:
+            continue
+        seen.add(p)
         try:
             a = json.loads(Path(p).read_text(encoding="utf-8"))
         except (OSError, json.JSONDecodeError):
             continue
-        if (a.get("published") or "9999") > before:
+        pub = a.get("published") or "9999"
+        if pub > before:
             continue
+        if floor and pub < floor and p not in alias_paths:
+            continue  # outside window — but a gold-answer-cited advisory bypasses the floor
+        ds = a.get("database_specific", {}) or {}
         out.append({"id": a.get("id"), "aliases": a.get("aliases") or [],
                     "published": a.get("published"),
-                    "severity": a.get("database_specific", {}).get("severity")
-                                or a.get("severity"),
+                    "cwe_ids": ds.get("cwe_ids") or [],
+                    "severity": ds.get("severity") or a.get("severity"),
                     "summary": a.get("summary") or "",
                     "details": a.get("details") or "",
                     "affected": a.get("affected") or [],
@@ -222,5 +287,8 @@ def build_snapshot(thread_id: str, groups: set[str]) -> Snapshot:
     if "prs" in groups:
         snap.prs = load_prs(repo, before)
     if "advisory" in groups:
-        snap.advisories = load_advisories(repo, before)
+        hf = meta.get("hard_facts") or {}
+        alias_ids = ((hf.get("cve_ids") or []) + (hf.get("ghsa_ids") or [])
+                     + (hf.get("osv_ids") or []))
+        snap.advisories = load_advisories(repo, before, alias_ids)
     return snap

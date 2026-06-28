@@ -188,7 +188,8 @@ class ToolBox:
         for r in self.snap.advisories:
             if r["id"].upper() == aid or aid in [a.upper() for a in r["aliases"]]:
                 return _trunc(
-                    f"{r['id']} aliases={r['aliases']} severity={r['severity']}"
+                    f"{r['id']} aliases={r['aliases']} cwe={r.get('cwe_ids') or []}"
+                    f" severity={r['severity']}"
                     f" published={r['published']}\n\n{r['summary']}\n\n{r['details']}\n\n"
                     f"affected: {r['affected']}\nreferences: {r['references']}")
         return f"ERROR: advisory {advisory_id} not found (as of {self.snap.report_time})"

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Paper, Group, Stack, Select, Autocomplete, NumberInput, Checkbox, Button,
   Chip, Text, Code, Alert,
@@ -30,15 +30,27 @@ export function Launcher({ options, onLaunched }) {
   const [groups, setGroups] = useState([]); // empty = full snapshot
   const [limit, setLimit] = useState("");
   const [unapproved, setUnapproved] = useState(false);
-  const [force, setForce] = useState(false);
   const [gradeAfter, setGradeAfter] = useState(true);
   const [judge, setJudge] = useState("openai/gpt-5.4");
+  const [onlyId, setOnlyId] = useState(null);      // single benchmark instance
+  // Note: every launch creates its own timestamped run; resume a run from its card.
+  const [instances, setInstances] = useState([]);
   const [msg, setMsg] = useState(null);
   const [busy, setBusy] = useState(false);
 
   const systems = options.systems || [];
   const sys = systems.find(s => s.id === system) || {};
   const allGroups = options.groups || [];
+
+  // Load benchmark instances for the "run one" picker.
+  useEffect(() => {
+    api.benchmark().then(b => setInstances(
+      (b.items || []).map(it => ({
+        value: it.qid,
+        label: `${it.slug || it.qid} — ${(it.title || "").slice(0, 70)}`,
+      }))
+    )).catch(() => setInstances([]));
+  }, []);
 
   const launch = async () => {
     setBusy(true);
@@ -48,11 +60,11 @@ export function Launcher({ options, onLaunched }) {
         system,
         model: sys.needs_model || model ? model || null : null,
         groups: sys.has_groups && groups.length ? groups : null,
-        limit: limit ? parseInt(limit, 10) : null,
+        limit: onlyId ? null : (limit ? parseInt(limit, 10) : null),
         include_unapproved: unapproved,
-        force,
         grade_after: gradeAfter,
         judge: gradeAfter ? judge : null,
+        only_id: onlyId || null,
       });
       setMsg({ ok: true, run: r.run_name, cmd: r.cmd });
       onLaunched?.();
@@ -91,6 +103,20 @@ export function Launcher({ options, onLaunched }) {
         <NumberInput
           label="Limit" w={110} min={1} value={limit}
           placeholder="all" onChange={setLimit} allowDecimal={false}
+          disabled={!!onlyId}
+        />
+
+        <Select
+          label="Instance (run one)"
+          w={340}
+          value={onlyId}
+          onChange={setOnlyId}
+          data={instances}
+          placeholder="whole benchmark"
+          searchable
+          clearable
+          comboboxProps={{ shadow: "md" }}
+          nothingFoundMessage="no match"
         />
 
         {gradeAfter && (
@@ -131,10 +157,6 @@ export function Launcher({ options, onLaunched }) {
         <Checkbox
           label="include unapproved" size="sm" checked={unapproved}
           onChange={e => setUnapproved(e.currentTarget.checked)}
-        />
-        <Checkbox
-          label="force re-run" size="sm" checked={force}
-          onChange={e => setForce(e.currentTarget.checked)}
         />
         <Checkbox
           label="grade after" size="sm" checked={gradeAfter}
