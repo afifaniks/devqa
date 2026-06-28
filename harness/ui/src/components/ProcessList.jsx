@@ -5,6 +5,11 @@ import {
 import { IconChevronRight, IconChevronDown, IconPlayerStop, IconTrash } from "@tabler/icons-react";
 import { useState } from "react";
 import { fmtStamp } from "../lib/format.js";
+import { LiveTimeline } from "./LiveTimeline.jsx";
+
+// Agent runs (built-in snapshot agent) write a live per-item trajectory; bare-LLM and
+// grading runs do not. Detect from the run name so we only poll /api/live where it exists.
+const isAgentRun = name => /snapshot_agent|_agent\b/.test(name || "");
 
 const PHASE_LABEL = { answering: "answering", grading: "grading", done: "finishing" };
 
@@ -89,6 +94,9 @@ function ProcessCard({ p, onStop, onRemove }) {
       )}
 
       <Collapse in={open}>
+        {p.running && p.phase === "answering" && isAgentRun(p.run_name) && p.current_qid && (
+          <LiveTimeline runName={p.run_name} currentQid={p.current_qid} />
+        )}
         <Code
           block mt="sm"
           style={{ fontSize: 11, maxHeight: 260, overflow: "auto", whiteSpace: "pre-wrap" }}

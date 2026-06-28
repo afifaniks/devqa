@@ -321,6 +321,23 @@ def transcript(name: str, qid_slug: str):
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+@app.get("/api/live/{name}/{qid_slug}")
+def live(name: str, qid_slug: str, since: int = 0):
+    """Live event stream for an in-flight item: the events the streaming agent
+    (harness/stream_agent.py) appends to transcripts/<name>/<qid>.live.jsonl while the
+    item runs. The UI polls with `since` = the count it already has and renders the new
+    tool/token events as a timeline. `done` flips true once the final event is written
+    (or the canonical transcript.json exists, i.e. the item finished)."""
+    if not _RUN_NAME_RE.match(name):
+        raise HTTPException(400, "invalid run name")
+    live_path = OUTPUT_DIR / "transcripts" / name / f"{qid_slug}.live.jsonl"
+    final_path = OUTPUT_DIR / "transcripts" / name / f"{qid_slug}.json"
+    events = read_jsonl(live_path)
+    done = bool(events and events[-1].get("t") in ("done", "final", "final_forced")) \
+        or final_path.exists()
+    return {"events": events[since:], "total": len(events), "done": done}
+
+
 # ---------------------------------------------------------------------------
 # Benchmark API — browse the released QA pairs (security_benchmark_final.jsonl)
 # ---------------------------------------------------------------------------
@@ -825,7 +842,8 @@ def remove_proc(proc_id: str):
 # ~4s, compare ~5s). That's one access-log line per poll per open tab — pure noise.
 # Drop the successful polling requests from uvicorn's access log; keep launches,
 # errors, asset loads, and anything non-2xx so real events stay visible.
-_QUIET_POLL_PATHS = ("/api/runs", "/api/procs", "/api/compare", "/api/transcript")
+_QUIET_POLL_PATHS = ("/api/runs", "/api/procs", "/api/compare", "/api/transcript",
+                     "/api/live")
 
 
 class _QuietPollingFilter(logging.Filter):

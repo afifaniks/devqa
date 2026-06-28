@@ -29,6 +29,8 @@ export const api = {
   deleteRun: name => request(`/api/runs/${q(name)}`, { method: "DELETE" }),
   compare: names => request(`/api/compare?runs=${names.map(q).join(",")}`),
   transcript: (name, slug) => request(`/api/transcript/${q(name)}/${q(slug)}`),
+  live: (name, slug, since = 0) =>
+    request(`/api/live/${q(name)}/${q(slug)}?since=${since}`),
   procs: () => request("/api/procs"),
   launch: body => postJSON("/api/launch", body),
   stopProc: id => postJSON(`/api/procs/${q(id)}/stop`, {}),

@@ -33,13 +33,13 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 
-import litellm
 from dotenv import load_dotenv
 
 from harness.answer import iter_items, slugify
 from harness.llm import load_jsonl, load_benchmark, default_benchmark
 from harness.snapshot import build_snapshot
-from harness.tools import ALL_GROUPS, ToolBox, schemas_for
+from harness.stream_agent import file_emitter, run_streaming_agent
+from harness.tools import ALL_GROUPS, ToolBox
 
 load_dotenv()
 
@@ -77,66 +77,18 @@ def condition_name(groups: set[str]) -> str:
     return "snapshot_agent-groups_" + "+".join(sorted(groups))
 
 
-def _litellm_model(model: str) -> str:
-    """Model id for the litellm call. Tool calling over Ollama requires the chat
-    endpoint: litellm's `ollama/` (generate API) provider silently drops `tool_calls`,
-    so the agent would see no tools and return empty. Route Ollama through `ollama_chat/`.
-    The original `model` string is kept in records / run name."""
-    if model.startswith("ollama/"):
-        return "ollama_chat/" + model[len("ollama/"):]
-    return model
-
-
-def run_agent_loop(model: str, question: str, box: ToolBox, max_steps: int,
-                   max_tokens: int) -> tuple[str, list[dict]]:
-    """Tool-calling loop. Returns (final_answer, transcript)."""
-    call_model = _litellm_model(model)
+def system_prompt_for(box: ToolBox) -> str:
+    """The investigation system prompt, filled in for this snapshot."""
     commit_note = (f" (checked out at commit {box.snap.commit_sha[:12]})"
                    if box.snap.commit_sha else "")
-    messages = [
-        {"role": "system", "content": SYSTEM_PROMPT.format(
-            repo=box.snap.repo, report_date=box.snap.report_time[:10],
-            commit_note=commit_note)},
-        {"role": "user", "content": question},
-    ]
-    tools = schemas_for(box.groups)
-    transcript: list[dict] = []
-    for step in range(1, max_steps + 1):
-        resp = litellm.completion(model=call_model, messages=messages, tools=tools,
-                                  max_tokens=max_tokens)
-        msg = resp.choices[0].message
-        tool_calls = getattr(msg, "tool_calls", None) or []
-        if not tool_calls:
-            final = (msg.content or "").strip()
-            transcript.append({"step": step, "type": "final", "chars": len(final)})
-            return final, transcript
-        messages.append({"role": "assistant", "content": msg.content or "",
-                         "tool_calls": [tc.model_dump() if hasattr(tc, "model_dump")
-                                        else tc for tc in tool_calls]})
-        for tc in tool_calls:
-            name = tc.function.name
-            try:
-                args = json.loads(tc.function.arguments or "{}")
-            except json.JSONDecodeError:
-                args = {}
-            result = box.execute(name, args)
-            transcript.append({"step": step, "type": "tool", "tool": name,
-                               "group": ToolBox.GROUP_OF_TOOL.get(name),
-                               "args": args, "result": result})
-            messages.append({"role": "tool", "tool_call_id": tc.id, "content": result})
-    # out of steps — force a final answer without tools
-    messages.append({"role": "user", "content":
-                     "You are out of tool budget. Give your final answer now."})
-    resp = litellm.completion(model=call_model, messages=messages, max_tokens=max_tokens)
-    final = (resp.choices[0].message.content or "").strip()
-    transcript.append({"step": max_steps + 1, "type": "final_forced",
-                       "chars": len(final)})
-    return final, transcript
+    return SYSTEM_PROMPT.format(repo=box.snap.repo,
+                                report_date=box.snap.report_time[:10],
+                                commit_note=commit_note)
 
 
 def run(input_path: Path, output_dir: Path, model: str, groups: set[str],
         condition: str, force: bool, limit: int | None, include_unapproved: bool,
-        max_steps: int, max_tokens: int) -> None:
+        max_steps: int) -> None:
     threads = load_benchmark(input_path)
     items = iter_items(threads, include_unapproved)
     if limit:
@@ -174,8 +126,17 @@ def run(input_path: Path, output_dir: Path, model: str, groups: set[str],
             try:
                 snap = build_snapshot(thread["thread_id"], groups)
                 box = ToolBox(snap, groups)
-                text, transcript = run_agent_loop(model, pair["question"], box,
-                                                  max_steps, max_tokens)
+                # Live event sink: the streaming layer appends token/tool events here as
+                # they happen, so the monitor UI can tail the in-flight item. The final
+                # trajectory transcript (below) is still written in the canonical format.
+                live_path = transcripts_dir / f"{qid.replace('/', '__')}.live.jsonl"
+                emit = file_emitter(live_path)
+                try:
+                    text, transcript = run_streaming_agent(
+                        model, pair["question"], box, system_prompt_for(box),
+                        max_steps, emit)
+                finally:
+                    getattr(emit, "_fh").close()
                 rec.update({
                     "response": text,
                     "snapshot": {"commit": snap.commit_sha,
@@ -232,7 +193,6 @@ def main() -> None:
     ap.add_argument("--include-unapproved", action="store_true")
     ap.add_argument("--max-steps", type=int, default=15,
                     help="max tool-calling rounds before a forced final answer")
-    ap.add_argument("--max-tokens", type=int, default=2000)
     ap.add_argument("--force", action="store_true")
     args = ap.parse_args()
 
@@ -254,7 +214,7 @@ def main() -> None:
 
     run(args.input, args.output_dir, args.model, groups,
         condition_name(groups), args.force, args.limit,
-        args.include_unapproved, args.max_steps, args.max_tokens)
+        args.include_unapproved, args.max_steps)
 
 
 if __name__ == "__main__":
