@@ -1,6 +1,7 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.6.8)  23 JUN 2026 02:26
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.6.8)  28 JUN 2026 17:01
 entering extended mode
  restricted \write18 enabled.
+ file:line:error style messages enabled.
  %&-line parsing enabled.
 **main.tex
 (./main.tex
@@ -248,15 +249,30 @@ Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
 \@thisruleclass=\count309
 \@lastruleclass=\count310
 \@thisrulewidth=\dimen197
+) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/latex/colortbl/colortbl.sty
+Package: colortbl 2026/05/01 v1.0l Color table columns (DPC)
+ (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/latex/tools/array.sty
+Package: array 2026/02/24 v2.7b Tabular extension package (FMi)
+\col@sep=\dimen198
+\ar@mcellbox=\box57
+\extrarowheight=\dimen199
+\NC@list=\toks24
+\extratabsurround=\skip57
+\backup@length=\skip58
+\ar@cellbox=\box58
+)
+new hooks used!!
+\minrowclearance=\skip59
+\rownum=\count311
 ) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/latex/url/url.sty
 \Urlmuskip=\muskip18
 Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
 ) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/latex/pgf/frontendlayer/tikz.sty (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/latex/pgf/basiclayer/pgf.sty (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/latex/pgf/utilities/pgfrcs.sty (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/utilities/pgfutil-common.tex
-\pgfutil@everybye=\toks24
-\pgfutil@tempdima=\dimen198
-\pgfutil@tempdimb=\dimen199
+\pgfutil@everybye=\toks25
+\pgfutil@tempdima=\dimen256
+\pgfutil@tempdimb=\dimen257
 ) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/utilities/pgfutil-latex.def
-\pgfutil@abb=\box57
+\pgfutil@abb=\box59
 ) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/utilities/pgfrcs.code.tex (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/pgf.revision.tex)
 Package: pgfrcs 2025-08-29 v3.1.11a (3.1.11a)
 ))
@@ -264,31 +280,31 @@ Package: pgf 2025-08-29 v3.1.11a (3.1.11a)
  (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/latex/pgf/basiclayer/pgfcore.sty (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/latex/pgf/systemlayer/pgfsys.sty (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/systemlayer/pgfsys.code.tex
 Package: pgfsys 2025-08-29 v3.1.11a (3.1.11a)
  (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/utilities/pgfkeys.code.tex
-\pgfkeys@pathtoks=\toks25
-\pgfkeys@temptoks=\toks26
+\pgfkeys@pathtoks=\toks26
+\pgfkeys@temptoks=\toks27
  (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/utilities/pgfkeyslibraryfiltered.code.tex
-\pgfkeys@tmptoks=\toks27
+\pgfkeys@tmptoks=\toks28
 ))
-\pgf@x=\dimen256
-\pgf@y=\dimen257
-\pgf@xa=\dimen258
-\pgf@ya=\dimen259
-\pgf@xb=\dimen260
-\pgf@yb=\dimen261
-\pgf@xc=\dimen262
-\pgf@yc=\dimen263
-\pgf@xd=\dimen264
-\pgf@yd=\dimen265
+\pgf@x=\dimen258
+\pgf@y=\dimen259
+\pgf@xa=\dimen260
+\pgf@ya=\dimen261
+\pgf@xb=\dimen262
+\pgf@yb=\dimen263
+\pgf@xc=\dimen264
+\pgf@yc=\dimen265
+\pgf@xd=\dimen266
+\pgf@yd=\dimen267
 \w@pgf@writea=\write3
 \r@pgf@reada=\read2
-\c@pgf@counta=\count311
-\c@pgf@countb=\count312
-\c@pgf@countc=\count313
-\c@pgf@countd=\count314
-\t@pgf@toka=\toks28
-\t@pgf@tokb=\toks29
-\t@pgf@tokc=\toks30
-\pgf@sys@id@count=\count315
+\c@pgf@counta=\count312
+\c@pgf@countb=\count313
+\c@pgf@countc=\count314
+\c@pgf@countd=\count315
+\t@pgf@toka=\toks29
+\t@pgf@tokb=\toks30
+\t@pgf@tokc=\toks31
+\pgf@sys@id@count=\count316
  (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/systemlayer/pgf.cfg
 File: pgf.cfg 2025-08-29 v3.1.11a (3.1.11a)
 )
@@ -299,59 +315,59 @@ File: pgfsys-pdftex.def 2025-08-29 v3.1.11a (3.1.11a)
 File: pgfsys-common-pdf.def 2025-08-29 v3.1.11a (3.1.11a)
 ))) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/systemlayer/pgfsyssoftpath.code.tex
 File: pgfsyssoftpath.code.tex 2025-08-29 v3.1.11a (3.1.11a)
-\pgfsyssoftpath@smallbuffer@items=\count316
-\pgfsyssoftpath@bigbuffer@items=\count317
+\pgfsyssoftpath@smallbuffer@items=\count317
+\pgfsyssoftpath@bigbuffer@items=\count318
 ) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/systemlayer/pgfsysprotocol.code.tex
 File: pgfsysprotocol.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 )) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/pgfcore.code.tex
 Package: pgfcore 2025-08-29 v3.1.11a (3.1.11a)
  (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmath.code.tex (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmathutil.code.tex) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmathparser.code.tex
-\pgfmath@dimen=\dimen266
-\pgfmath@count=\count318
-\pgfmath@box=\box58
-\pgfmath@toks=\toks31
-\pgfmath@stack@operand=\toks32
-\pgfmath@stack@operation=\toks33
+\pgfmath@dimen=\dimen268
+\pgfmath@count=\count319
+\pgfmath@box=\box60
+\pgfmath@toks=\toks32
+\pgfmath@stack@operand=\toks33
+\pgfmath@stack@operation=\toks34
 ) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.code.tex) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.basic.code.tex) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.trigonometric.code.tex) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.random.code.tex) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.comparison.code.tex) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.base.code.tex) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.round.code.tex) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.misc.code.tex) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.integerarithmetics.code.tex) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmathcalc.code.tex) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmathfloat.code.tex
-\c@pgfmathroundto@lastzeros=\count319
+\c@pgfmathroundto@lastzeros=\count320
 )) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/math/pgfint.code.tex) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepoints.code.tex
 File: pgfcorepoints.code.tex 2025-08-29 v3.1.11a (3.1.11a)
-\pgf@picminx=\dimen267
-\pgf@picmaxx=\dimen268
-\pgf@picminy=\dimen269
-\pgf@picmaxy=\dimen270
-\pgf@pathminx=\dimen271
-\pgf@pathmaxx=\dimen272
-\pgf@pathminy=\dimen273
-\pgf@pathmaxy=\dimen274
-\pgf@xx=\dimen275
-\pgf@xy=\dimen276
-\pgf@yx=\dimen277
-\pgf@yy=\dimen278
-\pgf@zx=\dimen279
-\pgf@zy=\dimen280
+\pgf@picminx=\dimen269
+\pgf@picmaxx=\dimen270
+\pgf@picminy=\dimen271
+\pgf@picmaxy=\dimen272
+\pgf@pathminx=\dimen273
+\pgf@pathmaxx=\dimen274
+\pgf@pathminy=\dimen275
+\pgf@pathmaxy=\dimen276
+\pgf@xx=\dimen277
+\pgf@xy=\dimen278
+\pgf@yx=\dimen279
+\pgf@yy=\dimen280
+\pgf@zx=\dimen281
+\pgf@zy=\dimen282
 ) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepathconstruct.code.tex
 File: pgfcorepathconstruct.code.tex 2025-08-29 v3.1.11a (3.1.11a)
-\pgf@path@lastx=\dimen281
-\pgf@path@lasty=\dimen282
+\pgf@path@lastx=\dimen283
+\pgf@path@lasty=\dimen284
 ) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepathusage.code.tex
 File: pgfcorepathusage.code.tex 2025-08-29 v3.1.11a (3.1.11a)
-\pgf@shorten@end@additional=\dimen283
-\pgf@shorten@start@additional=\dimen284
+\pgf@shorten@end@additional=\dimen285
+\pgf@shorten@start@additional=\dimen286
 ) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/pgfcorescopes.code.tex
 File: pgfcorescopes.code.tex 2025-08-29 v3.1.11a (3.1.11a)
-\pgfpic=\box59
-\pgf@hbox=\box60
-\pgf@layerbox@main=\box61
-\pgf@picture@serial@count=\count320
+\pgfpic=\box61
+\pgf@hbox=\box62
+\pgf@layerbox@main=\box63
+\pgf@picture@serial@count=\count321
 ) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/pgfcoregraphicstate.code.tex
 File: pgfcoregraphicstate.code.tex 2025-08-29 v3.1.11a (3.1.11a)
-\pgflinewidth=\dimen285
+\pgflinewidth=\dimen287
 ) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/pgfcoretransformations.code.tex
 File: pgfcoretransformations.code.tex 2025-08-29 v3.1.11a (3.1.11a)
-\pgf@pt@x=\dimen286
-\pgf@pt@y=\dimen287
-\pgf@pt@temp=\dimen288
+\pgf@pt@x=\dimen288
+\pgf@pt@y=\dimen289
+\pgf@pt@temp=\dimen290
 ) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/pgfcorequick.code.tex
 File: pgfcorequick.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 ) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreobjects.code.tex
@@ -360,17 +376,17 @@ File: pgfcoreobjects.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 File: pgfcorepathprocessing.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 ) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/pgfcorearrows.code.tex
 File: pgfcorearrows.code.tex 2025-08-29 v3.1.11a (3.1.11a)
-\pgfarrowsep=\dimen289
+\pgfarrowsep=\dimen291
 ) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreshade.code.tex
 File: pgfcoreshade.code.tex 2025-08-29 v3.1.11a (3.1.11a)
-\pgf@max=\dimen290
-\pgf@sys@shading@range@num=\count321
-\pgf@shadingcount=\count322
+\pgf@max=\dimen292
+\pgf@sys@shading@range@num=\count322
+\pgf@shadingcount=\count323
 ) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreimage.code.tex
 File: pgfcoreimage.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 ) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreexternal.code.tex
 File: pgfcoreexternal.code.tex 2025-08-29 v3.1.11a (3.1.11a)
-\pgfexternal@startupbox=\box62
+\pgfexternal@startupbox=\box64
 ) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/pgfcorelayers.code.tex
 File: pgfcorelayers.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 ) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/pgfcoretransparency.code.tex
@@ -381,59 +397,59 @@ File: pgfcorepatterns.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 File: pgfcorerdf.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 ))) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/modules/pgfmoduleshapes.code.tex
 File: pgfmoduleshapes.code.tex 2025-08-29 v3.1.11a (3.1.11a)
-\pgfnodeparttextbox=\box63
+\pgfnodeparttextbox=\box65
 ) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/modules/pgfmoduleplot.code.tex
 File: pgfmoduleplot.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 ) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/latex/pgf/compatibility/pgfcomp-version-0-65.sty
 Package: pgfcomp-version-0-65 2025-08-29 v3.1.11a (3.1.11a)
-\pgf@nodesepstart=\dimen291
-\pgf@nodesepend=\dimen292
+\pgf@nodesepstart=\dimen293
+\pgf@nodesepend=\dimen294
 ) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/latex/pgf/compatibility/pgfcomp-version-1-18.sty
 Package: pgfcomp-version-1-18 2025-08-29 v3.1.11a (3.1.11a)
 )) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/latex/pgf/utilities/pgffor.sty (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/latex/pgf/utilities/pgfkeys.sty (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/utilities/pgfkeys.code.tex)) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/latex/pgf/math/pgfmath.sty (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmath.code.tex)) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/utilities/pgffor.code.tex
 Package: pgffor 2025-08-29 v3.1.11a (3.1.11a)
-\pgffor@iter=\dimen293
-\pgffor@skip=\dimen294
-\pgffor@stack=\toks34
-\pgffor@toks=\toks35
+\pgffor@iter=\dimen295
+\pgffor@skip=\dimen296
+\pgffor@stack=\toks35
+\pgffor@toks=\toks36
 )) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/frontendlayer/tikz/tikz.code.tex
 Package: tikz 2025-08-29 v3.1.11a (3.1.11a)
  (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/libraries/pgflibraryplothandlers.code.tex
 File: pgflibraryplothandlers.code.tex 2025-08-29 v3.1.11a (3.1.11a)
-\pgf@plot@mark@count=\count323
-\pgfplotmarksize=\dimen295
+\pgf@plot@mark@count=\count324
+\pgfplotmarksize=\dimen297
 )
-\tikz@lastx=\dimen296
-\tikz@lasty=\dimen297
-\tikz@lastxsaved=\dimen298
-\tikz@lastysaved=\dimen299
-\tikz@lastmovetox=\dimen300
-\tikz@lastmovetoy=\dimen301
-\tikzleveldistance=\dimen302
-\tikzsiblingdistance=\dimen303
-\tikz@figbox=\box64
-\tikz@figbox@bg=\box65
-\tikz@tempbox=\box66
-\tikz@tempbox@bg=\box67
-\tikztreelevel=\count324
-\tikznumberofchildren=\count325
-\tikznumberofcurrentchild=\count326
-\tikz@fig@count=\count327
+\tikz@lastx=\dimen298
+\tikz@lasty=\dimen299
+\tikz@lastxsaved=\dimen300
+\tikz@lastysaved=\dimen301
+\tikz@lastmovetox=\dimen302
+\tikz@lastmovetoy=\dimen303
+\tikzleveldistance=\dimen304
+\tikzsiblingdistance=\dimen305
+\tikz@figbox=\box66
+\tikz@figbox@bg=\box67
+\tikz@tempbox=\box68
+\tikz@tempbox@bg=\box69
+\tikztreelevel=\count325
+\tikznumberofchildren=\count326
+\tikznumberofcurrentchild=\count327
+\tikz@fig@count=\count328
  (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/modules/pgfmodulematrix.code.tex
 File: pgfmodulematrix.code.tex 2025-08-29 v3.1.11a (3.1.11a)
-\pgfmatrixcurrentrow=\count328
-\pgfmatrixcurrentcolumn=\count329
-\pgf@matrix@numberofcolumns=\count330
+\pgfmatrixcurrentrow=\count329
+\pgfmatrixcurrentcolumn=\count330
+\pgf@matrix@numberofcolumns=\count331
 )
-\tikz@expandcount=\count331
+\tikz@expandcount=\count332
  (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tikzlibrarytopaths.code.tex
 File: tikzlibrarytopaths.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 ))) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/libraries/pgflibraryarrows.meta.code.tex
 File: pgflibraryarrows.meta.code.tex 2025-08-29 v3.1.11a (3.1.11a)
-\pgfarrowinset=\dimen304
-\pgfarrowlength=\dimen305
-\pgfarrowwidth=\dimen306
-\pgfarrowlinewidth=\dimen307
+\pgfarrowinset=\dimen306
+\pgfarrowlength=\dimen307
+\pgfarrowwidth=\dimen308
+\pgfarrowlinewidth=\dimen309
 ) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tikzlibrarypositioning.code.tex
 File: tikzlibrarypositioning.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 ) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tikzlibraryshapes.geometric.code.tex
@@ -444,74 +460,74 @@ File: pgflibraryshapes.geometric.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 File: tikzlibraryfit.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 ) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tikzlibrarybackgrounds.code.tex
 File: tikzlibrarybackgrounds.code.tex 2025-08-29 v3.1.11a (3.1.11a)
-\pgf@layerbox@background=\box68
-\pgf@layerboxsaved@background=\box69
+\pgf@layerbox@background=\box70
+\pgf@layerboxsaved@background=\box71
 ) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/latex/listings/listings.sty
-\lst@mode=\count332
-\lst@gtempboxa=\box70
-\lst@token=\toks36
-\lst@length=\count333
-\lst@currlwidth=\dimen308
-\lst@column=\count334
-\lst@pos=\count335
-\lst@lostspace=\dimen309
-\lst@width=\dimen310
-\lst@newlines=\count336
-\lst@lineno=\count337
-\lst@maxwidth=\dimen311
+\lst@mode=\count333
+\lst@gtempboxa=\box72
+\lst@token=\toks37
+\lst@length=\count334
+\lst@currlwidth=\dimen310
+\lst@column=\count335
+\lst@pos=\count336
+\lst@lostspace=\dimen311
+\lst@width=\dimen312
+\lst@newlines=\count337
+\lst@lineno=\count338
+\lst@maxwidth=\dimen313
  (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/latex/listings/lstpatch.sty
 File: lstpatch.sty 2025/11/14 1.11b (Carsten Heinz)
 ) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/latex/listings/lstmisc.sty
 File: lstmisc.sty 2025/11/14 1.11b (Carsten Heinz)
-\c@lstnumber=\count338
-\lst@skipnumbers=\count339
-\lst@framebox=\box71
+\c@lstnumber=\count339
+\lst@skipnumbers=\count340
+\lst@framebox=\box73
 ) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/latex/listings/listings.cfg
 File: listings.cfg 2025/11/14 1.11b listings configuration
 ))
 Package: listings 2025/11/14 1.11b (Carsten Heinz)
  (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
 File: l3backend-pdftex.def 2026-02-18 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count340
+\l__color_backend_stack_int=\count341
 ) (./main.aux)
 \openout1 = `main.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 54.
-LaTeX Font Info:    ... okay on input line 54.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 54.
-LaTeX Font Info:    ... okay on input line 54.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 54.
-LaTeX Font Info:    ... okay on input line 54.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 54.
-LaTeX Font Info:    ... okay on input line 54.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 54.
-LaTeX Font Info:    ... okay on input line 54.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 54.
-LaTeX Font Info:    ... okay on input line 54.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 54.
-LaTeX Font Info:    ... okay on input line 54.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 55.
+LaTeX Font Info:    ... okay on input line 55.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 55.
+LaTeX Font Info:    ... okay on input line 55.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 55.
+LaTeX Font Info:    ... okay on input line 55.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 55.
+LaTeX Font Info:    ... okay on input line 55.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 55.
+LaTeX Font Info:    ... okay on input line 55.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 55.
+LaTeX Font Info:    ... okay on input line 55.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 55.
+LaTeX Font Info:    ... okay on input line 55.
 
 -- Lines per column: 56 (exact).
 (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count341
-\scratchdimen=\dimen312
-\scratchbox=\box72
-\nofMPsegments=\count342
-\nofMParguments=\count343
-\everyMPshowfont=\toks37
-\MPscratchCnt=\count344
-\MPscratchDim=\dimen313
-\MPnumerator=\count345
-\makeMPintoPDFobject=\count346
-\everyMPtoPDFconversion=\toks38
+\scratchcounter=\count342
+\scratchdimen=\dimen314
+\scratchbox=\box74
+\nofMPsegments=\count343
+\nofMParguments=\count344
+\everyMPshowfont=\toks38
+\MPscratchCnt=\count345
+\MPscratchDim=\dimen315
+\MPnumerator=\count346
+\makeMPintoPDFobject=\count347
+\everyMPtoPDFconversion=\toks39
 ) (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 485.
  (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
 ))
-\c@lstlisting=\count347
+\c@lstlisting=\count348
  (./sections/introduction.tex [1{/local/home/amamun/apps/latex/.TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/enc/dvips/base/8r.enc}
 
 
@@ -568,19 +584,34 @@ Underfull \hbox (badness 1552) in paragraph at lines 202--215
 \OT1/ptm/b/n/10 Self-contained, resolution-free queries. \OT1/ptm/m/n/10 The query pre-
  []
 
-[4 <./figures/secdevqa-normalization.pdf>] [5] (./tables/repo-stats.tex) (./tables/artifacts.tex) (./tables/axial-categories.tex)) (./sections/experimental-setup.tex [6]
-LaTeX Font Info:    Trying to load font information for OT1+phv on input line 76.
+[4 <./figures/secdevqa-normalization.pdf>] (./figures/rubric-example.tex
+<figures/rubric-example.pdf, id=260, 402.54388pt x 198.7425pt>
+File: figures/rubric-example.pdf Graphic file (type pdf)
+<use figures/rubric-example.pdf>
+Package pdftex.def Info: figures/rubric-example.pdf  used on input line 3.
+(pdftex.def)             Requested size: 252.0pt x 124.41995pt.
+) [5 <./figures/rubric-example.pdf>] (./tables/repo-stats.tex) (./tables/artifacts.tex) (./tables/axial-categories.tex)) (./sections/experimental-setup.tex
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [6]
+Underfull \vbox (badness 1014) has occurred while \output is active []
+
+ [7] (./tables/agent-tools.tex
+
+LaTeX Font Warning: Font shape `TS1/ptm/m/sc' undefined
+(Font)              using `TS1/ptm/m/n' instead
+(Font)              for symbol `textsection' on input line 3.
+
+)
+LaTeX Font Info:    Trying to load font information for OT1+phv on input line 114.
  (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/latex/psnfss/ot1phv.fd
 File: ot1phv.fd 2020/03/25 scalable font definitions for OT1/phv.
-) [7]
-Underfull \vbox (badness 1062) has occurred while \output is active []
-
- [8]) (./sections/threats-to-validity.tex [9]) (./sections/related-work.tex
+) [8]) (./sections/threats-to-validity.tex [9]) (./sections/related-work.tex
 Underfull \hbox (badness 1810) in paragraph at lines 26--41
 \OT1/ptm/m/n/10 the question-answering task de-vel-op-ers ac-tu-ally pose to
  []
 
-(./tables/related-benchmarks.tex)) (./main.bbl [10]
+[10] (./tables/related-benchmarks.tex)) (./main.bbl
 Underfull \hbox (badness 3861) in paragraph at lines 42--43
 \OT1/ptm/m/n/8 mod-els on se-cure code gen-er-a-tion with codese-ce-val,'' Preprint,
  []
@@ -607,27 +638,29 @@ Before submitting the final camera ready copy, remember to:
  uses only Type 1 fonts and that every step in the generation
  process uses the appropriate paper size.
 
-[11
-
-] (./main.aux)
+[11] (./main.aux)
  ***********
 LaTeX2e <2026-06-01>
 L3 programming layer <2026-05-26>
  ***********
+
+
+LaTeX Font Warning: Some font shapes were not available, defaults substituted.
+
  ) 
 Here is how much of TeX's memory you used:
- 16939 strings out of 468300
- 342055 string characters out of 5426743
- 753745 words of memory out of 5000000
- 45691 multiletter control sequences out of 15000+600000
- 677312 words of font info for 130 fonts, out of 8000000 for 9000
+ 17139 strings out of 468300
+ 345545 string characters out of 5426743
+ 757012 words of memory out of 5000000
+ 45877 multiletter control sequences out of 15000+600000
+ 678704 words of font info for 132 fonts, out of 8000000 for 9000
  430 hyphenation exceptions out of 8191
- 84i,9n,94p,2356b,295s stack positions out of 10000i,1000n,20000p,200000b,200000s
-</local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on main.pdf (11 pages, 854836 bytes).
+ 84i,11n,94p,2356b,296s stack positions out of 10000i,1000n,20000p,200000b,200000s
+</local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on main.pdf (11 pages, 985864 bytes).
 PDF statistics:
- 343 PDF objects out of 1000 (max. 8388607)
- 92 compressed objects within 1 object stream
+ 489 PDF objects out of 1000 (max. 8388607)
+ 109 compressed objects within 2 object streams
  0 named destinations out of 1000 (max. 500000)
- 23 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 28 words of extra memory for PDF output out of 10000 (max. 10000000)
 

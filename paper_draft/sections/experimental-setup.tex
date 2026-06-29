@@ -71,19 +71,28 @@ question $q$ and answers from parametric knowledge. We evaluate frontier
 closed-weight models and open-weight models under identical prompts
 (temperature~0 where the API permits).
 
-\textbf{Reference agent (typed tools).} Our harness implements a tool-calling
-agent whose tools are \emph{partitioned by artifact type}: file reading,
-listing, and code search over the snapshot working tree (\textsf{code});
-commit log and ancestor-guarded commit display (\textsf{commits}); keyword
-search and full-text retrieval over the capped issue and pull-request corpora
-(\textsf{issues}, \textsf{prs}); and search and retrieval over the capped
-advisory set (\textsf{advisory}). Because each tool belongs to exactly one group, the set of
-artifact types an agent consulted on an item is read directly off its
-transcript as tool-call counts---the instrument RQ4 requires---and access to an
-artifact type is granted or withheld by enabling or disabling its tool group,
-the instrument RQ3 requires. The agent runs a bounded tool-calling loop
-(at most \dnum{15} rounds) before committing to an answer; all transcripts are
-released.
+\textbf{Reference agent (typed tools).} The reference agent interacts with the
+snapshot through a fixed set of read-only, typed tools. The tools are organized
+into five groups, one for each artifact type the snapshot exposes---\textsc{code} for the
+repository working tree, \textsc{commits} for version history, \textsc{issues}
+and \textsc{prs} for the issue and pull-request corpora from GitHub, and \textsc{advisory}
+for security advisories. Each group provides a keyword-search operation and a
+retrieve-by-identifier operation, mirroring how a maintainer first locates a
+candidate artifact and then reads it in full, and every tool belongs to exactly
+one group; Table~\ref{tab:agent-tools} enumerates the resulting eleven tools.
+
+Every tool draws exclusively from the time-capped snapshot
+(\S\ref{sec:snapshot}) and re-enforces the cap at the moment of access, such as
+a commit is shown only if its revision is an
+ancestor of the snapshot commit, the source thread is withheld from the issue
+corpus, and issue, pull-request, and advisory queries return only records within
+the snapshot window. Advisory records carry their aliased CVE and CWE
+identifiers inline, so vulnerability-database lookups are served from within the
+snapshot and no condition depends on live network access. The agent issues tool
+calls in a bounded loop---at most \dnum{X} rounds---before committing to a final
+answer, and we release every transcript.
+
+\input{tables/agent-tools}
 
 \textbf{Off-the-shelf coding agents.} To ground the agent results in systems
 practitioners actually use, we additionally evaluate production coding agents

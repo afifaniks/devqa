@@ -1,7 +1,8 @@
 \begin{table}[t]
 \caption{Repositories in the current SecDevQA corpus. \textbf{Pairs} = Q\&A
   pairs retained after manual verification; \textbf{Hard} = subset whose answer
-  carries at least one externally verifiable fact (\dnum{2026-06-08}).}
+  carries at least one externally verifiable fact (CVE/GHSA ID, fixed version,
+  fix commit/PR, advisory URL). Stars rounded to thousands (\dnum{2026-06-08}).}
 \label{tab:repos}
 \centering
 \footnotesize
@@ -11,18 +12,15 @@
 \textbf{Repository} & \textbf{Lang.} & \textbf{Stars} & \textbf{Pairs} & \textbf{Hard} \\
 \midrule
 psf/requests              & Python & \dnum{54.0k} & \dnum{24} & \dnum{14} \\
-axios/axios               & JS, TS     & \dnum{109k} & \dnum{23} & \dnum{19} \\
+axios/axios               & JS     & \dnum{109k} & \dnum{23} & \dnum{19} \\
 expressjs/express         & JS     & \dnum{69.1k} & \dnum{23} & \dnum{17} \\
-pyca/cryptography         & Python, Rust & \dnum{7.6k} & \dnum{21} & \dnum{13} \\
+pyca/cryptography         & Python & \dnum{7.6k} & \dnum{21} & \dnum{13} \\
 urllib3/urllib3           & Python & \dnum{4.0k} & \dnum{14} & \dnum{6} \\
-stripe/stripe-node        & TS, JS     & \dnum{4.4k} & \dnum{13} & \dnum{5} \\
-python-pillow/Pillow      & Python, C & \dnum{13.6k} & \dnum{12} & \dnum{12} \\
-rails/rails               & Ruby, JS   & \dnum{58.5k} & \dnum{11} & \dnum{9} \\
+stripe/stripe-node        & JS     & \dnum{4.4k} & \dnum{13} & \dnum{5} \\
+python-pillow/Pillow      & Python & \dnum{13.6k} & \dnum{12} & \dnum{12} \\
+rails/rails               & Ruby   & \dnum{58.5k} & \dnum{11} & \dnum{9} \\
 auth0/node-jsonwebtoken   & JS     & \dnum{18.2k} & \dnum{9} & \dnum{5} \\
 fastapi/fastapi           & Python & \dnum{99.0k} & \dnum{8} & \dnum{5} \\
-kubernetes/kubernetes     & Go & \\
-ImageMagick/ImageMagick   & C, HTML & \\
-mattermost/mattermost     & TS, Go & \\
 \midrule
 \textbf{Total (\dnum{10} repos)} & & & \textbf{\dnum{158}} & \textbf{\dnum{105}} \\
 \bottomrule

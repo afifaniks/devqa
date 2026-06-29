@@ -170,7 +170,7 @@ context conditions in the evaluation (\S\ref{sec:experimental-setup}): different
 query categories lean on different artifact types, and the annotation makes
 that dependency measurable.
 
-\subsection{Synthesis and Coding}
+\subsection{QA Synthesis and Coding}
 \label{sec:phase-normalization}
 
 \subsubsection{QA Synthesis}
@@ -242,12 +242,12 @@ test. The label exists for the evaluation, where it keeps the no-context
 condition a fair capability test and serves as a contamination probe
 (\S\ref{sec:experimental-setup}).
 
-\noindent\textbf{Decomposition.}
-A thread sometimes bundles distinct needs---``am I affected?'' and ``how do I
-remediate?''---each answered separately by the maintainer. We split into multiple
-items only when the reporter genuinely raised distinct queries \emph{and} the
-maintainer answered more than one; we never invent a sub-query the thread does
-not answer.
+% \noindent\textbf{Decomposition.}
+% A thread sometimes bundles distinct needs---``am I affected?'' and ``how do I
+% remediate?''---each answered separately by the maintainer. We split into multiple
+% items only when the reporter genuinely raised distinct queries \emph{and} the
+% maintainer answered more than one; we never invent a sub-query the thread does
+% not answer.
 
 \noindent\textbf{Outcome.}
 An initial pass over \dnum{50} threads yields \dnum{56} items (\dnum{3} threads
@@ -288,8 +288,7 @@ adds, such as the underlying mechanism, a scope caveat, or an alternative valid
 fix. The axis is a kind rather than a numeric weight: correctness \emph{gates}
 the item outcome while completeness only contributes coverage, so a missed
 load-bearing fact cannot be offset by surrounding detail, reflecting that
-incorrect security guidance is unsafe however thorough it is. No reported result
-therefore depends on an arbitrary weighting constant (\S\ref{sec:grading}). Every
+incorrect security guidance is unsafe however thorough it is. Figure \ref{fig:rubric-example} shows an example of the generated rubrics across two axes for a transitive dependency-related query in \texttt{axios/axios} repository. Every
 criterion must be supported by a verbatim span of \emph{answer-side} evidence,
 namely the gold answer, the maintainer's reply, a referenced fix diff, an
 advisory, or a recorded verifiable fact, and a criterion grounded only in the
@@ -297,6 +296,8 @@ query (which the candidate already receives) is discarded so that the rubric
 cannot reward a model for restating the question. We keep each rubric short, at
 most \dnum{five} criteria, so that a long checklist of easy criteria does not
 saturate and flatten the differences between systems.
+
+\input{figures/rubric-example}
 
 \noindent\textbf{Resolution timing.}
 Criteria are graded as facts a competent developer could supply rather than
@@ -319,7 +320,7 @@ resolution by another route satisfies the former through its recorded
 alternatives, whereas one that merely echoes the reporter's symptom satisfies
 neither.
 
-\noindent\textbf{Preparation and verification.}
+\noindent\textbf{Verification.}
 We draft each rubric with \texttt{GPT-5.5}, prompting it with the synthesized
 query, the thread-grounded gold answer, and every artifact the answer draws on,
 namely the maintainer's reply, any referenced fix diff, the advisory, and the
