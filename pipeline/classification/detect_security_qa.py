@@ -28,11 +28,10 @@ Stage 2   (LLM):
           security_topic phrase, and answerer_role (including op_self
           when OP self-answers).
 
-Acceptance gate (every accepted pair must be verifiable in principle):
-  - answer < 30 chars                                       → drop
-  - no hard_facts AND artifacts_needed in ([] | ["none"])   → drop (no anchor)
-  - 30 <= answer < 100 chars AND no hard_facts              → drop (thin source-only)
-  - otherwise                                               → accept
+Acceptance: the LLM decides. A pair is accepted iff Stage 1 returns
+contains_qa=true (above the --confidence threshold). No post-hoc length floors
+or anchor gates — hard_facts / artifacts_needed are extracted and recorded but
+never used to drop a pair.
 
 Grading downstream:
   - hard_facts populated     → deterministic grade (identifier match)
@@ -61,10 +60,9 @@ from config import REPOS
 from utils.openai_client import STAGE1_MODEL, generate_json
 from utils.storage import append_record, load_jsonl, repo_dir
 
-SYSTEM_PROMPT = """You are a research assistant analyzing GitHub threads
-for an academic study on real developer security quest in
-open-source repositories. Follow instructions precisely and return only
-valid JSON with no extra text."""
+SYSTEM_PROMPT = """You are a security analyst curating a research benchmark of
+real developer SECURITY and PRIVACY question-answer pairs from open-source GitHub
+threads."""
 
 # Expanded artifact list for security questions. Existing options retained;
 # security-specific options added.
@@ -374,13 +372,6 @@ Return only this JSON:
 
 _CONF = {"HIGH": 0.95, "MEDIUM": 0.75, "LOW": 0.5}
 
-# Conditional answer-length floor: drop unconditionally below MIN_ANSWER_CHARS;
-# between MIN and SOFT_FLOOR, accept only if at least one hard_fact is populated
-# (a 40-char "fixed in 2.6.3, see GHSA-XXX" carries more research signal than a
-# 200-char "wrong forum, ask discord" deflection).
-MIN_ANSWER_CHARS = 30
-SOFT_FLOOR_CHARS = 100
-
 # Self-Consistency on Stage 1: sample N times, majority-vote `contains_qa`,
 # take the highest-frequency confidence and the longest non-empty need_summary
 # from the contains_qa=True votes. N=1 disables self-consistency.
@@ -409,10 +400,6 @@ def _normalize_hard_facts(raw):
             v = [v]
         out[k] = [str(x).strip() for x in v if str(x).strip()]
     return out
-
-
-def _hard_facts_has_any(hf):
-    return any(len(v) > 0 for v in hf.values())
 
 
 def _flatten_references(hf):
@@ -528,36 +515,12 @@ def detect_and_extract(thread, model, usage_log=None):
 
     q_text = s2.get("question_text") or comment_lookup.get(q_comment_id, "")
     a_text = s2.get("answer_text") or comment_lookup.get(a_comment_id, "")
-    a_len = len(a_text.strip())
 
-    # Normalize hard_facts and artifacts; emit a flat references list for compat
+    # Normalize hard_facts and artifacts; emit a flat references list for compat.
     hard_facts = _normalize_hard_facts(s2.get("hard_facts"))
-    has_hard = _hard_facts_has_any(hard_facts)
-
     artifacts = s2.get("artifacts_needed", [])
     if not isinstance(artifacts, list):
         artifacts = [artifacts] if artifacts else []
-    has_source = bool(artifacts) and artifacts != ["none"]
-
-    # Length floor: drop anything below the hard minimum.
-    if a_len < MIN_ANSWER_CHARS:
-        print(f"  [drop] answer too short ({a_len} chars, hard min {MIN_ANSWER_CHARS})")
-        return {"contains_qa": False, "drop_reason": "answer_too_short"}
-
-    # Anchor gate: every accepted pair must be verifiable in principle —
-    # either through an identifier in hard_facts (deterministic grading) or
-    # through a citable source in artifacts_needed (source-anchored grading).
-    # Pure opinion / deflection without an anchor is dropped.
-    if not has_hard and not has_source:
-        print(f"  [drop] no anchor (no hard_facts, artifacts_needed empty/none)")
-        return {"contains_qa": False, "drop_reason": "no_anchor"}
-
-    # Thin-answer guard: between MIN and SOFT_FLOOR we additionally require
-    # an identifier anchor (a 40-char "fixed in 2.6.3, see GHSA-XXX" is in;
-    # a 40-char "see our docs" is out — the source claim needs more substance).
-    if a_len < SOFT_FLOOR_CHARS and not has_hard:
-        print(f"  [drop] thin answer ({a_len} chars) and no hard_facts")
-        return {"contains_qa": False, "drop_reason": "thin_source_only"}
 
     s2_conf = _CONF.get(str(s2.get("confidence", "LOW")).upper(), 0.5)
 
@@ -621,12 +584,13 @@ def _save_response(repo, entry):
 
 
 def run(repo, model=STAGE1_MODEL, confidence_threshold=0.3, limit=None,
-        max_pairs=None, force=False, state_filter=None, since=None, until=None):
+        max_pairs=None, force=False, state_filter=None, since=None, until=None,
+        no_prefilter=False):
     print(f"\n[detect_security_qa] {repo}")
     print(f"  model:      {model}")
     print(f"  threshold:  {confidence_threshold}")
     print(f"  S1 samples: {STAGE1_SAMPLES} (self-consistency)")
-    print(f"  ans floor:  hard>={MIN_ANSWER_CHARS}  soft>={SOFT_FLOOR_CHARS} (or hard_facts)")
+    print(f"  prefilter:  {'OFF (LLM sees all threads)' if no_prefilter else 'ON (>=2 substantive non-bot comments)'}")
     if state_filter:
         print(f"  state:      {state_filter}")
     if since or until:
@@ -688,7 +652,7 @@ def run(repo, model=STAGE1_MODEL, confidence_threshold=0.3, limit=None,
     for thread in tqdm(threads_to_do, desc="  detecting"):
         num = thread["number"]
 
-        if not prefilter(thread):
+        if not no_prefilter and not prefilter(thread):
             _save_response(repo, {"number": num, "status": "prefilter"})
             dropped_prefilter += 1
             continue
@@ -789,14 +753,16 @@ if __name__ == "__main__":
                         help="Stop after extracting N valid security pairs")
     parser.add_argument("--force", action="store_true",
                         help="Re-process all threads from scratch")
-    parser.add_argument("--state", choices=["open", "closed"], default=None,
-                        help="Filter threads by issue state (default: all)")
+    parser.add_argument("--state", choices=["open", "closed"], default="closed",
+                        help="Filter threads by issue state (default: closed)")
     parser.add_argument("--since", default=None, metavar="YYYY-MM-DD",
                         help="Only threads created on/after this date (e.g. 2025-10-01)")
     parser.add_argument("--until", default=None, metavar="YYYY-MM-DD",
                         help="Only threads created on/before this date (inclusive)")
     parser.add_argument("--stage1-samples", type=int, default=1,
                         help=f"Stage-1 self-consistency sample count (default {STAGE1_SAMPLES}; set 1 to disable)")
+    parser.add_argument("--no-prefilter", action="store_true",
+                        help="Skip the Stage-0 sanity prefilter; send every thread to the LLM (higher cost)")
     args = parser.parse_args()
 
     if args.stage1_samples is not None:
@@ -816,4 +782,5 @@ if __name__ == "__main__":
             state_filter=args.state,
             since=args.since,
             until=args.until,
+            no_prefilter=args.no_prefilter,
         )
