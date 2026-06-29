@@ -28,6 +28,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+
 import json
 import time
 from datetime import datetime, timezone
@@ -35,9 +36,9 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-from harness.answer import (iter_items, select_items, make_run_name,
-                            resume_state, slugify)
-from harness.llm import load_jsonl, load_benchmark, default_benchmark
+from harness.answer import (iter_items, make_run_name, resume_state,
+                            select_items, slugify)
+from harness.llm import default_benchmark, load_benchmark
 from harness.snapshot import build_snapshot
 from harness.stream_agent import file_emitter, run_streaming_agent
 from harness.tools import ALL_GROUPS, ToolBox
@@ -54,8 +55,7 @@ open-source project `{repo}`. Today's date is {report_date}.
 
 You have tools over a snapshot of the project frozen at this date: the repository \
 working tree{commit_note}, the issue tracker and pull requests as they existed today, \
-and the GitHub security advisory database published up to today. There is no live \
-internet access, and nothing after this date exists.
+and the GitHub security advisory database published up to today. {web_note}
 
 Investigate before answering: search the tracker for duplicate or related reports, \
 check the advisory database, and read the relevant code or history where useful. Then \
@@ -66,16 +66,26 @@ than guess. If the question cannot be resolved from the information available to
 say so and give your best assessment. No generic padding."""
 
 
-def condition_name(groups: set[str]) -> str:
-    """Filesystem-safe condition name encoding the active artifact groups."""
+NO_WEB_NOTE = ("There is no live internet access, and nothing after this date exists.")
+WEB_NOTE = (
+    "You have access to the internet with web_search and web_fetch tools."
+    "You can look into the internet for latest information. But make sure"
+    "to note when your decision is based on information from the internet, and not from the snapshot.")
+
+
+def condition_name(groups: set[str], web: bool = False) -> str:
+    """Filesystem-safe condition name encoding the active artifact groups. A `+web`
+    suffix marks runs that were also given live-internet tools (off-snapshot)."""
     missing = set(ALL_GROUPS) - groups
     if not missing:
-        return "snapshot_agent"
-    if len(groups) == 1:
-        return f"snapshot_agent-only_{next(iter(groups))}"
-    if len(missing) == 1:
-        return f"snapshot_agent-no_{next(iter(missing))}"
-    return "snapshot_agent-groups_" + "+".join(sorted(groups))
+        base = "snapshot_agent"
+    elif len(groups) == 1:
+        base = f"snapshot_agent-only_{next(iter(groups))}"
+    elif len(missing) == 1:
+        base = f"snapshot_agent-no_{next(iter(missing))}"
+    else:
+        base = "snapshot_agent-groups_" + "+".join(sorted(groups))
+    return base + "+web" if web else base
 
 
 def system_prompt_for(box: ToolBox) -> str:
@@ -84,13 +94,14 @@ def system_prompt_for(box: ToolBox) -> str:
                    if box.snap.commit_sha else "")
     return SYSTEM_PROMPT.format(repo=box.snap.repo,
                                 report_date=box.snap.report_time[:10],
-                                commit_note=commit_note)
+                                commit_note=commit_note,
+                                web_note=WEB_NOTE if box.web else NO_WEB_NOTE)
 
 
 def run(input_path: Path, output_dir: Path, model: str, groups: set[str],
         condition: str, limit: int | None, include_unapproved: bool,
         max_steps: int, only_id: str | None = None,
-        run_name: str | None = None) -> None:
+        run_name: str | None = None, web: bool = False) -> None:
     threads = load_benchmark(input_path)
     items = select_items(iter_items(threads, include_unapproved), only_id)
     if limit:
@@ -129,7 +140,7 @@ def run(input_path: Path, output_dir: Path, model: str, groups: set[str],
             }
             try:
                 snap = build_snapshot(thread["thread_id"], groups)
-                box = ToolBox(snap, groups)
+                box = ToolBox(snap, groups, web=web)
                 # Live event sink: the streaming layer appends token/tool events here as
                 # they happen, so the monitor UI can tail the in-flight item. The final
                 # trajectory transcript (below) is still written in the canonical format.
@@ -195,8 +206,11 @@ def main() -> None:
                     help="explicit comma list of groups to enable (overrides --without/--only)")
     ap.add_argument("--limit", type=int, default=None)
     ap.add_argument("--include-unapproved", action="store_true")
-    ap.add_argument("--max-steps", type=int, default=15,
+    ap.add_argument("--max-steps", type=int, default=25,
                     help="max tool-calling rounds before a forced final answer")
+    ap.add_argument("--web-search", action="store_true",
+                    help="also give the agent live-internet web_search/web_fetch tools "
+                         "(off-snapshot; adds a +web condition suffix)")
     ap.add_argument("--only-id", default=None,
                     help="Run a single benchmark instance by qid or thread_id")
     ap.add_argument("--run-name", default=None,
@@ -220,8 +234,9 @@ def main() -> None:
         raise SystemExit("at least one artifact group must be enabled")
 
     run(args.input, args.output_dir, args.model, groups,
-        condition_name(groups), args.limit,
-        args.include_unapproved, args.max_steps, args.only_id, args.run_name)
+        condition_name(groups, args.web_search), args.limit,
+        args.include_unapproved, args.max_steps, args.only_id, args.run_name,
+        web=args.web_search)
 
 
 if __name__ == "__main__":

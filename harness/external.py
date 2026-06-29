@@ -39,7 +39,7 @@ from pathlib import Path
 
 from harness.answer import (iter_items, select_items, make_run_name,
                             resume_state, slugify)
-from harness.llm import load_jsonl, load_benchmark, default_benchmark
+from harness.llm import load_benchmark, default_benchmark
 from harness.snapshot import build_snapshot
 
 ROOT = Path(__file__).parent.parent

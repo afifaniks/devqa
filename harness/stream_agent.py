@@ -95,9 +95,12 @@ def build_tools(box: ToolBox) -> list[StructuredTool]:
     tool-call recording (RQ4) and result truncation stay identical to the non-streaming
     path; args schemas come straight from harness/tools.TOOL_SCHEMAS."""
     tools: list[StructuredTool] = []
-    for group in ALL_GROUPS:
-        if group not in box.groups:
-            continue
+    # The five artifact groups (gated by box.groups) plus the optional web group
+    # (gated by box.web — off-snapshot, not part of ALL_GROUPS).
+    active = [g for g in ALL_GROUPS if g in box.groups]
+    if box.web:
+        active.append("web")
+    for group in active:
         for schema in TOOL_SCHEMAS[group]:
             spec = schema["function"]
             name = spec["name"]

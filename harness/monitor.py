@@ -607,11 +607,11 @@ def options():
     return {
         "systems": [
             {"id": "llm", "label": "Bare LLM (no_context)", "needs_model": True,
-             "has_groups": False, "available": True},
+             "has_groups": False, "has_web": False, "available": True},
             {"id": "agent", "label": "Built-in snapshot agent (typed tools)",
-             "needs_model": True, "has_groups": True, "available": True},
+             "needs_model": True, "has_groups": True, "has_web": True, "available": True},
             *[{"id": a, "label": f"External agent: {a}", "needs_model": False,
-               "has_groups": False,
+               "has_groups": False, "has_web": False,
                "available": shutil.which(spec["cmd"][0]) is not None}
               for a, spec in EXTERNAL_AGENTS.items()],
         ],
@@ -627,6 +627,7 @@ class LaunchBody(BaseModel):
     system: str                       # llm | agent | claude-code | opencode
     model: str | None = None
     groups: list[str] | None = None   # built-in agent only; None/all → full snapshot
+    web_search: bool = False          # built-in agent only; live-internet tools (+web)
     limit: int | None = None
     include_unapproved: bool = False
     max_steps: int | None = None
@@ -641,7 +642,7 @@ def _base_run_name(body: LaunchBody) -> str:
         return f"{slugify(body.model)}_no_context"
     if body.system == "agent":
         groups = set(body.groups) if body.groups else set(ALL_GROUPS)
-        return f"{slugify(body.model)}_{agent_condition_name(groups)}"
+        return f"{slugify(body.model)}_{agent_condition_name(groups, body.web_search)}"
     cond = f"external_{body.system.replace('-', '_')}"
     return f"{slugify(body.model) + '_' if body.model else ''}{cond}"
 
@@ -680,6 +681,8 @@ def _build_cmd(body: LaunchBody, run_name: str) -> list[str]:
         cmd = [py, "-m", "harness", "agent", "--model", body.model, *common]
         if groups != set(ALL_GROUPS):
             cmd += ["--groups", ",".join(sorted(groups))]
+        if body.web_search:
+            cmd += ["--web-search"]
         if body.max_steps:
             cmd += ["--max-steps", str(body.max_steps)]
     elif body.system in EXTERNAL_AGENTS:
