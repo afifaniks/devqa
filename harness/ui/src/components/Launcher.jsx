@@ -28,6 +28,7 @@ export function Launcher({ options, onLaunched }) {
   const [system, setSystem] = useState("agent");
   const [model, setModel] = useState("openai/gpt-5.4-mini");
   const [groups, setGroups] = useState([]); // empty = full snapshot
+  const [webSearch, setWebSearch] = useState(false); // live-internet tools (+web)
   const [limit, setLimit] = useState("");
   const [unapproved, setUnapproved] = useState(false);
   const [gradeAfter, setGradeAfter] = useState(true);
@@ -60,6 +61,7 @@ export function Launcher({ options, onLaunched }) {
         system,
         model: sys.needs_model || model ? model || null : null,
         groups: sys.has_groups && groups.length ? groups : null,
+        web_search: sys.has_web ? webSearch : false,
         limit: onlyId ? null : (limit ? parseInt(limit, 10) : null),
         include_unapproved: unapproved,
         grade_after: gradeAfter,
@@ -162,6 +164,12 @@ export function Launcher({ options, onLaunched }) {
           label="grade after" size="sm" checked={gradeAfter}
           onChange={e => setGradeAfter(e.currentTarget.checked)}
         />
+        {sys.has_web && (
+          <Checkbox
+            label="web search (live internet, +web)" size="sm" checked={webSearch}
+            onChange={e => setWebSearch(e.currentTarget.checked)}
+          />
+        )}
       </Group>
 
       {msg && (

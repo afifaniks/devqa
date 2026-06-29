@@ -7,7 +7,10 @@ import { SectionLabel } from "../SectionLabel.jsx";
 import { RunPicker } from "./RunPicker.jsx";
 import { FilterBar } from "./FilterBar.jsx";
 import { CompareStats } from "./CompareStats.jsx";
+import { SolvedMatrix } from "./SolvedMatrix.jsx";
 import { CompareGrid } from "./CompareGrid.jsx";
+
+const MAX_RUNS = 10;  // compare matrix/grid stay legible up to ten columns
 
 const EMPTY_FILTERS = {
   kt: "all", outcome: "all", repo: "all", search: "",
@@ -21,9 +24,14 @@ export function CompareView({ runs }) {
   const [filters, setFilters] = useState(EMPTY_FILTERS);
   const [openQid, setOpenQid] = useState(null);
 
+  const [capMsg, setCapMsg] = useState(false);
   const setF = (k, v) => setFilters(f => ({ ...f, [k]: v }));
   const toggle = name =>
-    setSelected(p => (p.includes(name) ? p.filter(x => x !== name) : [...p, name]));
+    setSelected(p => {
+      if (p.includes(name)) { setCapMsg(false); return p.filter(x => x !== name); }
+      if (p.length >= MAX_RUNS) { setCapMsg(true); return p; }   // cap at MAX_RUNS
+      return [...p, name];
+    });
 
   const key = selected.join(",");
   const { data, loading } = usePolling(
@@ -61,12 +69,17 @@ export function CompareView({ runs }) {
 
   return (
     <>
-      <SectionLabel mt="xs" count={selected.length ? `${selected.length} selected` : null}>
+      <SectionLabel mt="xs" count={selected.length ? `${selected.length}/${MAX_RUNS} selected` : null}>
         Select runs to compare
       </SectionLabel>
       {runs.length === 0
         ? <Text c="dimmed" ta="center" py="xl">No runs found yet.</Text>
         : <RunPicker runs={runs} selected={selected} onToggle={toggle} />}
+      {capMsg && (
+        <Text c="yellow.5" size="xs" mt={6}>
+          At most {MAX_RUNS} runs can be compared at once — deselect one first.
+        </Text>
+      )}
 
       {selected.length > 0 && (
         <>
@@ -74,6 +87,8 @@ export function CompareView({ runs }) {
           <FilterBar f={filters} set={setF} repos={repos} />
 
           {data && sel.length > 0 && <CompareStats rows={rows} runs={sel} />}
+
+          {data && sel.length > 1 && <SolvedMatrix rows={rows} runs={sel} />}
 
           <SectionLabel count={`${rows.length} question${rows.length === 1 ? "" : "s"}`}>
             Predictions
