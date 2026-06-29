@@ -32,12 +32,12 @@ import re
 import subprocess
 from pathlib import Path
 
-from harness.snapshot import Snapshot
+from harness.core.paths import CACHE_DIR
+from harness.snapshot.builder import Snapshot
 
 MAX_RESULT_CHARS = 20000
 
-ROOT = Path(__file__).parent.parent
-VULN_CACHE = ROOT / "harness" / "cache" / "vuln"   # one curated JSON per looked-up id
+VULN_CACHE = CACHE_DIR / "vuln"   # one curated JSON per looked-up id
 HTTP_TIMEOUT = 20
 PROSE_CLIP = 1500            # only verbose free-text fields are clipped, never facts/refs
 

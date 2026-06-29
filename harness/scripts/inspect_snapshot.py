@@ -2,10 +2,10 @@
 Inspect a time-capped snapshot for one benchmark thread — what the snapshot_agent
 actually sees at report time T.
 
-    python -m harness.inspect_snapshot <thread_id>
-    python -m harness.inspect_snapshot <thread_id> --groups advisory,issues
-    python -m harness.inspect_snapshot <thread_id> --full      # no truncation
-    python -m harness.inspect_snapshot --list                  # show available ids
+    python -m harness.scripts.inspect_snapshot <thread_id>
+    python -m harness.scripts.inspect_snapshot <thread_id> --groups advisory,issues
+    python -m harness.scripts.inspect_snapshot <thread_id> --full   # no truncation
+    python -m harness.scripts.inspect_snapshot --list               # show available ids
 
 thread_id form: owner/repo/issue/<number>  (e.g. ImageMagick/ImageMagick/issue/8584)
 """
@@ -16,7 +16,7 @@ import argparse
 import json
 
 from harness.snapshot import (BENCHMARK, build_snapshot, thread_meta)
-from harness.tools import ALL_GROUPS
+from harness.snapshot.tools import ALL_GROUPS
 
 
 def _hr(title: str) -> None:

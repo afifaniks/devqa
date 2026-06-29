@@ -29,21 +29,21 @@ from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from pathlib import Path
 
+from harness.core.benchmark import default_benchmark
+from harness.core.paths import ADVISORY_DB, CACHE_DIR, MINED_OUTPUT_DIR
+
 # Artifacts are capped to a trailing window before report time T: issues/PRs/advisories
 # older than this are dropped (a developer at T would not be triaging ancient threads,
 # and it bounds the retrieval corpus for huge repos). Alias-matched advisories — the
 # specific CVE/GHSA the gold answer cites — bypass the floor (still <= T).
 WINDOW_DAYS = 730  # ~2 years
 
-ROOT = Path(__file__).parent.parent
-CACHE = ROOT / "harness" / "cache"
-OUTPUT_DIR = ROOT / "output"
-ADVISORY_DB = ROOT / "advisory-database"
-# Released benchmark (rubric-bearing) is the eval source; fall back to the full
-# corpus if it hasn't been built. Kept inline to avoid importing the LLM stack here.
-BENCHMARK = ROOT / "dataset" / "security_benchmark_release.jsonl"
-if not BENCHMARK.exists():
-    BENCHMARK = ROOT / "dataset" / "security_benchmark_final.jsonl"
+CACHE = CACHE_DIR
+OUTPUT_DIR = MINED_OUTPUT_DIR
+# Released benchmark (rubric-bearing) is the eval source; fall back to the full corpus
+# if it hasn't been built. core.benchmark is litellm-free, so importing it here keeps
+# the snapshot layer clear of the model stack.
+BENCHMARK = default_benchmark()
 
 
 def _git(cwd: Path, *args: str, check: bool = True) -> str:

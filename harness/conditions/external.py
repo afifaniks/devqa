@@ -37,15 +37,15 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 
-from harness.answer import (iter_items, select_items, make_run_name,
-                            resume_state, slugify)
-from harness.llm import load_benchmark, default_benchmark
+from harness.core.benchmark import default_benchmark, load_benchmark
+from harness.core.paths import CACHE_DIR, OUTPUT_DIR
+from harness.core.runs import (iter_items, make_run_name, resume_state,
+                               select_items, slugify)
 from harness.snapshot import build_snapshot
 
-ROOT = Path(__file__).parent.parent
 DEFAULT_INPUT = default_benchmark()
-DEFAULT_OUTPUT_DIR = ROOT / "harness" / "output"
-SANDBOX_ROOT = ROOT / "harness" / "cache" / "sandbox"
+DEFAULT_OUTPUT_DIR = OUTPUT_DIR
+SANDBOX_ROOT = CACHE_DIR / "sandbox"
 
 # Command templates. {prompt} is replaced; extra args appended from --agent-args.
 # Both run with cwd = the sandbox directory.

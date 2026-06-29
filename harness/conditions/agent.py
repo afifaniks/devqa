@@ -28,7 +28,6 @@ Usage:
 from __future__ import annotations
 
 import argparse
-
 import json
 import time
 from datetime import datetime, timezone
@@ -36,18 +35,18 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-from harness.answer import (iter_items, make_run_name, resume_state,
-                            select_items, slugify)
-from harness.llm import default_benchmark, load_benchmark
+from harness.core.benchmark import default_benchmark, load_benchmark
+from harness.core.paths import OUTPUT_DIR
+from harness.core.runs import (acquire_run_lock, iter_items, make_run_name,
+                               resume_state, select_items, slugify)
 from harness.snapshot import build_snapshot
-from harness.stream_agent import file_emitter, run_streaming_agent
-from harness.tools import ALL_GROUPS, ToolBox
+from harness.snapshot.stream_agent import file_emitter, run_streaming_agent
+from harness.snapshot.tools import ALL_GROUPS, ToolBox
 
 load_dotenv()
 
-ROOT = Path(__file__).parent.parent
 DEFAULT_INPUT = default_benchmark()
-DEFAULT_OUTPUT_DIR = ROOT / "harness" / "output"
+DEFAULT_OUTPUT_DIR = OUTPUT_DIR
 
 SYSTEM_PROMPT = """\
 You are a security-knowledgeable assistant answering a developer's question about the \
@@ -113,6 +112,7 @@ def run(input_path: Path, output_dir: Path, model: str, groups: set[str],
     output_path = output_dir / f"answers_{run_name}.jsonl"
     transcripts_dir = output_dir / "transcripts" / run_name
     transcripts_dir.mkdir(parents=True, exist_ok=True)
+    _lock = acquire_run_lock(output_path)  # noqa: F841 — held for process lifetime
     good, done = resume_state(output_path)
     if done:
         print(f"Resuming {run_name}: {len(done)} already done, "

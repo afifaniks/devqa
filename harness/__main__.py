@@ -1,12 +1,12 @@
 """
 SecDevQA evaluation harness — a self-contained benchmarking module.
 
-  python -m harness answer    [...]   bare-LLM no_context condition (harness/answer.py)
-  python -m harness agent     [...]   built-in snapshot_agent, typed tools (harness/agent.py)
+  python -m harness answer    [...]   bare-LLM no_context condition (conditions/answer.py)
+  python -m harness agent     [...]   built-in snapshot_agent, typed tools (conditions/agent.py)
   python -m harness external  [...]   off-the-shelf agents (claude-code, opencode) in a
-                                      time-capped sandbox (harness/external.py)
-  python -m harness grade     [...]   condition-aware grading (harness/grade.py)
-  python -m harness ui        [...]   web UI: launch runs + live monitoring (harness/monitor.py)
+                                      time-capped sandbox (conditions/external.py)
+  python -m harness grade     [...]   condition-aware grading (grading/grade.py)
+  python -m harness ui        [...]   web UI: launch runs + live monitoring (monitor/ package)
 
 The harness consumes dataset/security_benchmark_final.jsonl (+ mined corpora as data
 files) and writes to harness/output/. It does not import benchmark-construction code.
@@ -26,16 +26,16 @@ def main() -> None:
     cmd, rest = sys.argv[1], sys.argv[2:]
     sys.argv = [f"harness {cmd}"] + rest
     if cmd == "answer":
-        from harness import answer
+        from harness.conditions import answer
         answer.main()
     elif cmd == "agent":
-        from harness import agent
+        from harness.conditions import agent
         agent.main()
     elif cmd == "external":
-        from harness import external
+        from harness.conditions import external
         external.main()
     elif cmd == "grade":
-        from harness import grade
+        from harness.grading import grade
         grade.main()
     elif cmd in ("ui", "monitor", "serve"):
         from harness import monitor

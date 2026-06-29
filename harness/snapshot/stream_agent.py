@@ -35,7 +35,7 @@ from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_core.tools import StructuredTool
 from langgraph.errors import GraphRecursionError
 
-from harness.tools import TOOL_SCHEMAS, ALL_GROUPS, ToolBox
+from harness.snapshot.tools import TOOL_SCHEMAS, ALL_GROUPS, ToolBox
 
 # An emit callback takes one event dict. A no-op default means callers that don't care
 # about live events pay nothing.

@@ -10,10 +10,10 @@ Checks four things:
   4. error / not-found behavior — and that failures are NOT cached
 
 Run it directly (human-readable PASS/FAIL, sets exit code):
-    /local/home/amamun/envs/devqa/bin/python harness/test_vuln_lookup.py
+    /local/home/amamun/envs/devqa/bin/python harness/tests/test_vuln_lookup.py
 
 Or under pytest:
-    /local/home/amamun/envs/devqa/bin/python -m pytest harness/test_vuln_lookup.py -v
+    /local/home/amamun/envs/devqa/bin/python -m pytest harness/tests/test_vuln_lookup.py -v
 
 Live checks hit OSV.dev / NVD / MITRE. With no network they are skipped (not failed),
 so the offline checks still verify the parsing/cache/error logic.
@@ -25,10 +25,10 @@ import sys
 import tempfile
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))   # repo root on path
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))   # repo root on path
 
-import harness.tools as T
-from harness.tools import ToolBox
+import harness.snapshot.tools as T
+from harness.snapshot.tools import ToolBox
 
 
 # --- a ToolBox with the advisory group, writing to a throwaway cache dir ---------

@@ -38,14 +38,15 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-from harness.llm import load_jsonl, chat_json
-from harness.answer import slugify
+from harness.core.benchmark import load_jsonl
+from harness.core.llm import chat_json
+from harness.core.paths import RELEASE_BENCHMARK
+from harness.core.runs import slugify
 
 load_dotenv()
 
-ROOT = Path(__file__).parent.parent
 # Grading needs the embedded rubric, so the released benchmark is the gold source.
-DEFAULT_PAIRS = ROOT / "dataset" / "security_benchmark_release.jsonl"
+DEFAULT_PAIRS = RELEASE_BENCHMARK
 DEFAULT_JUDGE = "gpt-5.4"
 
 # Outcome thresholds on the correctness score (pre-registered; calibrate against the

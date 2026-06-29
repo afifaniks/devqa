@@ -23,7 +23,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import re
 import time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -31,13 +30,15 @@ from pathlib import Path
 import litellm
 from dotenv import load_dotenv
 
-from harness.llm import load_jsonl, load_benchmark, default_benchmark
+from harness.core.benchmark import default_benchmark, load_benchmark
+from harness.core.paths import OUTPUT_DIR
+from harness.core.runs import (acquire_run_lock, iter_items, make_run_name,
+                               resume_state, select_items, slugify)
 
 load_dotenv()
 
-ROOT = Path(__file__).parent.parent
 DEFAULT_INPUT = default_benchmark()
-DEFAULT_OUTPUT_DIR = ROOT / "harness" / "output"
+DEFAULT_OUTPUT_DIR = OUTPUT_DIR
 
 CONDITIONS = ("no_context", "single_artifact", "multi_artifact", "agent")
 IMPLEMENTED_CONDITIONS = ("no_context",)
@@ -53,10 +54,6 @@ Give a direct, specific answer. Cite concrete identifiers (CVE/GHSA IDs, version
 commits) only when you are confident they are correct; acknowledge uncertainty rather \
 than guess. If the question cannot be determined without project-specific information \
 you do not have, say so explicitly. No generic padding."""
-
-
-def slugify(model: str) -> str:
-    return re.sub(r"[^a-zA-Z0-9._-]+", "-", model).strip("-")
 
 
 def complete(model: str, system: str, user: str, max_tokens: int) -> tuple[str, dict]:
@@ -80,64 +77,6 @@ def complete(model: str, system: str, user: str, max_tokens: int) -> tuple[str, 
     return (r.choices[0].message.content or "").strip(), usage_d
 
 
-def iter_items(threads: list[dict], include_unapproved: bool) -> list[tuple[dict, dict]]:
-    """Flatten threads into (thread, qa_pair) items, approved threads only by default."""
-    items = []
-    for t in threads:
-        if t.get("error") or not t.get("qa_pairs"):
-            continue
-        if not include_unapproved and not t.get("approved"):
-            continue
-        for p in t["qa_pairs"]:
-            items.append((t, p))
-    return items
-
-
-def select_items(items: list[tuple[dict, dict]],
-                 only_id: str | None) -> list[tuple[dict, dict]]:
-    """Restrict to a single benchmark instance by qid or thread_id (UI 'run one')."""
-    if not only_id:
-        return items
-    keep = [(t, p) for (t, p) in items
-            if p.get("qid") == only_id or t.get("thread_id") == only_id]
-    if not keep:
-        raise SystemExit(
-            f"--only-id {only_id!r} matched no item — pass a qid or thread_id "
-            f"(add --include-unapproved if the thread is not yet approved)")
-    return keep
-
-
-def instance_slug(only_id: str) -> str:
-    """Compact tag for a single-instance run, e.g. 'issue_8494_q1'."""
-    s = only_id.replace("#", "_q")
-    parts = s.split("/")
-    tail = "_".join(parts[-2:]) if len(parts) >= 2 else s
-    return re.sub(r"[^A-Za-z0-9_.-]", "_", tail)
-
-
-def make_run_name(base: str, only_id: str | None = None,
-                  run_name: str | None = None) -> str:
-    """Unique, log-everything run name. Explicit `run_name` (from the UI launcher)
-    wins; otherwise base + instance tag (if any) + timestamp — so every launch lands
-    in its own answers_<run>.jsonl and nothing is ever overwritten."""
-    if run_name:
-        return run_name
-    ts = datetime.now().strftime("%Y%m%d-%H%M%S")
-    parts = [base] + ([instance_slug(only_id)] if only_id else []) + [ts]
-    return "_".join(parts)
-
-
-def resume_state(output_path: Path) -> tuple[list[dict], set[str]]:
-    """Resume support without truncation: if `output_path` already exists (a run
-    relaunched under the same --run-name), keep every SUCCESSFUL record and skip its
-    qid; error/missing items are retried. A fresh (timestamped) run sees no file and
-    starts empty. Returns (good_records_to_rewrite, done_qids)."""
-    existing = load_jsonl(output_path) if output_path.exists() else []
-    good = [r for r in existing if not r.get("error")]
-    done = {r["qid"] for r in good if r.get("qid")}
-    return good, done
-
-
 def run(input_path: Path, output_dir: Path, model: str, condition: str,
         limit: int | None, include_unapproved: bool, max_tokens: int,
         only_id: str | None = None, run_name: str | None = None) -> None:
@@ -156,6 +95,7 @@ def run(input_path: Path, output_dir: Path, model: str, condition: str,
     output_dir.mkdir(parents=True, exist_ok=True)
     run_name = make_run_name(f"{slugify(model)}_{condition}", only_id, run_name)
     output_path = output_dir / f"answers_{run_name}.jsonl"
+    _lock = acquire_run_lock(output_path)  # noqa: F841 — held for process lifetime
     good, done = resume_state(output_path)
     if done:
         print(f"Resuming {run_name}: {len(done)} already done, "
