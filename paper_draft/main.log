@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.6.8)  28 JUN 2026 17:01
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.6.8)  8 JUL 2026 01:04
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -555,48 +555,48 @@ File: figures/benchmark-pipeline.pdf Graphic file (type pdf)
 Package pdftex.def Info: figures/benchmark-pipeline.pdf  used on input line 3.
 (pdftex.def)             Requested size: 516.0pt x 107.72299pt.
 ) [2]
-LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 51.
+LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 71.
  (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/latex/psnfss/ot1pcr.fd
 File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
 )
-Underfull \hbox (badness 6125) in paragraph at lines 47--60
+Underfull \hbox (badness 6125) in paragraph at lines 67--80
 []\OT1/ptm/m/n/10 From this pool we are min-ing repos-i-to-ries in-cre-
  []
 
 
-Underfull \hbox (badness 2111) in paragraph at lines 47--60
+Underfull \hbox (badness 2111) in paragraph at lines 67--80
 \OT1/ptm/m/n/10 men-tally. The cur-rent cor-pus com-prises the []\OT1/ptm/b/n/10 ten[] \OT1/ptm/m/n/10 repos-
  []
 
 
-Underfull \hbox (badness 3579) in paragraph at lines 47--60
+Underfull \hbox (badness 3579) in paragraph at lines 67--80
 \OT1/ptm/m/n/10 i-to-ries in Ta-ble I[], span-ning []\OT1/ptm/b/n/10 three[] \OT1/ptm/m/n/10 lan-guages (Python,
  []
 
-[3 <./figures/benchmark-pipeline.pdf>] (./figures/normalization-example.tex
-<figures/secdevqa-normalization.pdf, id=66, 394.3533pt x 297.02968pt>
+[3 <./figures/benchmark-pipeline.pdf>] [4] (./figures/normalization-example.tex
+<figures/secdevqa-normalization.pdf, id=71, 394.3533pt x 297.02968pt>
 File: figures/secdevqa-normalization.pdf Graphic file (type pdf)
 <use figures/secdevqa-normalization.pdf>
 Package pdftex.def Info: figures/secdevqa-normalization.pdf  used on input line 101.
 (pdftex.def)             Requested size: 252.0pt x 189.80827pt.
 )
-Underfull \hbox (badness 1552) in paragraph at lines 202--215
+Underfull \hbox (badness 1552) in paragraph at lines 224--237
 \OT1/ptm/b/n/10 Self-contained, resolution-free queries. \OT1/ptm/m/n/10 The query pre-
  []
 
-[4 <./figures/secdevqa-normalization.pdf>] (./figures/rubric-example.tex
-<figures/rubric-example.pdf, id=260, 402.54388pt x 198.7425pt>
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [5 <./figures/secdevqa-normalization.pdf>] (./figures/rubric-example.tex
+<figures/rubric-example.pdf, id=263, 402.54388pt x 198.7425pt>
 File: figures/rubric-example.pdf Graphic file (type pdf)
 <use figures/rubric-example.pdf>
 Package pdftex.def Info: figures/rubric-example.pdf  used on input line 3.
 (pdftex.def)             Requested size: 252.0pt x 124.41995pt.
-) [5 <./figures/rubric-example.pdf>] (./tables/repo-stats.tex) (./tables/artifacts.tex) (./tables/axial-categories.tex)) (./sections/experimental-setup.tex
-Underfull \vbox (badness 10000) has occurred while \output is active []
+) (./tables/repo-stats.tex) (./tables/artifacts.tex) (./tables/axial-categories.tex)) (./sections/experimental-setup.tex
+Underfull \vbox (badness 5519) has occurred while \output is active []
 
- [6]
-Underfull \vbox (badness 1014) has occurred while \output is active []
-
- [7] (./tables/agent-tools.tex
+ [6 <./figures/rubric-example.pdf>] [7] (./tables/agent-tools.tex
 
 LaTeX Font Warning: Font shape `TS1/ptm/m/sc' undefined
 (Font)              using `TS1/ptm/m/n' instead
@@ -606,12 +606,12 @@ LaTeX Font Warning: Font shape `TS1/ptm/m/sc' undefined
 LaTeX Font Info:    Trying to load font information for OT1+phv on input line 114.
  (/local/home/amamun/apps/latex/.TinyTeX/texmf-dist/tex/latex/psnfss/ot1phv.fd
 File: ot1phv.fd 2020/03/25 scalable font definitions for OT1/phv.
-) [8]) (./sections/threats-to-validity.tex [9]) (./sections/related-work.tex
+) [8] [9]) (./sections/threats-to-validity.tex) (./sections/related-work.tex [10]
 Underfull \hbox (badness 1810) in paragraph at lines 26--41
 \OT1/ptm/m/n/10 the question-answering task de-vel-op-ers ac-tu-ally pose to
  []
 
-[10] (./tables/related-benchmarks.tex)) (./main.bbl
+(./tables/related-benchmarks.tex)) (./main.bbl
 Underfull \hbox (badness 3861) in paragraph at lines 42--43
 \OT1/ptm/m/n/8 mod-els on se-cure code gen-er-a-tion with codese-ce-val,'' Preprint,
  []
@@ -626,7 +626,7 @@ Underfull \hbox (badness 5637) in paragraph at lines 48--49
 \OT1/ptm/m/n/8 u-at-ing large lan-guage mod-els in com-puter se-cu-rity,'' Preprint,
  []
 
-)
+[11])
 
 ** Conference Paper **
 Before submitting the final camera ready copy, remember to:
@@ -638,7 +638,9 @@ Before submitting the final camera ready copy, remember to:
  uses only Type 1 fonts and that every step in the generation
  process uses the appropriate paper size.
 
-[11] (./main.aux)
+[12
+
+] (./main.aux)
  ***********
 LaTeX2e <2026-06-01>
 L3 programming layer <2026-05-26>
@@ -649,18 +651,18 @@ LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
  ) 
 Here is how much of TeX's memory you used:
- 17139 strings out of 468300
- 345545 string characters out of 5426743
- 757012 words of memory out of 5000000
- 45877 multiletter control sequences out of 15000+600000
+ 17142 strings out of 468300
+ 345606 string characters out of 5426743
+ 759673 words of memory out of 5000000
+ 45880 multiletter control sequences out of 15000+600000
  678704 words of font info for 132 fonts, out of 8000000 for 9000
  430 hyphenation exceptions out of 8191
  84i,11n,94p,2356b,296s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></local/home/amamun/apps/latex/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on main.pdf (11 pages, 985864 bytes).
+Output written on main.pdf (12 pages, 987546 bytes).
 PDF statistics:
- 489 PDF objects out of 1000 (max. 8388607)
- 109 compressed objects within 2 object streams
+ 492 PDF objects out of 1000 (max. 8388607)
+ 111 compressed objects within 2 object streams
  0 named destinations out of 1000 (max. 500000)
  28 words of extra memory for PDF output out of 10000 (max. 10000000)
 

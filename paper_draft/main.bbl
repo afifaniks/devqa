@@ -47,6 +47,12 @@ F.~Fischer, K.~B\"{o}ttinger, H.~Xiao, C.~Stransky, Y.~Acar, M.~Backes, and S.~F
 \bibitem{secqa2023}
 Z.~Liu, ``Secqa: A concise question-answering dataset for evaluating large language models in computer security,'' Preprint, arXiv:2312.15838, 2023.
 
+\bibitem{avizienis2004taxonomy}
+A.~Avizienis, J.-C. Laprie, B.~Randell, and C.~Landwehr, ``Basic concepts and taxonomy of dependable and secure computing,'' \emph{IEEE transactions on dependable and secure computing}, vol.~1, no.~1, pp. 11--33, 2004.
+
+\bibitem{shostack2014threat}
+A.~Shostack, \emph{Threat modeling: Designing for security}.\hskip 1em plus 0.5em minus 0.4em\relax John wiley \& sons, 2014.
+
 \bibitem{zheng2023judging}
 L.~Zheng, W.-L. Chiang, Y.~Sheng, S.~Zhuang, Z.~Wu, Y.~Zhuang, Z.~Lin, Z.~Li, D.~Li, E.~P. Xing, H.~Zhang, J.~E. Gonzalez, and I.~Stoica, ``Judging {LLM-as-a-Judge} with {MT-Bench} and {Chatbot Arena},'' in \emph{Advances in Neural Information Processing Systems (NeurIPS)}, 2023.
 

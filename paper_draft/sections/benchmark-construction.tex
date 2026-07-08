@@ -18,6 +18,26 @@ axial coding---toward a taxonomy of developer security queries.
 
 \input{figures/benchmark-pipeline}
 
+\subsection{Security Query}
+\label{sec:security-def}
+
+We adopt the standard security construct from dependable computing: the
+preservation of \textbf{confidentiality}, \textbf{integrity}, and \textbf{availability} (CIA) against a
+deliberate \emph{adversary}~\cite{avizienis2004taxonomy}. A thread is a
+\emph{security query} if and only if the concern it raises is a potential
+compromise of one of these properties by an adversary crossing a \emph{trust
+boundary}~\cite{shostack2014threat}, that is, whether some party could gain
+unauthorized access, escalate privilege, bypass a control, tamper with state,
+deny service to others, or expose private data. This adversarial criterion alone
+governs inclusion; a cited CVE, GHSA, or advisory serves as corroborating
+evidence and is not a prerequisite. The decisive test is reachability across a
+trust boundary: a crash triggered by attacker-controlled input, such as a
+service parsing an untrusted upload, constitutes a denial-of-service compromise
+and is in scope. Scope depends on the concern a query raises and not on its
+eventual outcome, hence, a query asking whether a disclosed vulnerability affects the
+project remains in scope when the resolution is a not-affected determination,
+itself a security-triage need.
+
 \subsection{Query Sourcing}
 \label{sec:phase-sourcing}
 
@@ -111,13 +131,15 @@ decision.
 Every candidate pair is reviewed by both authors through a purpose-built
 annotation interface that presents the full thread alongside the extracted
 query, answer, role, artifacts, and verifiable facts. A pair is \emph{accepted}
-only if it satisfies the inclusion criteria: the query concerns a security
-situation in the developer's own project, the answer is substantive and
-information-providing, and the query and answer are attributable to distinct,
-identifiable comments. Pairs that are not genuinely security-related
-(e.g.\ ordinary functional bugs), that are unanswerable without information
-absent from the thread, or that are mis-extracted are \emph{rejected}; the
-reviewer records a short reason for each rejection.
+only if it satisfies the inclusion criteria: the query is a security query in
+the sense of \S\ref{sec:security-def}---its resolution turns on a potential
+compromise of confidentiality, integrity, or availability by an adversary
+crossing a trust boundary---the answer is substantive and information-providing,
+and the query and answer are attributable to distinct, identifiable comments.
+Pairs whose faults involve no adversary and no trust boundary (e.g.\ ordinary
+functional or robustness bugs), that are unanswerable without information absent
+from the thread, or that are mis-extracted are \emph{rejected}; the reviewer
+records a short reason for each rejection.
 
 To prevent the most security-active projects from dominating the corpus, we cap
 the number of verified pairs retained per repository at \dnum{25}. This keeps the
@@ -360,7 +382,15 @@ instances; the long tail of singleton codes confirms that the corpus is not
 dominated by a handful of canned queries.
 
 Axial coding then groups the open codes into a smaller set of higher-level
-categories that anchor the per-category analysis in RQ2--RQ3. Table~\ref{tab:axial} presents a \emph{preliminary, author-proposed}
+categories that anchor the per-category analysis in RQ2--RQ3. The grouping is
+emergent---codes are merged by conceptual affinity rather than fitted to a
+predefined list---but each resulting category is named and delimited by the
+security concern it captures: the property placed at risk (confidentiality,
+integrity, or availability) and the developer's underlying intent, consistent
+with the construct of \S\ref{sec:security-def}. This keeps the categories
+grounded in security semantics rather than surface phrasing, so the taxonomy
+reflects distinct classes of security query rather than an ad hoc partition of
+keywords. Table~\ref{tab:axial} presents a \emph{preliminary, author-proposed}
 grouping of the \dnum{235} codes into \dnum{eleven} candidate categories,
 reported here to convey the shape of the emerging taxonomy. The two largest
 groups---HTTP request and response security (SSRF, redirects, headers, cookies)
