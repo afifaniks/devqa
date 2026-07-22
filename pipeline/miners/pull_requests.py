@@ -57,7 +57,7 @@ query($owner: String!, $name: String!, $cursor: String) {
       first: 20
       after: $cursor
       states: [OPEN, CLOSED, MERGED]
-      orderBy: {field: CREATED_AT, direction: ASC}
+      orderBy: {field: CREATED_AT, direction: DESC}
     ) {
       pageInfo { hasNextPage endCursor }
       nodes {
@@ -108,12 +108,16 @@ query($owner: String!, $name: String!, $cursor: String) {
 """
 
 
-def mine_pull_requests(repo: str):
+def mine_pull_requests(repo: str, since: str | None = None):
+    """Mine PRs newest-first. `since` (ISO date, e.g. '2020-01-01') stops paging once
+    PRs predate it — bounds volume for huge repos. All benchmark thread T >= 2020, so a
+    2020 cutoff keeps every pre-T PR a snapshot could need."""
     if already_mined(repo, "pull_requests"):
         print(f"  [skip] pull_requests already mined for {repo}")
         return
 
-    print(f"\n[pull_requests] mining {repo} ...")
+    print(f"\n[pull_requests] mining {repo} ..."
+          + (f" (since {since})" if since else ""))
 
     owner, name = repo.split("/")
     records = []
@@ -129,6 +133,8 @@ def mine_pull_requests(repo: str):
         number = pr["number"]
         body = pr.get("body", "") or ""
         created_at = pr.get("createdAt")
+        if since and created_at and created_at[:10] < since:
+            break  # DESC order — everything past here is older than the cutoff
         merged_at = pr.get("mergedAt")
         closed_at = pr.get("closedAt")
         state = pr.get("state", "")  # OPEN / CLOSED / MERGED
@@ -223,7 +229,9 @@ def mine_pull_requests(repo: str):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--repo", default=None)
+    parser.add_argument("--since", default=None,
+                        help="ISO date cutoff, e.g. 2020-01-01 (stop paging older PRs)")
     args = parser.parse_args()
     repos = [args.repo] if args.repo else REPOS
     for repo in repos:
-        mine_pull_requests(repo)
+        mine_pull_requests(repo, since=args.since)
