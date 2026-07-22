@@ -24,19 +24,17 @@ axial coding---toward a taxonomy of developer security queries.
 We adopt the standard security construct from dependable computing: the
 preservation of \textbf{confidentiality}, \textbf{integrity}, and \textbf{availability} (CIA) against a
 deliberate \emph{adversary}~\cite{avizienis2004taxonomy}. A thread is a
-\emph{security query} if and only if the concern it raises is a potential
-compromise of one of these properties by an adversary crossing a \emph{trust
-boundary}~\cite{shostack2014threat}, that is, whether some party could gain
-unauthorized access, escalate privilege, bypass a control, tamper with state,
-deny service to others, or expose private data. This adversarial criterion alone
-governs inclusion; a cited CVE, GHSA, or advisory serves as corroborating
-evidence and is not a prerequisite. The decisive test is reachability across a
-trust boundary: a crash triggered by attacker-controlled input, such as a
-service parsing an untrusted upload, constitutes a denial-of-service compromise
-and is in scope. Scope depends on the concern a query raises and not on its
-eventual outcome, hence, a query asking whether a disclosed vulnerability affects the
-project remains in scope when the resolution is a not-affected determination,
-itself a security-triage need.
+\emph{security query} when its information need concerns a compromise of one of
+these properties by an adversary crossing a \emph{trust
+boundary}~\cite{shostack2014threat}---a party able to gain unauthorized access,
+escalate privilege, bypass a control, tamper with state, deny service to others,
+or expose private data. This need may be to \emph{assess} whether such a
+compromise is possible or to \emph{identify}, \emph{track}, or \emph{remediate}
+one already disclosed; a query asking which commit fixes a given CVE is a
+security query no less than one asking whether a weakness exists. We judge each
+thread by this criterion rather than by surface cues: a cited CVE, GHSA, or
+advisory is corroborating evidence, not a requirement, and many in-scope queries
+cite none.
 
 \subsection{Query Sourcing}
 \label{sec:phase-sourcing}
