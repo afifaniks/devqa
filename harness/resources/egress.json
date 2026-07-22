@@ -1,0 +1,8 @@
+{
+ "providers": [
+  "anthropic",
+  "openai"
+ ],
+ "extra_domains": [],
+ "allow_ollama": true
+}

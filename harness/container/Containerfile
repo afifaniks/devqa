@@ -1,0 +1,56 @@
+# SecDevQA — isolated per-item evaluation runtime.
+#
+# A single image that can run EITHER agent condition against the in-container MCP snapshot
+# server: the off-the-shelf CLI agents (claude-code, opencode; Node) and the built-in
+# LangChain/LiteLLM agent (Python). The harness source itself is NOT baked in — it is
+# bind-mounted read-only at runtime (fast iteration; pin it into the image for the final
+# artifact, per the "bake later" plan). Only third-party dependencies live here.
+#
+# The image also carries the egress-control tooling (iptables, ipset, dnsmasq) the entrypoint
+# uses to pin outbound traffic to the allowlist. Model API keys are passed via env at run
+# time, never baked.
+#
+# Build:  harness/container/build.sh
+FROM docker.io/library/node:22-bookworm-slim
+
+# Pinned agent CLI versions (match the host at authoring time; bump deliberately).
+ARG CLAUDE_CODE_VERSION=2.1.195
+ARG OPENCODE_VERSION=1.14.39
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_BREAK_SYSTEM_PACKAGES=1
+
+# System deps: python + git for the snapshot tools; egress-control tooling; search utilities.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        python3 python3-pip python3-venv \
+        git ca-certificates tar curl \
+        ripgrep grep \
+        iptables ipset dnsmasq dnsutils iproute2 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Off-the-shelf coding agents (Node CLIs).
+RUN npm install -g \
+        @anthropic-ai/claude-code@${CLAUDE_CODE_VERSION} \
+        opencode-ai@${OPENCODE_VERSION} \
+    && npm cache clean --force
+
+# Python runtime for the MCP snapshot server and the built-in agent.
+# (Installed into the system interpreter; harness/ is mounted at PYTHONPATH=/opt/secdevqa.)
+RUN pip3 install \
+        "mcp" "langchain-mcp-adapters" \
+        "langchain" "langgraph" \
+        "langchain-openai" "langchain-anthropic" "langchain-ollama" \
+        "litellm" "python-dotenv" \
+        "requests" "lxml" "ddgs"
+
+ENV PYTHONPATH=/opt/secdevqa \
+    PYTHONUNBUFFERED=1
+
+# Non-root user; the entrypoint elevates only for firewall setup via file capabilities on
+# iptables (configured at run time with --cap-add=NET_ADMIN,NET_RAW). /workspace is the
+# per-item mount point for the snapshot payload.
+WORKDIR /workspace
+
+LABEL org.opencontainers.image.title="secdevqa-eval" \
+      org.opencontainers.image.description="Isolated per-item runtime for SecDevQA agent conditions (MCP snapshot server + CLI/built-in agents)."

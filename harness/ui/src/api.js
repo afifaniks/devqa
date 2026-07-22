@@ -17,6 +17,13 @@ const postJSON = (path, body) =>
     body: JSON.stringify(body),
   });
 
+const putJSON = (path, body) =>
+  request(path, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+
 const q = encodeURIComponent;
 
 export const api = {
@@ -37,4 +44,6 @@ export const api = {
   removeProc: id => request(`/api/procs/${q(id)}`, { method: "DELETE" }),
   gradeRun: (name, body) => postJSON(`/api/runs/${q(name)}/grade`, body),
   resumeRun: name => postJSON(`/api/runs/${q(name)}/resume`, {}),
+  getEgress: () => request("/api/egress"),
+  saveEgress: body => putJSON("/api/egress", body),
 };

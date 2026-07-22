@@ -269,6 +269,12 @@ class Snapshot:
     issues: list[dict] = field(default_factory=list)
     prs: list[dict] = field(default_factory=list)
     advisories: list[dict] = field(default_factory=list)
+    # Offline commit history for the `commits` group when the worktree is an archive-based
+    # snapshot with no real ancestry (containerized runs): precomputed on the host where the
+    # blobless clone + network are available. Empty on the host path, where the worktree
+    # carries real history and ToolBox falls back to live git. See harness/container/materialize.py.
+    commit_log: str = ""                              # `git log` output, most recent first
+    commit_patches: dict = field(default_factory=dict)  # short-sha (12 hex) -> `git show` patch
 
 
 def build_snapshot(thread_id: str, groups: set[str]) -> Snapshot:

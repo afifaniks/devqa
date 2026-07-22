@@ -5,6 +5,7 @@ import {
 } from "@mantine/core";
 import { IconPlayerPlay, IconCheck, IconAlertTriangle } from "@tabler/icons-react";
 import { api } from "../api.js";
+import { EgressEditor } from "./EgressEditor.jsx";
 
 const PROVIDER_LABEL = { openai: "OpenAI", anthropic: "Anthropic", ollama: "Ollama (local)" };
 const PROVIDER_ORDER = ["openai", "anthropic", "ollama"];
@@ -78,6 +79,7 @@ export function Launcher({ options, onLaunched }) {
   };
 
   return (
+    <>
     <Paper withBorder p="md" radius="md">
       <Group align="flex-end" gap="lg" wrap="wrap">
         <Select
@@ -183,5 +185,7 @@ export function Launcher({ options, onLaunched }) {
         </Alert>
       )}
     </Paper>
+    {sys.has_egress && <EgressEditor />}
+    </>
   );
 }

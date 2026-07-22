@@ -418,6 +418,12 @@ class ToolBox:
     # ---- commits group ----------------------------------------------------
 
     def git_log(self, path: str = "", n: int = 20) -> str:
+        # Offline snapshot (container): serve the host-precomputed log. It is already
+        # time-capped and ordered most-recent-first; trim to n lines. Per-path filtering is
+        # not available offline, so `path` is ignored when serving precomputed history.
+        if self.snap.commit_log:
+            lines = self.snap.commit_log.splitlines()[:min(int(n), 50)]
+            return _trunc("\n".join(lines) or "(no commits)")
         args = ["log", f"--max-count={min(int(n), 50)}",
                 "--date=iso", "--pretty=format:%h %ad %an %s"]
         if path:
@@ -428,6 +434,15 @@ class ToolBox:
         if not re.fullmatch(r"[0-9a-fA-F]{6,40}", sha.strip()):
             return "ERROR: pass a commit SHA (6-40 hex chars)"
         sha = sha.strip()
+        # Offline snapshot (container): serve from the host-precomputed patch store, keyed by
+        # 12-hex short sha. A miss means the patch was not materialized (it is either outside
+        # the precomputed window or — the time-cap guarantee — not an ancestor of the snapshot).
+        if self.snap.commit_patches or self.snap.commit_log:
+            patch = self.snap.commit_patches.get(sha[:12])
+            if patch:
+                return _trunc(patch)
+            return (f"ERROR: commit {sha} patch not available in this offline snapshot "
+                    f"(as of {self.snap.report_time})")
         # Time-cap guard: the clone contains post-report commits; only ancestors of the
         # snapshot commit are visible.
         chk = subprocess.run(["git", "merge-base", "--is-ancestor", sha, "HEAD"],

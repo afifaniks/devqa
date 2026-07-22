@@ -58,7 +58,7 @@ VERDICT_SCORE = {"met": 1.0, "partial": 0.5, "not_met": 0.0}
 # Conditions where the system had project/advisory access (affects hard-fact aux +
 # the judge's condition-aware hallucination rule). Matched by prefix.
 CONTEXT_CONDITION_PREFIXES = ("single_artifact", "multi_artifact", "agent",
-                              "snapshot_agent", "external_", "oracle")
+                              "snapshot_agent", "external_", "container_", "oracle")
 
 
 def is_context_condition(condition: str) -> bool:
