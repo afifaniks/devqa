@@ -25,21 +25,22 @@ from miners.pull_requests import mine_pull_requests
 # REPOS = ["urllib3/urllib3", "pyca/cryptography", "axios/axios", "auth0/node-jsonwebtoken", "python-pillow/Pillow", "django/django", "expressjs/express"]
 REPOS = ["tensorflow/tensorflow", "magento/magento2", "jenkinsci/jenkins", "apache/tomcat"]
 
-def run_pipeline(repo: str, skip_ci: bool = False, only_threads: bool = False):
+def run_pipeline(repo: str, skip_ci: bool = False, only_threads: bool = False,
+                 since: str | None = None):
     print(f"\n{'='*60}")
     print(f"  PIPELINE: {repo}")
     print(f"{'='*60}")
 
     if not only_threads:
         # Step 1: Issues (most important — run first)
-        mine_issues(repo)
+        mine_issues(repo, since=since)
 
         # # Step 2: Commits + SZZ (slowest — fetches every commit)
         # mine_commits(repo)
         # run_szz(repo)
 
-        # # Step 3: Pull requests
-        # mine_pull_requests(repo)
+        # Step 3: Pull requests (consumed by the harness snapshot, like issues)
+        mine_pull_requests(repo, since=since)
 
         # # Step 4: CI runs (optional — can be slow for large repos)
         # if not skip_ci:
@@ -65,10 +66,13 @@ if __name__ == "__main__":
         action="store_true",
         help="Skip mining, only rebuild raw threads",
     )
+    parser.add_argument("--since", default=None,
+                        help="ISO date cutoff, e.g. 2020-01-01 (stop paging older items)")
     args = parser.parse_args()
 
     repos = [args.repo] if args.repo else REPOS
     for repo in repos:
-        run_pipeline(repo, skip_ci=args.skip_ci, only_threads=args.only_threads)
+        run_pipeline(repo, skip_ci=args.skip_ci, only_threads=args.only_threads,
+                     since=args.since)
 
     print(f"\nAll done. Threads are in output/<repo>/raw_threads.jsonl")
