@@ -343,4 +343,3 @@ harness/cache/
   `langchain-mcp-adapters`, sharing the `stream_agent` loop.
 - **New artifact group / tool:** add it to `ToolBox` + `TOOL_SCHEMAS` in `snapshot/tools.py`;
   it flows to the built-in agent and the MCP server automatically.
-```
