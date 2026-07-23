@@ -4,8 +4,8 @@ SecDevQA harness — web UI: launch evaluation runs and monitor them live.
 A standalone FastAPI app (port 8766) over harness/output/, distinct from the
 benchmark/review UI (review_ui/app.py, port 8765). Three halves:
 
-  * Launcher — pick a system (bare LLM / built-in snapshot agent / claude-code /
-    opencode), model, artifact-group context selection, limit, and optional
+  * Launcher — pick a system (bare LLM / built-in snapshot agent / containerized
+    claude-code), model, artifact-group context selection, limit, and optional
     auto-grading; the server spawns the corresponding `python -m harness ...` CLI
     as a subprocess (logged to harness/output/logs/).
   * Monitor — read-only polling over the answers_*/grades_* JSONL files and

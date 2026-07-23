@@ -100,6 +100,12 @@ export function RunItem({ run, it }) {
             >
               {transcript ? (
                 <Stack gap={4}>
+                  {!(transcript.transcript || []).length && (
+                    <Text size="xs" c="dimmed">
+                      No tool steps recorded for this item — runs produced before tool-output
+                      capture was added store only the raw agent stream.
+                    </Text>
+                  )}
                   {(transcript.transcript || []).map((s, i) => (
                     <Box key={i} pl="sm" style={{ borderLeft: "2px solid var(--mantine-color-default-border)" }}>
                       <Text ff="monospace" size="xs" fw={600}>

@@ -2,19 +2,19 @@
 
 **Status:** deferred (design captured here; not yet implemented).
 **Depends on:** Tasks 2–6 + 8 (all done: MCP server, materializer, image, egress, container runner,
-external claude-code path — all validated end-to-end).
+containerized claude-code path — all validated end-to-end).
 
 ## Goal
 
 Run the **built-in snapshot agent** through the *same* unified MCP interface and the *same*
-egress-locked container as the external agents, so `snapshot_agent` and `container_claude_code`
+egress-locked container as the coding agent, so `snapshot_agent` and `coding_agent_claude_code`
 differ only in the agent, not in how the snapshot is delivered. Today the built-in agent
 (`harness/conditions/agent.py` → `harness/snapshot/stream_agent.py`) talks to `ToolBox`
 **in-process on the host**; Task 7 moves it into the container as an **MCP client**.
 
 Why bother (the built-in agent is already airtight on the host): uniformity (one execution path,
 one image, one egress policy, one attribution source), and it lets the built-in agent run under
-the exact same conditions we report for the external agents.
+the exact same conditions we report for the containerized coding agent.
 
 ## Current pieces to reuse
 
@@ -95,7 +95,7 @@ identically.
 
 1. Unit: `load_mcp_tools` against a materialized payload on the host (outside a container) →
    confirm the 12 tools load as LangChain tools and one call round-trips.
-2. In-container smoke: `python -m harness container --agent builtin --model openai/gpt-5.4-mini
+2. In-container smoke: `python -m harness coding-agent --agent builtin --model openai/gpt-5.4-mini
    --only-id psf/requests/issue/7209#1 --include-unapproved --keep-sandbox` → expect a final
    answer, `tool_calls_by_group` populated from the MCP log, live events streamed.
 3. Parity: compare `tool_calls_by_group` semantics with the host `snapshot_agent` run on the same

@@ -75,7 +75,7 @@ _bench_meta: dict[str, dict] | None = None
 
 
 def thread_meta(thread_id: str) -> dict:
-    """{created_at, number, repo} for a benchmark thread id (owner/repo/issue/N)."""
+    """{created_at, number, repo, base_commit, hard_facts} for a benchmark thread id."""
     global _bench_meta
     if _bench_meta is None:
         _bench_meta = {}
@@ -84,6 +84,7 @@ def thread_meta(thread_id: str) -> dict:
                 r = json.loads(line)
                 _bench_meta[r["id"]] = {"created_at": r.get("created_at"),
                                         "number": r.get("number"), "repo": r.get("repo"),
+                                        "base_commit": r.get("base_commit") or {},
                                         "hard_facts": r.get("hard_facts") or {}}
     if thread_id not in _bench_meta:
         raise KeyError(f"{thread_id} not in {BENCHMARK} — rebuild the benchmark?")

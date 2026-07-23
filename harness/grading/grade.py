@@ -58,7 +58,7 @@ VERDICT_SCORE = {"met": 1.0, "partial": 0.5, "not_met": 0.0}
 # Conditions where the system had project/advisory access (affects hard-fact aux +
 # the judge's condition-aware hallucination rule). Matched by prefix.
 CONTEXT_CONDITION_PREFIXES = ("single_artifact", "multi_artifact", "agent",
-                              "snapshot_agent", "external_", "container_", "oracle")
+                              "snapshot_agent", "coding_agent_", "oracle")
 
 
 def is_context_condition(condition: str) -> bool:
@@ -359,7 +359,7 @@ def run(answers_path: Path, pairs_path: Path, judge_model: str, output_path: Pat
 def main() -> None:
     ap = argparse.ArgumentParser(description="Stage 3: rubric grading (single judge).")
     ap.add_argument("--answers", type=Path, required=True,
-                    help="answers_*.jsonl produced by the harness (answer/agent/external)")
+                    help="answers_*.jsonl produced by the harness (answer/agent/container)")
     ap.add_argument("--pairs", type=Path, default=DEFAULT_PAIRS,
                     help="rubric-bearing benchmark jsonl (default: security_benchmark_release.jsonl)")
     ap.add_argument("--judge", default=DEFAULT_JUDGE,

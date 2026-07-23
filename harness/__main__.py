@@ -1,12 +1,11 @@
 """
 SecDevQA evaluation harness — a self-contained benchmarking module.
 
-  python -m harness answer    [...]   bare-LLM no_context condition (conditions/answer.py)
-  python -m harness agent     [...]   built-in snapshot_agent, typed tools (conditions/agent.py)
-  python -m harness external  [...]   off-the-shelf agents (claude-code, opencode) in a
-                                      time-capped sandbox (conditions/external.py)
-  python -m harness container [...]   agents in a per-item podman container over the unified
-                                      MCP snapshot interface, egress-locked (container/run.py)
+  python -m harness answer       [...]   bare-LLM no_context condition (conditions/answer.py)
+  python -m harness agent        [...]   built-in snapshot_agent, typed tools (conditions/agent.py)
+  python -m harness coding-agent [...]   off-the-shelf coding agent (claude-code) in a per-item
+                                         podman container over the unified MCP snapshot interface,
+                                         egress-locked (container/run.py)
   python -m harness grade     [...]   condition-aware grading (grading/grade.py)
   python -m harness ui        [...]   web UI: launch runs + live monitoring (monitor/ package)
 
@@ -33,12 +32,9 @@ def main() -> None:
     elif cmd == "agent":
         from harness.conditions import agent
         agent.main()
-    elif cmd == "external":
-        from harness.conditions import external
-        external.main()
-    elif cmd == "container":
-        from harness.container import run as container_run
-        container_run.main()
+    elif cmd in ("coding-agent", "coding_agent"):
+        from harness.container import run as coding_agent_run
+        coding_agent_run.main()
     elif cmd == "grade":
         from harness.grading import grade
         grade.main()

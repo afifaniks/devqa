@@ -32,6 +32,7 @@ from dotenv import load_dotenv
 
 from harness.core.benchmark import default_benchmark, load_benchmark
 from harness.core.paths import OUTPUT_DIR
+from harness.core.prompts import no_context_prompt
 from harness.core.runs import (acquire_run_lock, iter_items, make_run_name,
                                resume_state, select_items, slugify)
 
@@ -43,17 +44,9 @@ DEFAULT_OUTPUT_DIR = OUTPUT_DIR
 CONDITIONS = ("no_context", "single_artifact", "multi_artifact", "agent")
 IMPLEMENTED_CONDITIONS = ("no_context",)
 
-# System prompt for the model under test, no-context condition. The model must not be
-# nudged toward the gold answer; it is told only the ground rules of the condition.
-NO_CONTEXT_SYSTEM_PROMPT = """\
-You are a security-knowledgeable assistant answering a developer's question about an \
-open-source project. You are under a NO-CONTEXT condition: answer from your training \
-knowledge only — no repository code, commits, issues, or advisory documents are provided.
-
-Give a direct, specific answer. Cite concrete identifiers (CVE/GHSA IDs, versions, \
-commits) only when you are confident they are correct; acknowledge uncertainty rather \
-than guess. If the question cannot be determined without project-specific information \
-you do not have, say so explicitly. No generic padding."""
+# The system prompt is the shared maintainer prompt (harness/core/prompts.py) with the
+# no-context block; it is built per item because it carries the repo and the report date.
+# The model must not be nudged toward the gold answer — it is told only the ground rules.
 
 
 def complete(model: str, system: str, user: str, max_tokens: int) -> tuple[str, dict]:
@@ -125,8 +118,10 @@ def run(input_path: Path, output_dir: Path, model: str, condition: str,
                 "answered_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
             }
             try:
-                text, usage = complete(model, NO_CONTEXT_SYSTEM_PROMPT,
-                                       pair["question"], max_tokens)
+                system = no_context_prompt(
+                    repo=thread.get("repo"),
+                    report_date=(thread.get("created_at") or "")[:10])
+                text, usage = complete(model, system, pair["question"], max_tokens)
                 rec["response"] = text
                 rec["usage"] = usage
                 n_new += 1

@@ -53,7 +53,7 @@ def runs():
             "n_flagged": default.get("n_flagged", 0),
             "tool_groups": tool_groups,
             "is_agent": str(last.get("condition", "")).startswith(
-                ("snapshot_agent", "agent", "external_")
+                ("snapshot_agent", "agent", "coding_agent_")
             ),
             "updated_secs_ago": int(now - mtime),
             "running": (now - mtime) < ACTIVE_SECS,
@@ -141,7 +141,11 @@ def live(name: str, qid_slug: str, since: int = 0):
         raise HTTPException(400, "invalid run name")
     live_path = OUTPUT_DIR / "transcripts" / name / f"{qid_slug}.live.jsonl"
     final_path = OUTPUT_DIR / "transcripts" / name / f"{qid_slug}.json"
-    events = read_jsonl(live_path)
+    # tool_result events carry the verbatim tool output (the durable record the final
+    # transcript is rebuilt from). The live timeline only needs `chars`, so drop the
+    # payload here rather than shipping every tool result on every poll.
+    events = [{k: v for k, v in e.items() if k != "result"}
+              for e in read_jsonl(live_path)]
     done = (
         bool(events and events[-1].get("t") in ("done", "final", "final_forced"))
         or final_path.exists()

@@ -65,12 +65,47 @@ setup_restricted_egress() {
     log "egress allowlist installed"
 }
 
+# Clone the repository from the read-only bare mirror in the payload and check out the base
+# commit. The mirror holds ONLY that commit's ancestry, so this is a real repository (native
+# git log/blame/diff work, HEAD is genuinely the base commit) that still cannot reveal anything
+# committed after the report. No network is involved — the mirror is a local path.
+setup_repo() {
+    local mirror="${SECDEVQA_REPO_MIRROR:-}" target="${SECDEVQA_REPO_DIR:-}"
+    local sha="${SECDEVQA_BASE_COMMIT:-}"
+    [ -n "$mirror" ] && [ -n "$target" ] || { log "no repo mirror configured — skipping clone"; return 0; }
+    [ -d "$mirror" ] || { log "ERROR: repo mirror not found at ${mirror}"; return 1; }
+
+    local t0 tclone
+    t0=$(date +%s)
+    log "cloning repository from mirror ${mirror} -> ${target} ..."
+    git clone --quiet "$mirror" "$target"
+    tclone=$(( $(date +%s) - t0 ))
+    log "clone finished in ${tclone}s"
+
+    if [ -n "$sha" ]; then
+        log "checking out base commit ${sha} ..."
+        git -C "$target" -c advice.detachedHead=false checkout --quiet "$sha"
+    fi
+
+    local head cdate n
+    head=$(git -C "$target" rev-parse HEAD)
+    cdate=$(git -C "$target" show -s --format=%cI HEAD)
+    n=$(git -C "$target" rev-list --count HEAD 2>/dev/null || echo '?')
+    log "repo ready: HEAD=${head} committed=${cdate} history=${n} commits tracked=$(git -C "$target" ls-files | wc -l) files"
+    if [ -n "$sha" ] && [ "$head" != "$sha" ]; then
+        log "ERROR: HEAD ${head} != expected base commit ${sha}"; return 1
+    fi
+    log "verified: HEAD matches the recorded base commit (repo state as of ${cdate})"
+}
+
 case "${SECDEVQA_EGRESS:-restricted}" in
     open)        log "OPEN egress (+web): no firewall, full internet" ;;
     restricted)  setup_restricted_egress ;;
     *)           log "unknown SECDEVQA_EGRESS='${SECDEVQA_EGRESS}', defaulting to restricted"
                  setup_restricted_egress ;;
 esac
+
+setup_repo
 
 log "exec: $1 ($# args)"
 exec "$@"

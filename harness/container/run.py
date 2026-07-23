@@ -13,19 +13,19 @@ SAME interface to every agent type:
     the model API + vuln-resolution hosts only, so the time-cap holds even for a shell agent —
     unless the +web condition opts into open internet.
 
-Off-the-shelf agents (claude-code, opencode) additionally keep their own file/shell tools over
-the checked-out repo; the MCP server carries issues/PRs/advisories/commit-history, which are not
-on disk. The built-in agent (--agent builtin) reaches the same MCP server via its LangChain
-client (see harness/container/builtin.py).
+The claude-code agent additionally keeps its own file/shell tools over the checked-out repo;
+the MCP server carries issues/PRs/advisories/commit-history, which are not on disk. The
+built-in agent (--agent builtin) reaches the same MCP server via its LangChain client
+(see harness/container/builtin.py).
 
-Records match the answer.py/external.py schema with condition ``container_<agent>`` (a with-context
+Records match the answer.py schema with condition ``coding_agent_<agent>`` (a with-context
 condition for grading). Auth is passed through from the host env: CLAUDE_CODE_OAUTH_TOKEN
 (subscription) is preferred, else ANTHROPIC_API_KEY / OPENAI_API_KEY.
 
 Usage:
-  python -m harness container --agent claude-code --limit 1 --include-unapproved
-  python -m harness container --agent claude-code --only-id psf/requests/issue/7209#1
-  python -m harness container --agent claude-code --web        # +web (open internet)
+  python -m harness coding-agent --agent claude-code --limit 1 --include-unapproved
+  python -m harness coding-agent --agent claude-code --only-id psf/requests/issue/7209#1
+  python -m harness coding-agent --agent claude-code --web        # +web (open internet)
 """
 
 from __future__ import annotations
@@ -45,9 +45,10 @@ from harness.container.egress import default_policy
 from harness.container.materialize import materialize_payload
 from harness.core.benchmark import default_benchmark, load_benchmark
 from harness.core.paths import CACHE_DIR, HARNESS_DIR, OUTPUT_DIR
+from harness.core.prompts import coding_agent_prompt
 from harness.core.runs import (iter_items, make_run_name, resume_state,
                                select_items)
-from harness.snapshot.tools import ALL_GROUPS
+from harness.snapshot.tools import ALL_GROUPS, MAX_RESULT_CHARS
 
 load_dotenv()
 
@@ -58,6 +59,8 @@ SANDBOX_ROOT = CACHE_DIR / "container"
 # In-container paths (fixed by convention; the runner mounts onto these).
 C_WORKSPACE = "/workspace"
 C_SNAPSHOT = "/workspace/snapshot"
+C_MIRROR = "/workspace/snapshot/repo.git"   # bare, ancestors-only (read-only mount)
+C_REPO = "/workspace/repo"                  # the entrypoint's clone, checked out at base commit
 C_LIVE = "/workspace/live.jsonl"
 C_MCP_CONFIG = "/workspace/mcp.json"
 C_HARNESS = "/opt/secdevqa/harness"
@@ -65,29 +68,6 @@ C_ENTRYPOINT = "/opt/secdevqa/harness/container/entrypoint.sh"
 
 # Auth env vars forwarded into the container, in preference order (subscription first).
 AUTH_ENV_VARS = ("CLAUDE_CODE_OAUTH_TOKEN", "ANTHROPIC_API_KEY", "OPENAI_API_KEY")
-
-PROMPT_TMPL = """\
-# Developer security question — {repo}
-
-Today's date is {report_date}. Everything you can see is a frozen snapshot as of this date;
-NOTHING AFTER THIS DATE EXISTS, and you have no general internet access.
-
-Available to you:
-- `snapshot/repo/` — the project source tree as of today (use your own file tools to read/search it)
-- MCP tools under `secdevqa` — search this project's issue tracker, pull requests, security
-  advisories, and commit history as they existed today, and look up CVE/GHSA/CWE ids. Prefer
-  these over guessing; they are the only way to reach issues/PRs/advisories (not on disk).
-
-Investigate (search for duplicate or related reports, check advisories, read the relevant code),
-then print your final answer. Be direct and specific; cite concrete identifiers (CVE/GHSA ids,
-versions, commits, issue/PR numbers) only when you verified them here or are confident from
-general knowledge. Acknowledge uncertainty rather than guess.
-
-## Question
-
-{question}
-"""
-
 
 # ---------------------------------------------------------------------------
 # MCP client config + agent command (per agent)
@@ -102,6 +82,8 @@ def _mcp_config(groups: set[str]) -> dict:
                 "args": ["-m", "harness.mcp.server"],
                 "env": {
                     "SECDEVQA_SNAPSHOT_DIR": C_SNAPSHOT,
+                    # The code tools operate on the entrypoint's real clone, not the payload.
+                    "SECDEVQA_REPO_DIR": C_REPO,
                     "SECDEVQA_LIVE_EVENTS": C_LIVE,
                     "SECDEVQA_GROUPS": ",".join(sorted(groups)),
                 },
@@ -175,10 +157,13 @@ def resolve_auth(run_name: str, mode: str = "auto") -> tuple[dict[str, str], lis
 
 def _podman_cmd(image: str, payload_dir: Path, live_file: Path, mcp_file: Path,
                 agent_argv: list[str], policy, auth_env: dict[str, str],
-                auth_mounts: list[str]) -> list[str]:
+                auth_mounts: list[str], base_commit: str = "") -> list[str]:
     # IS_SANDBOX=1 lets claude-code accept --dangerously-skip-permissions as root (we need root
     # in-container for the egress firewall, and we genuinely are sandboxed).
-    env = {"IS_SANDBOX": "1", **policy.env(), **auth_env}
+    # SECDEVQA_REPO_* drive the entrypoint's clone-and-checkout of the base commit.
+    repo_env = {"SECDEVQA_REPO_MIRROR": C_MIRROR, "SECDEVQA_REPO_DIR": C_REPO,
+                "SECDEVQA_BASE_COMMIT": base_commit} if base_commit else {}
+    env = {"IS_SANDBOX": "1", **repo_env, **policy.env(), **auth_env}
     env_flags: list[str] = []
     for k, v in env.items():
         env_flags += ["-e", f"{k}={v}"]
@@ -205,12 +190,55 @@ _NATIVE_TOOL_GROUP = {"Read": "code", "Grep": "code", "Glob": "code",
                       "LS": "code", "Bash": "code"}
 
 
+def _read_live(live_file: Path) -> list[dict]:
+    """Parse the live-events file, skipping any half-written trailing line (the container
+    appends to it while we may already be reading)."""
+    events: list[dict] = []
+    try:
+        text = live_file.read_text(encoding="utf-8", errors="replace")
+    except OSError:
+        return events
+    for line in text.splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            events.append(json.loads(line))
+        except json.JSONDecodeError:
+            continue
+    return events
+
+
+def _cap(s: str, n: int = MAX_RESULT_CHARS) -> str:
+    """Bound a captured tool output the same way ToolBox bounds its own results."""
+    return s if len(s) <= n else s[:n] + f"\n... [truncated, {len(s)} chars total]"
+
+
+def _tool_result_text(content) -> str:
+    """Flatten a stream-json tool_result `content` (str, or a list of content blocks)."""
+    if isinstance(content, str):
+        return content
+    if isinstance(content, list):
+        parts = []
+        for b in content:
+            if isinstance(b, dict):
+                parts.append(b.get("text") or b.get("content") or json.dumps(b, ensure_ascii=False))
+            else:
+                parts.append(str(b))
+        return "\n".join(p for p in parts if p)
+    return "" if content is None else json.dumps(content, ensure_ascii=False)
+
+
 def _parse_stream_json(stdout: str) -> tuple[str, list[dict]]:
     """Return (final_answer, native_tool_calls). MCP tool calls (mcp__*) are logged by the MCP
     server itself, so only the agent's OWN tools are collected here — that recovers the code
-    attribution the MCP log cannot see (the agent reads the repo with its own file tools)."""
+    attribution the MCP log cannot see (the agent reads the repo with its own file tools).
+
+    Each native call carries its `result`: the agent's own file/shell tools bypass the MCP
+    server, so this stream is the ONLY place their output can be captured."""
     final = ""
     native: list[dict] = []
+    by_use_id: dict[str, dict] = {}
     for line in stdout.splitlines():
         line = line.strip()
         if not line:
@@ -222,14 +250,23 @@ def _parse_stream_json(stdout: str) -> tuple[str, list[dict]]:
         kind = ev.get("type")
         if kind == "result" and ev.get("result"):
             final = ev["result"]
-        elif kind == "assistant":
+        elif kind in ("assistant", "user"):
             for block in (ev.get("message", {}) or {}).get("content", []) or []:
-                if isinstance(block, dict) and block.get("type") == "tool_use":
+                if not isinstance(block, dict):
+                    continue
+                if block.get("type") == "tool_use":
                     name = block.get("name", "")
-                    if not name.startswith("mcp__"):
-                        native.append({"tool": name,
-                                       "group": _NATIVE_TOOL_GROUP.get(name),
-                                       "args": block.get("input")})
+                    if name.startswith("mcp__"):
+                        continue
+                    call = {"tool": name, "group": _NATIVE_TOOL_GROUP.get(name),
+                            "args": block.get("input"), "result": ""}
+                    native.append(call)
+                    if block.get("id"):
+                        by_use_id[block["id"]] = call
+                elif block.get("type") == "tool_result":
+                    call = by_use_id.get(block.get("tool_use_id"))
+                    if call is not None:
+                        call["result"] = _cap(_tool_result_text(block.get("content")))
     return final, native
 
 
@@ -298,15 +335,44 @@ def _stream_container(cmd: list[str], timeout: int) -> tuple[str, int, float, bo
 
 
 def _append_native_tools_to_live(live_file: Path, native: list[dict]) -> None:
-    """Fold the agent's own tool calls into the live-events file so the UI timeline and RQ4
-    attribution include them alongside the MCP calls."""
+    """Fold the agent's own tool calls AND their outputs into the live-events file, so the
+    live file is a complete record of every tool the agent used — MCP and native alike —
+    for the UI timeline, RQ4 attribution, and transcript assembly."""
     if not native:
         return
     with open(live_file, "a", encoding="utf-8") as fh:
         for i, c in enumerate(native, 1):
-            fh.write(json.dumps({"t": "tool_call", "step": f"native-{i}",
+            step = f"native-{i}"
+            fh.write(json.dumps({"t": "tool_call", "step": step,
                                  "tool": c["tool"], "group": c["group"],
                                  "args": c["args"]}, ensure_ascii=False) + "\n")
+            result = c.get("result") or ""
+            fh.write(json.dumps({"t": "tool_result", "step": step,
+                                 "tool": c["tool"], "group": c["group"],
+                                 "chars": len(result), "result": result},
+                                ensure_ascii=False) + "\n")
+
+
+def _transcript_from_live(live_file: Path) -> list[dict]:
+    """Build the final transcript from the live-events file.
+
+    Emits the SAME step schema the in-process agent writes
+    (``{step, type: "tool", tool, group, args, result}``) so the monitor UI renders
+    coding-agent and snapshot_agent transcripts through one code path."""
+    steps: dict = {}
+    out: list[dict] = []
+    for ev in _read_live(live_file):
+        step = ev.get("step")
+        if ev.get("t") == "tool_call":
+            entry = {"step": step, "type": "tool", "tool": ev.get("tool"),
+                     "group": ev.get("group"), "args": ev.get("args"), "result": ""}
+            out.append(entry)
+            steps[step] = entry
+        elif ev.get("t") == "tool_result":
+            entry = steps.get(step)
+            if entry is not None:
+                entry["result"] = ev.get("result") or ""
+    return out
 
 
 # ---------------------------------------------------------------------------
@@ -326,7 +392,7 @@ def _run_item(thread: dict, pair: dict, agent: str, image: str, groups: set[str]
     rec = {
         "qid": qid, "thread_id": thread_id,
         "repo": thread.get("repo"), "url": thread.get("url"),
-        "condition": f"container_{agent.replace('-', '_')}",
+        "condition": f"coding_agent_{agent.replace('-', '_')}",
         "model": agent, "agent": agent,
         "knowledge_type": pair.get("knowledge_type"),
         "question": pair["question"],
@@ -340,13 +406,16 @@ def _run_item(thread: dict, pair: dict, agent: str, image: str, groups: set[str]
         live_file.write_text("")                       # bind target must pre-exist
         mcp_file.write_text(json.dumps(_mcp_config(groups)), encoding="utf-8")
 
-        prompt = PROMPT_TMPL.format(
+        prompt = coding_agent_prompt(
             repo=thread.get("repo"), report_date=meta["report_time"][:10],
-            question=pair["question"])
+            question=pair["question"], web=web)
         policy = default_policy(web=web)
         argv = AGENT_ARGV[agent](prompt, web)
+        # Only ask the entrypoint to clone when a mirror was actually materialized: under an
+        # RQ3 condition without the `code` group there is no repository to provide.
+        base_commit = (meta.get("commit_sha") or "") if meta.get("has_repo") else ""
         cmd = _podman_cmd(image, payload_dir, live_file, mcp_file, argv, policy,
-                          auth_env, auth_mounts)
+                          auth_env, auth_mounts, base_commit=base_commit)
 
         output, rc, secs, timed_out = _stream_container(cmd, timeout)
         if timed_out:
@@ -370,8 +439,13 @@ def _run_item(thread: dict, pair: dict, agent: str, image: str, groups: set[str]
         })
         (transcripts_dir / f"{slug}.json").write_text(json.dumps(
             {"qid": qid, "agent": agent, "condition": rec["condition"],
+             "model": agent, "report_time": meta.get("report_time"),
+             "snapshot_commit": meta.get("commit_sha"),
              "snapshot": meta, "returncode": rc,
              "runtime_secs": round(secs, 1), "native_tools": native,
+             # `transcript` is the key the monitor UI renders; same step schema as the
+             # in-process agent, rebuilt from the live-events file (MCP + native calls).
+             "transcript": _transcript_from_live(live_file),
              "output": output[-60000:]}, ensure_ascii=False, indent=1))
     except subprocess.TimeoutExpired:
         rec["error"] = f"TIMEOUT after {timeout}s"
@@ -387,13 +461,9 @@ def _run_item(thread: dict, pair: dict, agent: str, image: str, groups: set[str]
 def _count_mcp_calls(live_file: Path) -> dict[str, int]:
     """Per-group MCP tool-call counts from the live-events file (RQ4 attribution)."""
     out: dict[str, int] = {}
-    try:
-        for line in live_file.read_text(encoding="utf-8", errors="replace").splitlines():
-            ev = json.loads(line)
-            if ev.get("t") == "tool_call" and ev.get("group") and str(ev.get("step", "")).isdigit():
-                out[ev["group"]] = out.get(ev["group"], 0) + 1
-    except (OSError, json.JSONDecodeError):
-        pass
+    for ev in _read_live(live_file):
+        if ev.get("t") == "tool_call" and ev.get("group") and str(ev.get("step", "")).isdigit():
+            out[ev["group"]] = out.get(ev["group"], 0) + 1
     return out
 
 
@@ -417,7 +487,7 @@ def run(input_path: Path, agent: str, image: str, groups: set[str], web: bool,
     if not items:
         raise SystemExit(f"No eval items found in {input_path}.")
 
-    condition = f"container_{agent.replace('-', '_')}" + ("+web" if web else "")
+    condition = f"coding_agent_{agent.replace('-', '_')}" + ("+web" if web else "")
     run_name = make_run_name(condition, only_id, run_name)
     output_path = OUTPUT_DIR / f"answers_{run_name}.jsonl"
     transcripts_dir = OUTPUT_DIR / "transcripts" / run_name
@@ -462,7 +532,8 @@ def run(input_path: Path, agent: str, image: str, groups: set[str], web: bool,
 
 
 def main() -> None:
-    ap = argparse.ArgumentParser(description="Containerized agent condition (unified MCP).")
+    ap = argparse.ArgumentParser(
+        description="Off-the-shelf coding-agent condition (containerized, unified MCP).")
     ap.add_argument("--input", type=Path, default=DEFAULT_INPUT)
     ap.add_argument("--agent", required=True, choices=sorted(AGENT_ARGV))
     ap.add_argument("--image", default=DEFAULT_IMAGE)

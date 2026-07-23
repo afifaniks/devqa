@@ -21,12 +21,12 @@ code (`eval/`, `pipeline/`).
 bash harness/container/build.sh
 
 # Run claude-code, in an egress-locked container, over the unified MCP snapshot interface:
-$PY -m harness container --agent claude-code \
+$PY -m harness coding-agent --agent claude-code \
     --only-id psf/requests/issue/7209#1 --include-unapproved --auth mount
 
 # Grade the answer (judge must differ from the candidate):
 $PY -m harness grade \
-    --answers harness/output/answers_container_claude_code_*.jsonl \
+    --answers harness/output/answers_coding_agent_claude_code_*.jsonl \
     --judge ollama/gemma4:31b
 
 # Or drive everything from the web UI (launch + live monitoring):
@@ -61,10 +61,9 @@ The snapshot is split into five groups: **`code`**, **`commits`**, **`issues`**,
 |---|---|---|
 | `no_context` | `harness answer` | bare LLM, no tools |
 | `snapshot_agent[…]` | `harness agent` | built-in LangChain agent, typed tools in-process (host) |
-| `external_<agent>` | `harness external` | off-the-shelf agent in a file sandbox (legacy, best-effort capped) |
-| **`container_<agent>`** | **`harness container`** | **off-the-shelf agent in a per-item, egress-locked container over the unified MCP interface** ← recommended |
+| **`coding_agent_<agent>`** | **`harness coding-agent`** | **claude-code in a per-item, egress-locked container over the unified MCP interface** ← recommended |
 
-`container_*` is the current, airtight path and the focus of the rest of this README.
+`coding_agent_*` is the current, airtight path and the focus of the rest of this README.
 
 ---
 
@@ -72,7 +71,7 @@ The snapshot is split into five groups: **`code`**, **`commits`**, **`issues`**,
 
 ```
 harness/
-  __main__.py            dispatch: answer | agent | external | container | grade | ui
+  __main__.py            dispatch: answer | agent | coding-agent | grade | ui
   core/                  paths, benchmark loader, shared run plumbing (iter/select/resume/lock)
   snapshot/
     builder.py           build a time-capped Snapshot (cached blobless clone + worktree,
@@ -88,7 +87,7 @@ harness/
   container/
     materialize.py       host → container-ready snapshot payload (offline + airtight)
     egress.py            egress allowlist policy + persisted, UI-editable config
-    Containerfile        the eval image (node+python+claude+opencode+MCP+firewall tooling)
+    Containerfile        the eval image (node+python+claude-code+MCP+firewall tooling)
     build.sh             build the image (rootless podman)
     entrypoint.sh        installs the DNS-driven egress firewall, then execs the agent
     run.py               the container runner (materialize → podman run → capture → record)
@@ -96,7 +95,6 @@ harness/
   conditions/
     answer.py            no_context (bare LLM)
     agent.py             snapshot_agent (built-in, host, in-process ToolBox)
-    external.py          external_<agent> (legacy file sandbox)
   grading/grade.py       condition-aware rubric + hard-fact grading (LLM judge)
   monitor/               FastAPI app (port 8766): launcher + run/live monitor + compare + egress API
   ui/                    Vite/React/Mantine front end (own README); build → ui/dist
@@ -113,14 +111,17 @@ the same way everywhere.
 
 ## 4. How a containerized claude-code run works
 
-`harness container --agent claude-code` runs, **per benchmark item**:
+`harness coding-agent --agent claude-code` runs, **per benchmark item**:
 
 ```
 HOST                                         CONTAINER (podman, --rm, egress-locked)
 ────                                         ──────────────────────────────────────
 1. materialize_payload(thread_id, groups)
-   • git archive @commit → single-commit
-     repo  (offline, no history to leak)
+   • verify base_commit vs the clone
+     (mismatch = stale cache → hard fail)
+   • bare mirror repo.git: fetch base
+     commit BY SHA → ancestors only,
+     nothing post-report in the objects
    • precompute ancestor-only commit log
      + patches (commits group)
    • dump issues/PRs/advisories as JSON
@@ -133,6 +134,10 @@ HOST                                         CONTAINER (podman, --rm, egress-loc
                                         │     dnsmasq(allowlisted domains → ipset)
                                         │     iptables default-DROP except ipset
                                         │     → github/pypi/direct-IP BLOCKED
+                                        │     git clone repo.git → /workspace/repo
+                                        │     git checkout <base_commit>   (local,
+                                        │       no network) + verify HEAD, log
+                                        │       sha/commit-date/file count
                                         │   claude -p "<question>" \
                                         │     --mcp-config /workspace/mcp.json \
                                         │     --strict-mcp-config \
@@ -168,13 +173,14 @@ HOST                                         CONTAINER (podman, --rm, egress-loc
 - **Network:** the entrypoint installs a DNS-driven allowlist firewall (dnsmasq populates an
   ipset with resolved IPs; iptables default-drops everything else). Verified: the model API and
   vuln-resolution hosts are reachable; **github.com, pypi, and even a direct-to-IP connection are
-  blocked**. This upgrades the external condition from "best-effort capped" to enforced-at-the-
-  network-layer.
+  blocked**. This makes the coding-agent condition enforced-at-the-network-layer rather than
+  best-effort capped.
 - **The payload is leak-free:** it carries snapshot artifacts only, never the gold answer.
 
 ### Off-the-shelf agents keep their own tools
-The repo is on disk at `/workspace/snapshot/repo`, so claude-code uses its native
-`Read`/`Grep`/`Bash` for code — realistic. Issues/PRs/advisories/commits are **not** on disk;
+The repo is a real clone at `/workspace/repo`, checked out at the base commit, so claude-code
+uses its native `Read`/`Grep`/`Bash` — and native `git log`/`blame`/`diff` — for code. Issues,
+PRs and advisories are **not** on disk;
 those are reached only through the MCP `secdevqa` tools. Attribution combines both: MCP calls
 from the live log + the agent's own tools parsed from `stream-json`.
 
@@ -249,14 +255,14 @@ $PY -m harness agent --model openai/gpt-5.4 --only advisory      # single-artifa
 ### Containerized off-the-shelf agent (recommended)
 ```bash
 # One item, subscription auth, keep the sandbox for inspection:
-$PY -m harness container --agent claude-code \
+$PY -m harness coding-agent --agent claude-code \
     --only-id psf/requests/issue/7209#1 --include-unapproved \
     --auth mount --keep-sandbox
 
 # Whole benchmark (or a slice), selective provision, custom timeout:
-$PY -m harness container --agent claude-code --limit 20 --auth mount
-$PY -m harness container --agent claude-code --groups code,advisory   # RQ3
-$PY -m harness container --agent claude-code --web                    # +web (open internet)
+$PY -m harness coding-agent --agent claude-code --limit 20 --auth mount
+$PY -m harness coding-agent --agent claude-code --groups code,advisory   # RQ3
+$PY -m harness coding-agent --agent claude-code --web                    # +web (open internet)
 ```
 Flags: `--agent`, `--image`, `--groups`, `--web`, `--limit`, `--include-unapproved`,
 `--timeout` (seconds/item, default 900), `--keep-sandbox`, `--only-id`, `--run-name`
@@ -268,7 +274,7 @@ Flags: `--agent`, `--image`, `--groups`, `--web`, `--limit`, `--include-unapprov
     │ [entrypoint] egress allowlist installed
     │ claude session init (model=claude-opus-4-8)
     │ → search_issues {"query": "trailing dot FQDN redirect"}
-    │ → Read {"file_path": "/workspace/snapshot/repo/src/requests/sessions.py", …}
+    │ → Read {"file_path": "/workspace/repo/src/requests/sessions.py", …}
     │ final: success (16 turns, 97449ms)
     → ok (99s, 15 tool calls, 4394 chars)
 ```
@@ -282,7 +288,7 @@ $PY -m harness grade \
     --judge ollama/gemma4:31b        # judge MUST differ from the candidate
 ```
 Grading is **condition-aware**: internal facts (fix PRs/commits, fixed versions) are never scored
-as no-context misses, and `container_*` / `snapshot_agent*` / `external_*` count as with-context.
+as no-context misses, and `coding_agent_*` / `snapshot_agent*` count as with-context.
 Output: `grades_<run>__judge-<slug>.jsonl` + a summary by knowledge_type × outcome.
 
 ### Web UI
@@ -335,9 +341,10 @@ harness/cache/
 
 ## 10. Extending
 
-- **Another off-the-shelf agent (e.g. opencode):** add an entry to `AGENT_ARGV` in
-  `container/run.py` (build its headless argv + a stream parser) and to the launcher's system
-  list. The MCP server, materializer, egress, and auth are agent-agnostic.
+- **Another off-the-shelf agent (e.g. opencode):** install its CLI in the `Containerfile`,
+  add an entry to `AGENT_ARGV` in `container/run.py` (build its headless argv + a stream
+  parser), and add it to the launcher's system list. The MCP server, materializer, egress,
+  and auth are agent-agnostic.
 - **Built-in agent over MCP (in-container):** design captured in
   `container/TASK7_builtin_over_mcp.md` — run the LangChain agent as an MCP client via
   `langchain-mcp-adapters`, sharing the `stream_agent` loop.

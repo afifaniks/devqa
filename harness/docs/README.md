@@ -14,8 +14,8 @@ monitor them live, and compare runs side by side.
         security_benchmark_final.jsonl
                        │
         ┌──────────────┼───────────────┐
-     answer          agent           external          ← systems under test
-   (no_context)  (snapshot_agent)  (claude-code,…)
+     answer          agent         coding-agent        ← systems under test
+   (no_context)  (snapshot_agent)   (claude-code)
         └──────────────┼───────────────┘
                  answers_<run>.jsonl
                        │ grade
@@ -30,9 +30,9 @@ Always use the project conda Python (`/local/home/amamun/envs/devqa/bin/python`)
 
 ```bash
 # 1. Run a system under test → harness/output/answers_<run>.jsonl
-python -m harness answer   --model openai/gpt-5.4-mini --condition no_context
-python -m harness agent    --model openai/gpt-5.4-mini            # built-in snapshot agent
-python -m harness external --agent claude-code                    # off-the-shelf agent
+python -m harness answer    --model openai/gpt-5.4-mini --condition no_context
+python -m harness agent     --model openai/gpt-5.4-mini           # built-in snapshot agent
+python -m harness coding-agent --agent claude-code               # containerized claude-code
 
 # 2. Grade (the judge must differ from the candidate)
 python -m harness grade --answers harness/output/answers_gpt-5.4-mini_no_context.jsonl \
@@ -56,7 +56,7 @@ A *run* is one `(model, condition)` pair. The condition encodes the context regi
 | `snapshot_agent-only_<group>` | single-artifact provision (RQ3) |
 | `snapshot_agent-no_<group>` | leave-one-out provision (RQ3) |
 | `snapshot_agent-groups_<a>_<b>` | a chosen subset of artifact groups |
-| `external_<agent>` | off-the-shelf coding agent (`claude_code`, `opencode`) |
+| `coding_agent_<agent>` | off-the-shelf coding agent, containerized over the unified MCP snapshot (`claude_code`) |
 
 Files are keyed by run name: `answers_<run>.jsonl`, `grades_<run>.jsonl`,
 `transcripts/<run>/<qid>.json` (agent step-by-step traces).
@@ -127,7 +127,7 @@ Select two or more runs; the matrix polls live (5s) so in-flight runs fill in as
 |---|---|
 | `answer.py` | bare-LLM `no_context` condition |
 | `agent.py` | built-in `snapshot_agent`; `--groups/--without/--only` selective provision (RQ3) |
-| `external.py` | off-the-shelf agents in a per-item time-capped sandbox (condition `external_<agent>`) |
+| `container/run.py` | containerized claude-code over the unified MCP snapshot (condition `coding_agent_<agent>`), egress-locked |
 | `snapshot.py` | time-capped snapshot: repo at commit-before-report, issues/PRs/advisories ≤ report time |
 | `tools.py` | one tool group per artifact type (code/commits/issues/prs/advisory); call counts = RQ4 attribution |
 | `grade.py` | condition-aware deterministic hard-fact tier + per-claim LLM judge; hallucination reported separately |
@@ -141,8 +141,8 @@ Select two or more runs; the matrix polls live (5s) so in-flight runs fill in as
 ## Notes
 
 - The judge is **condition-aware**: internal facts (fix PRs/commits, fixed versions) are
-  never scored as no-context misses; `snapshot_agent*` / `external_*` count as with-context.
-- External shell agents *could* reach the web despite the time-capped sandbox — reported as
-  a limitation, not a hard guarantee.
+  never scored as no-context misses; `snapshot_agent*` / `coding_agent_*` count as with-context.
+- Containerized claude-code is egress-locked to the snapshot; the open-internet `+web`
+  condition is opt-in and reported as such.
 - Still open (see `PLAN.md` Phase 4): the `fix_reference` diff oracle, per-fact
   `knowable_at_report` temporal gating, judge ensemble + human-κ calibration.

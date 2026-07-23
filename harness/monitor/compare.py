@@ -76,7 +76,7 @@ def compare(runs: str = ""):
                 else next(iter(judges)) if judges else None
             ),
             "is_agent": str(sample.get("condition", "")).startswith(
-                ("snapshot_agent", "agent", "external_")
+                ("snapshot_agent", "agent", "coding_agent_")
             ),
             "n_done": len(answers),
             "n_graded": len(grades),

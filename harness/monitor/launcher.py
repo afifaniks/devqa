@@ -17,9 +17,8 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
 from harness.conditions.agent import condition_name as agent_condition_name
-from harness.conditions.external import AGENTS as EXTERNAL_AGENTS
 from harness.container import egress as egress_cfg
-from harness.container.run import AGENT_ARGV as CONTAINER_AGENTS
+from harness.container.run import AGENT_ARGV as CODING_AGENTS
 from harness.container.run import DEFAULT_IMAGE as CONTAINER_IMAGE
 from harness.core.paths import ROOT
 from harness.core.runs import make_run_name, slugify
@@ -47,10 +46,10 @@ _PROGRESS_RE = re.compile(r"\[(\d+)/(\d+)\]\s+(\S+)")
 # ---------------------------------------------------------------------------
 
 class LaunchBody(BaseModel):
-    system: str                       # llm | agent | claude-code | opencode | container-<agent>
+    system: str                       # llm | agent | coding-agent-<agent>
     model: str | None = None
-    groups: list[str] | None = None   # agent + container; None → full snapshot
-    web_search: bool = False          # agent + container; live-internet (+web)
+    groups: list[str] | None = None   # agent + coding-agent; None → full snapshot
+    web_search: bool = False          # agent + coding-agent; live-internet (+web)
     limit: int | None = None
     include_unapproved: bool = False
     max_steps: int | None = None
@@ -59,7 +58,7 @@ class LaunchBody(BaseModel):
     only_id: str | None = None        # run a single benchmark item
     only_ids: list[str] | None = None # run a manually chosen subset of items
     run_name: str | None = None       # set to resume an existing run
-    auth: str | None = None           # container only: auto | env | mount (default mount)
+    auth: str | None = None           # coding-agent only: auto | env | mount (default mount)
 
 
 class EgressBody(BaseModel):
@@ -99,11 +98,10 @@ def _base_run_name(body: LaunchBody) -> str:
     if body.system == "agent":
         groups = set(body.groups) if body.groups else set(ALL_GROUPS)
         return f"{slugify(body.model)}_{agent_condition_name(groups, body.web_search)}"
-    if body.system.startswith("container-"):
-        agent = body.system[len("container-"):].replace("-", "_")
-        return f"container_{agent}" + ("+web" if body.web_search else "")
-    cond = f"external_{body.system.replace('-', '_')}"
-    return f"{slugify(body.model) + '_' if body.model else ''}{cond}"
+    if body.system.startswith("coding-agent-"):
+        agent = body.system[len("coding-agent-"):].replace("-", "_")
+        return f"coding_agent_{agent}" + ("+web" if body.web_search else "")
+    raise HTTPException(400, f"unknown system: {body.system}")
 
 
 def _container_available() -> bool:
@@ -154,11 +152,11 @@ def _build_cmd(body: LaunchBody, run_name: str) -> list[str]:
             cmd += ["--web-search"]
         if body.max_steps:
             cmd += ["--max-steps", str(body.max_steps)]
-    elif body.system.startswith("container-"):
-        agent = body.system[len("container-"):]
-        if agent not in CONTAINER_AGENTS:
-            raise HTTPException(400, f"unknown container agent: {agent}")
-        cmd = [py, "-m", "harness", "container", "--agent", agent,
+    elif body.system.startswith("coding-agent-"):
+        agent = body.system[len("coding-agent-"):]
+        if agent not in CODING_AGENTS:
+            raise HTTPException(400, f"unknown coding agent: {agent}")
+        cmd = [py, "-m", "harness", "coding-agent", "--agent", agent,
                "--auth", body.auth or "mount", *common]
         groups = set(body.groups) if body.groups else set(ALL_GROUPS)
         bad = groups - set(ALL_GROUPS)
@@ -168,10 +166,6 @@ def _build_cmd(body: LaunchBody, run_name: str) -> list[str]:
             cmd += ["--groups", ",".join(sorted(groups))]
         if body.web_search:
             cmd += ["--web"]
-    elif body.system in EXTERNAL_AGENTS:
-        cmd = [py, "-m", "harness", "external", "--agent", body.system, *common]
-        if body.model:
-            cmd += ["--model", body.model]
     else:
         raise HTTPException(400, f"unknown system: {body.system}")
 
@@ -286,26 +280,15 @@ def options():
             },
             *[
                 {
-                    "id": a,
-                    "label": f"External agent: {a}",
-                    "needs_model": False,
-                    "has_groups": False,
-                    "has_web": False,
-                    "available": shutil.which(spec["cmd"][0]) is not None,
-                }
-                for a, spec in EXTERNAL_AGENTS.items()
-            ],
-            *[
-                {
-                    "id": f"container-{a}",
-                    "label": f"Container: {a} (unified MCP, egress-locked)",
+                    "id": f"coding-agent-{a}",
+                    "label": f"Coding agent: {a} (containerized, unified MCP, egress-locked)",
                     "needs_model": False,
                     "has_groups": True,
                     "has_web": True,
                     "has_egress": True,
                     "available": _container_available(),
                 }
-                for a in CONTAINER_AGENTS
+                for a in CODING_AGENTS
             ],
         ],
         "groups": list(ALL_GROUPS),

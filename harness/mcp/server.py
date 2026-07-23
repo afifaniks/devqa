@@ -1,8 +1,8 @@
 """
 SecDevQA — MCP server exposing a time-capped snapshot to any agent.
 
-This is the unified tool interface for BOTH the built-in agent and off-the-shelf agents
-(Claude Code, opencode). It runs as a stdio MCP server inside the per-item container and serves
+This is the unified tool interface for both the built-in agent and containerized
+claude-code. It runs as a stdio MCP server inside the per-item container and serves
 the same typed, artifact-grouped tools the built-in agent already uses — by wrapping the
 existing :class:`~harness.snapshot.tools.ToolBox`, so tool semantics, result truncation, and the
 RQ4 per-call attribution log are identical to the in-process path.
@@ -67,7 +67,7 @@ def register_tools(mcp: FastMCP, box: ToolBox, groups: set[str], events: EventLo
         group = ToolBox.GROUP_OF_TOOL.get(name)
         events.tool_call(name, group, kwargs)
         result = box.execute(name, kwargs)
-        events.tool_result(name, group, len(result))
+        events.tool_result(name, group, result)
         return result
 
     registered: list[str] = []
@@ -151,6 +151,9 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
                     help="override enabled groups, comma-separated (env: SECDEVQA_GROUPS)")
     ap.add_argument("--live-events", default=os.environ.get("SECDEVQA_LIVE_EVENTS"),
                     help="live-events JSONL path (env: SECDEVQA_LIVE_EVENTS)")
+    ap.add_argument("--repo-dir", default=os.environ.get("SECDEVQA_REPO_DIR"),
+                    help="working clone the code/commit tools operate on; overrides the path "
+                         "recorded in the payload (env: SECDEVQA_REPO_DIR)")
     return ap.parse_args(argv)
 
 
@@ -162,6 +165,13 @@ def main(argv: list[str] | None = None) -> None:
     snap, groups = load_snapshot(Path(args.snapshot_dir))
     if args.groups:
         groups = {g.strip() for g in args.groups.split(",") if g.strip()}
+    # In the container the repository is a real clone the entrypoint checked out at the base
+    # commit; the payload only carries the bare mirror it came from. Point the code/commit
+    # tools at that clone so `search_code`/`git_log` see the same tree the agent's own tools do.
+    if args.repo_dir and Path(args.repo_dir).is_dir():
+        snap.worktree = Path(args.repo_dir)
+        # Real history is present now, so prefer live git over the precomputed fallbacks.
+        snap.commit_log, snap.commit_patches = "", {}
 
     events = EventLog(Path(args.live_events) if args.live_events else None)
     box = ToolBox(snap, groups)

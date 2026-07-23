@@ -124,6 +124,9 @@ export function DetailColumn({ runName, alias, cell, qidSlug }) {
           </Group>
           {tr && (
             <Stack gap={4}>
+              {!(tr.transcript || []).length && (
+                <Text size="xs" c="dimmed">No tool steps recorded for this item.</Text>
+              )}
               {(tr.transcript || []).map((s, i) => (
                 <Box key={i} pl="sm" style={{ borderLeft: "2px solid var(--mantine-color-default-border)" }}>
                   <Text ff="monospace" size="xs" fw={600}>

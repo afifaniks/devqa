@@ -2,7 +2,7 @@
 SecDevQA harness — shared run plumbing for every system-under-test.
 
 Item selection, run naming, the concurrent-run lock, and resume support are common to
-the answer/agent/external conditions (and read by the monitor launcher), so they live
+the answer/agent/container conditions (and read by the monitor launcher), so they live
 here rather than in any one command module.
 """
 

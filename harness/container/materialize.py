@@ -9,12 +9,14 @@ the in-container MCP server (:mod:`harness.mcp.server`) reconstructs verbatim.
 
 What it produces (only the enabled artifact groups are materialized):
 
-  code     ``repo/`` — the tree at ``commit_sha`` exported with ``git archive`` and wrapped in a
-           FRESH single-commit git repo. This is offline-complete (all files present, ``git grep``
-           and file reads work with no network) AND airtight by construction: the repo has no
-           ancestor or future history, so even an agent's own ``git log`` sees only the snapshot.
-           (A ``git bundle`` from the blobless cache is NOT offline-complete — verified — hence
-           this approach.)
+  code     ``repo.git/`` — a BARE MIRROR holding ``commit_sha`` and its ancestors only, fetched
+           by SHA (never by branch tip, which would drag in post-report commits). The container's
+           entrypoint clones it to a working tree and checks out ``commit_sha``, so the agent gets
+           a REAL repository: ``git log``/``blame``/``diff``/``show`` work natively and
+           ``git rev-parse HEAD`` is genuinely the base commit. Airtight by construction rather
+           than by a guard — nothing committed after the report exists in the object store, so
+           even ``git log --all`` cannot reach the thread's fix. Offline-complete: the clone is a
+           local path, so the container needs no network.
 
   commits  ``data/commit_log.txt`` + ``data/commit_patches.json`` — real history, precomputed
            from the clone. Only ANCESTORS of ``commit_sha`` are included: a thread's fix commit
@@ -32,9 +34,10 @@ from __future__ import annotations
 import argparse
 import os
 import subprocess
+import time
 from pathlib import Path
 
-from harness.snapshot.builder import Snapshot, build_snapshot
+from harness.snapshot.builder import Snapshot, build_snapshot, thread_meta
 from harness.snapshot.payload import dump_snapshot
 from harness.snapshot.tools import ALL_GROUPS
 
@@ -44,6 +47,14 @@ from harness.snapshot.tools import ALL_GROUPS
 # would plausibly inspect; older commits fall back to a graceful "not available offline".
 DEFAULT_LOG_COMMITS = 200
 DEFAULT_PATCH_COMMITS = 40
+
+# Depth of the container's repo mirror. History beyond this is grafted away; the checked-out
+# tree is always complete. Matches DEFAULT_LOG_COMMITS so native `git log` reaches as far back
+# as the precomputed log used to.
+DEFAULT_MIRROR_DEPTH = 200
+
+# Bare mirror inside the payload; the container clones from it at <payload>/repo.git.
+MIRROR_SUBDIR = "repo.git"
 
 # Deterministic identity for the synthetic snapshot commit (never depends on user git config).
 _GIT_IDENTITY = {
@@ -58,15 +69,40 @@ def _run(cmd: list[str], cwd: Path, env: dict | None = None,
                           env=env, check=True)
 
 
-def _build_snapshot_repo(clone: Path, commit_sha: str, repo_dest: Path) -> None:
-    """Export the tree at `commit_sha` into a fresh single-commit git repo at `repo_dest`."""
-    repo_dest.mkdir(parents=True, exist_ok=True)
-    archive = _run(["git", "archive", commit_sha], cwd=clone)
-    _run(["tar", "-x", "-C", str(repo_dest)], cwd=clone, stdin=archive.stdout)
+def _build_snapshot_mirror(repo: str, commit_sha: str, branch: str, mirror_dest: Path,
+                           depth: int = DEFAULT_MIRROR_DEPTH) -> None:
+    """Build a bare git mirror at `mirror_dest` containing ONLY `commit_sha` and its ancestors.
+
+    The container clones from this mirror and checks out `commit_sha`, so the agent gets a REAL
+    repository — native ``git log``/``blame``/``diff``/``show`` all work, and
+    ``git rev-parse HEAD`` is genuinely the base commit.
+
+    Airtightness is structural rather than enforced by a guard: fetching a single commit brings
+    down that commit's ancestry and nothing else, so no post-report commit exists anywhere in the
+    object store. ``git log --all`` cannot reveal the thread's fix. The single ref we then create
+    points at `commit_sha`, so there is no branch tip ahead of it either.
+
+    `depth` bounds the fetch (history beyond it is grafted away), keeping mirrors small; blobs for
+    the checked-out tree and the recent window come with it, so the container needs no network."""
+    mirror_dest.mkdir(parents=True, exist_ok=True)
     env = {**os.environ, **_GIT_IDENTITY}
-    _run(["git", "-c", "init.defaultBranch=snapshot", "init", "-q"], cwd=repo_dest, env=env)
-    _run(["git", "add", "-A"], cwd=repo_dest, env=env)
-    _run(["git", "commit", "-q", "-m", f"snapshot at {commit_sha}"], cwd=repo_dest, env=env)
+    _run(["git", "init", "--bare", "-q"], cwd=mirror_dest, env=env)
+    # GitHub permits fetching a reachable SHA directly, so we never pull a branch tip (which
+    # would drag in commits made after the report).
+    _run(["git", "fetch", "--depth", str(depth), "--no-tags",
+          f"https://github.com/{repo}.git", commit_sha], cwd=mirror_dest, env=env)
+    ref = f"refs/heads/{branch or 'main'}"
+    _run(["git", "update-ref", ref, commit_sha], cwd=mirror_dest, env=env)
+    _run(["git", "symbolic-ref", "HEAD", ref], cwd=mirror_dest, env=env)
+
+
+def _mirror_info(mirror: Path, commit_sha: str) -> dict:
+    """Size / commit-count / base-commit date, for the run log."""
+    n = _git_out(mirror, "rev-list", "--count", commit_sha).strip()
+    when = _git_out(mirror, "show", "-s", "--format=%cI", commit_sha).strip()
+    size = sum(f.stat().st_size for f in mirror.rglob("*") if f.is_file())
+    return {"n_commits": n or "?", "committed_at": when or "?",
+            "size_mb": size / (1024 * 1024)}
 
 
 def _git_out(clone: Path, *args: str) -> str:
@@ -104,9 +140,30 @@ def materialize_payload(thread_id: str, groups: set[str], dest: Path,
     a directory ready to bind-mount read-only into the container at a fixed path."""
     snap: Snapshot = build_snapshot(thread_id, groups)
     dest.mkdir(parents=True, exist_ok=True)
+    meta_row = thread_meta(thread_id)
+    base = meta_row.get("base_commit") or {}
+    branch = base.get("branch") or "main"
 
-    if "code" in groups and snap.clone is not None and snap.commit_sha:
-        _build_snapshot_repo(snap.clone, snap.commit_sha, dest / "repo")
+    # The recorded base_commit is the authoritative snapshot base; a disagreement means the
+    # cached clone drifted (stale clone, force-push, rewritten history) and would silently hand
+    # the agent the wrong tree, so fail loudly instead.
+    if base.get("sha") and snap.commit_sha and base["sha"] != snap.commit_sha:
+        raise RuntimeError(
+            f"snapshot base mismatch for {thread_id}: benchmark base_commit={base['sha'][:12]} "
+            f"but clone resolved {snap.commit_sha[:12]} at T={snap.report_time}. "
+            f"The cached clone is stale or history was rewritten — refresh "
+            f"harness/cache/repos/ and retry.")
+    commit_sha = base.get("sha") or snap.commit_sha
+
+    if "code" in groups and commit_sha:
+        t0 = time.time()
+        print(f"  [snapshot] mirroring {snap.repo} @ {commit_sha[:12]} "
+              f"(branch {branch}, depth {DEFAULT_MIRROR_DEPTH}) ...", flush=True)
+        _build_snapshot_mirror(snap.repo, commit_sha, branch, dest / MIRROR_SUBDIR)
+        info = _mirror_info(dest / MIRROR_SUBDIR, commit_sha)
+        print(f"  [snapshot] mirror ready in {time.time() - t0:.1f}s — "
+              f"{info['n_commits']} commits, {info['size_mb']:.1f} MB, "
+              f"base committed {info['committed_at']}", flush=True)
 
     if "commits" in groups and snap.clone is not None and snap.commit_sha:
         snap.commit_log, snap.commit_patches = _precompute_history(
@@ -123,13 +180,15 @@ def materialize_payload(thread_id: str, groups: set[str], dest: Path,
         "thread_id": thread_id,
         "repo": snap.repo,
         "report_time": snap.report_time,
-        "commit_sha": snap.commit_sha,
+        "commit_sha": commit_sha,
+        "base_commit_verified": bool(base.get("sha")),
+        "branch": branch,
         "groups": sorted(groups),
         "n_issues": len(snap.issues),
         "n_prs": len(snap.prs),
         "n_advisories": len(snap.advisories),
         "n_commit_patches": len(snap.commit_patches),
-        "has_repo": (dest / "repo").is_dir(),
+        "has_repo": (dest / MIRROR_SUBDIR).is_dir(),
     }
 
 

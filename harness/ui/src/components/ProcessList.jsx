@@ -7,9 +7,10 @@ import { useState } from "react";
 import { fmtStamp } from "../lib/format.js";
 import { LiveTimeline } from "./LiveTimeline.jsx";
 
-// Agent runs (built-in snapshot agent) write a live per-item trajectory; bare-LLM and
-// grading runs do not. Detect from the run name so we only poll /api/live where it exists.
-const isAgentRun = name => /snapshot_agent|_agent\b/.test(name || "");
+// Agent runs (built-in snapshot agent + containerized coding agents) write a live per-item
+// trajectory; bare-LLM and grading runs do not. Detect from the run name so we only poll
+// /api/live where it exists.
+const isAgentRun = name => /snapshot_agent|coding_agent|_agent\b/.test(name || "");
 
 const PHASE_LABEL = { answering: "answering", grading: "grading", done: "finishing" };
 

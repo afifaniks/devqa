@@ -7,7 +7,11 @@ one JSON line per event to a live-events file, in EXACTLY the schema
 :mod:`harness.snapshot.stream_agent` already emits::
 
     {"t": "tool_call",   "step": n, "tool": name, "group": grp, "args": {...}}
-    {"t": "tool_result", "step": n, "tool": name, "group": grp, "chars": len}
+    {"t": "tool_result", "step": n, "tool": name, "group": grp, "chars": len, "result": "..."}
+
+``tool_result`` additionally carries the verbatim ``result`` — this file is the only durable
+record of what a containerized agent saw, and the final transcript is rebuilt from it.
+``GET /api/live`` drops that field on the way out, so the UI's live poll is unaffected.
 
 Because the schema is identical, the monitor UI's live view (``GET /api/live/{run}/{qid}``,
 which tails ``transcripts/<run>/<qid>.live.jsonl``) renders container tool activity with no
@@ -64,9 +68,15 @@ class EventLog:
                      "tool": tool, "group": group, "args": args})
         return self._step
 
-    def tool_result(self, tool: str, group: str | None, chars: int) -> None:
-        self._write({"t": "tool_result", "step": self._step,
-                     "tool": tool, "group": group, "chars": chars})
+    def tool_result(self, tool: str, group: str | None, result: str) -> None:
+        """Record a tool's OUTPUT verbatim.
+
+        The full text is kept (already bounded by ``ToolBox``'s MAX_RESULT_CHARS) because
+        this file is the only durable record of what the containerized agent actually saw
+        — the final transcript is assembled from it. ``/api/live`` strips ``result`` before
+        serving, so the UI's poll stays as light as it was when only ``chars`` was here."""
+        self._write({"t": "tool_result", "step": self._step, "tool": tool,
+                     "group": group, "chars": len(result), "result": result})
 
     def note(self, kind: str, **fields) -> None:
         """Emit a free-form lifecycle marker (e.g. ``start``/``done``) for the UI timeline."""

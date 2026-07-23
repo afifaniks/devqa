@@ -37,6 +37,7 @@ from dotenv import load_dotenv
 
 from harness.core.benchmark import default_benchmark, load_benchmark
 from harness.core.paths import OUTPUT_DIR
+from harness.core.prompts import snapshot_agent_prompt
 from harness.core.runs import (acquire_run_lock, iter_items, make_run_name,
                                resume_state, select_items, slugify)
 from harness.snapshot import build_snapshot
@@ -47,30 +48,6 @@ load_dotenv()
 
 DEFAULT_INPUT = default_benchmark()
 DEFAULT_OUTPUT_DIR = OUTPUT_DIR
-
-SYSTEM_PROMPT = """\
-You are a security-knowledgeable assistant answering a developer's question about the \
-open-source project `{repo}`. Today's date is {report_date}.
-
-You have tools over a snapshot of the project frozen at this date: the repository \
-working tree{commit_note}, the issue tracker and pull requests as they existed today, \
-and the GitHub security advisory database published up to today. {web_note}
-
-Investigate before answering: search the tracker for duplicate or related reports, \
-check the advisory database, and read the relevant code or history where useful. Then \
-give a direct, specific answer to the developer. Cite concrete identifiers \
-(CVE/GHSA ids, versions, commits, issue/PR numbers) only when you verified them with \
-your tools or are confident from general knowledge; acknowledge uncertainty rather \
-than guess. If the question cannot be resolved from the information available today, \
-say so and give your best assessment. No generic padding."""
-
-
-NO_WEB_NOTE = ("There is no live internet access, and nothing after this date exists.")
-WEB_NOTE = (
-    "You have access to the internet with web_search and web_fetch tools."
-    "You can look into the internet for latest information. But make sure"
-    "to note when your decision is based on information from the internet, and not from the snapshot.")
-
 
 def condition_name(groups: set[str], web: bool = False) -> str:
     """Filesystem-safe condition name encoding the active artifact groups. A `+web`
@@ -88,13 +65,13 @@ def condition_name(groups: set[str], web: bool = False) -> str:
 
 
 def system_prompt_for(box: ToolBox) -> str:
-    """The investigation system prompt, filled in for this snapshot."""
+    """The shared maintainer prompt, filled in for this snapshot."""
     commit_note = (f" (checked out at commit {box.snap.commit_sha[:12]})"
                    if box.snap.commit_sha else "")
-    return SYSTEM_PROMPT.format(repo=box.snap.repo,
-                                report_date=box.snap.report_time[:10],
-                                commit_note=commit_note,
-                                web_note=WEB_NOTE if box.web else NO_WEB_NOTE)
+    return snapshot_agent_prompt(repo=box.snap.repo,
+                                 report_date=box.snap.report_time[:10],
+                                 commit_note=commit_note,
+                                 web=box.web)
 
 
 def run(input_path: Path, output_dir: Path, model: str, groups: set[str],

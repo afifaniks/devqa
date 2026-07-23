@@ -1,8 +1,8 @@
 # SecDevQA — isolated per-item evaluation runtime.
 #
 # A single image that can run EITHER agent condition against the in-container MCP snapshot
-# server: the off-the-shelf CLI agents (claude-code, opencode; Node) and the built-in
-# LangChain/LiteLLM agent (Python). The harness source itself is NOT baked in — it is
+# server: the off-the-shelf claude-code CLI (Node) and the built-in LangChain/LiteLLM
+# agent (Python). The harness source itself is NOT baked in — it is
 # bind-mounted read-only at runtime (fast iteration; pin it into the image for the final
 # artifact, per the "bake later" plan). Only third-party dependencies live here.
 #
@@ -13,9 +13,8 @@
 # Build:  harness/container/build.sh
 FROM docker.io/library/node:22-bookworm-slim
 
-# Pinned agent CLI versions (match the host at authoring time; bump deliberately).
+# Pinned agent CLI version (match the host at authoring time; bump deliberately).
 ARG CLAUDE_CODE_VERSION=2.1.195
-ARG OPENCODE_VERSION=1.14.39
 
 ENV DEBIAN_FRONTEND=noninteractive \
     PIP_NO_CACHE_DIR=1 \
@@ -29,10 +28,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         iptables ipset dnsmasq dnsutils iproute2 \
     && rm -rf /var/lib/apt/lists/*
 
-# Off-the-shelf coding agents (Node CLIs).
+# Off-the-shelf coding agent (Node CLI).
 RUN npm install -g \
         @anthropic-ai/claude-code@${CLAUDE_CODE_VERSION} \
-        opencode-ai@${OPENCODE_VERSION} \
     && npm cache clean --force
 
 # Python runtime for the MCP snapshot server and the built-in agent.

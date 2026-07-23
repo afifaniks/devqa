@@ -3,8 +3,8 @@
 How the built-in agent condition works end to end: a model under test answers each
 benchmark query with autonomous, typed tool access over a **time-capped snapshot** of the
 project. This is the `snapshot_agent` condition and its selective-provision variants
-(RQ3/RQ4). For the harness as a whole see [`README.md`](README.md); for the external
-off-the-shelf agents (`claude-code`, `opencode`) see `external.py`.
+(RQ3/RQ4). For the harness as a whole see [`README.md`](README.md); for containerized
+claude-code over the same snapshot see `container/run.py`.
 
 ```
 python -m harness agent --model ollama/qwen3.6:latest
@@ -170,7 +170,7 @@ groups are not materialized in the snapshot **and** their tools are not exposed.
 python -m harness grade --answers harness/output/answers_<run>.jsonl --judge gpt-5.4
 ```
 
-Grading is **condition-aware**: any `snapshot_agent*` (and `external_*`) condition counts
+Grading is **condition-aware**: any `snapshot_agent*` (and `coding_agent_*`) condition counts
 as a with-context condition, so internal facts the agent could retrieve (fix PRs/commits,
 fixed versions) are not scored as no-context misses, and tool-derived enrichment is not
 counted as hallucination. The judge must differ from the candidate model.
@@ -228,5 +228,5 @@ flight and what the agent is doing — not just which item.
 python -m harness ui      # http://localhost:8766 — launch a run, expand its card to watch
 ```
 
-Run name detection (`isAgentRun`) limits live polling to agent runs; bare-LLM, grading, and
-external-agent runs don't write a live log and aren't polled.
+Run name detection (`isAgentRun`) limits live polling to agent runs; bare-LLM and grading
+runs don't write a live log and aren't polled.
