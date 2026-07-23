@@ -33,23 +33,37 @@ def iter_items(threads: list[dict], include_unapproved: bool) -> list[tuple[dict
     return items
 
 
+def _parse_ids(only_id: str) -> list[str]:
+    """Split an --only-id value into ids. Accepts a single id or a comma-separated
+    list (UI 'run one' or 'run selected subset')."""
+    return [s.strip() for s in only_id.split(",") if s.strip()]
+
+
 def select_items(items: list[tuple[dict, dict]],
                  only_id: str | None) -> list[tuple[dict, dict]]:
-    """Restrict to a single benchmark instance by qid or thread_id (UI 'run one')."""
+    """Restrict to a chosen set of benchmark instances by qid or thread_id.
+
+    `only_id` is a single id or a comma-separated list (UI 'run one'/'run selected')."""
     if not only_id:
         return items
+    wanted = set(_parse_ids(only_id))
     keep = [(t, p) for (t, p) in items
-            if p.get("qid") == only_id or t.get("thread_id") == only_id]
+            if p.get("qid") in wanted or t.get("thread_id") in wanted]
     if not keep:
         raise SystemExit(
             f"--only-id {only_id!r} matched no item — pass a qid or thread_id "
-            f"(add --include-unapproved if the thread is not yet approved)")
+            f"(or comma-separated list; add --include-unapproved if the thread "
+            f"is not yet approved)")
     return keep
 
 
 def instance_slug(only_id: str) -> str:
-    """Compact tag for a single-instance run, e.g. 'issue_8494_q1'."""
-    s = only_id.replace("#", "_q")
+    """Compact tag for a single-instance run, e.g. 'issue_8494_q1'. For a
+    multi-id selection, a 'selN' tag naming the count instead."""
+    ids = _parse_ids(only_id)
+    if len(ids) > 1:
+        return f"sel{len(ids)}"
+    s = (ids[0] if ids else only_id).replace("#", "_q")
     parts = s.split("/")
     tail = "_".join(parts[-2:]) if len(parts) >= 2 else s
     return re.sub(r"[^A-Za-z0-9_.-]", "_", tail)

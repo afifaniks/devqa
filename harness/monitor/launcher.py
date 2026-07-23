@@ -57,6 +57,7 @@ class LaunchBody(BaseModel):
     grade_after: bool = False
     judge: str | None = None
     only_id: str | None = None        # run a single benchmark item
+    only_ids: list[str] | None = None # run a manually chosen subset of items
     run_name: str | None = None       # set to resume an existing run
     auth: str | None = None           # container only: auto | env | mount (default mount)
 
@@ -75,6 +76,14 @@ class GradeBody(BaseModel):
 # ---------------------------------------------------------------------------
 # Internal helpers
 # ---------------------------------------------------------------------------
+
+def _effective_only_id(body: LaunchBody) -> str | None:
+    """The --only-id argument: a manually chosen subset (comma-joined) wins over
+    the single-instance field; None means run the whole benchmark."""
+    if body.only_ids:
+        return ",".join(body.only_ids)
+    return body.only_id
+
 
 def _run_name_is_active(run_name: str) -> bool:
     """True if any tracked subprocess with this run_name is still running."""
@@ -110,18 +119,19 @@ def _container_available() -> bool:
 
 def _full_run_name(body: LaunchBody) -> str:
     """Explicit run_name wins; else base + instance tag + timestamp."""
-    return make_run_name(_base_run_name(body), body.only_id, body.run_name)
+    return make_run_name(_base_run_name(body), _effective_only_id(body), body.run_name)
 
 
 def _build_cmd(body: LaunchBody, run_name: str) -> list[str]:
     py = sys.executable
+    only_id = _effective_only_id(body)
     common: list[str] = ["--run-name", run_name]
     if body.limit:
         common += ["--limit", str(body.limit)]
     if body.include_unapproved:
         common += ["--include-unapproved"]
-    if body.only_id:
-        common += ["--only-id", body.only_id]
+    if only_id:
+        common += ["--only-id", only_id]
 
     if body.system == "llm":
         if not body.model:
