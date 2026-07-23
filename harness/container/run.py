@@ -272,8 +272,10 @@ def _stream_container(cmd: list[str], timeout: int) -> tuple[str, int, float, bo
     Returns (full_output, returncode, seconds, timed_out)."""
     import threading
     t0 = time.time()
+    # errors="replace": the merged container stream can carry non-UTF-8 bytes (a git patch or
+    # binary file echoed by the agent's Bash/Read tools); strict decoding would crash the run.
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                            text=True, bufsize=1)
+                            text=True, encoding="utf-8", errors="replace", bufsize=1)
     timed_out = {"v": False}
 
     def _kill() -> None:
@@ -386,7 +388,7 @@ def _count_mcp_calls(live_file: Path) -> dict[str, int]:
     """Per-group MCP tool-call counts from the live-events file (RQ4 attribution)."""
     out: dict[str, int] = {}
     try:
-        for line in live_file.read_text(encoding="utf-8").splitlines():
+        for line in live_file.read_text(encoding="utf-8", errors="replace").splitlines():
             ev = json.loads(line)
             if ev.get("t") == "tool_call" and ev.get("group") and str(ev.get("step", "")).isdigit():
                 out[ev["group"]] = out.get(ev["group"], 0) + 1

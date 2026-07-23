@@ -70,7 +70,10 @@ def _build_snapshot_repo(clone: Path, commit_sha: str, repo_dest: Path) -> None:
 
 
 def _git_out(clone: Path, *args: str) -> str:
-    r = subprocess.run(["git", *args], cwd=clone, capture_output=True, text=True)
+    # errors="replace": commit patches/logs are not guaranteed UTF-8 (binary diffs, latin-1
+    # filenames or author names) — strict decoding would raise mid-materialization.
+    r = subprocess.run(["git", *args], cwd=clone, capture_output=True,
+                       text=True, encoding="utf-8", errors="replace")
     return r.stdout if r.returncode == 0 else ""
 
 

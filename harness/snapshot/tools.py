@@ -59,7 +59,10 @@ def _trunc(s: str, n: int = MAX_RESULT_CHARS) -> str:
 
 
 def _git(cwd: Path, *args: str) -> str:
-    r = subprocess.run(["git", *args], cwd=cwd, capture_output=True, text=True)
+    # errors="replace": git output (patches, grep hits, log) may contain non-UTF-8 bytes;
+    # strict decoding would raise instead of returning a (slightly lossy) tool result.
+    r = subprocess.run(["git", *args], cwd=cwd, capture_output=True,
+                       text=True, encoding="utf-8", errors="replace")
     return r.stdout if r.returncode == 0 else f"ERROR: {r.stderr.strip()[:300]}"
 
 
