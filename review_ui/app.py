@@ -339,6 +339,9 @@ def save_benchmark_data() -> None:
 # ── Grading rubric drafts + verification ────────────────────────────────────────
 
 rubrics_by_qid: dict[str, dict] = {}     # qid -> draft rubric (build_rubrics.py output)
+# Frozen, READ-ONLY: the pre-reviewer shared overlay. Migrated into dataset/reviews/afif.json;
+# nothing writes here any more and build_release.py no longer reads it. Kept only so a
+# no-reviewer browse of /benchmark still renders the rubrics as they were verified.
 rubrics_verified: dict[str, dict] = {}   # qid -> human-edited overlay {status, rubric, ...}
 
 
@@ -355,10 +358,6 @@ def load_rubrics_data() -> None:
     rubrics_verified = {}
     if RUBRICS_VERIFIED_FILE.exists():
         rubrics_verified = json.loads(RUBRICS_VERIFIED_FILE.read_text(encoding="utf-8"))
-
-
-def save_rubrics_verified() -> None:
-    RUBRICS_VERIFIED_FILE.write_text(json.dumps(rubrics_verified, indent=2), encoding="utf-8")
 
 
 def merged_rubric(qid: str, overlay: Optional[dict] = None) -> Optional[dict]:
@@ -1423,42 +1422,33 @@ def set_review_status(index: int, reviewer: Optional[str] = None, confirmed: boo
 
 @app.post("/api/benchmark/rubric")
 def save_rubric(body: RubricSaveRequest, reviewer: Optional[str] = None):
-    """Persist the verification overlay for one qid's rubric. With ?reviewer set, the
-    edit goes to that reviewer's section of dataset/reviews.json (keyed by record id),
-    not the shared author overlay."""
+    """Persist the verification overlay for one qid's rubric into that reviewer's file,
+    dataset/reviews/<reviewer>.json (keyed by record id). ?reviewer is REQUIRED: the old
+    shared overlay dataset/rubrics_verified.json was migrated into afif.json and is no
+    longer read by dataset/build_release.py, so a save without a reviewer would look
+    saved but never reach the release."""
     reviewer = valid_reviewer(reviewer)
-    if reviewer:
-        rid = _record_id_for_qid(body.qid)
-        if rid is None:
-            raise HTTPException(404, f"no benchmark record contains qid {body.qid}")
-        draft = rubrics_by_qid.get(body.qid) or {}
-        reviews = load_reviews(reviewer)
-        entry = reviews.setdefault(rid, {})
-        rub = dict((entry.get("rubrics") or {}).get(body.qid) or {})
-        rub["rubric"] = body.rubric if body.rubric is not None else rub.get("rubric", draft.get("rubric", []))
-        if body.acceptable_alternatives is not None:
-            rub["acceptable_alternatives"] = body.acceptable_alternatives
-        if body.note is not None:
-            rub["note"] = body.note
-        rub["status"] = body.status or rub.get("status", "edited")
-        entry.setdefault("rubrics", {})[body.qid] = rub
-        entry["reviewer"] = reviewer
-        entry["id"] = rid
-        entry["reviewed_at"] = datetime.utcnow().isoformat() + "Z"
-        save_reviews(reviewer, reviews)
-        return {"ok": True, "status": rub["status"], "reviewer": reviewer}
-
-    cur = dict(rubrics_verified.get(body.qid) or {})
+    if not reviewer:
+        raise HTTPException(400, "reviewer query param required — open /benchmark?reviewer=<id>")
+    rid = _record_id_for_qid(body.qid)
+    if rid is None:
+        raise HTTPException(404, f"no benchmark record contains qid {body.qid}")
     draft = rubrics_by_qid.get(body.qid) or {}
-    cur["rubric"] = body.rubric if body.rubric is not None else cur.get("rubric", draft.get("rubric", []))
+    reviews = load_reviews(reviewer)
+    entry = reviews.setdefault(rid, {})
+    rub = dict((entry.get("rubrics") or {}).get(body.qid) or {})
+    rub["rubric"] = body.rubric if body.rubric is not None else rub.get("rubric", draft.get("rubric", []))
     if body.acceptable_alternatives is not None:
-        cur["acceptable_alternatives"] = body.acceptable_alternatives
+        rub["acceptable_alternatives"] = body.acceptable_alternatives
     if body.note is not None:
-        cur["note"] = body.note
-    cur["status"] = body.status or cur.get("status", "edited")
-    rubrics_verified[body.qid] = cur
-    save_rubrics_verified()
-    return {"ok": True, "status": cur["status"]}
+        rub["note"] = body.note
+    rub["status"] = body.status or rub.get("status", "edited")
+    entry.setdefault("rubrics", {})[body.qid] = rub
+    entry["reviewer"] = reviewer
+    entry["id"] = rid
+    entry["reviewed_at"] = datetime.utcnow().isoformat() + "Z"
+    save_reviews(reviewer, reviews)
+    return {"ok": True, "status": rub["status"], "reviewer": reviewer}
 
 
 @app.post("/api/benchmark/rubric-reload")
