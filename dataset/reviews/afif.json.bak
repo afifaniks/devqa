@@ -1,0 +1,62 @@
+{
+  "ImageMagick/ImageMagick/issue/8690": {
+    "reviewer": "afif",
+    "id": "ImageMagick/ImageMagick/issue/8690",
+    "confirmed": true,
+    "reviewed_at": "2026-06-26T23:14:51.945615Z",
+    "rubrics": {
+      "ImageMagick/ImageMagick/issue/8690#1": {
+        "rubric": [
+          {
+            "text": "A correct fix should clean up any token strings already allocated before the failed allocation and release the containing `tokens` allocation, rather than just breaking out of the parsing loop.",
+            "axis": "correctness",
+            "source_quote": "patch to resolve the issue",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "axis": "correctness",
+            "text": "diff too large, needs human review",
+            "source_quote": "https://github.com/ImageMagick/ImageMagick/pull/8691",
+            "source_loc": "fix_diff_oversized",
+            "knowable_at_report": false,
+            "needs_human_review": true
+          }
+        ],
+        "acceptable_alternatives": "Any sound cleanup strategy counts, including jumping to a common error-cleanup label, iterating over initialized token entries and freeing them, or restructuring allocation/parsing so ownership is tracked and all allocated memory is released on failure. The exact later PR, commit, branch, release, or merge timing is not required.",
+        "note": "",
+        "status": "accepted"
+      }
+    }
+  },
+  "ImageMagick/ImageMagick/issue/8584": {
+    "rubrics": {
+      "ImageMagick/ImageMagick/issue/8584#1": {
+        "rubric": [
+          {
+            "text": "The fix must verify that the pointer returned by heif_nclx_color_profile_alloc() is not NULL before any dereference.",
+            "axis": "correctness",
+            "source_quote": "if (nclx_profile == (struct heif_color_profile_nclx *) NULL)",
+            "source_loc": "fix_diff:coders/heic.c",
+            "knowable_at_report": true
+          },
+          {
+            "text": "When the allocation fails (NULL), the code should raise a writer exception (ResourceLimitError, \"MemoryAllocationFailed\") instead of dereferencing the NULL pointer.",
+            "axis": "correctness",
+            "source_quote": "ThrowWriterException(ResourceLimitError,\"MemoryAllocationFailed\");",
+            "source_loc": "fix_diff:coders/heic.c",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": [
+          "Any answer that proposes adding a NULL check before using nclx_profile and handling the error (e.g., returning an error, throwing a writer exception, or aborting with a clear message) would be considered correct."
+        ],
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "ImageMagick/ImageMagick/issue/8584",
+    "reviewed_at": "2026-06-26T23:15:08.717548Z"
+  }
+}

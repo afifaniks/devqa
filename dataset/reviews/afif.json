@@ -1,0 +1,2715 @@
+{
+  "ImageMagick/ImageMagick/issue/8690": {
+    "reviewer": "afif",
+    "id": "ImageMagick/ImageMagick/issue/8690",
+    "confirmed": true,
+    "reviewed_at": "2026-06-26T23:14:51.945615Z",
+    "rubrics": {
+      "ImageMagick/ImageMagick/issue/8690#1": {
+        "rubric": [
+          {
+            "text": "A correct fix should clean up any token strings already allocated before the failed allocation and release the containing `tokens` allocation, rather than just breaking out of the parsing loop.",
+            "axis": "correctness",
+            "source_quote": "patch to resolve the issue",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "axis": "correctness",
+            "text": "diff too large, needs human review",
+            "source_quote": "https://github.com/ImageMagick/ImageMagick/pull/8691",
+            "source_loc": "fix_diff_oversized",
+            "knowable_at_report": false,
+            "needs_human_review": true
+          }
+        ],
+        "acceptable_alternatives": "Any sound cleanup strategy counts, including jumping to a common error-cleanup label, iterating over initialized token entries and freeing them, or restructuring allocation/parsing so ownership is tracked and all allocated memory is released on failure. The exact later PR, commit, branch, release, or merge timing is not required.",
+        "note": "",
+        "status": "accepted"
+      }
+    }
+  },
+  "ImageMagick/ImageMagick/issue/8584": {
+    "rubrics": {
+      "ImageMagick/ImageMagick/issue/8584#1": {
+        "rubric": [
+          {
+            "text": "The fix must verify that the pointer returned by heif_nclx_color_profile_alloc() is not NULL before any dereference.",
+            "axis": "correctness",
+            "source_quote": "if (nclx_profile == (struct heif_color_profile_nclx *) NULL)",
+            "source_loc": "fix_diff:coders/heic.c",
+            "knowable_at_report": true
+          },
+          {
+            "text": "When the allocation fails (NULL), the code should raise a writer exception (ResourceLimitError, \"MemoryAllocationFailed\") instead of dereferencing the NULL pointer.",
+            "axis": "correctness",
+            "source_quote": "ThrowWriterException(ResourceLimitError,\"MemoryAllocationFailed\");",
+            "source_loc": "fix_diff:coders/heic.c",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": [
+          "Any answer that proposes adding a NULL check before using nclx_profile and handling the error (e.g., returning an error, throwing a writer exception, or aborting with a clear message) would be considered correct."
+        ],
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "ImageMagick/ImageMagick/issue/8584",
+    "reviewed_at": "2026-06-26T23:15:08.717548Z"
+  },
+  "ImageMagick/ImageMagick/issue/8582": {
+    "rubrics": {
+      "ImageMagick/ImageMagick/issue/8582#1": {
+        "rubric": [
+          {
+            "text": "Identifies PR #8583 as the existing resolving fix, with the essential change being to stop reusing `value` in the inner parsing loops by using a separate `token_value` local.",
+            "axis": "correctness",
+            "source_quote": "Fix in #8583: use a separate `token_value` local in each inner loop.",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Explains the root cause: commit `9db96365e` changed `value` from a non-owned attribute alias into heap-owned memory freed at loop end, while existing `gradientTransform`/`transform` parsing reassigned `value` to `tokens[j+1]`, causing the original allocation to be leaked and the token to be double-freed.",
+            "axis": "completeness",
+            "source_quote": "That commit changed `value` in `SVGStartElement`'s attribute loop from a `const char *` alias (pointing directly into `attributes[i+1]`, never freed) to a heap-allocated `char *` via `SVGEscapeString()`, with `DestroyString(value)` added at the end of each iteration.\n\nThe `gradientTransform` and `transform` inner token-parsing loops have had `value=(char *) tokens[j+1]` since the SVG coder was first written (2009, `3ed852eea`). Before `9db96365e`, that was harmless — `value` wasn't owned memory. After, reassigning `value` inside the inner loop:\n1. **Leaks** the original `SVGEscapeString()` allocation (pointer is clobbered)\n2. **Double-frees** `tokens[j+1]` (freed once by the token cleanup loop, then again by `DestroyString(value`)",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "For the correctness item, also accept answers that identify the same fix by a direct link to ImageMagick/ImageMagick PR #8583, or accurately describe the resolving change as using a distinct local variable for transform token values instead of assigning `tokens[j+1]` to the owned `value` pointer. If a later fixed release is named, it should count only if it clearly contains PR #8583.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "ImageMagick/ImageMagick/issue/8582",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "ImageMagick/ImageMagick/issue/8567": {
+    "rubrics": {
+      "ImageMagick/ImageMagick/issue/8567#1": {
+        "rubric": [
+          {
+            "text": "Correctly treats the reported NULL-pointer dereference paths as real issues requiring code changes, not as intended behavior or false positives.",
+            "axis": "correctness",
+            "source_quote": "actively working on a patch to resolve the issue",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Ensures TransformImage does not dereference a NULL transform_image after CloneImage/CropImageToTiles failure; it should detect NULL and return failure or otherwise avoid subsequent use.",
+            "axis": "correctness",
+            "source_quote": "if (transform_image == (Image *) NULL)\n    return(MagickFalse);",
+            "source_loc": "fix_diff:magick/transform.c",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Adds NULL handling for LogInfo lookup failures before dereferencing log_info in logging functions, including the linked-list lookup path used by setters; failure paths should return a safe default and release any lock already held.",
+            "axis": "correctness",
+            "source_quote": "if (log_info == (LogInfo *) NULL)\n    return;\n...\nlog_info=(LogInfo *) GetValueFromLinkedList(log_cache,0);\n+  if (log_info == (LogInfo *) NULL)\n+    {\n+      UnlockSemaphoreInfo(log_semaphore);\n+      return;\n+    }",
+            "source_loc": "fix_diff:magick/log.c",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Prevents NewXMLTreeTag allocation failure from producing a NULL XML tree root that later parser paths assume is valid, either by fail-fast allocation or equivalent caller-side NULL handling.",
+            "axis": "correctness",
+            "source_quote": "root=(XMLTreeRoot *) AcquireCriticalMemory(sizeof(*root));",
+            "source_loc": "fix_diff:magick/xml-tree.c",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "A candidate answer can use different but sound fixes than the shown diff: propagate allocation/lookup failures to callers, add guards at all dereference sites, or change APIs so they never return NULL under these conditions. For logging, returning MagickFalse/NoEvents/doing nothing is acceptable if no NULL dereference remains and locks are not left held. For XML, either fail-fast critical allocation or explicit NULL checks throughout NewXMLTree parsing paths should count.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "ImageMagick/ImageMagick/issue/8567",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "ImageMagick/ImageMagick/issue/8557": {
+    "rubrics": {
+      "ImageMagick/ImageMagick/issue/8557#1": {
+        "rubric": [
+          {
+            "text": "The answer's fix direction should eliminate the unsafe second length calculation by not subtracting `q` from `next` after `q` has been reassigned by `ParseXPMColor`; the length for copying the symbolic color must be computed from the buffer that `q` actually points into, such as with a bounded string length.",
+            "axis": "correctness",
+            "source_quote": "actively working on a patch to resolve the issue",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "The answer's fix direction should ensure `CopyXPMColor(symbolic, q, ...)` is not called with a NULL `q`; a NULL result from parsing should be checked or otherwise safely handled before dereferencing/copying.",
+            "axis": "correctness",
+            "source_quote": "actively working on a patch to resolve the issue",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "Any technically sound fix should count if it avoids pointer arithmetic between unrelated objects after `ParseXPMColor` and prevents NULL from reaching `CopyXPMColor`, even if it does not use the exact suggested `strlen(q)` form. For example, keeping separate pointers for the original XPM buffer and the parsed target buffer, using a bounded `strnlen`/same-object end pointer, or returning/breaking when `ParseXPMColor` fails are acceptable.",
+        "note": "Not referring to the commit changes, also need to remove the suggested fix from the question",
+        "status": "rejected"
+      }
+    },
+    "reviewer": "afif",
+    "id": "ImageMagick/ImageMagick/issue/8557",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "ImageMagick/ImageMagick/issue/8538": {
+    "rubrics": {
+      "ImageMagick/ImageMagick/issue/8538#1": {
+        "rubric": [
+          {
+            "text": "Fixes the integer overflow by ensuring the FITS width-by-height pixel-count multiplication is performed in a sufficiently wide type before the multiplication occurs, rather than multiplying as int and casting the already-overflowed result.",
+            "axis": "correctness",
+            "source_quote": "-      number_pixels=(MagickSizeType) (fits_info.columns*fits_info.rows);\n+      number_pixels=((MagickSizeType) fits_info.columns*fits_info.rows);",
+            "source_loc": "fix_diff:coders/fits.c",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Applies the same widened pixel-count calculation consistently to all FITS code paths that compute total pixels from columns and rows, including both parsed FITS dimensions and existing image dimensions.",
+            "axis": "completeness",
+            "source_quote": "-  number_pixels=(MagickSizeType) image->columns*image->rows;\n+  number_pixels=((MagickSizeType) image->columns*image->rows);\n...\n-    number_pixels=(MagickSizeType) (fits_info.columns*fits_info.rows);\n+    number_pixels=((MagickSizeType) fits_info.columns*fits_info.rows);",
+            "source_loc": "fix_diff:coders/fits.c",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "A correct answer need not use the exact cast placement from the later patch. It should count if it computes columns * rows using a non-overflowing wider type, uses a safe multiplication/overflow-check helper, or rejects dimensions whose product cannot be represented or safely allocated. It should also count if it applies the protection to the relevant FITS pixel-count calculations rather than only to the single PoC line.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "ImageMagick/ImageMagick/issue/8538",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "ImageMagick/ImageMagick/issue/8535": {
+    "rubrics": {
+      "ImageMagick/ImageMagick/issue/8535#1": {
+        "rubric": [
+          {
+            "text": "States that ImageMagick uses this pattern only in demos and test utilities; developers should sanitize user controlled paths in case independent code use",
+            "axis": "correctness",
+            "source_quote": "ImageMagick uses this pattern only in demos and test utilities, and those executables are not included in a standard installation. If the code is used independently, developers should sanitize user-controlled paths before passing them to ImageMagick.",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Indicates security policy stating that filesystem access can be restricted with an ImageMagick security policy that denies all reads by default and allows reads only from explicitly allowed directories",
+            "axis": "completeness",
+            "source_loc": "gold_answer",
+            "source_quote": "As an additional protection, filesystem access can be restricted with an ImageMagick security policy that denies all reads by default and allows reads only from explicitly allowed directories, e.g. denying pattern=\"*\" and allowing read access only under /opt/ImageMagick/*",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "ImageMagick/ImageMagick/issue/8535",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "ImageMagick/ImageMagick/issue/8494": {
+    "rubrics": {
+      "ImageMagick/ImageMagick/issue/8494#1": {
+        "rubric": [
+          {
+            "text": "Identifies the existing ImageMagick commits that addressed CVE-2025-68469 as a531d28e31309676ce8168c3b6dbbb5374b78790 and ac1f7ca1d88e14d30e5ae9bd30aad150bdbec20e.",
+            "axis": "correctness",
+            "source_quote": "CVE-2025-68469 was addressed in commits a531d28e31309676ce8168c3b6dbbb5374b78790 and ac1f7ca1d88e14d30e5ae9bd30aad150bdbec20e.",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "Answers may give the corresponding GitHub commit URLs instead of bare hashes, or use unambiguous short hashes for both commits. An answer that names only one of the two commits is only partly correct.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "ImageMagick/ImageMagick/issue/8494",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "ImageMagick/ImageMagick/issue/8186": {
+    "rubrics": {
+      "ImageMagick/ImageMagick/issue/8186#2": {
+        "rubric": [
+          {
+            "text": "States that ImageMagick's time-to-live limit is associated with an individual image rather than being a single global timer for all operations.",
+            "axis": "correctness",
+            "source_quote": "ImageMagick's time-to-live is image-based, not global.",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Identifies the technical way to adjust the per-image time limit: set or modify the image structure's `ttl` member.",
+            "axis": "correctness",
+            "source_quote": "It can be modified directly by setting the image structure member `ttl`.",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "Answers may describe this as a per-image TTL, per-image deadline, or per-image time budget, and may refer to modifying the underlying Image or MagickCore structure rather than naming `ttl` exactly if the mechanism is clearly per-image. For timeout behavior, answers should receive credit if they explain that ImageMagick checks the limit at certain processing points, especially pixel-cache/pixel-access points, instead of using a preemptive interrupt or hard wall-clock kill.",
+        "note": "",
+        "status": "accepted"
+      },
+      "ImageMagick/ImageMagick/issue/8186#3": {
+        "rubric": [
+          {
+            "text": "Explains that the configured time limit is not a hard, signal-driven wall-clock kill of the ImageMagick process, so the command may continue for some time after the limit is exceeded.",
+            "axis": "correctness",
+            "source_quote": "There is a delay because we don't use a signal to abort the process.",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Identifies the enforcement mechanism as cooperative polling during image pixel access, with execution stopping at subsequent command/check points rather than immediately interrupting the current work.",
+            "axis": "correctness",
+            "source_quote": "When the pixels of the image are being access we check if a time limit has been hit and when that happens we stop executing of the next commands.",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "Equivalent explanations should count if they state that ImageMagick checks the time limit only at certain internal safe points, such as pixel/cache access, and does not asynchronously kill or signal-abort the operation immediately. It is also acceptable to say the delay is due to cooperative timeout enforcement rather than necessarily being stuck in a delegate.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "ImageMagick/ImageMagick/issue/8186",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "ImageMagick/ImageMagick/issue/8184": {
+    "rubrics": {
+      "ImageMagick/ImageMagick/issue/8184#1": {
+        "rubric": [
+          {
+            "text": "Identifies the fix direction: this HEIC read path should not obtain a separate context by calling `heif_image_handle_get_context` from the image handle.",
+            "axis": "correctness",
+            "source_quote": "that part should not call `heif_image_handle_get_context`",
+            "source_loc": "answer_reply",
+            "knowable_at_report": false
+          },
+          {
+            "text": "States that the existing HEIF context created earlier in the read flow should be reused/passed through instead of acquiring another one.",
+            "axis": "correctness",
+            "source_quote": "we can re-use the heif_context that was created earlier instead",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Applies the reused context to the helper paths that need it, so `ReadHEICImageHandle` and depth-image handling receive the existing `heif_context` and use it for HEIF item transformation queries.",
+            "axis": "completeness",
+            "source_quote": "static MagickBooleanType ReadHEICImageHandle(const ImageInfo *image_info,\n  Image *image,struct heif_context *heif_context,\n  struct heif_image_handle *image_handle,ExceptionInfo *exception)",
+            "source_loc": "fix_diff:coders/heic.c",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "An answer can still be correct if it proposes another technically sound way to avoid leaking the HEIF context, such as keeping the `heif_image_handle_get_context` call but ensuring every acquired context is released on all success and error paths. It should not count as correct if it leaves the extra context acquisition unpaired or suggests only destroying the PHP Imagick object without addressing the HEIC coder context ownership.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "ImageMagick/ImageMagick/issue/8184",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "ImageMagick/ImageMagick/issue/8038": {
+    "rubrics": {
+      "ImageMagick/ImageMagick/issue/8038#1": {
+        "rubric": [
+          {
+            "text": "States that delegate execution is controlled by ImageMagick security policy, which can allow all delegates, selected delegates, or no delegates.",
+            "axis": "correctness",
+            "source_quote": "The security policy allows all delegates, some, or none.",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "States that if an administrator disables some or all delegates, an ordinary user cannot re-enable them without administrative privileges.",
+            "axis": "correctness",
+            "source_quote": "If the administrator disables some or all the delegates, the user cannot enable them without administrative privileges",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Explains that administrator-controlled policy is intentional: the administrator dictates ImageMagick policy for the environment.",
+            "axis": "correctness",
+            "source_quote": "that is the role of the administrator, to dictate policy over their environment",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Mentions the supported way for an administrator to let users control policy decisions: install ImageMagick with the `disable-install` option.",
+            "axis": "completeness",
+            "source_quote": "if the administrator wants to delegate policy decisions to the user, they can install ImageMagick with the `disable-install` option",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "Answers may phrase the result as: delegate use is governed by policy.xml/security policy rather than a per-invocation CLI flag; a non-admin cannot override a restrictive administrator or distribution policy; user-controlled delegate policy is only possible if the administrator installs/configures ImageMagick to allow user policy control, such as with the `disable-install` option.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "ImageMagick/ImageMagick/issue/8038",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "ImageMagick/ImageMagick/issue/7941": {
+    "rubrics": {
+      "ImageMagick/ImageMagick/issue/7941#1": {
+        "rubric": [
+          {
+            "text": "Stops processing a tiled EXR as soon as an unsupported tile-level configuration is detected, returning failure instead of continuing into later decode/channel logic that can crash.",
+            "axis": "correctness",
+            "source_quote": "CorruptImageError,\"Unsupported number of levels\",\"`%d %d'\",\n        levels_x,levels_y);\n+      return(MagickFalse);",
+            "source_loc": "fix_diff:coders/exr.c",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "Any sound fix that validates/rejects unsupported EXR tiled level counts before continuing is acceptable, including returning an error status, jumping to existing cleanup-and-fail handling, or otherwise aborting the read path after raising the unsupported-levels error. It does not need to use the exact return statement shown, as long as it prevents subsequent channel initialization/pixel processing on the unsupported EXR.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "ImageMagick/ImageMagick/issue/7941",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "ImageMagick/ImageMagick/issue/7837": {
+    "rubrics": {
+      "ImageMagick/ImageMagick/issue/7837#1": {
+        "rubric": [
+          {
+            "text": "Correctly identifies the file-format rule and root cause: PICT scanline byteCount is one byte unless rowBytes is greater than 250, and ImageMagick was writing a two-byte byteCount for a rowBytes value such as 240.",
+            "axis": "correctness",
+            "source_quote": "The key part is where it says \"If rowBytes > 250\". In `bad.pict`, rowBytes is 240, but the `byteCount` of each scanline is two bytes rather than one.",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Correctly concludes that the generated PICT is invalid because of ImageMagick’s encoding, not merely a classic Mac OS viewer quirk.",
+            "axis": "correctness",
+            "source_quote": "I just manually modified the file so that the `byteCount` entries for each scanline is only one byte, and it fixed the file, in that classic Mac OS can now properly read it.",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Proposes the essential writer-side fix: choose a two-byte packed scanline length only when bytes_per_line/rowBytes is greater than 250, otherwise write a one-byte length.",
+            "axis": "correctness",
+            "source_quote": "if (bytes_per_line > 250)",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Recognizes that the PICT reader must use the same >250 threshold when deciding whether to read a one-byte or two-byte scanline length, so it can read conforming files with rowBytes <= 250.",
+            "axis": "correctness",
+            "source_quote": "This bug apparently affects ImageMagick's PICT reader as well, as it's unable to open `fixed.pict`",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "Equivalent fixes should count if they implement the PICT rule by any sound means, such as centralizing the byteCount-size decision or comparing rowBytes/bytes_per_line against 250 in helper code. Answers need not name the exact source lines, PR, commit, or version. Do not require the literal condition spelling as long as the behavior is two-byte counts only for values greater than 250 and one-byte counts for 250 or below. An answer that changes only the writer but not the reader is incomplete for this question; an answer using the old >200 threshold or using >=250 is incorrect.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "ImageMagick/ImageMagick/issue/7837",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "ImageMagick/ImageMagick/issue/7832": {
+    "rubrics": {
+      "ImageMagick/ImageMagick/issue/7832#1": {
+        "rubric": [
+          {
+            "text": "Specifies the mitigation as setting ImageMagick's `resource` policy `list-length` in `policy.xml` to cap the maximum number of images that may be created or processed.",
+            "axis": "correctness",
+            "source_quote": "Add `<policy domain=\"resource\" name=\"list-length\" value=\"\"/>` to `policy.xml` and set the value to the maximum number of images you want to allow.",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Explains the cause as the MNG input having an excessive `LOOP` value that makes ImageMagick attempt to create 2,147,483,647 images.",
+            "axis": "completeness",
+            "source_quote": "The input file contains a ridiculous `LOOP` value, causing ImageMagick to try to create `2147483647` images.",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "It is acceptable to give the same mitigation with an explicit nonempty numeric `value` for `list-length`, or to describe it as limiting ImageMagick's image-list length/resource policy rather than quoting the exact XML. It is also acceptable to describe the root cause as an enormous MNG animation loop/frame count causing billions of images to be instantiated, even if the exact number 2147483647 is omitted.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "ImageMagick/ImageMagick/issue/7832",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "ImageMagick/ImageMagick/issue/7568": {
+    "rubrics": {
+      "ImageMagick/ImageMagick/issue/7568#1": {
+        "rubric": [
+          {
+            "text": "Correctly concludes that the finding is a false positive for the described Windows binary installation.",
+            "axis": "correctness",
+            "source_quote": "The vulnerability does not impact Windows binaries and should be considered a false positive in that context.",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Correctly scopes the vulnerability to Linux systems using the `magick` AppImage, not general ImageMagick installs or Windows binaries.",
+            "axis": "correctness",
+            "source_quote": "It affects only Linux systems and specifically the `magick` AppImage.",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Identifies the correct fixed/non-affected version threshold as ImageMagick 7.1.1-36, with only earlier AppImage versions affected.",
+            "axis": "completeness",
+            "source_quote": "The issue arises only if the AppImage version is pre-ImageMagick 7.1.1-36.",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Mentions the exploit prerequisites: a malicious configuration file must be placed in the AppImage folder and a specific `magick` command line must be run.",
+            "axis": "completeness",
+            "source_quote": "requires that an unauthorized individual gains access to your host system and stealthily creates a malicious configuration file in the AppImage folder. Finally, the vulnerability can be exploited only if the user executes a specific `magick` command-line.",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "It is acceptable to say that CVE-2024-41817/GHSA-8rxc-922v-phg8 applies only to vulnerable ImageMagick AppImage builds on Linux and not to Windows packaged binaries. Equivalent wording such as 'not affected on Windows' or 'scanner false positive for Windows Server 2019 with ImageMagick 7.1.1-36' should count. Answers should not be penalized for omitting the advisory URL if they otherwise identify the CVE/GHSA and the affected scope.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "ImageMagick/ImageMagick/issue/7568",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "ImageMagick/ImageMagick/issue/7562": {
+    "rubrics": {
+      "ImageMagick/ImageMagick/issue/7562#1": {
+        "rubric": [
+          {
+            "text": "Addresses the bug in ImageMagick's internal MVG/MSVG macro parsing path, specifically the `GetMVGMacros` logic in `MagickCore/draw.c`, rather than treating it only as a user-command or external renderer issue.",
+            "axis": "correctness",
+            "source_quote": "static SplayTreeInfo *GetMVGMacros(const char *primitive)",
+            "source_loc": "fix_diff:MagickCore/draw.c",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Handles the zero-length macro case where `end == start` so the parser still takes the macro-extraction/exit path instead of continuing indefinitely.",
+            "axis": "correctness",
+            "source_quote": "if ((n == 0) && (end >= start))",
+            "source_loc": "fix_diff:MagickCore/draw.c",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Avoids storing an empty macro by only copying and adding the macro when the computed macro length is greater than zero.",
+            "axis": "correctness",
+            "source_quote": "length=(size_t) (end-start);\n...\nif (length > 0)\n  {\n    (void) CopyMagickString(macro,start,length);\n    (void) AddValueToSplayTree(macros,ConstantString(name),\n      ConstantString(macro));\n  }",
+            "source_loc": "fix_diff:MagickCore/draw.c",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "A correct answer may describe the fix at a higher level as making the MSVG/MVG macro parser detect and safely skip/terminate on empty macro definitions so malformed SVG input cannot cause an infinite loop/CPU DoS. It does not need to name the exact commit or reproduce the exact code, but it should not present installing Inkscape or using another SVG renderer as the actual code fix.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "ImageMagick/ImageMagick/issue/7562",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "ImageMagick/ImageMagick/issue/7446": {
+    "rubrics": {
+      "ImageMagick/ImageMagick/issue/7446#1": {
+        "rubric": [
+          {
+            "text": "Explains that the `[ghostscript library 95.40]` text appears because ImageMagick is linked against the Ghostscript library.",
+            "axis": "correctness",
+            "source_quote": "ImageMagick is linked with Ghostscript and that is why you are seeing: `[ghostscript library 95.40]`.",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Recommends upgrading Ghostscript because the version being used has a remote code execution vulnerability.",
+            "axis": "correctness",
+            "source_quote": "I would first recommend you to upgrade Ghostscript. The version you are using contains a remote code execution vulnerability.",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Notes that upgrading Ghostscript may also resolve the observed conversion error.",
+            "axis": "completeness",
+            "source_quote": "This might also fix that error.",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "If upgrading does not fix the issue, suggests recompiling ImageMagick with `--with-gslib` so it uses the command-line Ghostscript path rather than Ghostscript library calls.",
+            "axis": "completeness",
+            "source_quote": "If that doesn't resolve the issue you could consider recompiling ImageMagick with `--with-gslib` to make sure you are always using the command line version of Ghostscript instead of the library calls.",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "Answers may phrase the linkage issue as ImageMagick using libgs or an embedded/linked Ghostscript library rather than the `gs` binary. They may recommend installing a newer patched Ghostscript release without naming a specific version. For the rebuild step, answers may describe rebuilding/reconfiguring ImageMagick to force use of the external command-line Ghostscript delegate instead of library invocation, as long as they preserve the maintainer's technical intent.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "ImageMagick/ImageMagick/issue/7446",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "axios/axios/issue/10731": {
+    "rubrics": {
+      "axios/axios/issue/10731#1": {
+        "rubric": [
+          {
+            "text": "States that CVE-2025-62718 is fixed in axios 1.15.0, so axios 1.15.0 is the addressed version for that CVE.",
+            "axis": "correctness",
+            "source_quote": "This vulnerability is fixed in 1.15.0.",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Correctly treats Sonatype OSS Index still flagging axios 1.15.0 for CVE-2025-62718 as an incorrect vulnerability database/scanner result",
+            "axis": "completeness",
+            "source_quote": "From what I can tell, it's simply a mistake in their vuln DB.",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Cites the Sonatype OSS Index entry for CVE-2025-62718 as the source of the conflicting report and fixed-version statement.",
+            "axis": "completeness",
+            "source_quote": "https://ossindex.sonatype.org/vulnerability/CVE-2025-62718?component-type=npm&component-name=axios",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "Answers should receive credit if they phrase the issue as a stale/incorrect/false-positive Sonatype OSS Index or scanner finding and state that axios 1.15.0 already fixes CVE-2025-62718. An equivalent citation to the same OSS Index/CVE entry is acceptable.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "axios/axios/issue/10731",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "axios/axios/issue/10707": {
+    "rubrics": {
+      "axios/axios/issue/10707#1": {
+        "rubric": [
+          {
+            "text": "Explains that axios v0.31.0 was still being flagged because it was not included in the initial CVE/advisory metadata.",
+            "axis": "correctness",
+            "source_quote": "Yeah, it wasn't included in those initial CVEs.",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Adds that corrections to the GitHub Advisory Database metadata were being tracked through open advisory PRs.",
+            "axis": "completeness",
+            "source_quote": "There are PRs to the advisory to fix: https://github.com/github/advisory-database/pulls?q=is%3Apr+is%3Aopen+axios",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "Answers should also receive credit if they state the same issue as advisory/scanner database lag or incorrect advisory affected-version metadata for v0.31.0, rather than an axios runtime/configuration problem. They may mention that scanners will stop flagging only after the advisory database or scanner data incorporates the correction.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "axios/axios/issue/10707",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "axios/axios/issue/10643": {
+    "rubrics": {
+      "axios/axios/issue/10643#1": {
+        "rubric": [
+          {
+            "text": "Identifies the compromised Axios releases as axios@1.14.1 and axios@0.30.4, without adding unsupported affected versions.",
+            "axis": "correctness",
+            "source_quote": "The maintainer confirmed that the affected versions were axios@1.14.1 and axios@0.30.4.",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Names axios@1.14.0 and axios@0.30.3 as safe versions to use because they are free of the malicious code.",
+            "axis": "correctness",
+            "source_quote": "They said axios@1.14.0 or axios@0.30.3 can be used safely because those versions are confirmed to be free of the malicious code.",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Does not give unconditional approval to install the latest Axios version; it should advise verifying current status via the pinned issue before installing latest.",
+            "axis": "completeness",
+            "source_quote": "They recommended sticking with those versions for now, and only installing the latest versions after checking the pinned issue #10604 for updates.",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "Answers may phrase this as pinning to known-good versions 1.14.0 or 0.30.3, avoiding 1.14.1 and 0.30.4, and checking the pinned issue before trusting any newer/latest install. They do not need to discuss Bun or React specifically unless they incorrectly claim those environments change which Axios versions are affected.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "axios/axios/issue/10643",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "axios/axios/issue/10636": {
+    "rubrics": {
+      "axios/axios/issue/10636#1": {
+        "rubric": [
+          {
+            "text": "Identifies the already-existing clean/fixed axios versions to move to: 1.14.0 for 1.x users and 0.30.3 for 0.x users.",
+            "axis": "correctness",
+            "source_quote": "Downgrade to `axios@1.14.0` (or `0.30.3` for 0.x users)",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Should indicate if grep returns anything, delete node_modules/plain-crypto-js/, rotate all secrets/tokens/credentials on that machine",
+            "axis": "correctness",
+            "source_loc": "gold_answer",
+            "source_quote": "delete node_modules/plain-crypto-js/, rotate all secrets/tokens/credentials on that machine,",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Indicates to rotate all secrets/tokens/credentials on that machine",
+            "axis": "correctness",
+            "source_loc": "gold_answer",
+            "source_quote": "rotate all secrets/tokens/credentials on that machine, and check network logs for sfrclak[.]com or 142.11.206.73 on port 8000. If the install happened on a CI runner, any secrets injected during the affected build should also be rotated.",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "Answers may instead identify PR #10591 as the resolving artifact, or state accurately that affected users should pin/downgrade away from axios@1.14.1 and axios@0.30.4 to the last clean versions 1.14.0 and 0.30.3.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "axios/axios/issue/10636",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "axios/axios/issue/10614": {
+    "rubrics": {
+      "axios/axios/issue/10614#1": {
+        "rubric": [
+          {
+            "text": "States that the documentation example should only re-inject credentials when the redirect target remains HTTPS, before setting the auth header.",
+            "axis": "correctness",
+            "source_quote": "The README example should verify the redirect remains on HTTPS before re-injecting credentials, e.g. by checking `new URL(redirectUrl).protocol === 'https:'` before setting the auth header.",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Explains that `follow-redirects` strips credentials on HTTPS-to-HTTP downgrades for security, and that `beforeRedirect` runs after that stripping.",
+            "axis": "correctness",
+            "source_quote": "`follow-redirects` deliberately strips credentials on HTTPS→HTTP downgrades and that `beforeRedirect` fires after that stripping",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Identifies the security impact: re-injecting credentials in `beforeRedirect` without a protocol check bypasses the credential-stripping protection.",
+            "axis": "correctness",
+            "source_quote": "so re-injecting credentials without checking the protocol bypasses the protection",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "An answer can use `options.protocol === 'https:'` or another equivalent check of the redirect target scheme instead of `new URL(redirectUrl).protocol === 'https:'`. It can describe adding either an inline comment or a README note for the security warning. Additional host/domain validation is fine, but it should not replace the HTTPS/protocol check.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "axios/axios/issue/10614",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "axios/axios/discussion/7302": {
+    "rubrics": {
+      "axios/axios/discussion/7302#1": {
+        "rubric": [
+          {
+            "text": "Explains that Axios is not generating the CSRF token itself: withXSRFToken only copies an existing readable XSRF-TOKEN cookie into the request header, so the backend must set that cookie first.",
+            "axis": "correctness",
+            "source_quote": "The `withXSRFToken: true` config is correct on the axios side, but axios only copies a cookie value into the header. if the backend never sets the `XSRF-TOKEN` cookie, there's nothing for axios to read.",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Recommends csrf-csrf, not csurf, for an Express SPA setup, and identifies the intended pattern as double-submit cookie CSRF protection.",
+            "axis": "correctness",
+            "source_quote": "since `csurf` is [deprecated](https://expressjs.com/2025/05/16/express-cleanup-legacy-packages.html), the current recommended replacement for SPAs is [`csrf-csrf`](https://github.com/Psifi-Solutions/csrf-csrf) (double submit cookie pattern, which is exactly what axios implements).",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Describes the essential backend wiring: configure csrf-csrf with an XSRF-TOKEN cookie, expose a token-seeding endpoint that calls generateToken, and install the protection middleware to validate state-changing requests.",
+            "axis": "correctness",
+            "source_quote": "cookieName: 'XSRF-TOKEN',           // matches axios default\n...\napp.get('/api/csrf-token', (req, res) => {\n  generateToken(req, res);\n  res.json({ ok: true });\n});\n\napp.use(doubleCsrfProtection); // validates all state-changing requests",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Calls out the critical compatibility details: the CSRF cookie must be readable by browser JavaScript/axios, and csrf-csrf must be configured to read Axios's x-xsrf-token header rather than its own default x-csrf-token header.",
+            "axis": "correctness",
+            "source_quote": "the critical alignment: `csrf-csrf` defaults to reading `x-csrf-token` (not `x-xsrf-token`), so the `getCsrfTokenFromRequest` override is needed. and `httpOnly: false` is required or JS/axios can't read the cookie.",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Mentions that the client should call the seed endpoint before making mutating requests, after which Axios can automatically include the X-XSRF-TOKEN header on POST/PUT/DELETE.",
+            "axis": "completeness",
+            "source_quote": "// seed the cookie on app init\nawait api.get('/api/csrf-token');\n// now all subsequent POST/PUT/DELETE requests auto-include X-XSRF-TOKEN header",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "An answer can still count if it recommends another maintained Express-compatible double-submit CSRF implementation instead of csrf-csrf, as long as it preserves the same security requirements: backend-generated token in a readable XSRF-TOKEN cookie, Axios-compatible X-XSRF-TOKEN header validation, credentials/cookie support, and server-side validation of unsafe methods. Equivalent header casing such as x-xsrf-token vs X-XSRF-TOKEN should be accepted.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "axios/axios/discussion/7302",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "axios/axios/issue/6969": {
+    "rubrics": {
+      "axios/axios/issue/6969#1": {
+        "rubric": [
+          {
+            "text": "Recommends forcing the transitive form-data dependency to the fixed 4.0.4 version using an npm package.json override.",
+            "axis": "correctness",
+            "source_quote": "\"overrides\": {\n  \"form-data\": \"4.0.4\"\n}",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Notes that the lockfile must be regenerated so the override actually changes the resolved installed dependency.",
+            "axis": "completeness",
+            "source_quote": "regenerate package-lock.json",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "Equivalent package-manager-specific overrides or resolutions, such as pnpm or Yarn overrides/resolutions, should count if they force form-data to 4.0.4 and update the relevant lockfile. An answer that updates the direct dependency tree so that form-data resolves to the fixed 4.0.4 version without using npm overrides should also count.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "axios/axios/issue/6969",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "axios/axios/issue/6931": {
+    "rubrics": {
+      "axios/axios/issue/6931#1": {
+        "rubric": [
+          {
+            "text": "Ensures Husky hook setup is safely skipped in installations that do not have a `.git` directory, so consumer or transitive installs do not fail.",
+            "axis": "correctness",
+            "source_quote": "safely guarded Husky install scripts, so installation won’t fail in environments without a `.git` directory",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Does not keep the original unguarded `prepare` lifecycle behavior; the published package must no longer run `husky install && npm run prepare:hooks` unconditionally during install.",
+            "axis": "correctness",
+            "source_quote": "-    \"prepare\": \"husky install && npm run prepare:hooks\",\n-    \"prepare:hooks\": \"npx husky set .husky/commit-msg \\\"npx commitlint --edit $1\\\"\",\n+    \"postinstall\": \"sh scripts/setup-husky.sh\",",
+            "source_loc": "fix_diff:package.json",
+            "knowable_at_report": true
+          },
+          {
+            "text": "If automatic contributor hook setup is retained, it must be implemented through a guard that runs Husky only inside a Git checkout and otherwise exits successfully.",
+            "axis": "completeness",
+            "source_quote": "if [ -d \".git\" ]; then\n  echo \"Detected Git repository. Setting up Husky...\"\n  ./node_modules/.bin/husky install\n\n  # Add commit-msg hook if not already set\n  ./node_modules/.bin/husky set .husky/commit-msg \"npx commitlint --edit \\$1\"\nelse\n  echo \"No .git directory found. Skipping Husky setup.\"\nfi",
+            "source_loc": "fix_diff:scripts/setup-husky.sh",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "A correct answer may instead remove Husky setup from all npm lifecycle scripts in the published package and move it to a manual contributor-only script such as `husky:init`, as long as consumer installs cannot fail due to missing `.git`. It may also use another safe guard besides `[ -d .git ]`, provided the lifecycle script exits successfully when not in a Git repository. Answers do not need to use `postinstall` specifically.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "axios/axios/issue/6931",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "axios/axios/discussion/6924": {
+    "rubrics": {
+      "axios/axios/discussion/6924#1": {
+        "rubric": [
+          {
+            "text": "Explains that redirects cannot be disabled when Axios is using XMLHttpRequest, because XHR follows redirects automatically and exposes no API to control that behavior.",
+            "axis": "correctness",
+            "source_quote": "`XMLHttpRequest`, which is used under the hood, always follows redirects, and its API has no way to control this behavior.",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "States that Axios `maxRedirects` applies only to the `http` adapter, not to the browser XHR adapter.",
+            "axis": "correctness",
+            "source_quote": "`maxRedirects` is supported only by the `http` adapter.",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Identifies the Axios/browser-side alternative: use the `fetch` adapter and pass `fetchOptions.redirect: 'manual'` to disable automatic redirects.",
+            "axis": "correctness",
+            "source_quote": "you can pass a proprietary fetch API option `redirect: 'manual'` to disable redirects.\n```js\nconst api = axios.create({\n  baseURL: getAPIUrl(),\n  withCredentials: true,\n  adapter: 'fetch',\n  fetchOptions: {\n    redirect: 'manual'\n  },",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Notes that the fetch adapter itself does not implement Axios `maxRedirects`; the redirect control comes from the fetch option instead.",
+            "axis": "completeness",
+            "source_quote": "The `fetch` adapter doesn't implement it (yet?), but you can pass a proprietary fetch API option `redirect: 'manual'` to disable redirects.",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Includes the need to treat 3xx responses as valid if the client code wants to receive and handle the manual redirect response through Axios rather than have it rejected.",
+            "axis": "completeness",
+            "source_quote": "validateStatus: (status) => status >= 200 && status < 400",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "Equivalent wording is acceptable, such as saying browser/XHR redirect handling is controlled by the browser and cannot be stopped by Axios, or that `maxRedirects` is a Node/http-adapter-only option. For the workaround, answers may describe configuring Axios to use the fetch adapter with `fetchOptions: { redirect: 'manual' }`; including the exact surrounding `axios.create` code is not required. An answer that recommends plain native `fetch` with `redirect: 'manual'` may partially satisfy the workaround if it also explains why Axios XHR/`maxRedirects` cannot do it.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "axios/axios/discussion/6924",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "axios/axios/issue/6821": {
+    "rubrics": {
+      "axios/axios/issue/6821#1": {
+        "rubric": [
+          {
+            "text": "Identifies the already-existing Axios fix as release v1.8.3, or commit 10fa70ef14fe39558b15a179f0e82f5f5e5d11b2 as the resolving artifact.",
+            "axis": "correctness",
+            "source_quote": "The problem has been solved in the current release version 1.8.3. The maintainer pointed to the Axios v1.8.3 release and commit 10fa70ef14fe39558b15a179f0e82f5f5e5d11b2.",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "Answers should receive credit if they correctly point to Axios v1.8.3 as the fixed version, link to the v1.8.3 release, identify commit 10fa70ef14fe39558b15a179f0e82f5f5e5d11b2, or state that upgrading from 1.8.2 to 1.8.3 or later resolves the reported vulnerability.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "axios/axios/issue/6821",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "axios/axios/issue/6806": {
+    "rubrics": {
+      "axios/axios/issue/6806#1": {
+        "rubric": [
+          {
+            "text": "Identifies that the omission is not limited to the HTTP adapter: the xhr and fetch paths also ignore allowAbsoluteUrls when calling buildFullPath through resolveConfig.",
+            "axis": "correctness",
+            "source_quote": "The `allowAbsoluteUrls` configuration is also being ignored in the `xhr` and `fetch` calls to `buildFullPath`",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "States or implements the required fix direction for xhr/fetch URL construction: pass the configured allowAbsoluteUrls value into buildFullPath when resolveConfig builds the final URL.",
+            "axis": "correctness",
+            "source_quote": "newConfig.url = buildURL(buildFullPath(newConfig.baseURL, newConfig.url, newConfig.allowAbsoluteUrls), config.params, config.paramsSerializer);",
+            "source_loc": "fix_diff:lib/helpers/resolveConfig.js",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Captures the intended security behavior when allowAbsoluteUrls is false: an absolute request URL should be treated relative to/prepended by the baseURL rather than being used as the actual outbound destination.",
+            "axis": "completeness",
+            "source_quote": "expect(request.url).toBe('http://someurl.com/http://someotherurl.com/');",
+            "source_loc": "fix_diff:test/specs/options.spec.js",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "An answer can use different wording or a different code structure as long as it makes xhr/fetch URL resolution honor allowAbsoluteUrls=false, e.g. by passing config.allowAbsoluteUrls or newConfig.allowAbsoluteUrls into buildFullPath or by otherwise preventing absolute URLs from bypassing baseURL in those adapter paths. It need not cite the later PR or version.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "axios/axios/issue/6806",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "axios/axios/issue/6776": {
+    "rubrics": {
+      "axios/axios/issue/6776#1": {
+        "rubric": [
+          {
+            "text": "Correctly states that TLS protocol and cipher support/deprecation is not controlled by axios itself, but by the runtime environment used to execute it.",
+            "axis": "correctness",
+            "source_quote": "This does not depend on axios, but rather on the runtime that you are using.",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "For Node.js specifically, points to Node's TLS/OpenSSL security-level configuration as the relevant place to look.",
+            "axis": "completeness",
+            "source_quote": "Example from the node docs:\n\nhttps://nodejs.org/api/tls.html#openssl-security-level",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "Answers should receive credit if they explain that axios relies on the underlying environment, such as Node.js, the browser, OpenSSL, or platform TLS libraries, for supported TLS versions and ciphers. It is also acceptable to say that changing TLS 1.1 or legacy cipher behavior requires configuring or upgrading that runtime rather than changing axios. For the Node-specific completeness point, references to Node.js TLS options or OpenSSL security levels are acceptable even if the exact URL is not quoted.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "axios/axios/issue/6776",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "axios/axios/issue/6545": {
+    "rubrics": {
+      "axios/axios/issue/6545#1": {
+        "rubric": [
+          {
+            "text": "States that CVE-2024-39338 is fixed/resolved in Axios version 1.7.4.",
+            "axis": "correctness",
+            "source_quote": "this was resolved in the new version [1.7.4]",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Treats continued Snyk findings against Axios 1.7.4 as likely stale scanner/verification data rather than evidence that 1.7.4 remains affected.",
+            "axis": "completeness",
+            "source_quote": "after upgrading to 1.7.4 and scanning again, the Snyk issue was fixed, and suggested it may just take time for Snyk to verify/update",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "It is acceptable to say to upgrade to Axios 1.7.4 or any later non-vulnerable release. It is also acceptable to explain that a scanner may still flag 1.7.4 until its vulnerability database or verification state updates, as long as the answer does not claim that 1.7.4 is still vulnerable to CVE-2024-39338.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "axios/axios/issue/6545",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "axios/axios/discussion/6542": {
+    "rubrics": {
+      "axios/axios/discussion/6542#1": {
+        "rubric": [
+          {
+            "text": "Identifies axios 1.7.4 as the version that fixes the SSRF issue.",
+            "axis": "correctness",
+            "source_quote": "The issue is fixed in axios version 1.7.4.",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "Answers that state users should upgrade to axios 1.7.4 or any later version containing that fix should count. Answers that only say a patch exists without naming 1.7.4 should not fully satisfy the key fixed-version claim.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "axios/axios/discussion/6542",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "axios/axios/issue/6497": {
+    "rubrics": {
+      "axios/axios/issue/6497#1": {
+        "rubric": [
+          {
+            "text": "Identifies the failure as an Android network security / certificate configuration issue rather than an axios library bug.",
+            "axis": "correctness",
+            "source_quote": "Its not axios problem. You need add certificates into your network_security_config",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Requires allowing cleartext HTTP traffic on Android for the app, e.g. via `android:usesCleartextTraffic=\"true\"` and/or `cleartextTrafficPermitted=\"true\"` in the network security config.",
+            "axis": "correctness",
+            "source_quote": "Also add android:usesCleartextTraffic=\"true\"",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Requires adding a Network Security Config XML under Android resources that defines trust anchors including the bundled backend certificate and the system trust store.",
+            "axis": "correctness",
+            "source_quote": "<network-security-config>\n    <base-config cleartextTrafficPermitted=\"true\">\n        <trust-anchors>\n            <certificates src=\"@raw/ca\" />\n            <certificates src=\"system\" />\n        </trust-anchors>\n    </base-config>\n</network-security-config>",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Requires placing the backend certificate file in Android `res/raw` so it can be referenced by the network security config.",
+            "axis": "correctness",
+            "source_quote": "After that you need add your certificates into res/raw/NAME_OF_CERT",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "An answer can name the usual Android manifest wiring, such as `android:networkSecurityConfig=\"@xml/network_security_config\"`, as part of the same Network Security Config fix. It can use a different raw resource name than `ca` if the XML reference and certificate filename match. For pure HTTP backends, an answer that focuses on Android cleartext traffic being disabled and enables it for the app or specific domain/IP should count for the cleartext item even if it omits certificate trust anchors.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "axios/axios/issue/6497",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "expressjs/express/issue/7143": {
+    "rubrics": {
+      "expressjs/express/issue/7143#1": {
+        "rubric": [
+          {
+            "text": "Identifies `path-to-regexp@0.1.13` as the fixed/safe version that Express 4.22.1 should resolve to from its `~0.1.12` dependency range.",
+            "axis": "correctness",
+            "source_quote": "Express 4 uses `path-to-regexp` versions `0.1.x` and Express 4.22.1 specifies `path-to-regexp` version as [`~0.1.12`](https://github.com/expressjs/express/blob/v4.22.1/package.json#L54) (#7135), which should install [0.1.13](https://github.com/pillarjs/path-to-regexp/releases/tag/v.0.1.13)",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "States that Snyk does not list `path-to-regexp@0.1.13` as affected by known vulnerabilities.",
+            "axis": "correctness",
+            "source_quote": "The Snyk page shows that [0.1.13](https://security.snyk.io/package/npm/path-to-regexp/0.1.13) is not known to be affected by any vulnerabilities.",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Gives the correct remediation when an older `path-to-regexp` is installed: update it with `npm update path-to-regexp` or `npm audit fix`, or do a fresh install so `0.1.13` is installed.",
+            "axis": "correctness",
+            "source_quote": "If you have an older version installed, please run `npm update path-to-regexp` or `npm audit fix`. Fresh installs (without `node_modules`) should also install `path-to-regexp@0.1.13` on `npm install`.",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Mentions the official Express security release blog post as an additional reference recommending `npm update path-to-regexp`.",
+            "axis": "completeness",
+            "source_quote": "The official [blog post](https://expressjs.com/2026/03/30/security-releases.html) also suggests running `npm update path-to-regexp`.",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "Answers may phrase the semver point as `~0.1.12` allowing the patched `0.1.13` release, or may say updating the lockfile/dependency tree will cause npm to select `path-to-regexp@0.1.13`. For remediation, equivalent instructions such as deleting `node_modules` and reinstalling, regenerating the lockfile, or otherwise ensuring the installed version is `0.1.13` should count.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "expressjs/express/issue/7143",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "expressjs/express/issue/6978": {
+    "rubrics": {
+      "expressjs/express/issue/6978#1": {
+        "rubric": [
+          {
+            "text": "Correctly distinguishes the official Express package from the malicious package: the report concerns `express-js-web`, not the legitimate NPM package `express`.",
+            "axis": "correctness",
+            "source_quote": "Express is released as [`express`](https://www.npmjs.com/package/express) on NPM. [`express-js-web`](https://www.npmjs.com/package/express-js-web) (the package listed in this report) is [malware]",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Identifies the malicious package as a typosquatting/dependency-confusion style package using a similar name to mislead users.",
+            "axis": "correctness",
+            "source_quote": "uses a similiar name to confuse people ([typosquatting](https://docs.npmjs.com/threats-and-mitigations#by-typosquatting--dependency-confusion))",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "States that systems where the malicious package is actually detected should be treated as compromised and rebuilt or restored from a known-good backup.",
+            "axis": "completeness",
+            "source_quote": "If your scanner has detected this package on your PCs/servers, please contact your security department - these devices should be considered compromised, wiped and reinstalled/restored from known good backup.",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "States that secrets used or stored on affected devices should be revoked and rotated.",
+            "axis": "completeness",
+            "source_quote": "All secrets stored or used on those devices (passwords, tokens, private keys) should be revoked and rotated.",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "References the relevant GitHub advisory for the malware, GHSA-wpr4-9cjg-p8mm.",
+            "axis": "completeness",
+            "source_quote": "GHSAs: GHSA-wpr4-9cjg-p8mm",
+            "source_loc": "hard_facts",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "Answers can phrase this as a false positive or misattribution against Express 5.2.1, as long as they clearly say the legitimate `express` package is not the malware named by the report and that the actual package is `express-js-web`. They may also say that if `express-js-web` is not present in package manifests, lockfiles, or installed dependencies, the alert should be investigated as a scanner mapping issue rather than an Express vulnerability. Incident-response guidance can be expressed equivalently as isolate affected hosts, rebuild from trusted media or backup, and rotate credentials/secrets.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "expressjs/express/issue/6978",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "expressjs/express/issue/6751": {
+    "rubrics": {
+      "expressjs/express/issue/6751#1": {
+        "rubric": [
+          {
+            "text": "Identifies `debug` 4.4.2 as the compromised version and `debug` 4.4.1 as the safe/fixed version to use.",
+            "axis": "correctness",
+            "source_quote": "The compromised `debug` version (4.4.2) has been removed from NPM a few hours ago. If you remove `node_modules` and `package-lock.json` in your code and reinstall, npm should install `debug` version 4.4.1 (a good one).",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Gives a concrete remediation: remove the installed dependency tree and lockfile, then reinstall so npm resolves `debug` to 4.4.1 instead of the compromised version.",
+            "axis": "correctness",
+            "source_quote": "If you remove `node_modules` and `package-lock.json` in your code and reinstall, npm should install `debug` version 4.4.1",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Notes that the compromised `debug` 4.4.2 package had been removed from npm, explaining why a fresh install should avoid it.",
+            "axis": "completeness",
+            "source_quote": "The compromised `debug` version (4.4.2) has been removed from NPM",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "Answers can equivalently advise updating/regenerating the lockfile, running a clean npm install, or using npm overrides/resolutions/pinning to force `debug` 4.4.1, as long as they clearly avoid `debug` 4.4.2 and identify 4.4.1 as the good/fixed version.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "expressjs/express/issue/6751",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "expressjs/express/issue/6614": {
+    "rubrics": {
+      "expressjs/express/issue/6614#1": {
+        "rubric": [
+          {
+            "text": "Correctly concludes that Express does not need to validate or sanitize the scheme passed to `res.location()` because controlling that value is the application's responsibility under Express's threat model.",
+            "axis": "correctness",
+            "source_quote": "our [threat model](https://github.com/expressjs/security-wg/blob/main/docs/ThreatModel.md#the-express-threat-model) is clear that it is the application's responsibility to control what is passed to methods, including `res.location()`",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Correctly notes that non-HTTP schemes in `Location` headers are not inherently invalid because Express recognizes legitimate use cases for them.",
+            "axis": "correctness",
+            "source_quote": "there are perfectly valid use cases for non http schemes in location headers",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Includes or points to the Express threat model as the supporting reference for the decision.",
+            "axis": "completeness",
+            "source_quote": "[threat model](https://github.com/expressjs/security-wg/blob/main/docs/ThreatModel.md#the-express-threat-model)",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "Answers may phrase the conclusion as intended behavior, outside Express's threat model, or the application's responsibility to validate redirect targets. They should still count if they do not use the exact words 'threat model' but clearly state that Express leaves `res.location()` inputs under application control. Answers should not be penalized for suggesting application-level validation as a defense, as long as they do not claim Express itself must enforce an HTTP(S)-only allowlist.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "expressjs/express/issue/6614",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "expressjs/express/issue/6458": {
+    "rubrics": {
+      "expressjs/express/issue/6458#3": {
+        "rubric": [
+          {
+            "text": "Identifies the reason for the changed Express 5/path-to-regexp route semantics as a security-driven ReDoS issue in path-to-regexp, specifically tied to CVE-2024-45296.",
+            "axis": "correctness",
+            "source_quote": "the reason is explained in the Express security release notes for CVE-2024-45296 in `path-to-regexp` and in Blake Embrey’s post about web ReDoS",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Makes clear that bringing back the old path semantics would only be acceptable if it can be done without reintroducing a ReDoS vulnerability.",
+            "axis": "correctness",
+            "source_quote": "open up a PR bringing back the old path semantics without a ReDOS",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Cites the Express security release/advisory for CVE-2024-45296 as the primary reference for the rationale.",
+            "axis": "completeness",
+            "source_quote": "https://expressjs.com/2024/09/29/security-releases.html#moderate-severity-vulnerability-cve-2024-45296-in-path-to-regexp-utility-module",
+            "source_loc": "hard_facts",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "Answers may describe the issue as web ReDoS, regular-expression denial of service, catastrophic backtracking, or unsafe old path matching semantics, as long as they connect the Express 5 behavior change to the path-to-regexp security fix/CVE-2024-45296. They do not need to quote both linked articles, but should not claim the change was arbitrary or unrelated to security.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "expressjs/express/issue/6458",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "expressjs/express/issue/6204": {
+    "rubrics": {
+      "expressjs/express/issue/6204#1": {
+        "rubric": [
+          {
+            "text": "Identifies that the debug dependency upgrade was already present on Express's main branch and is available in Express v5.",
+            "axis": "correctness",
+            "source_quote": "This has already been updated in the main branch and released with v5:",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "Answers should count if they point to Express v5 as the fixed version, or to the main-branch/package.json commit e4a61bd88e2f170eab64d937f3bf6c0812b4a649 as the existing fix. It is also acceptable to describe the fix as the existing main-branch change that upgrades Express's debug dependency, as long as it is clearly tied to v5/main rather than claiming the older v4 dependency is fixed.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "expressjs/express/issue/6204",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "expressjs/express/issue/6067": {
+    "rubrics": {
+      "expressjs/express/issue/6067#1": {
+        "rubric": [
+          {
+            "text": "Correctly concludes that the reported Express 4.21.1 dependency on serve-static 1.16.2 is not affected by CVE-2024-43800.",
+            "axis": "correctness",
+            "source_quote": "Express@4.21.1 includes serve-static@1.16.2 so it is not affected.",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Correctly identifies the vulnerable serve-static version ranges as below 1.16.0 and 2.0.0 through below 2.1.0, which excludes 1.16.2.",
+            "axis": "correctness",
+            "source_quote": "this impact < 1.16.0 and >=2.0.0, <2.1.0",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "References the relevant GitHub Security Advisory GHSA-cm22-4g7w-348p as the basis for the affected-version assessment.",
+            "axis": "completeness",
+            "source_quote": "based on the advisory (https://github.com/expressjs/serve-static/security/advisories/GHSA-cm22-4g7w-348p)",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "Answers should count if they state that the scan is a false positive or non-applicable for express@4.21.1 because it depends on serve-static@1.16.2, and that CVE-2024-43800/GHSA-cm22-4g7w-348p affects only serve-static versions <1.16.0 and >=2.0.0 <2.1.0. It is also acceptable to phrase this as 1.16.0 and 2.1.0 being the relevant fixed boundaries, as long as 1.16.2 is clearly treated as unaffected.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "expressjs/express/issue/6067",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "expressjs/express/issue/6053": {
+    "rubrics": {
+      "expressjs/express/issue/6053#1": {
+        "rubric": [
+          {
+            "text": "Identifies the existing resolution for CVE-2024-47764 in Express 4 as Express version 4.21.1, and/or the specific fixing commit 2027b87a27396d418f7848cc7fc4c353d798c3d9.",
+            "axis": "correctness",
+            "source_quote": "The version of express-4.21.1 contains the security fix.\nhttps://github.com/expressjs/express/commit/2027b87a27396d418f7848cc7fc4c353d798c3d9",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "Answers should receive credit if they name Express 4.21.1 as the fixed version, or cite commit 2027b87a27396d418f7848cc7fc4c353d798c3d9 as the fix. A close answer that says upgrading from Express 4.21.0 to 4.21.1 resolves the cookie/CVE-2024-47764 issue should also count. Do not give credit for merely saying cookie 0.7.0 is needed without identifying the Express-side fixed version or fixing commit.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "expressjs/express/issue/6053",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "expressjs/express/issue/5970": {
+    "rubrics": {
+      "expressjs/express/issue/5970#1": {
+        "rubric": [
+          {
+            "text": "Identifies Express 4.21.2 as the relevant fixed Express 4 release and states that it includes `path-to-regexp@0.1.12`.",
+            "axis": "correctness",
+            "source_quote": "Express 4 was updated and released with `path-to-regexp@0.1.12` in December: https://github.com/expressjs/express/releases/tag/4.21.2",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Gives the correct remediation for affected projects: update the local Express dependency to the fixed Express release, rather than requiring a direct `path-to-regexp` major-version upgrade.",
+            "axis": "correctness",
+            "source_quote": "You might need to update express locally.",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Provides the Express 4.21.2 release reference supporting the fixed-version claim.",
+            "axis": "completeness",
+            "source_quote": "https://github.com/expressjs/express/releases/tag/4.21.2",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "Answers should be credited if they say Express 4.x is fixed by upgrading Express to 4.21.2 or later, and that this brings in `path-to-regexp` 0.1.12. Equivalent references to the Express 4.21.2 release page count for the link item. Do not require mentioning the December timing.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "expressjs/express/issue/5970",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "expressjs/express/issue/5948": {
+    "rubrics": {
+      "expressjs/express/issue/5948#1": {
+        "rubric": [
+          {
+            "text": "States that Express 5 no longer supports regular expressions embedded inside string route paths.",
+            "axis": "correctness",
+            "source_quote": "Express 5 fully dropped support for regular expressions embedded in route strings.",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Explains the security rationale as DoS/ReDoS protection, specifically that path-segment regex matching could not be supported without major performance regressions.",
+            "axis": "correctness",
+            "source_quote": "The reason for this is mainly security around DOS protection. There is no way to support path segment regular expression matching while also avoiding major performance regressions.",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "For alternatives such as `/[discussion|page]/:slug`, recommends replacing regex-like string syntax with explicit route paths, for example an array of paths.",
+            "axis": "correctness",
+            "source_quote": "For this example, use an array of explicit paths such as `app.get(['/discussion/:slug', '/page/:slug'], ...)`",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "For constraints such as numeric route parameters, recommends validating input outside the route-string regex syntax rather than putting the regex in the path.",
+            "axis": "completeness",
+            "source_quote": "We will be recommending folks use a more robust input validation approach for this.",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Connects the change to the Web ReDoS discussion/advisory context by citing the Web ReDoS resource.",
+            "axis": "completeness",
+            "source_quote": "See more here: https://blakeembrey.com/posts/2024-09-web-redos/",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "Answers may say ReDoS instead of DoS, or describe the issue as preventing unsafe/expensive regex route matching. For replacement routing, using separate `app.get('/discussion/:slug', ...)` and `app.get('/page/:slug', ...)` handlers should count as equivalent to an array of paths. For numeric constraints, validating inside the handler or middleware and calling `next()`/returning an error on invalid input should count. It is also acceptable to mention that a full JavaScript RegExp route can still be written directly, as long as the answer does not claim embedded regex in string paths remains supported.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "expressjs/express/issue/5948",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "expressjs/express/issue/5947": {
+    "rubrics": {
+      "expressjs/express/issue/5947#1": {
+        "rubric": [
+          {
+            "text": "For Express v4, the recommended mitigation is to use package-manager overrides/resolutions for the mismatched transitive dependencies, specifically including `send` at a non-vulnerable 0.19.x range and the related aligned versions for `encodeurl` and `qs`.",
+            "axis": "correctness",
+            "source_quote": "\"overrides\": {\n  \"encodeurl\": \"~2.0.0\",\n  \"qs\": \"^6.13.0\",\n  \"send\": \"^0.19.0\"\n}",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Identifies `send` 0.19.0 as the fixed/non-vulnerable version relevant to GHSA-m6fv-jmcg-4jfg.",
+            "axis": "correctness",
+            "source_quote": "fixed in: 0.19.0",
+            "source_loc": "hard_facts",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Notes the caveat that overrides may not be usable in every dependency graph if other dependencies require incompatible versions.",
+            "axis": "completeness",
+            "source_quote": "Be aware it may not be possible for every occasion if other dependencies use a completely different version.",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "Answers may use npm `overrides`, Yarn `resolutions`, pnpm `overrides`, or another equivalent package-manager mechanism, as long as they force Express v4's transitive `send` dependency to 0.19.0 or a non-vulnerable compatible range. An answer may also be acceptable if it recommends upgrading to an Express/serve-static release that already aligns these dependencies, if such a release is named and includes non-vulnerable `send`. The exact inclusion of `encodeurl` and `qs` can be partly credited if the answer correctly fixes `send`, but full credit should recognize the dependency-alignment workaround shown in the answer.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "expressjs/express/issue/5947",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "fastapi/fastapi/issue/5837": {
+    "rubrics": {
+      "fastapi/fastapi/issue/5837#1": {
+        "rubric": [
+          {
+            "text": "Identifies the technical reason the cookie is not accepted: a cookie set with SameSite=None must also have the Secure attribute, so FastAPI's set_cookie should use secure=True in that configuration.",
+            "axis": "correctness",
+            "source_quote": "According to security policy you have to set `secure=True` for cookies with `samesite=\"none\"`.",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "References the relevant Set-Cookie SameSite documentation as supporting context.",
+            "axis": "completeness",
+            "source_quote": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie/SameSite",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "Answers should count if they state the browser rejects or ignores SameSite=None cookies unless the Secure attribute is present, or if they express the fix as adding Secure/secure=True to the Set-Cookie header. It is also acceptable to mention that this normally requires serving over HTTPS, but the core requirement is SameSite=None plus Secure.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "fastapi/fastapi/issue/5837",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "fastapi/fastapi/issue/5831": {
+    "rubrics": {
+      "fastapi/fastapi/issue/5831#1": {
+        "rubric": [
+          {
+            "text": "Explains that the Gradio handler can receive the network request and use request data such as cookies or headers to perform authentication/authorization checks.",
+            "axis": "correctness",
+            "source_quote": "gradio provides ability to access the request data on the main function, you can access session cookies, headers, and do various checks",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Shows that unauthenticated access should be denied from the Gradio handler, e.g. by checking for a session cookie and raising a 401 error when it is absent or invalid.",
+            "axis": "correctness",
+            "source_quote": "getattr(request.cookies, 'fakesession')\n            # do some checks and validations ...\n        except AttributeError:\n            raise HTTPException(401, detail='Must be logged in')",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Identifies FastAPI middleware as another viable way to run authentication checks before requests to the mounted Gradio path are handled.",
+            "axis": "completeness",
+            "source_quote": "This other example uses middleware to run before all requests to gradio path:",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Notes that a naive `startswith` path check can overmatch paths such as `/gradiosometext`, and suggests using a more precise path match such as a regex.",
+            "axis": "completeness",
+            "source_quote": "I'm not sure using `startswith` is the best option as it would cover all paths starting with gradio (gradio/... but also gradiosometext). You could refine that using regex.",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "Answers can be correct if they present either of the two supported approaches: checking authentication inside the Gradio function via `gr.Request` cookies/headers, or adding FastAPI/Starlette middleware that applies only to the mounted Gradio path and rejects unauthenticated users. Equivalent session, token, or subscription validation logic is acceptable; the fake cookie/login route need not be reproduced.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "fastapi/fastapi/issue/5831",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "fastapi/fastapi/issue/5723": {
+    "rubrics": {
+      "fastapi/fastapi/issue/5723#1": {
+        "rubric": [
+          {
+            "text": "Identifies the existing resolving commit for this issue as FastAPI commit 63a5ffcf577abc6015d021f65857b3826d8db74e.",
+            "axis": "correctness",
+            "source_quote": "fix commits: 63a5ffcf577abc6015d021f65857b3826d8db74e",
+            "source_loc": "hard_facts",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Explains that the duplicate session arises because FastAPI dependency cache keys include both the dependency callable and the active security scopes, so the same `get_session` dependency is cached separately under scoped and unscoped keys.",
+            "axis": "completeness",
+            "source_quote": "the cache_key is generated using the **dependency function reference** and **security scopes**",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "For the fix-identification item, accept the full GitHub commit URL https://github.com/fastapi/fastapi/commit/63a5ffcf577abc6015d021f65857b3826d8db74e, the unambiguous short SHA 63a5ffc if clearly referring to the FastAPI fix, or a statement that the issue was already fixed by the Dependant cache_key/security-scopes change in that commit.",
+        "note": "The commit URL is hallucinated I guess, we should regenerate rubric for this one",
+        "status": "rejected"
+      }
+    },
+    "reviewer": "afif",
+    "id": "fastapi/fastapi/issue/5723",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "fastapi/fastapi/issue/5386": {
+    "rubrics": {
+      "fastapi/fastapi/issue/5386#1": {
+        "rubric": [
+          {
+            "text": "Identifies the hang as stemming from a Starlette bug or design issue rather than as expected FastAPI endpoint behavior.",
+            "axis": "correctness",
+            "source_quote": "in summary it is a bug or design issue from starlette",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Gives the core workaround: move the request-body-reading logic into a FastAPI dependency instead of reading JSON directly in `BaseHTTPMiddleware`.",
+            "axis": "correctness",
+            "source_quote": "async def auth_middleware(request: Request):\n    # you can implement your auth here\n    print(await request.json())\n\n# the trick here is including auth_middleware in the dependencies:\napp.include_router(api_router, dependencies=[Depends(auth_middleware)])",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Explains that attaching the dependency at the router level makes the middleware-like logic run for every request handled by that router.",
+            "axis": "completeness",
+            "source_quote": "thus this middleware logic will work on every requests",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Mentions that FastAPI dependencies are the mechanism being used to inject the auth/body-processing logic into requests.",
+            "axis": "completeness",
+            "source_quote": "Dependencies will inject your auth logic into each request",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Redirects to a previous issue: https://github.com/tiangolo/fastapi/issues/394",
+            "axis": "completeness",
+            "source_loc": "gold_answer",
+            "source_quote": "You can ref this issue: https://github.com/tiangolo/fastapi/issues/394",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "Answers may use equivalent FastAPI dependency placement, such as router-level or application-level dependencies, as long as the request JSON/body-processing logic is executed through `Depends` rather than by consuming the body in `BaseHTTPMiddleware`. Answers may describe the logic as auth, logging, validation, or sanitization so long as the technical mechanism is the same.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "fastapi/fastapi/issue/5386",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "fastapi/fastapi/issue/5334": {
+    "rubrics": {
+      "fastapi/fastapi/issue/5334#1": {
+        "rubric": [
+          {
+            "text": "Explains that a cookie using SameSite=None must also have the Secure attribute; otherwise the browser warning/error is expected.",
+            "axis": "correctness",
+            "source_quote": "If you use `SameSite=none`, it is required to set `secure` attribute aswell",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Gives the correct local non-HTTPS setting: use SameSite=Lax together with secure=False.",
+            "axis": "correctness",
+            "source_quote": "But you can still use `SameSite=Lax` (with `secure=False`) and it **should** work.",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Shows the concrete FastAPI cookie-setting form for that local configuration.",
+            "axis": "completeness",
+            "source_quote": "response.set_cookie(key=\"foo\", value=\"bar\", secure=False, samesite=\"lax\")",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "References external documentation for the SameSite cookie rule.",
+            "axis": "completeness",
+            "source_quote": "as described [here](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie/SameSite)",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "Answers may use different casing such as `SameSite=None`, `SameSite=Lax`, `Secure`, or FastAPI's `samesite=\"none\"/\"lax\"` and `secure=True/False`. They may also say that for cross-site cookies requiring `SameSite=None`, the alternative is to serve the app over HTTPS and keep `Secure` enabled. It is acceptable to frame this as browser-enforced cookie behavior rather than a FastAPI bug.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "fastapi/fastapi/issue/5334",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "jenkinsci/jenkins/issue/26507": {
+    "rubrics": {
+      "jenkinsci/jenkins/issue/26507#1": {
+        "rubric": [
+          {
+            "text": "Correctly attributes the post-upgrade 403/handshake failure to the SECURITY-3674 security change rather than treating it as an unrelated agent failure.",
+            "axis": "correctness",
+            "source_quote": "This is the result of https://www.jenkins.io/security/advisory/2026-03-18/#SECURITY-3674 and possibly expected.",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Notes that agents should not be connecting through the Jenkins CLI endpoint.",
+            "axis": "correctness",
+            "source_quote": "Agents should not use the CLI endpoint.",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Provides the relevant Jenkins security advisory reference for SECURITY-3674.",
+            "axis": "completeness",
+            "source_quote": "https://www.jenkins.io/security/advisory/2026-03-18/#SECURITY-3674",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Mentions correcting the configured Jenkins URL or otherwise making the Origin match as the technical resolution.",
+            "axis": "completeness",
+            "source_quote": "correcting the URL made it work",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "Answers may describe SECURITY-3674 as an intentional security hardening, origin validation, reverse-proxy/Jenkins URL mismatch, or CLI/WebSocket Origin mismatch. They do not need to use the exact advisory identifier if they clearly explain the same Jenkins 2.541.3 behavior and its URL/Origin matching requirement.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "jenkinsci/jenkins/issue/26507",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "jenkinsci/jenkins/issue/26204": {
+    "rubrics": {
+      "jenkinsci/jenkins/issue/26204#1": {
+        "rubric": [
+          {
+            "text": "Identifies Jenkins Overall/Manage as the existing permission intended for delegating management/configuration tasks without granting full Administer.",
+            "axis": "correctness",
+            "source_quote": "This is what Overall/Manage permission is for",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "States the security boundary correctly: only features that cannot be used to elevate the user's permissions to Administer are suitable for delegation through Manage.",
+            "axis": "correctness",
+            "source_quote": "Anything that cannot be used to elevate one's own permission to Administer should ultimately use Manage.",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Notes the caveat that many Jenkins features may be usable for privilege escalation, so features with that risk are not appropriate for fenced-in access.",
+            "axis": "completeness",
+            "source_quote": "The problem is that many features can be used in that way. If a feature you want them \"fenced in\" like that can be used to elevate permissions, it's not suitable.",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "Answers may refer to Overall/Manage as defined by JEP-223, or describe it generically as Jenkins' non-Administer management permission. They should still count if they do not use the exact term \"fenced-in\" but clearly explain that delegation is only safe for permissions/features that cannot lead to Administer-level privilege escalation.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "jenkinsci/jenkins/issue/26204",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "jenkinsci/jenkins/issue/26027": {
+    "rubrics": {
+      "jenkinsci/jenkins/issue/26027#1": {
+        "rubric": [
+          {
+            "text": "Identifies the core race as a non-atomic check-then-create in `doCreateFirstAccount`: `hasSomeUser()` is checked before user creation without synchronization, allowing concurrent requests to pass the check.",
+            "axis": "correctness",
+            "source_quote": "The method `doCreateFirstAccount` checks `hasSomeUser()` and then creates the user without any synchronization, which allows a race condition where multiple requests can pass the check before the first user is persisted.",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Proposes making the first-account eligibility check and the account creation operation atomic, rather than only adding a pre-check or post-check.",
+            "axis": "correctness",
+            "source_quote": "makes the first account creation atomic by synchronizing the check and creation logic",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Ensures the fix permits only one initial admin account to be created through this endpoint.",
+            "axis": "correctness",
+            "source_quote": "ensuring that only one initial admin user can be created",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Handles later/concurrent attempts after the first user exists by returning an unauthorized error and stopping before account creation.",
+            "axis": "completeness",
+            "source_quote": "if (hasSomeUser()) {\n                rsp.sendError(SC_UNAUTHORIZED, \"First user was already created\");\n                return;\n            }",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "A correct answer may use `synchronized` on the method, a synchronized block with an appropriate private lock, a `ReentrantLock`, or another sound mutual-exclusion/transactional mechanism. It need not use the exact dedicated static lock shown, as long as the `hasSomeUser()` decision and user creation/admin-grant path are protected as one atomic operation and concurrent later requests are rejected before creating another initial admin.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "jenkinsci/jenkins/issue/26027",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "kubernetes/kubernetes/issue/139515": {
+    "rubrics": {
+      "kubernetes/kubernetes/issue/139515#1": {
+        "rubric": [
+          {
+            "text": "Correctly identifies that nftables rejects overlong comments at a 128-character maximum, so kube-proxy must not pass such comments through unchanged.",
+            "axis": "correctness",
+            "source_quote": "Error: comment too long, 128 characters maximum allowed",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Proposes a fix that caps, truncates, omits, or otherwise sanitizes kube-proxy's generated nftables comment strings before they are included in nftables statements.",
+            "axis": "correctness",
+            "source_quote": "truncateNFTablesComment truncates s to the maximum byte length accepted by nftables.",
+            "source_loc": "fix_diff:pkg/proxy/nftables/proxier.go",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Recognizes that comments are non-functional metadata, so changing or removing them must not affect service routing behavior.",
+            "axis": "completeness",
+            "source_quote": "Comments are cosmetic, so truncation does not affect routing.",
+            "source_loc": "fix_diff:pkg/proxy/nftables/proxier.go",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Ensures normal and boundary-length comments remain valid while only comments longer than the nftables maximum are shortened.",
+            "axis": "completeness",
+            "source_quote": "if len(s) > knftables.CommentLengthMax {\n\t\treturn s[:knftables.CommentLengthMax]\n\t}\n\treturn s",
+            "source_loc": "fix_diff:pkg/proxy/nftables/proxier.go",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "A correct answer may truncate to the nftables maximum, omit comments entirely, replace long comments with a shorter hash/abbreviation, or otherwise guarantee every emitted nftables comment is within the kernel limit. It need not match the exact helper name or implementation, as long as overlong service-derived comments cannot make the nftables transaction invalid.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "kubernetes/kubernetes/issue/139515",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "kubernetes/kubernetes/issue/138461": {
+    "rubrics": {
+      "kubernetes/kubernetes/issue/138461#1": {
+        "rubric": [
+          {
+            "text": "Identifies the flake as a race caused by node authorizer/informer lag where the pod or PCR is not visible yet, rather than a permanent missing-object or authorization failure.",
+            "axis": "correctness",
+            "source_quote": "When the node authorizer cannot find the pod yet due to informer lag",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Explains the immediate bug in the polling logic: returning `(false, err)` from a `wait.PollUntilContextTimeout` callback stops polling immediately instead of retrying.",
+            "axis": "correctness",
+            "source_quote": "the callback returns `(false, err)`, which terminates polling immediately instead of retrying",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "States the required fix direction: transient expected errors inside the poll callback should not be returned as fatal errors; they should cause another retry, e.g. by returning `(false, nil)`.",
+            "axis": "correctness",
+            "source_quote": "The fix is to return `(false, nil)` for transient errors so polling continues",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Recognizes that the direct get/read path can also suffer from node authorizer graph lag and should be polled until it succeeds, not executed just once.",
+            "axis": "completeness",
+            "source_quote": "Getting the PCR could fail if there is lag in the node authorizer graph population.\n\t\t// Poll until it succeeds.",
+            "source_loc": "fix_diff:test/integration/podcertificaterequests/podcertificate_integration_test.go",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Notes that the same erroneous polling pattern appears in more than one callback in the file and the fix should be applied consistently to those analogous cases.",
+            "axis": "completeness",
+            "source_quote": "the same pattern exists in several other poll callbacks in the file and should be fixed there too",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "Answers may describe the missing pod/PCR as eventual consistency, cache staleness, informer synchronization delay, or node authorizer graph population lag. They do not need to use the exact tuple syntax if they clearly say transient errors during polling should be swallowed/logged and retried until success or timeout. A fix that wraps the affected create/get operations in retry polling, or otherwise distinguishes transient not-found/authorization-lag errors from fatal errors, should count even if it is not identical to the eventual patch.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "kubernetes/kubernetes/issue/138461",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "kubernetes/kubernetes/issue/138374": {
+    "rubrics": {
+      "kubernetes/kubernetes/issue/138374#1": {
+        "rubric": [
+          {
+            "text": "Correctly identifies that the allocator must treat IPv6 address offsets as unsigned 64-bit values when adding them to the base address, avoiding conversion through int64 that can turn large offsets negative and allocate outside the CIDR.",
+            "axis": "correctness",
+            "source_quote": "r := big.NewInt(0).Add(addressBig, big.NewInt(0).SetUint64(offset)).Bytes()",
+            "source_loc": "fix_diff:pkg/registry/core/service/ipallocator/ipallocator.go",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Ensures random offset generation for very large service CIDR ranges cannot overflow when combined with the allocator's range offset, so the resulting address remains within the configured range.",
+            "axis": "correctness",
+            "source_quote": "// a.offsetAddress + offset should not overflow a 64 bit CIDR.\n\t\tif math.MaxUint64-offset < uint64(a.rangeOffset) {\n\t\t\toffset -= uint64(a.rangeOffset)\n\t\t}",
+            "source_loc": "fix_diff:pkg/registry/core/service/ipallocator/ipallocator.go",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Covers boundary cases for IPv6 offset-to-address conversion, including offsets at and above math.MaxInt64 through math.MaxUint64.",
+            "axis": "completeness",
+            "source_quote": "offset:   math.MaxInt64 + 1,\n\t\t\twantAddr: netip.MustParseAddr(\"fd54:ceea:51ad:2f00:8000::\"),",
+            "source_loc": "fix_diff:pkg/registry/core/service/ipallocator/ipallocator_test.go",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "Answers can propose any technically equivalent fix that keeps allocated IPv6 Service IPs within the configured serviceCIDR, such as doing offset arithmetic with big.Int/uint64 throughout, explicitly rejecting or retrying overflowing random offsets, or otherwise normalizing the generated offset before adding it to the CIDR base. They do not need to cite the later PR number or exact patch.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "kubernetes/kubernetes/issue/138374",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "kubernetes/kubernetes/issue/138329": {
+    "rubrics": {
+      "kubernetes/kubernetes/issue/138329#1": {
+        "rubric": [
+          {
+            "text": "Correctly concludes that this OpenTelemetry SDK CVE does not affect Kubernetes in practice, rather than treating the vendored vulnerable module version alone as sufficient exposure.",
+            "axis": "correctness",
+            "source_quote": "this one does not affect us.",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Identifies that the vulnerable OpenTelemetry code path is limited by the `host_id_bsd.go` build tag to DragonFly BSD, FreeBSD, NetBSD, OpenBSD, and Solaris.",
+            "axis": "correctness",
+            "source_quote": "Affected platforms (per build tag in host_id_bsd.go:4): DragonFly BSD, FreeBSD, NetBSD, OpenBSD, Solaris.",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Connects Kubernetes non-exposure to the fact that Kubernetes does not support or ship binaries/images for the affected BSD/Solaris platforms; optionally may rafer to the changelog https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.35.md#v1353",
+            "axis": "completeness",
+            "source_quote": "(we don't support or ship binaries/images for any of those platforms above)",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "Answers may phrase this as a scanner false positive or non-applicable CVE for Kubernetes, provided they explain that the affected OpenTelemetry file is only built for the listed BSD/Solaris targets and that Kubernetes does not ship/support those targets. It is also acceptable to say upgrading OpenTelemetry may silence the scanner, but not required for Kubernetes exposure, as long as the non-affected platform reasoning is correct.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "kubernetes/kubernetes/issue/138329",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "kubernetes/kubernetes/issue/137891": {
+    "rubrics": {
+      "kubernetes/kubernetes/issue/137891#1": {
+        "rubric": [
+          {
+            "text": "Identifies the fix direction as checking the QoS-class cgroup tier, not the pod cgroup, when verifying that memory.low resets after MemoryQoS is disabled.",
+            "axis": "correctness",
+            "source_quote": "which checks the QoS cgroup tier",
+            "source_loc": "gold_answer",
+            "knowable_at_report": false
+          },
+          {
+            "text": "Recognizes that the expected reset to 0 applies to the Burstable QoS-class cgroup's memory.low value.",
+            "axis": "correctness",
+            "source_quote": "burstable QoS memory.low should reset to 0 when MemoryQoS is disabled",
+            "source_loc": "fix_diff:test/e2e_node/memory_qos_test.go",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Notes the caveat that pod-level and container-level memory.low values may persist after rollback and should not be treated as the required reset target.",
+            "axis": "completeness",
+            "source_quote": "Pod-level and container-level memory.low values persist after rollback.",
+            "source_loc": "fix_diff:test/e2e_node/memory_qos_test.go",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "Answers can phrase this as: the test expectation was wrong and should assert memory.low on the QoS-class/Burstable cgroup rather than the pod cgroup; the rollback path clears QoS-level memory.low only; pod-level clearing is not required or is intentionally avoided.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "kubernetes/kubernetes/issue/137891",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "kubernetes/kubernetes/issue/137797": {
+    "rubrics": {
+      "kubernetes/kubernetes/issue/137797#1": {
+        "rubric": [
+          {
+            "text": "States the affected and fixed version boundary correctly: CSI Driver for NFS versions before v4.13.1 are affected, and v4.13.1 or later is fixed.",
+            "axis": "correctness",
+            "source_quote": "All versions of the CSI Driver for NFS prior to the v4.13.1 release containing the fix for traversal validation are affected.\n\n#### Fixed Versions\n\nCSI Driver for NFS versions >= v4.13.1",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Identifies the vulnerable deployment conditions: the cluster runs nfs.csi.k8s.io, users can create PersistentVolumes referencing it, and the driver lacks traversal validation for the subDir field.",
+            "axis": "correctness",
+            "source_quote": "You may be vulnerable if:\nYou run the CSI Driver for NFS (nfs.csi.k8s.io)\nYour cluster allows users to create PersistentVolumes referencing the NFS CSI driver\nYour CSI driver version does not validate traversal sequences in the subDir field",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Gives the core mitigations: upgrade to a patched driver, restrict PersistentVolume creation to trusted administrators, and ensure NFS exports are writable only in intended directories.",
+            "axis": "correctness",
+            "source_quote": "This issue can be mitigated by:\nUpgrading the CSI Driver for NFS to a patched version\nRestricting PersistentVolume creation privileges to trusted administrators\nReviewing NFS exports to ensure only intended directories are writable by the driver",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Describes practical detection checks: inspect NFS CSI PersistentVolumes' volumeHandle for traversal such as ../ and review CSI controller logs for unexpected directory operations.",
+            "axis": "correctness",
+            "source_quote": "Inspect PersistentVolumes using the NFS CSI driver and review the volumeHandle field.\nLook for traversal sequences such as: `../`\nReview CSI controller logs for unexpected directory operations. e.g. “Removing subPath: /tmp/mount-uuid/legitimate/../../../exports/subdir”",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "Answers may omit the leading 'v' and refer to 4.13.1 or later. Equivalent phrasing for PersistentVolume/PV creation privileges, RBAC restriction to trusted admins, and NFS export write-scope hardening should count. Detection can be stated as searching PV volumeHandle values for path traversal components like '../' and checking CSI controller logs for suspicious removal/cleanup paths.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "kubernetes/kubernetes/issue/137797",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "psf/requests/issue/7209": {
+    "rubrics": {
+      "psf/requests/issue/7209#1": {
+        "rubric": [
+          {
+            "text": "Identifies the pre-existing issue: https://github.com/urllib3/urllib3/issues/2873",
+            "axis": "correctness",
+            "source_quote": "You can see this same domain was brought to urllib3's attention already in https://github.com/urllib3/urllib3/issues/2873. ",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Explains that Requests itself is not where the behavior would be fixed: urllib3 controls the Host header handling, and urllib3 intentionally strips the trailing dot for HTTP/TLS while preserving it for DNS lookup.",
+            "axis": "completeness",
+            "source_quote": "stripping the dot is intentional for the HTTP stack (not DNS). This is a provision of TLS (RFC 6066) for SNI requiring the removal of the trailing dot.",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "For the correctness item, count answers that accurately cite curl commit 2ab1aff8b96017e1b8d902f4b5dcda6e42d75a50, the corresponding curl commit URL, aiohttp PR #7364, or the aiohttp PR URL as the already-existing relevant fix/change. For the completeness item, count answers that accurately describe the same distinction as: keep the trailing dot for DNS resolution but omit it from HTTP/TLS/SNI/certificate/Host-header handling, and note that Requests would depend on urllib3 for such behavior.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "psf/requests/issue/7209",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "psf/requests/issue/7085": {
+    "rubrics": {
+      "psf/requests/issue/7085#1": {
+        "rubric": [
+          {
+            "text": "Confirms the user's proposed certificate interpretation: the CA certificate's Basic Constraints extension should be marked critical for the stricter validation path.",
+            "axis": "correctness",
+            "source_quote": "Yes, that is correct.",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Identifies the cause as a CPython 3.13 SSL/security behavior change that urllib3 is using.",
+            "axis": "correctness",
+            "source_quote": "this is a change in CPython for 3.13 that urllib3 is using",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Provides the Python.org discussion link as the referenced source for further details and examples of typical certificates using the extension.",
+            "axis": "completeness",
+            "source_quote": "You can find one of the posts on it [here](https://discuss.python.org/t/python-3-13-x-ssl-security-changes/91266). You can find some examples there for what typical certificates using this extension look like.",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "Answers can phrase the first item as saying the corporate CA/root certificate is misconfigured for Python 3.13's stricter validation unless Basic Constraints is critical. Answers can also describe the cause more specifically as Python 3.13/OpenSSL stricter X.509 verification behavior that urllib3 follows or enables. It is acceptable to say Requests is only surfacing the SSL verification failure rather than causing it.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "psf/requests/issue/7085",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "psf/requests/issue/7035": {
+    "rubrics": {
+      "psf/requests/issue/7035#1": {
+        "rubric": [
+          {
+            "text": "Correctly concludes that Requests intentionally flags urllib3 versions with local distribution/modification identifiers rather than ignoring the local segment for compatibility checks.",
+            "axis": "correctness",
+            "source_quote": "The maintainer said the check is working as expected: local distributions and modified copies distributed by Linux distros are intended to be flagged",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Explains the rationale: the warning is meant to alert users that they may be running modified dependencies or versions outside what Requests validates in CI.",
+            "axis": "completeness",
+            "source_quote": "because Requests wants users to know when dependencies may be modified or outside the versions validated in CI",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Gives the appropriate mitigation for users who knowingly use local copies: suppress `RequestsDependencyWarning` with Python warnings warnings.filterwarnings(\"ignore\", category=RequestsDependencyWarning)",
+            "axis": "correctness",
+            "source_quote": "For local copies, suppress the warning if needed with:\n\n```python\nwarnings.filterwarnings(\"ignore\", category=RequestsDependencyWarning)\n```",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Distinguishes direct calls to `check_compatibility` from normal Requests import behavior: direct calls can raise `ValueError`, while normal import converts that failure into a warning; making warnings fatal is outside Requests' intended behavior.",
+            "axis": "completeness",
+            "source_quote": "They also clarified that the `ValueError` is turned into a warning during normal import; calling `check_compatibility` directly can raise, and treating warnings as errors is separate from Requests’ intended behavior.",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "Answers may phrase this as 'not a bug' or 'intended behavior' rather than 'working as expected' so long as they do not recommend stripping or ignoring the PEP 440 local version segment. For the mitigation, equivalent warning-filtering mechanisms count if they specifically suppress `RequestsDependencyWarning` or the same Requests dependency warning category.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "psf/requests/issue/7035",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "psf/requests/issue/6981": {
+    "rubrics": {
+      "psf/requests/issue/6981#1": {
+        "rubric": [
+          {
+            "text": "Correctly concludes the behavior is intended/by design: disabling proxies for a single request does not automatically cover redirected requests, since redirects leave the explicitly declared scope and may create information-leak risks.",
+            "axis": "correctness",
+            "source_quote": "I think this is working as intended. While you can disable proxies for the request, any redirects move us outside of the explicitly declared intent of the call. That may lead to unintentional leaking of information to other parties like we see with your example.com redirect.",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "States that the recommended way to fully disable environment/system proxy use is to use a Session with trust_env disabled.",
+            "axis": "correctness",
+            "source_quote": "Create a Session with `trust_env` disabled. You're explicitly disabling use of the system defined proxies for all requests",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Rejects the proposed semantic change because it would bypass the explicit trust_env setting and could introduce a security issue.",
+            "axis": "correctness",
+            "source_quote": "The proposed change is not the correct semantics. A magic value that disables or enables use of environment content that doesn't respect defined values for `trust_env` is a security issue waiting to happen.",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Mentions valid alternative controls: disable automatic redirects and handle each request manually, or use no_proxy for domains that should not use the proxy.",
+            "axis": "completeness",
+            "source_quote": "Disable auto-redirects. You can set `allow_redirects=False` and handle each call as needed. This enables you to make decisions on subsequent proxy usage.\n\n3.) If you have specific domains you want to avoid proxy usage, you should be able to set `no_proxy` which will omit those from proxy usage.",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "Answers can use equivalent wording such as 'not a bug' or 'by design' for the verdict, and may describe trust_env=False as setting it on a requests.Session object rather than quoting the exact maintainer phrasing. For the alternative controls, either allow_redirects=False with manual redirect handling or no_proxy for selected hosts should receive partial credit for that completeness item.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "psf/requests/issue/6981",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "psf/requests/issue/6978": {
+    "rubrics": {
+      "psf/requests/issue/6978#1": {
+        "rubric": [
+          {
+            "text": "Provides the technical workaround: use a custom requests HTTPAdapter to supply a custom ssl.SSLContext to urllib3, enable ssl.VERIFY_X509_PARTIAL_CHAIN on that context, and load the trusted leaf certificate into the context with load_verify_locations.",
+            "axis": "correctness",
+            "source_quote": "Use a custom `requests.adapters.HTTPAdapter` that passes a custom `ssl.SSLContext` to urllib3, set `context.verify_flags |= ssl.VERIFY_X509_PARTIAL_CHAIN`, and load the trusted leaf certificate with `context.load_verify_locations(...)`.",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "States that requests does not intend to support this partial-chain/leaf-trust behavior by default right now; it should be handled explicitly with a custom adapter.",
+            "axis": "correctness",
+            "source_quote": "The maintainers indicated they do not intend to change requests' default behavior right now; this should be accomplished with a custom adapter",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "Equivalent code that mounts an HTTPS adapter using a custom SSLContext with VERIFY_X509_PARTIAL_CHAIN and loads the desired certificate as a trust anchor should count, even if organized as a helper, decorator, or context manager. Answers may refer to trusting an intermediate or leaf/lower certificate for a partial chain, as long as they do not suggest disabling certificate verification as the solution. Answers may say requests has no built-in verify= option for this behavior and requires a custom SSLContext/adapter.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "psf/requests/issue/6978",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "psf/requests/issue/6974": {
+    "rubrics": {
+      "psf/requests/issue/6974#1": {
+        "rubric": [
+          {
+            "text": "Correctly concludes the failure is not caused by Requests itself.",
+            "axis": "correctness",
+            "source_quote": "I don't think there's anything in Requests itself that would be triggering this",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Identifies the likely source as Python's bundled OpenSSL / standard library SSL path rather than Requests.",
+            "axis": "correctness",
+            "source_quote": "This error is coming directly from the version of OpenSSL bundled with Python.",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Explains the certificate-validation reason: x509 strict checking rejects the certificate because it lacks the required Authority Key Identifier.",
+            "axis": "correctness",
+            "source_quote": "the cert isn't valid for x509 strict checking because the it's missing the required Authority Key Identifier",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Gives a way to verify the issue outside Requests, by using `urllib.request.urlopen` against the same HTTPS URL.",
+            "axis": "completeness",
+            "source_quote": "We should be able to trigger this without Requests. The easiest way would be do some something like:\n\n```python\nimport urllib.request\n\nurl = \"https://threatinsight.proofpoint.com\"\nwith urllib.request.urlopen(url) as response:\n    response.read()\n```",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Mentions the related CPython issue as the place where the same problem was already reported.",
+            "axis": "completeness",
+            "source_quote": "It looks like you already reported this to CPython in https://github.com/python/cpython/issues/135408.",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "It is acceptable to attribute the failure to CPython's ssl module or OpenSSL certificate verification rather than naming OpenSSL alone. It is also acceptable to say urllib3 may surface the error as long as the answer does not blame Requests as the root cause. Equivalent non-Requests verification using Python's standard-library ssl/http client stack should count in place of the exact urllib.request snippet.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "psf/requests/issue/6974",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "psf/requests/issue/6969": {
+    "rubrics": {
+      "psf/requests/issue/6969#1": {
+        "rubric": [
+          {
+            "text": "Identifies the missing Subject Alternative Name extension as the key hostname-validation problem; a Common Name of localhost alone is not sufficient for Requests' certificate hostname check.",
+            "axis": "correctness",
+            "source_quote": "So there is no subject alternative names specified",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Identifies that the generated certificate is a CA certificate rather than an end-entity/leaf server certificate.",
+            "axis": "correctness",
+            "source_quote": "you created a CA certificate, not a leaf",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Explains curl's differing behavior as likely Common Name fallback, and notes that relying on CN fallback is obsolete/not best practice.",
+            "axis": "completeness",
+            "source_quote": "I'm guessing curl just falls back to using the CN but that is no longer best practice and hasn't been for years",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "Answers should count if they say the certificate should be regenerated as a proper leaf/server certificate with a Subject Alternative Name such as DNS:localhost, rather than relying on CN=localhost. It is also acceptable to mention appropriate leaf-certificate constraints/usages such as CA:FALSE and server authentication. For the curl difference, equivalent wording such as curl/libcurl/OpenSSL accepting legacy CN matching while Requests/Python requires SAN is acceptable.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "psf/requests/issue/6969",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "psf/requests/issue/6945": {
+    "rubrics": {
+      "psf/requests/issue/6945#1": {
+        "rubric": [
+          {
+            "text": "Identifies that the failure is not caused by Requests or certifi, but by certificate verification in Python's standard library/OpenSSL layer.",
+            "axis": "correctness",
+            "source_quote": "The error is not specific to Requests or certifi; it comes from the Python standard library/OpenSSL verification layer.",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Explains the relevant verification settings as `VERIFY_X509_STRICT` and `VERIFY_X509_PARTIAL_CHAIN` being enabled.",
+            "axis": "correctness",
+            "source_quote": "The issue boils down to `VERIFY_X509_STRICT` and `VERIFY_X509_PARTIAL_CHAIN` being set",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "States that OpenSSL strict mode requires the Subject Key Identifier to be present even though it is optional from the CA baseline perspective, and that the relevant TWCA root lacks it.",
+            "axis": "correctness",
+            "source_quote": "When running in strict mode the optional \"Subject Key Identifier\" ... must be set ... and that is not the case for the \"TWCA Global Root CA\"",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Correctly treats the behavior as likely working as designed rather than as a Requests bug.",
+            "axis": "correctness",
+            "source_quote": "So I assume this is just working as designed?",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Provides related upstream references for the issue in CPython/urllib3/OpenSSL or the reported CPython discussion.",
+            "axis": "completeness",
+            "source_quote": "https://github.com/python/cpython/issues/107361, https://github.com/urllib3/urllib3/issues/3571 ... Reported here: https://github.com/python/cpython/issues/107361#issuecomment-2917808686",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "An answer can still be correct if it does not use the exact phrase 'working as designed' but clearly says this is expected behavior from Python/OpenSSL strict certificate validation rather than a Requests/certifi defect. It may describe the root cause as OpenSSL/Python strict chain validation rejecting a TWCA root or chain because of a missing Subject Key Identifier, even if it omits one of the exact flag names. It should not blame the browser, certifi bundle contents, or Requests' HTTP logic as the primary cause.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "psf/requests/issue/6945",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "psf/requests/issue/6928": {
+    "rubrics": {
+      "psf/requests/issue/6928#1": {
+        "rubric": [
+          {
+            "text": "Identifies Requests PR #7205 as the existing resolving fix, which changes Requests to ignore netrc entries that contain no authentication information.",
+            "axis": "correctness",
+            "source_quote": "I've made a [PR](https://github.com/psf/requests/pull/7205) that skips using the netrc entries entirely if we can't find any info.",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Explains the root cause: Python 3.11+ changed netrc handling so an entry with no username/account/password is considered valid, causing Requests to receive a truthy empty tuple and generate `Authorization: Basic Og==` for `:`.",
+            "axis": "completeness",
+            "source_quote": "For 3.11+, it treats a netrc entry without username, account or password as valid. ... Now, that produces `('', '', '')` for our `_netrc`. That tuple is in turn \"truthy\" and used to create an `Authorization` header with two empty values (`:`).",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "For the correctness item, accept the full URL https://github.com/psf/requests/pull/7205, an unambiguous reference to psf/requests#7205, or an accurate statement that the Requests fix is to skip/ignore netrc default entries when login/account/password are all absent. Do not count Python CPython PR #26330 alone as the Requests fix; it may count only toward the root-cause explanation.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "psf/requests/issue/6928",
+    "reviewed_at": "2026-06-26T04:50:49.237624Z"
+  },
+  "keycloak/keycloak/issue/49094": {
+    "rubrics": {
+      "keycloak/keycloak/issue/49094#1": {
+        "rubric": [
+          {
+            "text": "Identifies that CVE-2026-42581 is already covered by the existing Keycloak tracking/fix item #48805.",
+            "axis": "correctness",
+            "source_quote": "CVE‑2026‑42581 is covered by #48805",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Recognizes that the reported Netty CVEs share the same remediation release/update, so they do not require separate independent fixes.",
+            "axis": "correctness",
+            "source_quote": "all the issues are fixed by the same release",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "An answer should still count if it does not mention the duplicate closure but states that the existing CVE-2026-42581 tracking/fix also resolves CVE-2026-42584 and CVE-2026-42579 because the common Netty/Quarkus dependency update contains the fixes for all three.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "keycloak/keycloak/issue/49094",
+    "reviewed_at": "2026-07-24T03:34:18.012430Z"
+  },
+  "psf/requests/issue/6784": {
+    "rubrics": {
+      "psf/requests/issue/6784#1": {
+        "rubric": [
+          {
+            "text": "Identifies this report as the same underlying bug as issue #6711 rather than a separate, unrelated Requests digest-auth problem.",
+            "axis": "correctness",
+            "source_quote": "Resolving this as a duplicate of #6711 as they have the same root cause.",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Attributes the root cause/fix direction to urllib3’s URL/path handling, so the Requests-side fix should be based on the urllib3 correction rather than only changing the Digest Authorization header formatting.",
+            "axis": "correctness",
+            "source_quote": "The issue is now fixed in urllib3.",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "Answers should still count if they do not name #6711 but correctly say the failure comes from the same underlying URL/path normalization issue handled in urllib3, and that Requests should address it by incorporating or aligning with that urllib3 fix. Do not require mention of release timing, branch, PR status, or coordination.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "psf/requests/issue/6784",
+    "reviewed_at": "2026-07-24T03:35:34.503338Z"
+  },
+  "urllib3/urllib3/issue/3745": {
+    "rubrics": {
+      "urllib3/urllib3/issue/3745#1": {
+        "rubric": [
+          {
+            "text": "Correctly judges unlimited decompression in the non-streaming API as not a urllib3 security vulnerability, and points users handling large, unknown-length, or untrusted responses to the streaming API rather than treating this as a fixed vulnerability.",
+            "axis": "correctness",
+            "source_quote": "We are aware of the issue, but we do not consider it a vulnerability.\nurllib3's users are advised to use [the streaming API](https://urllib3.readthedocs.io/en/stable/advanced-usage.html#streaming-and-i-o)  when dealing with responses of large or unknown length including responses from untrusted sources.",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Identifies the Retry-After unbounded sleep issue is a duplicate of #3743 as already fixed in urllib3 2.6.3.",
+            "axis": "correctness",
+            "source_quote": "Duplicate of #3743, fixed in 2.6.3",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Correctly treats redirect draining with decompression of attacker-controlled bodies as a valid security issue and states that it is fixed in urllib3 2.6.3.",
+            "axis": "correctness",
+            "source_quote": "This is a valid security issue, fixed in 2.6.3, see GHSA-38jv-5279-wg99",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Cites the advisory identifier for the redirect-draining security issue.",
+            "axis": "completeness",
+            "source_quote": "see GHSA-38jv-5279-wg99",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Correctly declines to classify the HTTP proxy redirect header-dropping behavior as a security issue because credentials are not leaked to third parties, while still recognizing it as a bug.",
+            "axis": "correctness",
+            "source_quote": "I am not inclined to accept this as a security issue since the confidential information is not passed to third parties, but the issue does sound like a bug.",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "Answers may say 'upgrade to 2.6.3 or later' instead of exactly 'fixed in 2.6.3'. They may refer to the redirect advisory as GHSA-38jv-5279-wg99 without a URL. For unlimited decompression, equivalent phrasing that the eager/non-streaming API can consume memory but is not considered a vulnerability, with streaming recommended for untrusted or large responses, should count.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "urllib3/urllib3/issue/3745",
+    "reviewed_at": "2026-07-24T03:38:56.359650Z"
+  },
+  "psf/requests/issue/6660": {
+    "rubrics": {
+      "psf/requests/issue/6660#1": {
+        "rubric": [
+          {
+            "text": "Correctly identifies that the shown `certifi.where()` examples are exercising `certifi`, not Requests, so they do not by themselves show Requests ignoring the variables.",
+            "axis": "correctness",
+            "source_quote": "Requests isn't in use in your examples; you're using `certifi`.",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Correctly distinguishes the projects: `certifi` does not support `REQUESTS_CA_BUNDLE` or `CURL_CA_BUNDLE`, while Requests does.",
+            "axis": "correctness",
+            "source_quote": "`certifi` (a separate project) does not support either environment variable, Requests does.",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Explains the outside-venv behavior as likely caused by a distro/package-manager-modified `certifi`, unlike the separately installed `certifi` inside the virtualenv.",
+            "axis": "completeness",
+            "source_quote": "outside of the venv you have `certifi` from your package manager, and every Linux distro replaces `certifi` with something else",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Identifies #6565 as a duplicate",
+            "axis": "correctness",
+            "source_quote": "Lastly, I think this is effectively a duplicate of #6565",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "Equivalent answers may say that `certifi.where()` is not a reliable test of Requests' effective CA bundle, that PyPI `certifi` ignores these Requests-specific environment variables, and that distro-patched `certifi` packages may behave differently. Answers can also mention checking Requests behavior via an actual Requests call or Requests' environment-merging/verify configuration rather than by importing `certifi` directly.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "psf/requests/issue/6660",
+    "reviewed_at": "2026-07-24T03:45:00.912524Z"
+  },
+  "pyca/cryptography/issue/14690": {
+    "rubrics": {
+      "pyca/cryptography/issue/14690#1": {
+        "rubric": [
+          {
+            "text": "States that pyca/cryptography has ML-KEM and ML-DSA support on its roadmap or included in its forthcoming support scope.",
+            "axis": "correctness",
+            "source_quote": "Our next release will have ML-KEM and ML-DSA support",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "States that SLH-DSA is being tracked separately, specifically via issue #14419 or an equivalent separate tracker.",
+            "axis": "correctness",
+            "source_quote": "there's a distinct issue for SLH-DSA: #14419",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "Answers should still count if they say ML-KEM and ML-DSA support is planned or available without using the phrase 'next release'. For SLH-DSA, an answer may either cite #14419 or clearly state that SLH-DSA is tracked separately from ML-KEM/ML-DSA.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "pyca/cryptography/issue/14690",
+    "reviewed_at": "2026-07-24T03:47:29.819900Z"
+  },
+  "auth0/node-jsonwebtoken/issue/656": {
+    "rubrics": {
+      "auth0/node-jsonwebtoken/issue/656#1": {
+        "rubric": [
+          {
+            "text": "States that logout/token invalidation for JWTs should be handled by maintaining a server-side blacklist/denylist of tokens and rejecting blacklisted tokens.",
+            "axis": "correctness",
+            "source_quote": "In short: keeping a blacklist of tokens.",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Identifies #375 or #626 as similar issues",
+            "axis": "correctness",
+            "source_loc": "gold_answer",
+            "source_quote": "You can read these to get a better idea about the problem space and possible solutions:\nhttps://github.com/auth0/node-jsonwebtoken/issues/375\nhttps://github.com/auth0/node-jsonwebtoken/issues/626",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "Answers should also count if they use equivalent terminology such as denylist, revocation list, invalidated-token store, or storing token IDs/JTIs server-side and checking them on each request. A closely related session-store/allowlist approach may be acceptable if it clearly explains that JWTs cannot simply be 'destroyed' client-side once issued and must be rejected by server-side state.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "auth0/node-jsonwebtoken/issue/656",
+    "reviewed_at": "2026-07-24T03:49:58.819035Z"
+  },
+  "python-pillow/Pillow/issue/8706": {
+    "rubrics": {
+      "python-pillow/Pillow/issue/8706#1": {
+        "rubric": [
+          {
+            "text": "Identifies the crash as an already-known issue, CVE-2020-35653, and points to the existing resolving artifact: Pillow PR #5174, fixed in Pillow 8.1.0.",
+            "axis": "correctness",
+            "source_quote": "I would conclude this has found https://nvd.nist.gov/vuln/detail/cve-2020-35653, which was fixed by #5174 in Pillow 8.1.0",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "Answers should be counted correct if they identify the existing fix as PR #5174, or state that upgrading to Pillow 8.1.0 or later fixes the issue, or accurately identify the issue as CVE-2020-35653 together with its Pillow 8.1.0 fix. Do not count answers that merely point to the reporter's affected version 7.1.2 or only say to try the latest Pillow without identifying the prior fix.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "python-pillow/Pillow/issue/8706",
+    "reviewed_at": "2026-07-24T03:52:49.740472Z"
+  },
+  "hashicorp/terraform/issue/35011": {
+    "rubrics": {
+      "hashicorp/terraform/issue/35011#1": {
+        "rubric": [
+          {
+            "text": "Identifies the already-existing resolution as Terraform 1.8.0 / the 1.8.0 release series, and links it to the specific underlying PR (#34414) or commit (https://github.com/hashicorp/terraform/commit/fc756571130af35fc33e4f5651c9db487df6d861.) that fixed the observed failure.",
+            "axis": "correctness",
+            "source_quote": "This has been fixed in the 1.8.0 release series, are you able to upgrade to the newly released v1.8.0? ... the PR that fixed the observed failure was #34414, specifically commit https://github.com/hashicorp/terraform/commit/fc756571130af35fc33e4f5651c9db487df6d861.",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Explains the related test-framework cause: Terraform test was checking sensitive marks only at the top level and missing embedded sensitive values inside complex types, while planning can now handle sensitive marks on inputs.",
+            "axis": "completeness",
+            "source_quote": "the test framework still had a related bug: it checked for sensitive marks to warn if they were being lost but did not check embedded values within complex types, and since planning can now handle sensitive marks on inputs properly, Terraform should stop stripping sensitive marks from inputs within the test framework.",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "For the correctness item, answers may identify any distinct resolving artifact from the answer side: fixed in Terraform v1.8.0 / the 1.8.0 release series, PR #34414, or commit fc756571130af35fc33e4f5651c9db487df6d861. A response that accurately says upgrading from 1.7.5 to 1.8.0 resolves this observed failure should count even if it omits the PR, but a stronger answer should include the PR or commit link when asked for the underlying fix.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "hashicorp/terraform/issue/35011",
+    "reviewed_at": "2026-07-24T03:55:06.088164Z"
+  },
+  "rails/rails/issue/55886": {
+    "rubrics": {
+      "rails/rails/issue/55886#1": {
+        "rubric": [
+          {
+            "text": "Identifies the already-existing resolving artifact as ruby/openssl PR #950.",
+            "axis": "correctness",
+            "source_quote": "Fix is already committed:\n  * https://github.com/ruby/openssl/pull/950",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Attributes the issue to OpenSSL 3.6.0 behavior rather than Rails itself, noting the relevant OpenSSL behavior change was apparently unintended.",
+            "axis": "completeness",
+            "source_quote": "This is an openssl issue:\n\nhttps://github.com/ruby/openssl/issues/949\n\n> OpenSSL 3.6.0 appears to have changed the behavior in commit https://github.com/openssl/openssl/commit/b1b4b154fd389ac6254d49cfb11aee36c1c51b84, which doesn't look intentional",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "For the correctness item, answers may instead identify the same fix by the OpenSSL commit hash b1b4b154fd389ac6254d49cfb11aee36c1c51b84, or otherwise clearly point to ruby/openssl#950 as the fix. Mentioning ruby/openssl#949 is acceptable only if it also leads to the actual fix PR/commit. Generic advice such as downgrading OpenSSL, adding the openssl gem, or repeating the affected Ruby/Rails/OpenSSL versions alone is not enough for the fix-identification item.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "rails/rails/issue/55886",
+    "reviewed_at": "2026-07-24T03:58:20.410896Z"
+  },
+  "kubernetes/kubernetes/issue/137893": {
+    "rubrics": {
+      "kubernetes/kubernetes/issue/137893#1": {
+        "rubric": [
+          {
+            "text": "Identifies the existing ingress-nginx fix as PR #14728 at kubernetes/ingress-nginx.",
+            "axis": "correctness",
+            "source_quote": "Fix PR: https://github.com/kubernetes/ingress-nginx/pull/14728",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "Answers should also count if they identify the same resolving artifact as kubernetes/ingress-nginx#14728, link to https://github.com/kubernetes/ingress-nginx/pull/14728, or identify the patched/fixed releases as v1.13.9, v1.14.5, and v1.15.1. Do not count answers that point only to the placeholder advisory issue or to an unrelated kubernetes/kubernetes#14728 PR.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "kubernetes/kubernetes/issue/137893",
+    "reviewed_at": "2026-07-24T04:01:51.956190Z"
+  },
+  "BerriAI/litellm/issue/24952": {
+    "rubrics": {
+      "BerriAI/litellm/issue/24952#1": {
+        "rubric": [
+          {
+            "text": "Identifies the pre-existing resolving artifacts for both findings: the api_base SSRF is CVE-2024-6587 / GHSA-g26j-5385-hhw3 fixed in v1.44.8, and the guardrail RCE is resolved by PR #22095.",
+            "axis": "correctness",
+            "source_quote": "Finding 1 is the same issue as CVE-2024-6587 / GHSA-g26j-5385-hhw3, reported via huntr and fixed in v1.44.8; ... Finding 2 was confirmed resolved by PR #22095",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Adds the technical shape of the existing mitigations: api_base is gated by configurable_clientside_auth_params and not user-settable by default, while PR #22095 adds empty builtins, forbidden-pattern validation, and admin-only access control.",
+            "axis": "completeness",
+            "source_quote": "`api_base` is now gated behind the `configurable_clientside_auth_params` mechanism and is not user-settable by default. Finding 2 was confirmed resolved by PR #22095, which adds `__builtins__ = {}`, `FORBIDDEN_PATTERNS` validation, and admin-only access control to the test endpoint.",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Notes the sandboxing caveat that regex or pattern filtering alone is defense in depth, not a security boundary, and that stronger isolation such as Firecracker, gVisor, or seccomp-restricted subprocesses is the appropriate long-term direction for high-assurance deployments.",
+            "axis": "completeness",
+            "source_quote": "regex-based filtering alone is only defense-in-depth, not a security boundary, and that lightweight container isolation such as Firecracker, gVisor, or a restricted subprocess with seccomp would be the right long-term solution for financial/banking deployments.",
+            "source_loc": "gold_answer",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "For the correctness item, an answer may name either CVE-2024-6587 or GHSA-g26j-5385-hhw3 for the SSRF finding as long as it also identifies v1.44.8 as the fixed version, and may identify the guardrail fix as PR #22095. For the mitigation details, equivalent wording such as saying api_base requires explicit opt-in through configurable client-side auth parameters is acceptable. For the sandboxing caveat, equivalent isolation mechanisms or phrasing such as 'run untrusted guardrail code in a real sandbox/VM/container rather than relying on source filtering' is acceptable.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "BerriAI/litellm/issue/24952",
+    "reviewed_at": "2026-07-24T04:10:16.989269Z"
+  },
+  "BerriAI/litellm/issue/27745": {
+    "rubrics": {
+      "BerriAI/litellm/issue/27745#1": {
+        "rubric": [
+          {
+            "text": "Identifies the pre-existing resolving artifact: commit 3c9bf32611, included in v1.83.14-stable and later, as the fix to use rather than v1.82.3.",
+            "axis": "correctness",
+            "source_quote": "Commit `3c9bf32611` (\"fix(bedrock): prevent negative streaming costs with start-only cache usage\", Apr 16 2026) added a clamp:\n\nThis is in **v1.83.14-stable** and later. Our production was on **v1.82.3** which didn't have it.\n\n**Resolution:** We'll bump our pinned version to >= v1.83.14-stable.",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          },
+          {
+            "text": "Explains the underlying mechanism as `text_tokens` going negative in `generic_cost_per_token()` and being prevented by clamping negative `text_tokens` to 0.",
+            "axis": "completeness",
+            "source_quote": "the negative cost is caused by `text_tokens` going negative in `generic_cost_per_token()` (in `litellm_core_utils/llm_cost_calc/utils.py`). In v1.82.3:\n\n```python\n# v1.82.3 — no clamp\ntext_tokens = usage.prompt_tokens - cache_hit - audio_tokens - cache_creation - image_tokens\n```\n\nCommit `3c9bf32611` ... added a clamp:\n\n```python\n# v1.83.14+ — clamped\nif text_tokens < 0:\n    text_tokens = 0\n```",
+            "source_loc": "answer_reply",
+            "knowable_at_report": true
+          }
+        ],
+        "acceptable_alternatives": "For the correctness item, accept answers that identify either the fixed version `v1.83.14-stable` or later / `v1.83.14+`, or the fixing commit `3c9bf32611` / full hash `3c9bf32611095f9f1e4e92a0cbc724391baae6fb`, as the already-landed fix. An answer that only points to the reporter-mentioned Bedrock PR #15292 or the affected version v1.82.3 should not satisfy the correctness item. For the completeness item, accept equivalent wording that the generic cost calculation could produce a negative uncached/text token count and the fix prevents negative pricing by clamping that value to zero.",
+        "note": "",
+        "status": "accepted"
+      }
+    },
+    "reviewer": "afif",
+    "id": "BerriAI/litellm/issue/27745",
+    "reviewed_at": "2026-07-24T04:14:53.457743Z"
+  }
+}
