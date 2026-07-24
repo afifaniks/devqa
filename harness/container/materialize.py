@@ -70,7 +70,7 @@ def _run(cmd: list[str], cwd: Path, env: dict | None = None,
 
 
 def _build_snapshot_mirror(repo: str, commit_sha: str, branch: str, mirror_dest: Path,
-                           depth: int = DEFAULT_MIRROR_DEPTH) -> None:
+                           depth: int = DEFAULT_MIRROR_DEPTH) -> int:
     """Build a bare git mirror at `mirror_dest` containing ONLY `commit_sha` and its ancestors.
 
     The container clones from this mirror and checks out `commit_sha`, so the agent gets a REAL
@@ -83,7 +83,9 @@ def _build_snapshot_mirror(repo: str, commit_sha: str, branch: str, mirror_dest:
     points at `commit_sha`, so there is no branch tip ahead of it either.
 
     `depth` bounds the fetch (history beyond it is grafted away), keeping mirrors small; blobs for
-    the checked-out tree and the recent window come with it, so the container needs no network."""
+    the checked-out tree and the recent window come with it, so the container needs no network.
+
+    Returns the number of release tags carried over (see :func:`_add_ancestor_tags`)."""
     mirror_dest.mkdir(parents=True, exist_ok=True)
     env = {**os.environ, **_GIT_IDENTITY}
     _run(["git", "init", "--bare", "-q"], cwd=mirror_dest, env=env)
@@ -94,6 +96,44 @@ def _build_snapshot_mirror(repo: str, commit_sha: str, branch: str, mirror_dest:
     ref = f"refs/heads/{branch or 'main'}"
     _run(["git", "update-ref", ref, commit_sha], cwd=mirror_dest, env=env)
     _run(["git", "symbolic-ref", "HEAD", ref], cwd=mirror_dest, env=env)
+    return _add_ancestor_tags(mirror_dest, repo)
+
+
+def _add_ancestor_tags(mirror: Path, repo: str) -> int:
+    """Create tag refs for releases that existed at the snapshot, and only those.
+
+    Release questions ("which version fixes this?") are a large slice of the benchmark, and
+    agents reach for them with ``git tag``/``git describe``/``git tag --contains`` — which
+    return nothing without tag refs.
+
+    Leak-safe by construction: ``ls-remote`` transfers no objects, and a tag ref is created
+    ONLY when the mirror already contains its target commit. Since the mirror holds nothing
+    but ancestors of the base commit, a tag on any later commit — including the release that
+    carries a thread's fix — simply cannot be created. No object is ever fetched here.
+    """
+    out = _git_out(mirror, "ls-remote", "--tags", f"https://github.com/{repo}.git")
+    wanted: dict[str, str] = {}
+    for line in out.splitlines():
+        parts = line.split()
+        if len(parts) != 2 or not parts[1].startswith("refs/tags/"):
+            continue
+        sha, name = parts[0], parts[1][len("refs/tags/"):]
+        peeled = name.endswith("^{}")            # annotated tag → its commit
+        if peeled:
+            name = name[:-3]
+        if peeled or name not in wanted:         # peeled entry wins
+            wanted[name] = sha
+
+    n = 0
+    for name, sha in wanted.items():
+        have = subprocess.run(["git", "cat-file", "-e", f"{sha}^{{commit}}"],
+                              cwd=mirror, capture_output=True)
+        if have.returncode != 0:
+            continue                             # target not an ancestor → post-snapshot
+        made = subprocess.run(["git", "update-ref", f"refs/tags/{name}", sha],
+                              cwd=mirror, capture_output=True)
+        n += made.returncode == 0
+    return n
 
 
 def _mirror_info(mirror: Path, commit_sha: str) -> dict:
@@ -159,10 +199,10 @@ def materialize_payload(thread_id: str, groups: set[str], dest: Path,
         t0 = time.time()
         print(f"  [snapshot] mirroring {snap.repo} @ {commit_sha[:12]} "
               f"(branch {branch}, depth {DEFAULT_MIRROR_DEPTH}) ...", flush=True)
-        _build_snapshot_mirror(snap.repo, commit_sha, branch, dest / MIRROR_SUBDIR)
+        n_tags = _build_snapshot_mirror(snap.repo, commit_sha, branch, dest / MIRROR_SUBDIR)
         info = _mirror_info(dest / MIRROR_SUBDIR, commit_sha)
         print(f"  [snapshot] mirror ready in {time.time() - t0:.1f}s — "
-              f"{info['n_commits']} commits, {info['size_mb']:.1f} MB, "
+              f"{info['n_commits']} commits, {n_tags} tags, {info['size_mb']:.1f} MB, "
               f"base committed {info['committed_at']}", flush=True)
 
     if "commits" in groups and snap.clone is not None and snap.commit_sha:

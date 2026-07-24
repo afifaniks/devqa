@@ -282,7 +282,23 @@ export function Launcher({ options, onLaunched }) {
           icon={msg.ok ? <IconCheck size={16} /> : <IconAlertTriangle size={16} />}
           title={msg.ok ? `Launched ${msg.run}` : "Launch failed"}
         >
-          <Code block style={{ fontSize: 11 }}>{msg.cmd}</Code>
+          {/* The launch command is one long line (a multi-instance --only-id list runs to
+              thousands of characters), and Mantine's `Code block` is a <pre>, so without
+              wrapping the tail is clipped. Wrap and break inside long tokens so the whole
+              reproducible command stays visible and copyable. */}
+          <Code
+            block
+            style={{
+              fontSize: 11,
+              whiteSpace: "pre-wrap",
+              wordBreak: "break-all",
+              overflowWrap: "anywhere",
+              maxHeight: 260,
+              overflowY: "auto",
+            }}
+          >
+            {msg.cmd}
+          </Code>
         </Alert>
       )}
     </Paper>

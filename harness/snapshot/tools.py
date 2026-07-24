@@ -59,6 +59,12 @@ def _trunc(s: str, n: int = MAX_RESULT_CHARS) -> str:
 
 
 def _git(cwd: Path, *args: str) -> str:
+    # A None cwd would make subprocess inherit the harness's OWN working directory, silently
+    # running git against the project checkout (which contains the benchmark and its gold
+    # answers) instead of the snapshot. Fail as a tool error rather than answer from the
+    # wrong repository.
+    if cwd is None:
+        return "ERROR: no repository is provisioned in this condition"
     # errors="replace": git output (patches, grep hits, log) may contain non-UTF-8 bytes;
     # strict decoding would raise instead of returning a (slightly lossy) tool result.
     r = subprocess.run(["git", *args], cwd=cwd, capture_output=True,
@@ -388,6 +394,8 @@ class ToolBox:
     # ---- code group -------------------------------------------------------
 
     def _safe_path(self, rel: str) -> Path | None:
+        if self.snap.worktree is None:      # no repo provisioned — never fall back to cwd
+            return None
         root = self.snap.worktree.resolve()
         p = (root / rel).resolve()
         return p if str(p).startswith(str(root)) else None
@@ -448,6 +456,8 @@ class ToolBox:
                     f"(as of {self.snap.report_time})")
         # Time-cap guard: the clone contains post-report commits; only ancestors of the
         # snapshot commit are visible.
+        if self.snap.worktree is None:
+            return "ERROR: no repository is provisioned in this condition"
         chk = subprocess.run(["git", "merge-base", "--is-ancestor", sha, "HEAD"],
                              cwd=self.snap.worktree, capture_output=True)
         if chk.returncode != 0:
