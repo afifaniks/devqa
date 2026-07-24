@@ -6,7 +6,7 @@ Output: dataset/security_benchmark_filtered.jsonl  (written fresh, deduped by id
 """
 import json
 
-BENCHMARK = "dataset/security_benchmark_v3.jsonl"
+BENCHMARK = "dataset/security_benchmark_v5.jsonl"
 OPEN_CODES = "dataset/open_codes_verified.json"
 OUTPUT = "dataset/security_benchmark_filtered.jsonl"
 
