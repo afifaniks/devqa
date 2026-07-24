@@ -10,24 +10,31 @@ if not GITHUB_TOKENS and os.getenv("GITHUB_TOKEN"):
 
 # Repositories to mine — add more here as you expand
 REPOS = [
-    "stripe/stripe-node",
-    "psf/requests",
-    "fastapi/fastapi",
-    "auth0/node-jsonwebtoken",
-    "axios/axios",
-    "django/django",
-    "rails/rails",
-    "python-pillow/Pillow",
-    "pyca/cryptography",
-    "expressjs/express",
-    "urllib3/urllib3",
-]
+    # "stripe/stripe-node",
+    # "psf/requests",
+    # "fastapi/fastapi",
+    # "auth0/node-jsonwebtoken",
+    # "axios/axios",
+    # "django/django",
+    # "rails/rails",
+    # "python-pillow/Pillow",
+    # "pyca/cryptography",
+    # "expressjs/express",
+    # "urllib3/urllib3",
+    "tensorflow/tensorflow", 
+    "magento/magento2", 
+    # "jenkinsci/jenkins", 
+    # "apache/tomcat"
+    ]
+
 
 # How many items to fetch per page (max 100 for GitHub API)
 PAGE_SIZE = 100
 
-# Output directory
-OUTPUT_DIR = "output"
+# Output directory — absolute (repo root) so miners write to the same output/ the
+# harness reads regardless of the cwd they're launched from.
+OUTPUT_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                          "output")
 
 # For issues miner — only fetch issues with these labels
 # Empty list = fetch all issues

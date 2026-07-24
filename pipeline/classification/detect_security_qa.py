@@ -7,8 +7,9 @@ Stage-0 pre-filter is the sanity check that the thread has substantive
 non-bot participation.
 
 Stage 1   (LLM, N-sample self-consistency):
-          Detect whether the thread contains a valid security-related
-          developer information need. Emits free-text need_summary — no
+          Detect whether the thread contains a valid security/vulnerability
+          question (NOT a general developer information need). Emits free-text
+          need_summary — no
           fixed enum, for later open + axial coding into the security
           taxonomy. Tightened with explicit BAD-pattern guardrails
           (PEM-format usage errors, browser-storage deflections,
@@ -27,11 +28,10 @@ Stage 2   (LLM):
           security_topic phrase, and answerer_role (including op_self
           when OP self-answers).
 
-Acceptance gate (every accepted pair must be verifiable in principle):
-  - answer < 30 chars                                       → drop
-  - no hard_facts AND artifacts_needed in ([] | ["none"])   → drop (no anchor)
-  - 30 <= answer < 100 chars AND no hard_facts              → drop (thin source-only)
-  - otherwise                                               → accept
+Acceptance: the LLM decides. A pair is accepted iff Stage 1 returns
+contains_qa=true (above the --confidence threshold). No post-hoc length floors
+or anchor gates — hard_facts / artifacts_needed are extracted and recorded but
+never used to drop a pair.
 
 Grading downstream:
   - hard_facts populated     → deterministic grade (identifier match)
@@ -47,6 +47,7 @@ Usage:
 """
 
 import argparse
+import json
 import os
 import re
 import sys
@@ -55,14 +56,13 @@ from tqdm import tqdm
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 from config import REPOS
-from utils.ollama_client import STAGE1_MODEL, generate_json, is_running
-from utils.storage import (append_record, load_checkpoint, load_jsonl,
-                           save_checkpoint)
+# from utils.ollama_client import STAGE1_MODEL, generate_json, is_running
+from utils.openai_client import STAGE1_MODEL, generate_json
+from utils.storage import append_record, load_jsonl, repo_dir
 
-SYSTEM_PROMPT = """You are a research assistant analyzing GitHub threads
-for an academic study on real developer security information needs in
-open-source repositories. Follow instructions precisely and return only
-valid JSON with no extra text."""
+SYSTEM_PROMPT = """You are a security analyst curating a research benchmark of
+real developer SECURITY and PRIVACY question-answer pairs from open-source GitHub
+threads."""
 
 # Expanded artifact list for security questions. Existing options retained;
 # security-specific options added.
@@ -86,6 +86,7 @@ ARTIFACT_OPTIONS = [
     "other",
 ]
 
+MAX_THREAD_TEXT_LENGTH = 100_000  # cap to keep prompts manageable; LLM can still scroll in GitHub UI
 
 # ── Stage 0: Sanity pre-filter (NO security keywords) ────────────────────────
 
@@ -108,68 +109,96 @@ def prefilter(thread) -> bool:
 
 
 def build_detection_prompt(thread_text):
-    return f"""Read this GitHub thread and decide whether it contains a developer information need related to SECURITY in this project, AND whether the thread contains a concrete answer to that need.
-
+    # Cache-optimized layout: every static instruction comes FIRST so the prompt
+    # prefix is byte-identical on every call (KV / prompt-cache hit across all
+    # threads). The only variable input — the thread — is appended LAST, so it is
+    # the first point of divergence and nothing cacheable sits behind it.
+    return f"""You will decide whether a GitHub thread contains a SECURITY or PRIVACY question about this project, 
+AND whether the thread contains a concrete answer to it. 
+We collect ONLY security/privacy question-answer pairs — NOT general developer information needs (functional bugs, regressions, config/usage, UI, build/CI/compat failures 
+are OUT unless the question itself raises a security or privacy risk). 
+The thread is provided at the very END of this message, after all instructions.
+ 
 Two independent tests must both pass for INCLUDE = true. Apply them with different stances:
+ 
+  TEST A — Is the QUESTION ITSELF a security or PRIVACY question?  → STRICT that it IS one; OPEN-ENDED about what kind.
+  TEST B — Is the answer CONCRETE?                                  → BE STRICT.
 
-  TEST A — Is the question SECURITY/VULNERABILITY-related?  → BE LENIENT.
-  TEST B — Is the answer CONCRETE?            → BE STRICT.
+TEST A — the core discriminator (apply this principle, not a keyword list). 
 
-If A is uncertain → favour inclusion (a human will review borderline security tags). If B is uncertain → favour exclusion (we cannot grade an unanchored answer). Both must hold; do not trade one for the other.
+A security/privacy question concerns protecting a system or its data against an 
+ADVERSARY or against unauthorized / unintended access — i.e. confidentiality, integrity, availability, authentication, authorization, 
+or the PRIVACY of user/personal data. It is defined by a 
+TRUST BOUNDARY: untrusted or attacker-controlled input, another user, the network, a malicious actor, or data that must not leak. 
+Ask: is there an adversary, or a trust boundary being crossed?
 
-<thread>
-{thread_text[:50000]}
-</thread>
+- If YES — someone could be attacked, gain unauthorized access, escalate privilege, bypass a check, tamper, deny service to others, or have private/personal data exposed — it IS a security/privacy question, whatever the specific class, and WHETHER OR NOT any CVE/CWE/GHSA/advisory is mentioned. Most valid pairs cite NO identifier; do not require one.
+- If NO adversary and NO trust boundary — the issue only affects the developer's own correct/incorrect use of their own system with their own inputs (a functional bug, crash, out-of-bounds, overflow, performance issue, build/version/hardware/OS compatibility, UI, or feature/roadmap question) — it is NOT security, however low-level or alarming the failure sounds. Merely touching a security-named component (auth, token, cert, permission, cookie, CSP...) does NOT make it security.
+- Functionality vs weakness: a security MECHANISM merely not working, erroring, or needing configuration (login fails, an auth call returns 401/404, how to set up TLS/auth, why a token is undefined) is FUNCTIONALITY or usage — in scope ONLY if it reveals a WEAKNESS that grants unauthorized access, bypasses a control, or exposes data. "It doesn't work" is not a security question; "it lets the wrong person in / leaks X" is.
+The kinds of security/privacy issue are OPEN-ENDED: the examples below are illustrative, not a fixed list — a genuine one matching NONE of them still counts. Do NOT reject for not fitting a named category, and do NOT require a CVE/identifier. The only strict requirement is a real adversary or trust boundary. If there is none, or you are unsure there is any → EXCLUDE. If B is uncertain → favour exclusion. Both must hold; do not trade one for the other.
+Both question answer pairs must be in English.
+ 
+TEST A — Security relevance. Mark security-related if ANY of the following are plausibly in play. This list is illustrative, not exhaustive — include anything that bears on the project's security posture:
+- A vulnerability, advisory, CVE, GHSA, CWE, OSV, exploit, weakness, or security risk affecting this project, its dependencies, or its users.
+- Whether a fix, patch, mitigation, or workaround addresses a security concern — even partially.
+- Sensitive-data handling (tokens, secrets, credentials, PII, keys), redaction, logging, sanitization, or leakage.
+- Privacy of user / personal data: unintended exposure or collection, over-broad logging/telemetry, tracking, consent, retention, or de-anonymization.
+- Web/app vuln classes: auth, authz, IDOR / broken object-level authorization, privilege escalation, sessions, cookies (Secure/HttpOnly/SameSite), CSRF, CORS misconfiguration, XSS, SSRF, open redirect, RCE, injection (SQL/NoSQL/command/template/LDAP), deserialization, XXE, path traversal.
+- Crypto & transport security: weak algorithms, IV/nonce reuse, weak randomness, padding-oracle / timing side-channels, and TLS/certificate or hostname VERIFICATION (including whether verification is actually performed or can be bypassed/disabled).
+- Memory-safety & native bugs: buffer/heap overflow, use-after-free, out-of-bounds read/write, integer overflow, null-deref — but ONLY when reachable via UNTRUSTED / attacker-controlled input crossing a trust boundary (an untrusted model file, a network/serving request, a malicious upload). A crash or out-of-bounds report caused by the CALLER'S OWN invalid arguments in their own process (wrong shape, bad indices, an oversized tensor the developer themselves passed, a sanitizer flagging a kernel on hand-crafted bad input) is a ROBUSTNESS bug, NOT a security issue — EXCLUDE.
+- Denial of service: ReDoS, decompression/zip/XML bombs, algorithmic-complexity or hash-collision DoS, unbounded allocation/resource exhaustion, infinite loops — ONLY when triggerable by untrusted/attacker-controlled input across a trust boundary, NOT a developer crashing their own process with their own invalid input.
+- HTTP-layer attacks: request smuggling / desync, CRLF / header injection, host-header injection, cache poisoning.
+- Authentication-token integrity: JWT signature bypass (alg=none, RS256↔HS256 confusion), missing/incorrect signature verification.
+- Concurrency security: TOCTOU and other race conditions with a security impact.
+- Dependency & supply-chain: dependency/transitive vulnerabilities, SBOM, scanner findings (CodeQL, dependabot, trivy, semgrep, bandit, etc.), dependency confusion, typosquatting, malicious or compromised packages, install/build-script (postinstall) risks, CI / GitHub Actions injection (pwn-request, untrusted checkout).
+- Ecosystem-specific classes: prototype pollution, sandbox escape, insecure temp-file / symlink handling, world-writable permissions.
+- Security-relevant configuration, insecure defaults, deprecations, or backward-compatibility tradeoffs.
+- Disclosure, triage, embargo, or coordinated-release process for a possible vulnerability.
 
-TEST A — Security relevance (LENIENT). Mark security-related if ANY of the following are plausibly true:
-- The thread discusses a vulnerability, advisory, CVE, GHSA, CWE, exploit, weakness, or security risk that may affect this project, its dependencies, or its users.
-- The thread discusses whether a fix, patch, mitigation, or workaround addresses a security concern in this project — even partially.
-- The thread discusses sensitive-data handling (tokens, secrets, credentials, PII, keys), redaction, logging, sanitization, or leakage in this project.
-- The thread discusses auth, authz, sessions, cookies, CSRF, XSS, SSRF, RCE, injection (SQL/command/template), deserialization, path traversal, ReDoS, TOCTOU, or similar security-relevant behaviour in this project's code.
-- The thread discusses dependency vulnerabilities, transitive risk, supply-chain concerns, SBOM, or scanner findings (CodeQL, dependabot, trivy, semgrep, bandit, etc.) for this project.
-- The thread discusses security-relevant configuration, defaults, deprecations, or backward-compatibility tradeoffs.
-- The thread discusses the disclosure, triage, embargo, or coordinated-release process for a possible vulnerability in this project.
-- The thread otherwise raises a question about this project's security posture and receives an informational response with a concrete anchor (a commit, PR, version, advisory, or citable source).
-
-TEST B — Concrete answer (STRICT). The answer must rest on at least one of:
+TEST B — Concrete answer. The answer must rest on at least one of:
   (i)  an external IDENTIFIER — a CVE/GHSA/CWE/OSV ID, a fixed-version string, a commit SHA, a PR reference, or an advisory URL; OR
-  (ii) a citable SOURCE — project docs, an RFC, a named scanner rule, a linked prior incident thread, or a policy doc that the maintainer explicitly references.
-
-A short answer is fine if it carries an anchor (e.g., "fixed in 2.6.3, see GHSA-XXX" is HIGH-quality concrete, update this code). A long answer without an anchor is NOT concrete.
-
+  (ii) a citable SOURCE — project docs, code snippets, an RFC, a named scanner rule, a linked prior incident thread, or a policy doc that the maintainer explicitly references.
+ 
+A short answer is fine if it carries an anchor (e.g., "fixed in 2.6.3, see GHSA-XXX" is HIGH-quality concrete). A long answer without an anchor is NOT concrete.
+ 
 EXCLUDE as not concrete:
 - Pure opinion or judgment without a source: "we don't consider this exploitable" with no further detail, "this is by design" with no doc/RFC reference.
 - Deflections: "wrong forum", "ask in discord", "ask support", "this is browser behaviour".
 - Unanchored speculation: "probably fine," "should be safe."
-
+ 
 Other categorical EXCLUDES (regardless of security-tag confidence — these are confirmed FP patterns):
 
+- IN-SCOPE OVERRIDE — read FIRST: if the thread genuinely concerns a security or privacy property (an adversary, a trust-boundary crossing, unauthorized access, privilege/escalation, or exposure of private data) it is in scope and the EXCLUDE patterns below do NOT override that. This holds whether or not a CVE/GHSA/OSV/advisory is cited — an identifier is sufficient but NOT required. The EXCLUDE patterns target only threads with no adversary and no trust boundary. NOTE: this override is about TEST A (security relevance) ONLY — it does NOT relax TEST B. A deflection, a non-answer, or an unanchored response is still EXCLUDED even when the question is a real CVE/advisory security question.
 - The thread has NO response at all (only the original post, no substantive comments), or only automated-bot replies.
 - The thread is purely a generic security tutorial unrelated to this project (e.g. asking the maintainers to explain XSS in general).
-- **Key/cert FILE-FORMAT usage errors.** The OP cannot load a PEM/DER/JWK because the file is malformed, the wrong type, or in the wrong format, and the answer just explains the correct format. Security-named API surface (PEM, RS256, x5c, JWK) is touched, but no security risk is being assessed. Example BAD include: "PEM_read_bio_ex: bad base64 decode" — answer is "your key file is wrong, use this format."
-- **Browser-storage / cookie deflections.** OP reports a cookie isn't saved by Safari / Chrome / iOS, and the answer is "this is browser behaviour, not our library." No security property of this project is being interrogated. Example BAD include: "JWT cookie not stored in Safari due to cross-site tracking prevention" — answer is "wrong forum, can't change browser behaviour."
-- **Adapter / config questions that touch a security-named API but ask no security question.** The OP wants to know which adapter to use, why a flag like `rejectUnauthorized` isn't honoured in a test environment, why percent-encoding is preserved on a URL parser. The answer explains the configuration, not a security risk. Example BAD include: jsdom not using the http adapter so the user's `rejectUnauthorized: false` isn't applied — answer is "switch adapter."
+- **Adapter / config questions that touch a security-named API but ask no security question.** The OP wants to know which adapter to use, why a flag like `rejectUnauthorized` isn't honoured in a test environment, why percent-encoding is preserved on a URL parser. The answer explains the configuration, not a security risk. Example BAD include: jsdom not using the http adapter so the user's `rejectUnauthorized: false` isn't applied — answer is "switch adapter." EXCEPTION → INCLUDE if TLS/certificate verification is actually being DISABLED or silently ignored in a way that weakens security in production (a real MITM concern), not merely unset for a local test.
 - **"Wrong forum" / "ask Stripe support" / "ask in Discord" deflections.** Maintainer's only informational content is "this isn't a question for this repo." No security information about this project is exchanged.
-- **Pure regression bugs whose only security-flavoured connection is the file/function/class name** (e.g. a method called `signSafely` crashes, an `auth` route returns 500). If the question is "why does this not work" rather than "is there a security risk here," EXCLUDE.
-- **Generic auth misconfig.** OP added authentication to the wrong router, can't reach a public endpoint, etc. — answer is "read the auth docs."
-
-If you are uncertain about TEST A (security-relatedness), INCLUDE — a human will review borderline security tags. If you are uncertain about TEST B (concreteness), EXCLUDE — unanchored answers cannot be graded.
-
+- **Pure regression bugs whose only security-flavoured connection is the file/function/class name** (e.g. a method called `signSafely` crashes, an `auth` route returns 500). If the question is "why does this not work" rather than "is there a security risk here," EXCLUDE. EXCEPTION → INCLUDE only if the crash is reachable via UNTRUSTED / attacker-controlled input that crosses a trust boundary (an untrusted model, a network/serving request), or the thread explicitly argues exploitability. A developer's own invalid arguments crashing their own process is NOT in scope, even if a sanitizer reports an out-of-bounds read/write.
+- **Generic auth misconfig.** OP added authentication to the wrong router, can't reach a public endpoint, etc. — answer is "read the auth docs." EXCEPTION → INCLUDE if it exposes an access-control weakness (e.g. an endpoint reachable without the intended authorization).
+- **Functional / compatibility / environment questions with no adversary or trust boundary** — build or install failures, hardware/GPU/driver/OS compatibility, library version mismatches, performance, or feature-support / roadmap-timeline questions. A concrete answer, linked PRs, "known issue" tracking, or fix-version numbers do NOT make these security. EXCEPTION → INCLUDE only if it concerns a genuinely VULNERABLE dependency (a known vulnerability in that dependency), not mere functional or version incompatibility.
+ 
+If it clearly IS a security/vulnerability question but you cannot name what kind it is (it matches none of the listed examples), INCLUDE — the kinds are open-ended and a human will review. If you are uncertain whether the thread is a security/vulnerability question at all (vs a functional/regression/config/UI bug), EXCLUDE. If you are uncertain about TEST B (concreteness), EXCLUDE — unanchored answers cannot be graded.
+ 
 If you include, write ONE SENTENCE summarizing what security information the developer needed to know AND which anchor (identifier or source) the answer rests on. Plain English, no taxonomy labels.
-
+ 
 Good summaries:
 - "Whether CVE-2023-32681 is exploitable when the application disables redirect following."
 - "Which commit in the urllib3 dependency upgrade closed the SSRF window the advisory describes."
 - "Whether the new error message redaction logic still leaks the Authorization header under chunked encoding."
 - "Whether the missing same-site cookie default is intentional and what the documented threat model assumes."
-
+ 
 Return only this JSON:
 {{"contains_qa": true or false, "need_summary": "one sentence or empty string", "confidence": "HIGH" or "MEDIUM" or "LOW"}}
-
+ 
 Confidence is for downstream sorting during manual review, NOT for filtering. (All confidence levels still require a concrete anchor — TEST B is a hard gate, not a confidence slider.)
 - HIGH = clearly security-relevant AND the anchor is unambiguous.
 - MEDIUM = security-relevant; the anchor exists but is partial or indirect (e.g. fix version cited but no CVE).
-- LOW = security relevance is borderline; the anchor exists and is concrete — included for manual security-tag review."""
+- LOW = it IS a security/vulnerability question but its kind is hard to name (fits none of the listed examples) or the anchor is the weakest acceptable; included for manual review. (Do NOT use LOW to smuggle in non-security questions — those are EXCLUDE, not LOW.)
+ 
+==================== THREAD TO ANALYZE (the only variable input — everything below is this thread) ====================
+<thread>
+{thread_text[:MAX_THREAD_TEXT_LENGTH]}
+</thread>"""
 
 
 # ── Stage 1.5: Hard-fact candidate extraction (regex pre-pass) ──────────────
@@ -262,26 +291,22 @@ def format_candidates_for_prompt(candidates):
 
 def build_extraction_prompt(thread_text, candidates_block):
     artifact_list = ", ".join(f'"{a}"' for a in ARTIFACT_OPTIONS)
-    return f"""Read this GitHub thread and extract the core SECURITY question-answer pair.
-
-<thread>
-{thread_text[:50000]}
-</thread>
-
-Each comment is tagged [c0], [c1], [c2], etc. c0 is the issue or PR body.
-
-A regex pre-pass found these candidate identifiers in the thread (CVE/GHSA/CWE IDs, version numbers, PR/issue refs, SHAs, advisory URLs). Use them when assigning roles in HARD_FACTS below. You may add identifiers the regex missed; you should DROP identifiers that are not actually anchoring the maintainer's answer.
-
-<candidates>
-{candidates_block}
-</candidates>
-
+    # Cache-optimized layout: all static instructions first (identical prefix on
+    # every call → prompt-cache hit), and the two variable inputs — the regex
+    # candidate list and the thread — appended LAST so nothing cacheable sits
+    # behind them.
+    return f"""You will extract the core SECURITY question-answer pair from ONE GitHub thread. The candidate-identifier list and the thread itself are provided at the very END of this message, after all instructions.
+ 
+Each comment in the thread is tagged [c0], [c1], [c2], etc. c0 is the issue or PR body.
+ 
+The <candidates> block lists identifiers a regex pre-pass found (CVE/GHSA/CWE IDs, version numbers, PR/issue refs, SHAs, advisory URLs). Use them when assigning roles in HARD_FACTS below. You may add identifiers the regex missed; you should DROP identifiers that are not actually anchoring the maintainer's answer.
+ 
 Your task:
-
+ 
 1. QUESTION TEXT — copy the exact wording of the key security question from the thread. Use the comment ID (cN) to locate it. Prefer the wording that most clearly states the security information need. If c0 is a long bug report or vulnerability disclosure that does not crystallize into a question, and a LATER comment frames the actual question the maintainer answers, use that later comment instead. Do not collapse the question to the issue title.
-
-2. ANSWER TEXT — copy the exact wording of the best answer in the thread. The answer must rest on a concrete anchor: an identifier (CVE/GHSA/CWE/OSV ID, fixed version, commit SHA, PR ref, advisory URL) OR a citable source (project docs, RFC, scanner rule, prior incident thread, policy doc the maintainer references). A short answer is acceptable IF it carries such an anchor (e.g. "fixed in 2.6.3, see GHSA-XXX"). A maintainer's response is preferable to an OP self-answer; if the OP confirms a maintainer-suggested fix, the OP confirmation can be the answer but report answerer_role accordingly. Do NOT extract pure opinion, deflection, or unanchored claims like "we don't consider this exploitable" without further detail — if the thread has no concretely anchored answer, leave answer_text empty and the downstream gate will drop it.
-
+ 
+2. ANSWER TEXT — copy the exact wording of the best answer in the thread. The answer must rest on a concrete anchor: an identifier (CVE/GHSA/CWE/OSV ID, fixed version, commit SHA, PR ref, advisory URL) OR a citable source (project docs, code snippets, an RFC, a named scanner rule, a linked prior incident thread, or a policy doc the maintainer references). A short answer is acceptable IF it carries such an anchor (e.g. "fixed in 2.6.3, see GHSA-XXX"). A maintainer's response is preferable to an OP self-answer; if the OP confirms a maintainer-suggested fix, the OP confirmation can be the answer but report answerer_role accordingly. Do NOT extract pure opinion, deflection, or unanchored claims like "we don't consider this exploitable" without further detail — if the thread has no concretely anchored answer, leave answer_text empty and the downstream gate will drop it.
+ 
 3. ARTIFACTS NEEDED — which project / external artifacts would a tool need to answer this security question? Choose any number from:
    {artifact_list}
    Security-specific options:
@@ -291,7 +316,7 @@ Your task:
    - "security_scan_logs" — CodeQL / dependabot / trivy / bandit / semgrep output
    - "prior_incident" — a linked past advisory or related earlier security issue
    Use "none" ONLY if the answer is purely a definitional or policy statement requiring no external lookup. If the answer cites docs, an RFC, a convention, or a behaviour pattern, prefer "documentation" over "none". If a non-listed artifact is needed, use "other-{{type}}".
-
+ 
 4. HARD_FACTS — the externally-checkable identifiers that anchor the answer. Each field is a list (empty if no such fact appears). Be conservative: include only identifiers that are actually load-bearing in the answer or in the question being answered. Do NOT include incidental environment metadata (Python/OpenSSL/Node version numbers in a bug-report environment block).
    - "cve_ids":           CVE IDs that are the SUBJECT of the Q&A (the question is about them, or the answer cites them as the relevant CVE)
    - "ghsa_ids":          GHSA IDs anchoring the answer
@@ -302,17 +327,17 @@ Your task:
    - "fix_prs":           PR / issue numbers (write as "#3736") that contain or track the fix
    - "fix_commits":       commit SHAs (7+ hex chars) that introduce the fix
    - "advisory_urls":     full URLs to GHSA / NVD / OSV / vendor advisory pages
-
+ 
 5. SECURITY_TOPIC — one short free-text phrase describing what the question is about, for downstream open / axial coding. Do not use a fixed taxonomy.
    Examples: "applicability of CVE to specific configuration", "sufficiency of redaction against token leakage", "regression-localization for known advisory", "transitive-dependency vulnerability impact", "design rationale of CSRF mitigation", "severity assessment for chained exploit".
-
+ 
 6. ANSWERER_ROLE:
    - "maintainer" = commit rights or core contributor of THIS project
    - "contributor" = has contributed before but not core
    - "commenter" = community member with no known contribution
    - "op_self"    = answer_author == question_author (the OP answered themselves)
    - "bot"        = automated response
-
+ 
 Return only this JSON:
 {{
   "question_comment_id": "cN",
@@ -330,20 +355,22 @@ Return only this JSON:
   "security_topic": "short free-text phrase",
   "answerer_role": "maintainer or contributor or commenter or op_self or bot",
   "confidence": "HIGH or MEDIUM or LOW"
-}}"""
+}}
+ 
+==================== INPUT (the only variable part — everything below) ====================
+<candidates>
+{candidates_block}
+</candidates>
+ 
+<thread>
+{thread_text[:MAX_THREAD_TEXT_LENGTH]}
+</thread>"""
 
 
 # ── Core detection function ──────────────────────────────────────────────────
 
 
 _CONF = {"HIGH": 0.95, "MEDIUM": 0.75, "LOW": 0.5}
-
-# Conditional answer-length floor: drop unconditionally below MIN_ANSWER_CHARS;
-# between MIN and SOFT_FLOOR, accept only if at least one hard_fact is populated
-# (a 40-char "fixed in 2.6.3, see GHSA-XXX" carries more research signal than a
-# 200-char "wrong forum, ask discord" deflection).
-MIN_ANSWER_CHARS = 30
-SOFT_FLOOR_CHARS = 100
 
 # Self-Consistency on Stage 1: sample N times, majority-vote `contains_qa`,
 # take the highest-frequency confidence and the longest non-empty need_summary
@@ -375,10 +402,6 @@ def _normalize_hard_facts(raw):
     return out
 
 
-def _hard_facts_has_any(hf):
-    return any(len(v) > 0 for v in hf.values())
-
-
 def _flatten_references(hf):
     """Backward-compat: emit a flat references list (the v1 schema field)
     containing CVE/GHSA/CWE/OSV IDs and advisory URLs. Hard versions/SHAs/PRs
@@ -401,7 +424,7 @@ def _flatten_references(hf):
     return out
 
 
-def _stage1_self_consistent(thread_text, model, n_samples=None):
+def _stage1_self_consistent(thread_text, model, n_samples=None, usage_log=None):
     """Run Stage 1 N times, majority-vote contains_qa. Returns the winning
     decision and the merged confidence/summary. With N=1 this is identical
     to a single call. n_samples=None resolves to the module-level
@@ -415,6 +438,8 @@ def _stage1_self_consistent(thread_text, model, n_samples=None):
             model=model,
             system=SYSTEM_PROMPT,
             max_tokens=512,
+            usage_log=usage_log,
+            stage="stage1"
         )
         if out:
             votes.append(out)
@@ -444,13 +469,13 @@ def _stage1_self_consistent(thread_text, model, n_samples=None):
     }
 
 
-def detect_and_extract(thread, model):
+def detect_and_extract(thread, model, usage_log=None):
     """Run Stage 1 + Stage 2. Returns result dict or None on parse failure."""
     thread_text = thread["thread_text"]
     comment_lookup = {c["id"]: c.get("body", "") for c in thread.get("comments", [])}
 
     # Stage 1 — security detection (self-consistent across N samples)
-    s1 = _stage1_self_consistent(thread_text, model)
+    s1 = _stage1_self_consistent(thread_text, model, usage_log=usage_log)
     print(f"  [s1] {s1}")
 
     if not s1:
@@ -471,6 +496,8 @@ def detect_and_extract(thread, model):
         model=model,
         system=SYSTEM_PROMPT,
         max_tokens=2048,  # raised: hard_facts schema is wider than v1 references
+        usage_log=usage_log,
+        stage="stage2"
     )
     print(f"  [s2] {s2}")
 
@@ -488,36 +515,12 @@ def detect_and_extract(thread, model):
 
     q_text = s2.get("question_text") or comment_lookup.get(q_comment_id, "")
     a_text = s2.get("answer_text") or comment_lookup.get(a_comment_id, "")
-    a_len = len(a_text.strip())
 
-    # Normalize hard_facts and artifacts; emit a flat references list for compat
+    # Normalize hard_facts and artifacts; emit a flat references list for compat.
     hard_facts = _normalize_hard_facts(s2.get("hard_facts"))
-    has_hard = _hard_facts_has_any(hard_facts)
-
     artifacts = s2.get("artifacts_needed", [])
     if not isinstance(artifacts, list):
         artifacts = [artifacts] if artifacts else []
-    has_source = bool(artifacts) and artifacts != ["none"]
-
-    # Length floor: drop anything below the hard minimum.
-    if a_len < MIN_ANSWER_CHARS:
-        print(f"  [drop] answer too short ({a_len} chars, hard min {MIN_ANSWER_CHARS})")
-        return {"contains_qa": False, "drop_reason": "answer_too_short"}
-
-    # Anchor gate: every accepted pair must be verifiable in principle —
-    # either through an identifier in hard_facts (deterministic grading) or
-    # through a citable source in artifacts_needed (source-anchored grading).
-    # Pure opinion / deflection without an anchor is dropped.
-    if not has_hard and not has_source:
-        print(f"  [drop] no anchor (no hard_facts, artifacts_needed empty/none)")
-        return {"contains_qa": False, "drop_reason": "no_anchor"}
-
-    # Thin-answer guard: between MIN and SOFT_FLOOR we additionally require
-    # an identifier anchor (a 40-char "fixed in 2.6.3, see GHSA-XXX" is in;
-    # a 40-char "see our docs" is out — the source claim needs more substance).
-    if a_len < SOFT_FLOOR_CHARS and not has_hard:
-        print(f"  [drop] thin answer ({a_len} chars) and no hard_facts")
-        return {"contains_qa": False, "drop_reason": "thin_source_only"}
 
     s2_conf = _CONF.get(str(s2.get("confidence", "LOW")).upper(), 0.5)
 
@@ -553,21 +556,54 @@ def detect_and_extract(thread, model):
 # ── Main runner ──────────────────────────────────────────────────────────────
 
 
-def run(repo, model=STAGE1_MODEL, confidence_threshold=0.3, limit=None,
-        max_pairs=None, force=False, state_filter=None):
-    if not is_running():
-        print("  [error] Ollama not running — start with: ollama serve")
-        return
+def _responses_path(repo):
+    return os.path.join(repo_dir(repo), "security_qa_responses.jsonl")
 
+
+def _load_done(repo):
+    """Return set of thread numbers already recorded in security_qa_responses."""
+    path = _responses_path(repo)
+    if not os.path.exists(path):
+        return set()
+    done = set()
+    with open(path) as f:
+        for line in f:
+            line = line.strip()
+            if line:
+                try:
+                    done.add(int(json.loads(line)["number"]))
+                except (KeyError, ValueError, json.JSONDecodeError):
+                    pass
+    return done
+
+
+def _save_response(repo, entry):
+    path = _responses_path(repo)
+    with open(path, "a") as f:
+        f.write(json.dumps(entry) + "\n")
+
+
+def run(repo, model=STAGE1_MODEL, confidence_threshold=0.3, limit=None,
+        max_pairs=None, force=False, state_filter=None, since=None, until=None,
+        no_prefilter=False):
     print(f"\n[detect_security_qa] {repo}")
     print(f"  model:      {model}")
     print(f"  threshold:  {confidence_threshold}")
     print(f"  S1 samples: {STAGE1_SAMPLES} (self-consistency)")
-    print(f"  ans floor:  hard>={MIN_ANSWER_CHARS}  soft>={SOFT_FLOOR_CHARS} (or hard_facts)")
+    print(f"  prefilter:  {'OFF (LLM sees all threads)' if no_prefilter else 'ON (>=2 substantive non-bot comments)'}")
     if state_filter:
         print(f"  state:      {state_filter}")
+    if since or until:
+        print(f"  created:    {since or '-inf'} .. {until or '+inf'}")
     if max_pairs:
         print(f"  cap/repo:   {max_pairs}")
+
+    if force:
+        for name in ("security_qa_pairs", "security_qa_responses"):
+            p = os.path.join(repo_dir(repo), f"{name}.jsonl")
+            if os.path.exists(p):
+                os.remove(p)
+                print(f"  cleared {name}.jsonl")
 
     if max_pairs and not force:
         existing = load_jsonl(repo, "security_qa_pairs")
@@ -580,12 +616,24 @@ def run(repo, model=STAGE1_MODEL, confidence_threshold=0.3, limit=None,
         print("  [error] no raw_threads.jsonl — run mine_threads.py first")
         return
 
-    checkpoint_key = f"detect_security_qa_{model}".replace(":", "_").replace("/", "_")
-    done = set() if force else load_checkpoint(repo, checkpoint_key)
+    done = _load_done(repo)
 
     threads_to_do = [t for t in threads if t["number"] not in done]
     if state_filter:
         threads_to_do = [t for t in threads_to_do if t.get("state", "").lower() == state_filter]
+    if since or until:
+        # created_at is ISO-8601 "YYYY-MM-DDTHH:MM:SSZ"; compare on the date prefix
+        # so an inclusive --until (e.g. 2025-12-31) keeps that whole day.
+        def _in_range(t):
+            d = (t.get("created_at") or "")[:10]
+            if not d:
+                return False
+            if since and d < since:
+                return False
+            if until and d > until:
+                return False
+            return True
+        threads_to_do = [t for t in threads_to_do if _in_range(t)]
     threads_to_do.sort(key=lambda t: t["number"], reverse=True)
     if limit:
         threads_to_do = threads_to_do[:limit]
@@ -596,44 +644,53 @@ def run(repo, model=STAGE1_MODEL, confidence_threshold=0.3, limit=None,
     if max_pairs:
         print(f"  max pairs:       {max_pairs}")
 
-    if force:
-        out_path = f"output/{repo.replace('/','__')}/security_qa_pairs.jsonl"
-        if os.path.exists(out_path):
-            os.remove(out_path)
-            print("  cleared previous output")
-
-    existing_count = 0 if force else len(load_jsonl(repo, "security_qa_pairs") or [])
+    existing_count = len(load_jsonl(repo, "security_qa_pairs") or [])
     accepted = existing_count
     dropped_prefilter = dropped_conf = failed = 0
     dropped_by_reason: dict = {}
 
     for thread in tqdm(threads_to_do, desc="  detecting"):
-        done.add(thread["number"])
+        num = thread["number"]
 
-        if not prefilter(thread):
+        if not no_prefilter and not prefilter(thread):
+            _save_response(repo, {"number": num, "status": "prefilter"})
             dropped_prefilter += 1
             continue
 
-        result = detect_and_extract(thread, model)
+        usage_log = []
+        result = detect_and_extract(thread, model, usage_log=usage_log)
+        issue_usage = {}
+        for r in usage_log:
+            b = issue_usage.setdefault(r["stage"],
+                                       {"input_tokens": 0, "cached_tokens": 0, "output_tokens": 0})
+            b["input_tokens"]  += r["input_tokens"]
+            b["cached_tokens"] += r["cached_tokens"]
+            b["output_tokens"] += r["output_tokens"]
+        append_record(repo, f"usage_{STAGE1_MODEL}", {f"{repo}/{num}": issue_usage})
 
         if result is None:
+            _save_response(repo, {"number": num, "status": "failed"})
             failed += 1
             continue
 
         if not result.get("contains_qa"):
             reason = result.get("drop_reason", "unknown")
             dropped_by_reason[reason] = dropped_by_reason.get(reason, 0) + 1
+            _save_response(repo, {"number": num, "status": "dropped", "drop_reason": reason})
             continue
 
         if result.get("confidence", 0) < confidence_threshold:
-            print(f"  [drop] confidence {result.get('confidence', 0):.2f} < {confidence_threshold}")
+            conf = result.get("confidence", 0)
+            print(f"  [drop] confidence {conf:.2f} < {confidence_threshold}")
             dropped_conf += 1
+            _save_response(repo, {"number": num, "status": "dropped",
+                                  "drop_reason": "low_confidence", "confidence": conf})
             continue
 
         record = {
             "source": thread["source"],
             "repo": repo,
-            "number": thread["number"],
+            "number": num,
             "title": thread.get("title", ""),
             "url": thread.get("url", ""),
             "state": thread.get("state", ""),
@@ -649,7 +706,7 @@ def run(repo, model=STAGE1_MODEL, confidence_threshold=0.3, limit=None,
             "answer_text": result["answer_text"],
             "artifacts_needed": result["artifacts_needed"],
             "hard_facts": result["hard_facts"],
-            "references": result["references"],  # backward-compat flat list
+            "references": result["references"],
             "answerer_role": result["answerer_role"],
             "stage1_confidence": result["stage1_confidence"],
             "stage1_n_yes": result["stage1_n_yes"],
@@ -663,16 +720,11 @@ def run(repo, model=STAGE1_MODEL, confidence_threshold=0.3, limit=None,
 
         accepted += 1
         append_record(repo, "security_qa_pairs", record)
+        _save_response(repo, {"number": num, "status": "accepted", **record})
 
         if max_pairs and accepted >= max_pairs:
-            done.add(thread["number"])
             print(f"  [stop] reached max_pairs={max_pairs}")
             break
-
-        if len(done) % 10 == 0:
-            save_checkpoint(repo, checkpoint_key, done)
-
-    save_checkpoint(repo, checkpoint_key, done)
 
     new_accepted = accepted - existing_count
     total_dropped = sum(dropped_by_reason.values())
@@ -693,18 +745,24 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--repo", default=None)
     parser.add_argument("--model", default=STAGE1_MODEL)
-    parser.add_argument("--confidence", type=float, default=0.3,
-                        help="Min confidence threshold (0–1, default 0.3 — recall-favoring; manual review filters false positives later)")
+    parser.add_argument("--confidence", type=float, default=0.5,
+                        help="Min confidence threshold (0–1, default 0.5 — recall-favoring; manual review filters false positives later)")
     parser.add_argument("--limit", type=int, default=None,
                         help="Cap threads to process (for testing)")
     parser.add_argument("--max-pairs", type=int, default=None,
                         help="Stop after extracting N valid security pairs")
     parser.add_argument("--force", action="store_true",
                         help="Re-process all threads from scratch")
-    parser.add_argument("--state", choices=["open", "closed"], default=None,
-                        help="Filter threads by issue state (default: all)")
-    parser.add_argument("--stage1-samples", type=int, default=None,
+    parser.add_argument("--state", choices=["open", "closed"], default="closed",
+                        help="Filter threads by issue state (default: closed)")
+    parser.add_argument("--since", default=None, metavar="YYYY-MM-DD",
+                        help="Only threads created on/after this date (e.g. 2025-10-01)")
+    parser.add_argument("--until", default=None, metavar="YYYY-MM-DD",
+                        help="Only threads created on/before this date (inclusive)")
+    parser.add_argument("--stage1-samples", type=int, default=1,
                         help=f"Stage-1 self-consistency sample count (default {STAGE1_SAMPLES}; set 1 to disable)")
+    parser.add_argument("--no-prefilter", action="store_true",
+                        help="Skip the Stage-0 sanity prefilter; send every thread to the LLM (higher cost)")
     args = parser.parse_args()
 
     if args.stage1_samples is not None:
@@ -722,4 +780,7 @@ if __name__ == "__main__":
             max_pairs=args.max_pairs,
             force=args.force,
             state_filter=args.state,
+            since=args.since,
+            until=args.until,
+            no_prefilter=args.no_prefilter,
         )

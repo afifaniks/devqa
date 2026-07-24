@@ -63,7 +63,7 @@ query($owner: String!, $name: String!, $labels: [String!], $cursor: String) {
       after: $cursor
       labels: $labels
       states: [OPEN, CLOSED]
-      orderBy: {field: CREATED_AT, direction: ASC}
+      orderBy: {field: CREATED_AT, direction: DESC}
     ) {
       pageInfo { hasNextPage endCursor }
       nodes {
@@ -172,24 +172,32 @@ def _parse_timeline(nodes: list) -> dict:
     }
 
 
-def mine_issues(repo: str):
+def mine_issues(repo: str, since: str | None = None):
+    """Mine issues newest-first. `since` (ISO date, e.g. '2020-01-01') stops paging once
+    issues predate it — bounds volume for huge repos. All benchmark thread T >= 2020, so
+    a 2020 cutoff keeps every pre-T issue a snapshot could need."""
     if already_mined(repo, "issues"):
         print(f"  [skip] issues already mined for {repo}")
         return
 
-    print(f"\n[issues] mining {repo} ...")
+    print(f"\n[issues] mining {repo} ..." + (f" (since {since})" if since else ""))
 
     owner, name = repo.split("/")
     labels = BUG_LABELS if BUG_LABELS else None
 
-    raw_issues = list(tqdm(
+    raw_issues = []
+    for issue in tqdm(
         paginate_graphql(
             _ISSUES_QUERY,
             {"owner": owner, "name": name, "labels": labels},
             lambda data: data["repository"]["issues"],
         ),
         desc="  fetching issues"
-    ))
+    ):
+        ca = issue.get("createdAt")
+        if since and ca and ca[:10] < since:
+            break  # DESC order — everything past here is older than the cutoff
+        raw_issues.append(issue)
 
     records = []
     for issue in tqdm(raw_issues, desc="  processing issues"):
@@ -282,7 +290,9 @@ def mine_issues(repo: str):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--repo", default=None)
+    parser.add_argument("--since", default=None,
+                        help="ISO date cutoff, e.g. 2020-01-01 (stop paging older issues)")
     args = parser.parse_args()
     repos = [args.repo] if args.repo else REPOS
     for repo in repos:
-        mine_issues(repo)
+        mine_issues(repo, since=args.since)

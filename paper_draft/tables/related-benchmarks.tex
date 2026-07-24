@@ -1,0 +1,26 @@
+\begin{table}[t]
+\caption{Comparison with related work.
+  \textbf{Sec.}~=~security-specific corpus;
+  \textbf{Adv.}~=~external advisory artifacts as context;
+  \textbf{Grd.}~=~fact-grounded grading;
+  \textbf{Abl.}~=~artifact-type ablation.
+  \checkmark~full; P~partial; $\times$~none.}
+\label{tab:related}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{l c c c c}
+\toprule
+\textbf{Paper} & \textbf{Sec.} & \textbf{Adv.} & \textbf{Grd.} & \textbf{Abl.} \\
+\midrule
+SWE-QA~\cite{sweqa2026}            & $\times$ & $\times$ & P          & $\times$ \\
+StackRepoQA~\cite{stackrepoqa2025} & $\times$ & $\times$ & $\times$   & $\times$ \\
+CoReQA~\cite{coreqa2025}           & $\times$ & $\times$ & P          & $\times$ \\
+SecVulEval / CodeSecEval           & \checkmark & $\times$ & \checkmark & $\times$ \\
+SecureAgentBench                   & \checkmark & $\times$ & \checkmark & $\times$ \\
+SecQA                              & \checkmark & $\times$ & \checkmark & $\times$ \\
+\midrule
+\textbf{SecDevQA (ours)}           & \checkmark & \checkmark & \checkmark & \checkmark \\
+\bottomrule
+\end{tabular}
+\end{table}

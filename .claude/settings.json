@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(/local/home/amamun/envs/devqa/bin/python -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(d['thread_text'][:800]\\)\")"
+    ]
+  }
+}

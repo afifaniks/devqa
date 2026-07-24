@@ -1,0 +1,35 @@
+\begin{table}[t]
+\caption{\scriptsize Typed tools exposed to the reference agent, grouped by
+  artifact type (\S\ref{sec:systems}).}
+\label{tab:agent-tools}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\newcommand{\toolgroup}[1]{\rowcolor{black!10}\multicolumn{2}{@{}l}{#1}}
+\begin{tabular}{@{}l p{0.60\columnwidth}@{}}
+\toprule
+\textbf{Tool} & \textbf{Returns (time-cap enforced)} \\
+\midrule
+\toolgroup{\textsc{code} --- working tree at the last commit $\le t_\theta$}\\
+\texttt{list\_dir} & Directory listing within the snapshot tree. \\
+\texttt{read\_file} & Line-numbered file contents for a path and line range. \\
+\texttt{search\_code} & Regex search over tracked files (\texttt{git grep}). \\
+\addlinespace
+\toolgroup{\textsc{commits} --- history truncated at the snapshot commit}\\
+\texttt{git\_log} & Commit log, newest first, optionally path-scoped. \\
+\texttt{git\_show} & Message, stat, and patch for one SHA; rejected unless the SHA is an ancestor of the snapshot commit. \\
+\addlinespace
+\toolgroup{\textsc{issues} --- issues $\le t_\theta$, source thread excluded}\\
+\texttt{search\_issues} & Keyword search over the capped issue corpus. \\
+\texttt{get\_issue} & Full issue thread by number, comments capped at $t_\theta$. \\
+\addlinespace
+\toolgroup{\textsc{prs} --- pull requests $\le t_\theta$}\\
+\texttt{search\_prs} & Keyword search over the capped pull-request corpus. \\
+\texttt{get\_pr} & Pull-request body and reviews by number, reviews capped at $t_\theta$. \\
+\addlinespace
+\toolgroup{\textsc{advisory} --- GHSA/OSV records published $\le t_\theta$}\\
+\texttt{search\_advisories} & Keyword search over advisories referencing the repository. \\
+\texttt{get\_advisory} & Full advisory by GHSA or CVE id, exposing aliased CVE and CWE identifiers and affected version ranges. \\
+\bottomrule
+\end{tabular}
+\end{table}

@@ -822,7 +822,7 @@
   "microsoft/vscode/issue/312816": {
     "status": "rejected",
     "note": "",
-    "verified_at": "2026-05-26T02:14:01.278049Z"
+    "verified_at": "2026-05-26T02:28:10.918195Z"
   },
   "microsoft/vscode/issue/312809": {
     "status": "rejected",
@@ -832,17 +832,17 @@
   "microsoft/vscode/issue/312805": {
     "status": "rejected",
     "note": "",
-    "verified_at": "2026-05-26T02:14:31.219872Z"
+    "verified_at": "2026-05-26T02:28:17.727236Z"
   },
   "microsoft/vscode/issue/312804": {
     "status": "rejected",
     "note": "",
-    "verified_at": "2026-05-26T02:14:38.945636Z"
+    "verified_at": "2026-05-26T02:28:23.854527Z"
   },
   "microsoft/vscode/issue/312802": {
     "status": "rejected",
     "note": "",
-    "verified_at": "2026-05-26T02:14:50.253847Z"
+    "verified_at": "2026-05-26T02:28:30.957852Z"
   },
   "microsoft/vscode/issue/312792": {
     "status": "rejected",
@@ -857,7 +857,7 @@
   "microsoft/vscode/issue/312774": {
     "status": "rejected",
     "note": "",
-    "verified_at": "2026-05-26T02:16:24.022390Z"
+    "verified_at": "2026-05-26T02:28:32.442889Z"
   },
   "microsoft/vscode/issue/312713": {
     "status": "accepted",
@@ -988,5 +988,20 @@
     "status": "accepted",
     "note": "instructs to upgrade to the latest version of the software",
     "verified_at": "2026-05-26T02:27:30.740914Z"
+  },
+  "microsoft/vscode/issue/312846": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T02:28:09.676253Z"
+  },
+  "microsoft/vscode/issue/312764": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T02:28:33.522378Z"
+  },
+  "microsoft/vscode/issue/312736": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-05-26T02:28:41.548936Z"
   }
 }

@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Security QA Chat</title>
+  <link rel="stylesheet" href="/static/app.css" />
+  <script src="https://cdn.jsdelivr.net/npm/marked@9/marked.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3/dist/cdn.min.js"></script>
+  <style>
+    [x-cloak] { display: none !important; }
+
+    body { margin: 0; height: 100vh; display: flex; flex-direction: column; background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+
+    #topbar { display: flex; align-items: center; gap: 10px; padding: 8px 16px; background: var(--surface); border-bottom: 1px solid var(--border); flex-shrink: 0; flex-wrap: wrap; }
+    #topbar h1 { font-size: 15px; font-weight: 600; margin: 0; }
+    #topbar .meta { font-size: 12px; color: var(--text-muted); }
+    #topbar a.back { font-size: 12px; color: var(--accent); text-decoration: none; }
+    #topbar a.back:hover { text-decoration: underline; }
+    .topbar-right { margin-left: auto; display: flex; gap: 6px; align-items: center; }
+
+    /* model selector */
+    .model-row { display: flex; align-items: center; gap: 6px; font-size: 12px; }
+    .model-row label { color: var(--text-muted); white-space: nowrap; }
+    .model-select { font-size: 12px; padding: 3px 6px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg); color: var(--text); max-width: 220px; }
+    .model-input { font-size: 12px; padding: 3px 6px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg); color: var(--text); width: 180px; }
+
+    /* context panel */
+    #ctx-toggle { width: 100%; padding: 6px 16px; background: var(--surface2); border: none; border-bottom: 1px solid var(--border); cursor: pointer; font-size: 12px; color: var(--text-dim); text-align: left; display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+    #ctx-toggle:hover { background: var(--border); }
+    #ctx-panel { background: var(--surface); border-bottom: 1px solid var(--border); flex-shrink: 0; overflow: hidden; transition: max-height 0.2s ease; }
+    #ctx-panel.collapsed { max-height: 0; border-bottom: none; }
+    #ctx-panel.expanded  { max-height: 60vh; overflow-y: auto; }
+
+    .ctx-body { padding: 12px 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 13px; }
+    .ctx-section { display: flex; flex-direction: column; gap: 4px; }
+    .ctx-section .label { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: .04em; }
+    .ctx-section p { margin: 0; line-height: 1.5; }
+    .ctx-section.full { grid-column: 1 / -1; }
+    .ctx-qa { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 12px; white-space: pre-wrap; font-size: 12px; line-height: 1.6; max-height: 180px; overflow-y: auto; }
+    .hf-badge { display: inline-block; padding: 1px 6px; border-radius: 10px; font-size: 11px; font-weight: 600; margin: 2px; background: var(--yellow-bg); color: var(--yellow); border: 1px solid #e3c86d; }
+    .hf-badge.cve { background: var(--red-bg); color: var(--red); border-color: #f5c6c8; }
+    .hf-badge.ghsa { background: var(--purple-bg); color: var(--purple); border-color: #d0b8f5; }
+    .hf-badge.version { background: var(--green-bg); color: var(--green); border-color: #b7dfc2; }
+
+    /* chat */
+    #chat-wrap { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+    #messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+
+    .msg { display: flex; flex-direction: column; max-width: 82%; }
+    .msg.user { align-self: flex-end; align-items: flex-end; }
+    .msg.assistant { align-self: flex-start; align-items: flex-start; }
+
+    .bubble { padding: 10px 14px; border-radius: 12px; font-size: 14px; line-height: 1.6; word-break: break-word; }
+    .msg.user .bubble { background: var(--accent); color: #fff; border-bottom-right-radius: 3px; }
+    .msg.assistant .bubble { background: var(--surface); border: 1px solid var(--border); border-bottom-left-radius: 3px; }
+    .msg.assistant .bubble pre { background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; padding: 8px; overflow-x: auto; font-size: 12px; }
+    .msg.assistant .bubble code { font-size: 12px; background: var(--surface2); padding: 1px 4px; border-radius: 3px; }
+    .msg.assistant .bubble pre code { background: none; padding: 0; }
+    .msg.assistant .bubble p { margin: 0 0 8px; }
+    .msg.assistant .bubble p:last-child { margin-bottom: 0; }
+    .msg.assistant .bubble ul, .msg.assistant .bubble ol { margin: 4px 0 8px 18px; padding: 0; }
+    .role-label { font-size: 11px; color: var(--text-muted); margin-bottom: 3px; }
+
+    .typing-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--text-muted); margin: 0 2px; animation: bounce 1.2s ease-in-out infinite; }
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes bounce { 0%,80%,100% { transform: translateY(0); } 40% { transform: translateY(-5px); } }
+
+    #input-row { padding: 12px 16px; background: var(--surface); border-top: 1px solid var(--border); display: flex; gap: 8px; align-items: flex-end; flex-shrink: 0; }
+    #user-input { flex: 1; resize: none; min-height: 40px; max-height: 160px; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg); color: var(--text); font-size: 14px; font-family: inherit; line-height: 1.5; outline: none; overflow-y: auto; }
+    #user-input:focus { border-color: var(--accent); }
+    #send-btn { padding: 8px 16px; font-size: 14px; }
+    #send-btn:disabled { opacity: 0.5; cursor: default; }
+
+    .empty-state { margin: auto; text-align: center; color: var(--text-muted); font-size: 14px; }
+    .empty-state .hint { font-size: 12px; margin-top: 6px; }
+    .err-banner { background: var(--red-bg); color: var(--red); border: 1px solid #f5c6c8; border-radius: var(--radius); padding: 8px 12px; font-size: 13px; margin: 8px 16px; flex-shrink: 0; }
+  </style>
+  <script>if (localStorage.getItem('theme') === 'dark') document.documentElement.classList.add('dark');</script>
+</head>
+
+<body x-data="chat()" x-init="init()">
+
+<div id="topbar">
+  <a class="back" href="/security">← Review</a>
+  <h1>LLM Discussion</h1>
+  <span class="meta" x-text="pair ? `${pair.repo} · #${pair.number}` : ''"></span>
+  <span class="badge badge-security" x-show="pair">SEC</span>
+  <span x-show="pair?.status" class="badge"
+        :class="pair?.status === 'accepted' ? 'badge-accepted' : pair?.status === 'rejected' ? 'badge-rejected' : 'badge-pending'"
+        x-text="pair?.status"></span>
+
+  <div class="model-row" x-show="availableModels.length > 0">
+    <label>Model:</label>
+    <select class="model-select" x-model="selectedModel">
+      <template x-for="m in availableModels" :key="m">
+        <option :value="m" x-text="m"></option>
+      </template>
+    </select>
+  </div>
+  <div class="model-row" x-show="availableModels.length === 0">
+    <label>Model:</label>
+    <input class="model-input" type="text" x-model="selectedModel" placeholder="e.g. qwen3:6b" />
+  </div>
+
+  <div class="topbar-right">
+    <button class="btn" @click="toggleTheme()" x-text="isDark ? '☀ Light' : '🌙 Dark'"></button>
+    <button class="btn" @click="clearChat()" x-show="messages.length > 0">🗑 Clear</button>
+  </div>
+</div>
+
+<button id="ctx-toggle" @click="ctxOpen = !ctxOpen">
+  <span x-text="ctxOpen ? '▼' : '▶'"></span>
+  <span x-text="ctxOpen ? 'Hide context' : 'Show context'"></span>
+  <span x-show="pair" style="margin-left:auto;color:var(--text-muted)"
+        x-text="pair?.security_topic || pair?.need_summary || ''"></span>
+</button>
+
+<div id="ctx-panel" :class="ctxOpen ? 'expanded' : 'collapsed'">
+  <div class="ctx-body" x-show="pair">
+    <div class="ctx-section">
+      <div class="label">Security Topic</div>
+      <p x-text="pair?.security_topic || '—'"></p>
+    </div>
+    <div class="ctx-section">
+      <div class="label">Need Summary</div>
+      <p x-text="pair?.need_summary || '—'"></p>
+    </div>
+    <div class="ctx-section full">
+      <div class="label">Extracted Question</div>
+      <div class="ctx-qa" x-text="pair?.question_text || '—'"></div>
+    </div>
+    <div class="ctx-section full">
+      <div class="label">Extracted Answer</div>
+      <div class="ctx-qa" x-text="pair?.answer_text || '—'"></div>
+    </div>
+    <div class="ctx-section">
+      <div class="label">Hard Facts</div>
+      <div x-show="hasHardFacts(pair?.hard_facts)" style="display:flex;flex-wrap:wrap;gap:2px;margin-top:2px">
+        <template x-for="id in (pair?.hard_facts?.cve_ids||[])" :key="'cve'+id">
+          <span class="hf-badge cve" x-text="id"></span>
+        </template>
+        <template x-for="id in (pair?.hard_facts?.ghsa_ids||[])" :key="'ghsa'+id">
+          <span class="hf-badge ghsa" x-text="id"></span>
+        </template>
+        <template x-for="id in (pair?.hard_facts?.cwe_ids||[])" :key="'cwe'+id">
+          <span class="hf-badge" x-text="id"></span>
+        </template>
+        <template x-for="v in (pair?.hard_facts?.fixed_versions||[])" :key="'fv'+v">
+          <span class="hf-badge version" x-text="'fixed: '+v"></span>
+        </template>
+        <template x-for="v in (pair?.hard_facts?.affected_versions||[])" :key="'av'+v">
+          <span class="hf-badge" x-text="'affected: '+v"></span>
+        </template>
+        <template x-for="pr in (pair?.hard_facts?.fix_prs||[])" :key="'pr'+pr">
+          <span class="hf-badge" x-text="pr"></span>
+        </template>
+        <template x-for="sha in (pair?.hard_facts?.fix_commits||[])" :key="'sha'+sha">
+          <span class="hf-badge" x-text="sha.slice(0,8)"></span>
+        </template>
+      </div>
+      <p x-show="!hasHardFacts(pair?.hard_facts)" style="color:var(--text-muted);font-size:12px">none</p>
+    </div>
+    <div class="ctx-section">
+      <div class="label">Artifacts Needed</div>
+      <p style="font-size:12px" x-text="(pair?.artifacts_needed||[]).join(', ') || 'none'"></p>
+    </div>
+    <div class="ctx-section">
+      <div class="label">Answerer Role</div>
+      <p x-text="pair?.answerer_role || '—'"></p>
+    </div>
+    <div class="ctx-section" x-show="pair?.note">
+      <div class="label">Reviewer Note</div>
+      <p x-text="pair?.note"></p>
+    </div>
+  </div>
+</div>
+
+<div id="chat-wrap">
+  <div id="messages" x-ref="messages">
+
+    <div class="empty-state" x-show="messages.length === 0 && !loading && !error">
+      <div>Ask the LLM about this security pair.</div>
+      <div class="hint">e.g. "Is the security topic accurate?" · "What does the answer anchor on?" · "Should this be accepted?"</div>
+    </div>
+
+    <template x-for="(msg, i) in messages" :key="i">
+      <div class="msg" :class="msg.role">
+        <div class="role-label" x-text="msg.role === 'user' ? 'You' : selectedModel || 'LLM'"></div>
+        <div class="bubble" x-html="msg.role === 'assistant' ? renderMd(msg.content) : esc(msg.content)"></div>
+      </div>
+    </template>
+
+    <div class="msg assistant" x-show="loading">
+      <div class="role-label" x-text="selectedModel || 'LLM'"></div>
+      <div class="bubble">
+        <span class="typing-dot"></span>
+        <span class="typing-dot"></span>
+        <span class="typing-dot"></span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="err-banner" x-show="error" x-text="error" x-cloak></div>
+
+  <div id="input-row">
+    <textarea id="user-input" x-ref="input" x-model="draft"
+              placeholder="Ask about this pair… (Enter to send, Shift+Enter for newline)"
+              @keydown="if($event.key==='Enter'&&!$event.shiftKey){$event.preventDefault();send()}"
+              @input="autoResize($event.target)"
+              rows="1"></textarea>
+    <button id="send-btn" class="btn btn-primary" @click="send()"
+            :disabled="loading || !draft.trim()">Send</button>
+  </div>
+</div>
+
+<script>
+  marked.use({ breaks: true, gfm: true });
+
+  function esc(s) {
+    return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function chat() {
+    const CHAT_ID  = new URLSearchParams(location.search).get('id') || '';
+    const AUTORUN  = new URLSearchParams(location.search).get('autorun') === '1';
+
+    return {
+      CHAT_ID,
+      pair: null,
+      messages: [],
+      draft: 'Does this thread have any actual security related QA pair?',
+      loading: false,
+      error: '',
+      ctxOpen: true,
+      isDark: document.documentElement.classList.contains('dark'),
+      availableModels: [],
+      selectedModel: '',
+
+      async init() {
+        if (!CHAT_ID) {
+          this.error = 'No pair ID in URL. Open this page from the review UI.';
+          return;
+        }
+        await Promise.all([this.loadPair(), this.loadModels()]);
+        if (AUTORUN && this.pair && this.draft.trim()) {
+          this.send();
+        }
+      },
+
+      async loadPair() {
+        try {
+          this.pair = await fetch(`/api/security/chat/context?id=${encodeURIComponent(CHAT_ID)}`).then(r => {
+            if (!r.ok) throw new Error(`HTTP ${r.status}`);
+            return r.json();
+          });
+        } catch(e) {
+          this.error = 'Failed to load pair: ' + e.message;
+        }
+      },
+
+      async loadModels() {
+        try {
+          const data = await fetch('/api/security/chat/models').then(r => r.json());
+          this.availableModels = data.models || [];
+          this.selectedModel = data.default || (this.availableModels[0] ?? '');
+        } catch {}
+      },
+
+      hasHardFacts(hf) {
+        if (!hf) return false;
+        return Object.values(hf).some(v => Array.isArray(v) && v.length > 0);
+      },
+
+      renderMd(text) {
+        return marked.parse(text || '');
+      },
+
+      async send() {
+        const content = this.draft.trim();
+        if (!content || this.loading) return;
+
+        this.draft = '';
+        this.$nextTick(() => { if (this.$refs.input) this.$refs.input.style.height = 'auto'; });
+        this.error = '';
+        this.messages.push({ role: 'user', content });
+
+        const assistantIdx = this.messages.length;
+        this.messages.push({ role: 'assistant', content: '' });
+        this.loading = true;
+        this.scrollBottom();
+
+        try {
+          const resp = await fetch(`/api/security/chat/stream?id=${encodeURIComponent(CHAT_ID)}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              model: this.selectedModel || null,
+              messages: this.messages.slice(0, assistantIdx).map(m => ({ role: m.role, content: m.content }))
+            })
+          });
+
+          if (!resp.ok) {
+            const err = await resp.json().catch(() => ({ detail: resp.statusText }));
+            throw new Error(err.detail || resp.statusText);
+          }
+
+          const reader = resp.body.getReader();
+          const decoder = new TextDecoder();
+          let buf = '';
+
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            buf += decoder.decode(value, { stream: true });
+            const lines = buf.split('\n');
+            buf = lines.pop();
+            for (const line of lines) {
+              if (!line.startsWith('data: ')) continue;
+              const raw = line.slice(6).trim();
+              if (raw === '[DONE]') break;
+              try {
+                const { token } = JSON.parse(raw);
+                this.messages[assistantIdx].content += token;
+                this.scrollBottom();
+              } catch {}
+            }
+          }
+        } catch(e) {
+          this.messages.splice(assistantIdx, 1);
+          this.error = 'Error: ' + e.message;
+        } finally {
+          this.loading = false;
+          this.scrollBottom();
+          this.$nextTick(() => this.$refs.input?.focus());
+        }
+      },
+
+      scrollBottom() {
+        this.$nextTick(() => {
+          const el = this.$refs.messages;
+          if (el) el.scrollTop = el.scrollHeight;
+        });
+      },
+
+      clearChat() {
+        this.messages = [];
+        this.error = '';
+      },
+
+      autoResize(el) {
+        el.style.height = 'auto';
+        el.style.height = Math.min(el.scrollHeight, 160) + 'px';
+      },
+
+      toggleTheme() {
+        this.isDark = !this.isDark;
+        document.documentElement.classList.toggle('dark', this.isDark);
+        localStorage.setItem('theme', this.isDark ? 'dark' : 'light');
+      },
+    };
+  }
+</script>
+</body>
+</html>

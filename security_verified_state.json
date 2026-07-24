@@ -1,0 +1,3447 @@
+{
+  "auth0/node-jsonwebtoken/issue/957": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-01T16:47:09.504509Z"
+  },
+  "auth0/node-jsonwebtoken/issue/921": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-01T17:00:04.666491Z"
+  },
+  "auth0/node-jsonwebtoken/issue/914": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-01T17:53:29.875261Z"
+  },
+  "auth0/node-jsonwebtoken/issue/892": {
+    "status": "rejected",
+    "note": "Question doesn't refer to any security risk or form, rather it is a typical error handling question\n",
+    "verified_at": "2026-06-01T17:59:37.164559Z"
+  },
+  "auth0/node-jsonwebtoken/issue/881": {
+    "status": "rejected",
+    "note": "Question is more regarding a runtime environment issue, not security",
+    "verified_at": "2026-06-01T18:05:03.374516Z"
+  },
+  "auth0/node-jsonwebtoken/issue/868": {
+    "status": "rejected",
+    "note": "Question is less security related and more so related to a runtime environment incompatibility",
+    "verified_at": "2026-06-01T18:11:10.197657Z"
+  },
+  "auth0/node-jsonwebtoken/issue/845": {
+    "status": "rejected",
+    "note": "Question is about environment guidance, not necessarily a security vulnerability",
+    "verified_at": "2026-06-01T18:13:22.453372Z"
+  },
+  "auth0/node-jsonwebtoken/issue/826": {
+    "status": "rejected",
+    "note": "Answer is simply an environment upgrade, not really security mitigation",
+    "verified_at": "2026-06-01T18:18:07.225794Z"
+  },
+  "auth0/node-jsonwebtoken/issue/823": {
+    "status": "rejected",
+    "note": "Question does not identify a security or vulnerability weakness",
+    "verified_at": "2026-06-01T18:19:04.026618Z"
+  },
+  "auth0/node-jsonwebtoken/issue/773": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-01T19:15:39.797384Z"
+  },
+  "auth0/node-jsonwebtoken/issue/766": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-01T19:16:00.235689Z"
+  },
+  "auth0/node-jsonwebtoken/issue/765": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-01T19:16:58.384611Z"
+  },
+  "auth0/node-jsonwebtoken/issue/764": {
+    "status": "rejected",
+    "note": "Malformed JWT claim typing / interoperability issue; verifier is behaving correctly, no vulnerability or security-relevant flaw described.",
+    "verified_at": "2026-06-01T19:18:47.029503Z"
+  },
+  "auth0/node-jsonwebtoken/issue/747": {
+    "status": "rejected",
+    "note": "TypeScript definition issue for a JWT error property; developer tooling problem, not a security issue.",
+    "verified_at": "2026-06-01T19:19:55.371386Z"
+  },
+  "auth0/node-jsonwebtoken/issue/739": {
+    "status": "accepted",
+    "note": "Cryptographic key size requirement for RSA JWT signing is a security-relevant constraint grounded in the JWA specification.",
+    "verified_at": "2026-06-01T19:20:49.162515Z"
+  },
+  "auth0/node-jsonwebtoken/issue/730": {
+    "status": "rejected",
+    "note": "jsonwebtoken browser runtime incompatibility; environment support issue, not a security vulnerability or security-relevant behavior.",
+    "verified_at": "2026-06-01T19:21:27.418874Z"
+  },
+  "auth0/node-jsonwebtoken/issue/728": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-01T19:49:44.767613Z"
+  },
+  "auth0/node-jsonwebtoken/issue/723": {
+    "status": "rejected",
+    "note": "This is a cryptographic misuse/error (wrong key type for RS384), not a security vulnerability or security-relevant behavior in the library.",
+    "verified_at": "2026-06-01T19:50:58.758793Z"
+  },
+  "auth0/node-jsonwebtoken/issue/711": {
+    "status": "accepted",
+    "note": "The thread discusses JWT algorithm enforcement and potential acceptance of unsigned (alg: none) tokens, referencing RFC 7518 security requirements and evaluating whether the library\u2019s verification behavior could allow integrity bypass.",
+    "verified_at": "2026-06-01T19:53:10.033295Z"
+  },
+  "auth0/node-jsonwebtoken/issue/706": {
+    "status": "accepted",
+    "note": "This is a user misunderstanding of JWT design (signed vs encrypted tokens), could be a security vulnerability or security-relevant behavior in the library if handled incorrectly and incorporated in a token-based authentication app",
+    "verified_at": "2026-06-01T19:55:28.690235Z"
+  },
+  "auth0/node-jsonwebtoken/issue/705": {
+    "status": "rejected",
+    "note": "This is a TypeScript promisify/overload inference issue in jwt.sign, not a security vulnerability or security-relevant behavior in the library.",
+    "verified_at": "2026-06-01T19:57:37.657676Z"
+  },
+  "auth0/node-jsonwebtoken/issue/701": {
+    "status": "rejected",
+    "note": "Browser/Angular incompatibility of jsonwebtoken due to Node crypto dependencies; runtime support issue, not a security vulnerability or security-relevant defect in the library.",
+    "verified_at": "2026-06-01T19:59:21.502322Z"
+  },
+  "auth0/node-jsonwebtoken/issue/667": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-01T20:00:02.655902Z"
+  },
+  "auth0/node-jsonwebtoken/issue/666": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-01T20:00:21.717580Z"
+  },
+  "auth0/node-jsonwebtoken/issue/665": {
+    "status": "accepted",
+    "note": "QA discusses the security implications of disabling JWT signature verification, which directly affects token integrity and authentication trust, and includes explicit risk analysis of bypassing cryptographic checks.",
+    "verified_at": "2026-06-01T20:02:33.092579Z"
+  },
+  "auth0/node-jsonwebtoken/issue/656": {
+    "status": "accepted",
+    "note": "QA discusses JWT token revocation and logout security design, including blacklisting strategies and authoritative security references, which directly relates to authentication integrity and session security.",
+    "verified_at": "2026-06-01T20:03:38.372158Z"
+  },
+  "axios/axios/issue/10731": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-01T20:46:03.689908Z"
+  },
+  "axios/axios/issue/10707": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-01T20:48:10.555392Z"
+  },
+  "axios/axios/issue/10685": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-01T20:48:41.469775Z"
+  },
+  "axios/axios/issue/10643": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-01T20:59:22.527097Z"
+  },
+  "axios/axios/issue/10642": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-01T21:06:53.051935Z"
+  },
+  "axios/axios/issue/10636": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-01T21:16:51.769898Z"
+  },
+  "axios/axios/issue/10614": {
+    "status": "accepted",
+    "note": "QA discusses a security-relevant redirect handling mechanism in follow-redirects where documentation examples can bypass built-in protections against credential leakage during HTTPS\u2192HTTP downgrades, potentially exposing credentials, and proposes mitigations to enforce safe protocol validation.",
+    "verified_at": "2026-06-01T21:40:15.081469Z"
+  },
+  "axios/axios/issue/10606": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-01T21:41:04.006916Z"
+  },
+  "axios/axios/issue/10604": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-01T21:44:05.550912Z"
+  },
+  "axios/axios/issue/7450": {
+    "status": "rejected",
+    "note": "QA concerns missing documentation and clarification of Axios XSRF-related configuration options (withXSRFToken, withCredentials), without describing a vulnerability, insecure behavior, or security-relevant defect in the library. ",
+    "verified_at": "2026-06-01T21:46:05.030266Z"
+  },
+  "axios/axios/issue/7417": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-01T21:46:49.299388Z"
+  },
+  "axios/axios/issue/7394": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-01T21:49:32.043970Z"
+  },
+  "axios/axios/issue/7383": {
+    "status": "rejected",
+    "note": "QA describes a Cloudflare Workers runtime/bundler issue causing Axios error response metadata loss, which is explicitly attributed to @opennextjs/cloudflare rather than Axios itself, and contains no security vulnerability, CWE/CVE/GHSA references, or security-relevant behavior.",
+    "verified_at": "2026-06-01T21:52:40.100739Z"
+  },
+  "axios/axios/issue/7349": {
+    "status": "rejected",
+    "note": "QA describes a regression in Axios interceptor promise handling where returned retry requests are not properly propagated, resulting in broken retry logic, without any security vulnerability, exploit, or security-relevant behavior, and contains no CVE/CWE/GHSA/OSV or other security references.",
+    "verified_at": "2026-06-01T21:53:50.902351Z"
+  },
+  "axios/axios/issue/7346": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-01T21:54:25.490266Z"
+  },
+  "axios/axios/issue/7338": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-01T21:54:57.893462Z"
+  },
+  "axios/axios/discussion/7302": {
+    "status": "accepted",
+    "note": "QA discusses implementation of CSRF protection in an Express.js backend, including generation and validation of XSRF tokens, secure cookie configuration, and adoption of the csrf-csrf library as a replacement for deprecated csurf, which is directly related to web application security mechanisms.",
+    "verified_at": "2026-06-01T22:09:44.324972Z"
+  },
+  "axios/axios/issue/7233": {
+    "status": "rejected",
+    "note": "QA is a debugging discussion about 403 responses caused by differences in Node.js HTTP/TLS behavior and WAF fingerprinting compared to curl, without any security vulnerability, exploit, or security-relevant behavior in Axios, and it contains no CVE/CWE/GHSA/OSV or other security references.",
+    "verified_at": "2026-06-01T22:30:09.073178Z"
+  },
+  "axios/axios/issue/7228": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-01T22:30:48.578675Z"
+  },
+  "axios/axios/issue/7055": {
+    "status": "accepted",
+    "note": "QA accepted because it discusses securing npm package publishing through 2FA and OIDC trusted publishing, which are supply chain security controls, and includes concrete references to CI workflow configuration.",
+    "verified_at": "2026-06-01T22:33:27.889776Z"
+  },
+  "axios/axios/issue/7053": {
+    "status": "rejected",
+    "note": "Rejected because it concerns CDNJS packaging and missing Subresource Integrity metadata rather than a security vulnerability, exploit, or security-relevant behavior in Axios, and it lacks any concrete security advisory or vulnerability references.",
+    "verified_at": "2026-06-01T22:35:51.579718Z"
+  },
+  "axios/axios/issue/7023": {
+    "status": "accepted",
+    "note": "Accepted because it directly references a confirmed security advisory (GHSA-4hjh-wcwx-xvwj / CVE-2025-58754) and clarifies affected and patched Axios versions (0.30.2), making it a security-relevant vulnerability scope determination with concrete release and advisory links.",
+    "verified_at": "2026-06-01T22:36:45.869835Z"
+  },
+  "axios/axios/issue/6975": {
+    "status": "accepted",
+    "note": "Accepted because it directly addresses remediation of a known security vulnerability (GHSA-fjxv-7rqg-78g4) by updating a dependency to a fixed version, with a concrete reference (#6974) showing the security fix in progress.",
+    "verified_at": "2026-06-01T22:37:38.589457Z"
+  },
+  "axios/axios/issue/6969": {
+    "status": "accepted",
+    "note": "Accepted because it directly mitigates a confirmed transitive dependency security vulnerability (SNYK-JS-FORMDATA-10841150) in Axios by providing a concrete dependency override to a fixed safe version (form-data@4.0.4).",
+    "verified_at": "2026-06-01T22:38:51.686959Z"
+  },
+  "axios/axios/issue/6931": {
+    "status": "accepted",
+    "note": "Accepted because it concerns a software supply-chain/install-time security risk (developer-only scripts executing during package installation) and includes a concrete remediation reference via PR #6944 for guarded Husky install behavior.",
+    "verified_at": "2026-06-02T15:18:44.773969Z"
+  },
+  "axios/axios/issue/6929": {
+    "status": "accepted",
+    "note": "Accepted because it discusses security-relevant credential handling during redirects (restoring auth only on same-origin redirects while preserving cross-origin credential stripping to prevent leakage) and includes a concrete code reference via PR #10929 and linked prior issue #6929.",
+    "verified_at": "2026-06-02T15:19:55.306592Z"
+  },
+  "axios/axios/discussion/6924": {
+    "status": "accepted",
+    "note": "The answer should be accepted because it directly addresses a security-relevant behavior (redirect handling and credential exposure) and provides concrete technical references (Axios/XHR adapter behavior, fetch adapter workaround, code example, and source-code-backed explanation), making it actionable and verifiable.",
+    "verified_at": "2026-06-02T15:20:46.061680Z"
+  },
+  "axios/axios/issue/6905": {
+    "status": "rejected",
+    "note": "The answer should be rejected because, although it discusses a security-relevant dependency upgrade, it does not provide concrete security references (e.g., CVE/GHSA/advisory/issue links for the vulnerabilities) and mainly gives a general upgrade recommendation rather than a verifiable remediation tied to specific vulnerabilities.",
+    "verified_at": "2026-06-02T15:22:42.624865Z"
+  },
+  "axios/axios/issue/6903": {
+    "status": "rejected",
+    "note": "The answer should be rejected because, although it includes detailed technical debugging and a concrete workaround, the issue is not primarily security-related (it is a networking/runtime regression), and the cited reference is a runtime bug rather than a security artifact like a CVE/GHSA/advisory or security-specific documentation.",
+    "verified_at": "2026-06-02T15:23:30.274610Z"
+  },
+  "axios/axios/issue/6859": {
+    "status": "accepted",
+    "note": "Accepted because it directly references a concrete security artifact (GHSA advisory and PR update) and confirms the patch mapping for a specific vulnerable version, which is necessary for vulnerability tracking and scanner accuracy.",
+    "verified_at": "2026-06-02T15:25:05.747716Z"
+  },
+  "axios/axios/issue/6858": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-02T15:27:28.275127Z"
+  },
+  "axios/axios/issue/6851": {
+    "status": "rejected",
+    "note": "Even though the answer is technically correct and well-referenced (RFC 7231 / RFC 9110), the question itself is not a security-relevant issue but a platform behavior clarification (React Native/iOS/Android networking and header conventions), so it does not meet the security-information-need criteria.",
+    "verified_at": "2026-06-02T15:28:43.699580Z"
+  },
+  "axios/axios/issue/6821": {
+    "status": "accepted",
+    "note": "The question is clearly security-relevant (reported OSS high severity vulnerability in dependency scanning), and the answer provides concrete remediation evidence via a specific patched version (1.8.3) and linked commit/release references, making it a valid security fix confirmation.",
+    "verified_at": "2026-06-02T15:29:46.653404Z"
+  },
+  "axios/axios/issue/6816": {
+    "status": "accepted",
+    "note": "The question is security-relevant because it directly concerns mitigation of a known SSRF vulnerability (CVE-2025-27152) in a specific Axios version, and the answer provides a concrete remediation path tied to a version fix (1.8.3) and configuration exposure (allowAbsoluteUrls in AxiosRequestConfig), making it actionable and security-grounded.",
+    "verified_at": "2026-06-02T15:30:31.729702Z"
+  },
+  "axios/axios/issue/6806": {
+    "status": "accepted",
+    "note": "The question is security-relevant because it identifies a request-handling flaw that can lead to SSRF via ignored allowAbsoluteUrls configuration, and the answer provides concrete code-level references (specific file path, function behavior, and PR #6814) that directly explain and address the vulnerability fix.",
+    "verified_at": "2026-06-02T15:43:52.679335Z"
+  },
+  "axios/axios/issue/6797": {
+    "status": "accepted",
+    "note": "The question is security-relevant because it involves a dependency/runtime break caused by Node.js crypto module resolution in bundled environments (Webpack 5), and the answer provides a concrete mitigation (upgrade to 1.8.1 plus explicit polyfill configuration using crypto-browserify or disabling the module), making it actionable and technically grounded.",
+    "verified_at": "2026-06-02T15:44:29.445657Z"
+  },
+  "axios/axios/issue/6793": {
+    "status": "rejected",
+    "note": "The question is not security-relevant because it concerns a client-side CORS configuration misunderstanding, and the answer is also incorrect/misleading since mode: 'no-cors' does not resolve CORS errors in Axios or Fetch for reading cross-origin responses, making it neither a valid security mitigation nor a correct technical resolution.",
+    "verified_at": "2026-06-02T15:44:58.145691Z"
+  },
+  "axios/axios/issue/6776": {
+    "status": "accepted",
+    "note": "The question is security-relevant because it concerns TLS version and cryptographic deprecation (a core transport-layer security concern), and the answer correctly references authoritative Node.js/OpenSSL TLS documentation to clarify that support depends on the runtime rather than Axios itself, making it technically valid and security-grounded.",
+    "verified_at": "2026-06-02T15:45:23.890246Z"
+  },
+  "axios/axios/issue/6625": {
+    "status": "accepted",
+    "note": "The question is security-relevant because it concerns correct parsing of HTTP response headers (specifically Set-Cookie handling, which can have security implications in session management), and the answer is valid because it references a fixed version (1.8.4) and demonstrates correct behavior of AxiosHeaders.from, making it a concrete and verifiable fix.",
+    "verified_at": "2026-06-02T15:45:52.717658Z"
+  },
+  "axios/axios/issue/6597": {
+    "status": "accepted",
+    "note": "the question is a valid security-relevant developer issue because it concerns correct implementation of auth header rotation in retry logic (a common control point for preventing token leakage and replay issues), and the answer provides a concrete, reproducible fix using a verified Axios version (1.7.7) and a working CodeSandbox reference showing how request mutation is preserved across retries.",
+    "verified_at": "2026-06-02T15:46:59.522303Z"
+  },
+  "axios/axios/issue/6571": {
+    "status": "rejected",
+    "note": "answer is insufficient because it only provides a generic webpack workaround without referencing the actual Axios change (e.g., process/browser import introduced in lib/utils.js as seen in the linked source) or explaining why the change triggers Node/webpack module resolution issues, making it non-authoritative and not tied to the underlying security or dependency context.",
+    "verified_at": "2026-06-02T15:48:57.679511Z"
+  },
+  "axios/axios/issue/6545": {
+    "status": "accepted",
+    "note": "the question is valid because it concerns an actively reported SSRF vulnerability (CVE-2024-39338) affecting Axios versions in production, and the answer is acceptable because it directly references the fixed release version (1.7.4), which is the authoritative remediation path for the security issue.",
+    "verified_at": "2026-06-02T15:49:33.738481Z"
+  },
+  "axios/axios/discussion/6542": {
+    "status": "accepted",
+    "note": "the question is valid because it describes a concrete SSRF risk in Axios URL handling logic, and the answer is acceptable because it clearly maps the issue to a patched release (1.7.4), providing a definitive remediation version for the vulnerability.",
+    "verified_at": "2026-06-02T15:50:08.651617Z"
+  },
+  "axios/axios/issue/6541": {
+    "status": "rejected",
+    "note": "he answer is insufficient because it only points to an unmerged pull request (#6539) without confirming a fixed release version, providing a secure workaround, or referencing an advisory/CVE status update, making it non-actionable for determining whether the vulnerability is actually resolved in a released package.",
+    "verified_at": "2026-06-02T15:50:46.773809Z"
+  },
+  "axios/axios/issue/6497": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-02T15:52:35.554447Z"
+  },
+  "axios/axios/issue/6463": {
+    "status": "accepted",
+    "note": "the question is valid because it concerns remediation of a confirmed SSRF vulnerability (CVE-2024-39338 / GHSA-8hc4-vh64-cxmj) in a specific Axios version range, and the answer is acceptable because it provides a concrete, actionable fix path via npm audit fix and explicitly identifies the patched version (1.7.4) as the resolution target.",
+    "verified_at": "2026-06-02T15:53:07.360368Z"
+  },
+  "axios/axios/issue/6459": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-02T15:54:18.506895Z"
+  },
+  "axios/axios/issue/6452": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-02T15:55:08.489690Z"
+  },
+  "expressjs/express/issue/7196": {
+    "status": "accepted",
+    "note": "the question is valid because it concerns CI dependency caching behavior, which directly affects supply-chain integrity and reproducibility, and the answer is acceptable because it cites authoritative GitHub Actions documentation explaining the lockfile requirement and the security-relevant risk (cache key ambiguity leading to potential cache misuse or inconsistency) when enabling caching without a lockfile.",
+    "verified_at": "2026-06-02T19:59:51.165692Z"
+  },
+  "expressjs/express/issue/7143": {
+    "status": "accepted",
+    "note": "the question is valid because it concerns a potentially vulnerable transitive dependency version (path-to-regexp) and its security status, and the answer is acceptable because it provides a concrete version reference (0.1.13), cites authoritative sources (Snyk advisory and Express security blog), and gives actionable remediation steps (npm update / npm audit fix) to resolve or verify the vulnerability status.",
+    "verified_at": "2026-06-02T20:00:43.762030Z"
+  },
+  "expressjs/express/issue/7016": {
+    "status": "accepted",
+    "note": "the question is valid because it concerns a transitive dependency vulnerability (qs pulled in via body-parser) and whether a known vulnerable version range affects Express 4.x, and the answer is acceptable because it provides a concrete vulnerability boundary (qs < 16.4.1), clarifies the security status (vulnerable vs malicious), and references relevant upstream discussion/PR context that helps determine safe upgrade guidance.",
+    "verified_at": "2026-06-02T20:05:33.761405Z"
+  },
+  "expressjs/express/issue/6978": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-02T20:06:55.209877Z"
+  },
+  "expressjs/express/issue/6968": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-02T20:07:20.914416Z"
+  },
+  "expressjs/express/issue/6874": {
+    "status": "accepted",
+    "note": "the question is valid because it concerns a real security-sensitive file serving behavior (exposure of .git repository metadata via Express res.sendFile), and the answer is acceptable because it directly references and applies the documented dotfiles option behavior in Express with a concrete configuration example explaining how file serving rules affect access to hidden directories.",
+    "verified_at": "2026-06-02T20:09:41.402556Z"
+  },
+  "expressjs/express/issue/6751": {
+    "status": "accepted",
+    "note": "the question is valid because it concerns remediation of a live supply-chain security incident (GHSA-8mgj-vmr8-frr6) involving a compromised transitive dependency (debug) affecting Express installations, and the answer is acceptable because it provides a concrete, actionable mitigation (reinstall dependencies to resolve to safe debug@4.4.1 after removal of compromised 4.4.2) tied to a specific safe version and package ecosystem behavior.",
+    "verified_at": "2026-06-02T20:49:41.903866Z"
+  },
+  "expressjs/express/issue/6614": {
+    "status": "accepted",
+    "note": "the question is valid because it raises a legitimate security concern about potential XSS/open-redirect risks from allowing malicious URL schemes (e.g., javascript:) in res.location, and the answer is acceptable because it provides a concrete authoritative reference to the Express threat model clarifying the framework\u2019s security boundary and explicitly explains that validation responsibility belongs to the application while preserving valid non-HTTP use cases.",
+    "verified_at": "2026-06-02T20:50:22.976240Z"
+  },
+  "expressjs/express/issue/6458": {
+    "status": "accepted",
+    "note": "the question is valid because it investigates a breaking route behavior introduced after a security update and seeks the cause of a regression tied to request routing, and the answer is acceptable because it directly connects the issue to the security-driven mitigation for CVE-2024-45296, cites authoritative release notes and technical rationale (ReDoS prevention), and explains why route semantics changed.",
+    "verified_at": "2026-06-02T20:52:37.594598Z"
+  },
+  "expressjs/express/issue/6443": {
+    "status": "accepted",
+    "note": "he question is a viable security question because it asks whether HTTP redirects can preserve or alter request headers in a way that impacts security-sensitive headers (e.g., Authorization, Cookie), and the answer directly addresses redirect security behavior defined in RFC 9110.",
+    "verified_at": "2026-06-02T20:53:53.223477Z"
+  },
+  "expressjs/express/issue/6432": {
+    "status": "rejected",
+    "note": "While the answer references a documented behavior change, the question itself is not a viable security question; it is about a framework behavior/migration difference (req.body being undefined vs {}), not a security vulnerability, mitigation, exploit, or security-sensitive configuration.",
+    "verified_at": "2026-06-02T20:56:09.209970Z"
+  },
+  "expressjs/express/issue/6428": {
+    "status": "rejected",
+    "note": "The question is not security-related because it concerns a routing syntax breaking change and framework upgrade compatibility issue, not a vulnerability, exploit path, or security control.",
+    "verified_at": "2026-06-02T20:56:41.696942Z"
+  },
+  "expressjs/express/issue/6413": {
+    "status": "rejected",
+    "note": "The question does not describe a security vulnerability or exploitable risk, but rather concerns public visibility of open-source project files that are intentionally exposed as part of a public repository.",
+    "verified_at": "2026-06-02T20:57:23.012362Z"
+  },
+  "expressjs/express/issue/6406": {
+    "status": "rejected",
+    "note": "Rejected because it concerns unsupported version clarification and dependency lineage, not a security vulnerability or attack scenario.",
+    "verified_at": "2026-06-02T20:57:51.374728Z"
+  },
+  "expressjs/express/issue/6401": {
+    "status": "rejected",
+    "note": "The question is not a concrete security issue because it is asking for clarification of a vendor scanner\u2019s \u201coperational vulnerability\u201d label rather than describing a specific vulnerability, exploit, or insecure behavior.",
+    "verified_at": "2026-06-02T20:58:18.021398Z"
+  },
+  "expressjs/express/issue/6315": {
+    "status": "rejected",
+    "note": "Rejected because it concerns framework capability and TLS stack access rather than a security issue, exploit, or mitigation.",
+    "verified_at": "2026-06-02T20:59:36.754854Z"
+  },
+  "expressjs/express/issue/6292": {
+    "status": "rejected",
+    "note": "The question does not describe a vulnerability in the framework itself but instead concerns an XSS issue in example/demo code, which is explicitly outside the security boundary of the library.",
+    "verified_at": "2026-06-02T21:43:44.447780Z"
+  },
+  "expressjs/express/issue/6222": {
+    "status": "accepted",
+    "note": "Accepted because it assesses CVE applicability and patch effectiveness across framework versions, which is a legitimate security validation concern.",
+    "verified_at": "2026-06-02T21:44:18.213116Z"
+  },
+  "expressjs/express/issue/6216": {
+    "status": "rejected",
+    "note": "Rejected because it concerns a version mismatch and API breakage in path-to-regexp, not a security issue or vulnerability behavior.",
+    "verified_at": "2026-06-02T21:44:38.633541Z"
+  },
+  "expressjs/express/issue/6215": {
+    "status": "rejected",
+    "note": "Rejected because it concerns HTTPS redirect configuration for a documentation website rather than a security vulnerability or exploit scenario.",
+    "verified_at": "2026-06-02T21:45:00.257400Z"
+  },
+  "expressjs/express/issue/6204": {
+    "status": "accepted",
+    "note": "Accepted because it evaluates whether a vulnerable dependency version must be upgraded to fix a documented security issue.",
+    "verified_at": "2026-06-02T21:45:21.759162Z"
+  },
+  "expressjs/express/issue/6067": {
+    "status": "accepted",
+    "note": "Accepted because it assesses vulnerability applicability to a concrete package version and dependency chain.",
+    "verified_at": "2026-06-02T21:46:57.252506Z"
+  },
+  "expressjs/express/issue/6053": {
+    "status": "accepted",
+    "note": "Accepted because it evaluates CVE status and patch availability in Express 4.x, which is a legitimate dependency security concern.",
+    "verified_at": "2026-06-02T21:47:18.299814Z"
+  },
+  "expressjs/express/issue/6030": {
+    "status": "rejected",
+    "note": "Rejected because it concerns a TypeScript type mismatch issue, not a security vulnerability or security-relevant behavior.",
+    "verified_at": "2026-06-02T21:47:40.240946Z"
+  },
+  "expressjs/express/issue/5970": {
+    "status": "accepted",
+    "note": "Accepted because it evaluates whether a known vulnerable dependency version has been upgraded in a framework release, impacting security exposure.",
+    "verified_at": "2026-06-02T21:48:38.870543Z"
+  },
+  "expressjs/express/issue/5975": {
+    "status": "rejected",
+    "note": "Rejected because it is a router binding regression/debugging issue after an Express update and does not involve a vulnerability, exploit, or security mitigation.",
+    "verified_at": "2026-06-02T21:49:50.665772Z"
+  },
+  "expressjs/express/issue/5968": {
+    "status": "accepted",
+    "note": "Accepted because the question is about a known security advisory (GHSA-9wv6-86v2-598j) and asks which path-to-regexp versions are safe, directly impacting vulnerability remediation.",
+    "verified_at": "2026-06-03T18:48:42.348714Z"
+  },
+  "expressjs/express/issue/5965": {
+    "status": "rejected",
+    "note": "Rejected because this is primarily a CORS configuration/debugging issue causing a missing JWT header, not a security vulnerability, exploit, or mitigation question.",
+    "verified_at": "2026-06-03T18:49:01.265288Z"
+  },
+  "expressjs/express/issue/5955": {
+    "status": "rejected",
+    "note": "Rejected because although the question references upgrading for CVEs, the actual issue is a runtime regression/crash in path-to-regexp route handling, not a security vulnerability or mitigation question.",
+    "verified_at": "2026-06-03T18:49:27.518787Z"
+  },
+  "expressjs/express/issue/5948": {
+    "status": "accepted",
+    "note": "Accepted because the question explicitly asks whether a security advisory/ReDoS issue (GHSA-9wv6-86v2-598j) motivated a breaking change in Express 5 route handling. The answer is valid since it explains the DoS/ReDoS security rationale for removing regex route support and points to safer alternatives and documentation.",
+    "verified_at": "2026-06-03T18:49:56.298522Z"
+  },
+  "expressjs/express/issue/5947": {
+    "status": "accepted",
+    "note": "Accepted because the question concerns a known transitive dependency vulnerability (send <0.19.0, GHSA-m6fv-jmcg-4jfg) causing npm audit failures in Express 4.20.0 and asks for remediation.",
+    "verified_at": "2026-06-03T18:50:21.240790Z"
+  },
+  "expressjs/express/issue/5943": {
+    "status": "accepted",
+    "note": "Accepted because the question is about dependency pinning strategy in Express and its security implications, which is a valid ecosystem/security design concern. The answer is valid because it correctly explains the historical reason for strict pinning and the transition toward looser semver ranges in Express v5, which directly addresses the maintenance/security rationale.",
+    "verified_at": "2026-06-03T18:50:43.611793Z"
+  },
+  "expressjs/express/discussion/5852": {
+    "status": "accepted",
+    "note": "Accepted because the question is about a real CORS preflight behavior issue in browsers/Express integration, which is a valid security-relevant web behavior (same-origin policy enforcement). The answer is valid since it correctly explains OPTIONS preflight behavior and provides proper Express CORS middleware and manual handling patterns, which are standard and correct mitigations.",
+    "verified_at": "2026-06-03T18:51:11.062156Z"
+  },
+  "expressjs/express/issue/5698": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-03T18:51:28.538396Z"
+  },
+  "expressjs/express/issue/5688": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-03T18:51:40.168405Z"
+  },
+  "expressjs/express/issue/5651": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-03T18:51:57.748357Z"
+  },
+  "expressjs/express/issue/5626": {
+    "status": "pending",
+    "note": "Rejected because although it is framed as a security upgrade request, the underlying issue is a false vulnerability report caused by confusing two different cookie packages (Rust vs JS ecosystem), not an actionable Express/Node security fix.",
+    "verified_at": "2026-06-03T18:52:28.456182Z"
+  },
+  "expressjs/express/issue/5516": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-03T18:52:50.215632Z"
+  },
+  "expressjs/express/issue/5459": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-03T18:53:16.887597Z"
+  },
+  "expressjs/express/issue/5449": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-03T18:53:31.261719Z"
+  },
+  "expressjs/express/issue/5353": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-03T18:53:46.332315Z"
+  },
+  "expressjs/express/issue/5344": {
+    "status": "accepted",
+    "note": "Accepted because the question is about header typing and runtime behavior in Express/Node, which is valid framework-level behavior. The answer is valid since it correctly states that Express does not transform headers (they come from Node.js), and accurately identifies that set-cookie is the only header that Node may represent as an array in req.headers, while also correctly noting it is primarily a response header rather than a request header.",
+    "verified_at": "2026-06-03T18:54:12.069710Z"
+  },
+  "expressjs/express/issue/5292": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-03T18:54:31.718477Z"
+  },
+  "expressjs/express/issue/5275": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-03T18:55:12.743630Z"
+  },
+  "expressjs/express/issue/5177": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T18:55:41.065383Z"
+  },
+  "fastapi/fastapi/issue/14454": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T18:58:13.923862Z"
+  },
+  "fastapi/fastapi/issue/14271": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T18:58:29.041288Z"
+  },
+  "fastapi/fastapi/issue/13533": {
+    "status": "rejected",
+    "note": "FastAPI form parsing regression (non-security framework bug, CVE mentioned but not central to issue)",
+    "verified_at": "2026-06-03T18:59:13.647568Z"
+  },
+  "fastapi/fastapi/issue/13471": {
+    "status": "accepted",
+    "note": "Standards interpretation issue affecting HTTP Basic authentication behavior (realm optionality, RFC 7235 vs RFC 7617 evolution)",
+    "verified_at": "2026-06-03T18:59:41.579431Z"
+  },
+  "fastapi/fastapi/issue/12459": {
+    "status": "rejected",
+    "note": "FastAPI Swagger UI limitation (non-security documentation/tooling behavior)",
+    "verified_at": "2026-06-03T19:00:06.034803Z"
+  },
+  "fastapi/fastapi/issue/11759": {
+    "status": "rejected",
+    "note": "FastAPI Swagger UI authentication UX misunderstanding (non-security behavior explanation)",
+    "verified_at": "2026-06-03T19:00:33.843043Z"
+  },
+  "fastapi/fastapi/issue/11104": {
+    "status": "accepted",
+    "note": "Security patch regression in multipart file upload parsing after GHSA-mitigating dependency upgrade (python-multipart)",
+    "verified_at": "2026-06-03T20:30:08.220033Z"
+  },
+  "fastapi/fastapi/issue/10177": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-03T20:30:31.177912Z"
+  },
+  "fastapi/fastapi/discussion/7176": {
+    "status": "rejected",
+    "note": "ASGI transport-layer limitation discussion (client certificate access), not a security vulnerability or fix-related Q&A",
+    "verified_at": "2026-06-03T20:30:48.095601Z"
+  },
+  "fastapi/fastapi/issue/5926": {
+    "status": "rejected",
+    "note": "Secure deployment/configuration question (WebSockets over TLS), not a security vulnerability or fix-related Q&A",
+    "verified_at": "2026-06-03T20:31:11.548333Z"
+  },
+  "fastapi/fastapi/issue/5899": {
+    "status": "rejected",
+    "note": "Infrastructure / proxy configuration issue (mixed content), not a framework security vulnerability Q&A.",
+    "verified_at": "2026-06-03T20:31:52.320509Z"
+  },
+  "fastapi/fastapi/issue/5837": {
+    "status": "accepted",
+    "note": "Security-relevant cookie configuration rule enforced by browsers (SameSite=None requires Secure).",
+    "verified_at": "2026-06-03T20:32:52.187326Z"
+  },
+  "fastapi/fastapi/issue/5832": {
+    "status": "rejected",
+    "note": "General multi-tenant database architecture guidance (Row-Level Security), not a security vulnerability or framework security behavior issue.",
+    "verified_at": "2026-06-03T20:33:50.081352Z"
+  },
+  "fastapi/fastapi/issue/5831": {
+    "status": "accepted",
+    "note": "Authentication/authorization enforcement for mounted web UI endpoint using middleware and request-based session validation.",
+    "verified_at": "2026-06-03T20:34:14.433254Z"
+  },
+  "fastapi/fastapi/issue/5818": {
+    "status": "accepted",
+    "note": "Host header validation behavior in TrustedHostMiddleware and correct handling of ports in allowed host configuration.",
+    "verified_at": "2026-06-03T20:34:33.757491Z"
+  },
+  "fastapi/fastapi/issue/5786": {
+    "status": "rejected",
+    "note": "General CORS/redirect behavior debugging issue, not a security vulnerability or security-relevant framework behavior.",
+    "verified_at": "2026-06-03T20:34:58.166980Z"
+  },
+  "fastapi/fastapi/issue/5778": {
+    "status": "rejected",
+    "note": "Deployment/routing configuration issue involving OAuth2 URL generation, not a security vulnerability or security-relevant behavior.",
+    "verified_at": "2026-06-03T20:35:26.635188Z"
+  },
+  "fastapi/fastapi/issue/5773": {
+    "status": "rejected",
+    "note": "Browser/Fetch API constraint on forbidden headers, not a project security vulnerability or security-relevant framework behavior.",
+    "verified_at": "2026-06-03T20:37:03.340240Z"
+  },
+  "fastapi/fastapi/issue/5756": {
+    "status": "rejected",
+    "note": "a runtime attribute bug in FastAPI\u2019s OpenAPI generator, not a security issue.",
+    "verified_at": "2026-06-03T20:38:11.133459Z"
+  },
+  "fastapi/fastapi/issue/5723": {
+    "status": "accepted",
+    "note": "Security-relevant dependency injection caching behavior where OAuth2 scopes affect FastAPI dependency resolution keys.",
+    "verified_at": "2026-06-03T20:39:03.933513Z"
+  },
+  "fastapi/fastapi/issue/5717": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T20:39:21.887780Z"
+  },
+  "fastapi/fastapi/issue/5676": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T20:39:32.084150Z"
+  },
+  "fastapi/fastapi/issue/5493": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T20:39:43.414739Z"
+  },
+  "fastapi/fastapi/issue/5484": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T20:40:03.267868Z"
+  },
+  "fastapi/fastapi/issue/5476": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T20:40:14.484142Z"
+  },
+  "fastapi/fastapi/issue/5386": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-03T20:40:30.755948Z"
+  },
+  "fastapi/fastapi/issue/5382": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T20:40:41.528857Z"
+  },
+  "fastapi/fastapi/issue/5334": {
+    "status": "accepted",
+    "note": "Accepted because the question is security-relevant (cookie storage failure caused by SameSite/Secure browser enforcement) and the answer is correctly grounded in MDN documentation with a concrete, accurate explanation of the SameSite=None + Secure requirement, making the Q/A pair both valid and useful for understanding real browser-enforced security behavior.",
+    "verified_at": "2026-06-03T20:41:35.748816Z"
+  },
+  "fastapi/fastapi/issue/5263": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T20:41:53.025651Z"
+  },
+  "fastapi/fastapi/issue/5229": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T20:42:05.753017Z"
+  },
+  "fastapi/fastapi/issue/5177": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-03T20:42:21.567150Z"
+  },
+  "fastapi/fastapi/issue/5086": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T20:42:48.505930Z"
+  },
+  "fastapi/fastapi/issue/5017": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-03T20:43:12.382622Z"
+  },
+  "fastapi/fastapi/issue/4990": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-03T20:43:33.884585Z"
+  },
+  "fastapi/fastapi/issue/4962": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-03T20:43:53.466214Z"
+  },
+  "fastapi/fastapi/issue/4946": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-03T20:44:09.300914Z"
+  },
+  "fastapi/fastapi/issue/4882": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T20:44:24.520523Z"
+  },
+  "fastapi/fastapi/issue/4845": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-03T20:44:35.731904Z"
+  },
+  "fastapi/fastapi/issue/4833": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-03T20:44:49.436748Z"
+  },
+  "fastapi/fastapi/issue/4768": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-03T20:45:20.700259Z"
+  },
+  "psf/requests/issue/7335": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T18:34:45.054021Z"
+  },
+  "psf/requests/issue/7247": {
+    "status": "accepted",
+    "note": "Accepted because the question raises a legitimate software supply-chain/security concern and the answer provides source-backed evidence of reproducibility and auditability.",
+    "verified_at": "2026-06-04T18:35:52.418202Z"
+  },
+  "psf/requests/issue/7209": {
+    "status": "accepted",
+    "note": "Accepted because the question concerns TLS/SNI-related behavior and the answer provides protocol-backed reasoning with concrete upstream references.",
+    "verified_at": "2026-06-04T18:36:16.940298Z"
+  },
+  "psf/requests/issue/7085": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T18:36:37.707873Z"
+  },
+  "psf/requests/issue/7035": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T18:37:02.366065Z"
+  },
+  "psf/requests/issue/7014": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T18:37:19.820108Z"
+  },
+  "psf/requests/issue/7013": {
+    "status": "accepted",
+    "note": "Accepted because the question involves a supply-chain integrity concern and the answer confirms resolution with a concrete fixed release version.",
+    "verified_at": "2026-06-04T18:37:35.595338Z"
+  },
+  "psf/requests/issue/6981": {
+    "status": "accepted",
+    "note": "Accepted because the question involves a security-relevant proxy leakage scenario and the answer provides correct, documented mitigation strategies grounded in Requests session proxy handling.",
+    "verified_at": "2026-06-04T18:38:33.578555Z"
+  },
+  "psf/requests/issue/6978": {
+    "status": "accepted",
+    "note": "Accepted because the question addresses TLS certificate chain validation and the answer provides a correct, implementation-level fix grounded in Python SSL security controls.",
+    "verified_at": "2026-06-04T18:38:59.597259Z"
+  },
+  "psf/requests/issue/6976": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T18:39:28.298269Z"
+  },
+  "psf/requests/issue/6974": {
+    "status": "accepted",
+    "note": "Accepted because the issue is a TLS certificate validation regression and the answer correctly anchors it to a CPython/OpenSSL change with a concrete reproduction path.",
+    "verified_at": "2026-06-04T18:40:05.963607Z"
+  },
+  "psf/requests/issue/6969": {
+    "status": "accepted",
+    "note": "Accepted because the question is about TLS hostname verification and the answer correctly identifies certificate misconfiguration with a concrete reference to correct implementation practices.",
+    "verified_at": "2026-06-04T18:47:30.925282Z"
+  },
+  "psf/requests/issue/6964": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T18:47:45.226877Z"
+  },
+  "psf/requests/issue/6952": {
+    "status": "accepted",
+    "note": "Accepted because the question is about CVE applicability to current versions and the answer correctly resolves it using explicit fixed-version references and authoritative clarification.",
+    "verified_at": "2026-06-04T18:48:00.433734Z"
+  },
+  "psf/requests/issue/6947": {
+    "status": "accepted",
+    "note": "Accepted because the issue is about TLS verification behavior and the answer gives a concrete, implementation-level fix tied to urllib3 handling.",
+    "verified_at": "2026-06-04T18:48:19.764016Z"
+  },
+  "psf/requests/issue/6946": {
+    "status": "accepted",
+    "note": "Accepted because the question is about CVE applicability and the answer clearly resolves scope using version-based security policy and historical patch context.",
+    "verified_at": "2026-06-04T18:48:42.315140Z"
+  },
+  "psf/requests/issue/6945": {
+    "status": "accepted",
+    "note": "Accepted because the question concerns TLS verification inconsistency and the answer correctly identifies strict certificate validation rules with authoritative upstream references.",
+    "verified_at": "2026-06-04T18:49:04.984006Z"
+  },
+  "psf/requests/issue/6934": {
+    "status": "accepted",
+    "note": "Accepted because the issue is a dependency-induced TLS regression and the answer correctly confirms resolution via a specific patched release.",
+    "verified_at": "2026-06-04T18:49:33.692682Z"
+  },
+  "psf/requests/issue/6928": {
+    "status": "accepted",
+    "note": "Accepted because the issue is a credential-handling regression and the answer correctly traces the root cause and points to an upstream fix with a concrete patch.",
+    "verified_at": "2026-06-04T18:49:56.024070Z"
+  },
+  "psf/requests/issue/6877": {
+    "status": "accepted",
+    "note": "Accepted because the question concerns exception lifecycle/security API design and the answer provides explicit deprecation and documentation changes with concrete PRs.",
+    "verified_at": "2026-06-04T18:50:22.107423Z"
+  },
+  "psf/requests/issue/6872": {
+    "status": "accepted",
+    "note": "Accepted because the issue is a real multithreaded SSLContext safety problem and the answer provides a correct, practical isolation-based fix supported by SSL threading semantics.",
+    "verified_at": "2026-06-04T18:50:40.123913Z"
+  },
+  "psf/requests/issue/6868": {
+    "status": "accepted",
+    "note": "Accepted because the question concerns SSL verification failure diagnostics and the answer correctly identifies it as a resolved regression with a fixed release.",
+    "verified_at": "2026-06-04T18:51:09.032319Z"
+  },
+  "psf/requests/issue/6859": {
+    "status": "accepted",
+    "note": "Accepted because the issue is a valid documentation/security-configuration clarification and the answer provides an explicit PR-based fix.",
+    "verified_at": "2026-06-04T18:51:56.495827Z"
+  },
+  "psf/requests/issue/6831": {
+    "status": "accepted",
+    "note": "Accepted because the issue is a valid TLS cipher regression after dependency upgrade and the answer correctly attributes it to urllib3 2.x removal of DEFAULT_CIPHERS.",
+    "verified_at": "2026-06-04T18:52:36.341684Z"
+  },
+  "psf/requests/issue/6815": {
+    "status": "accepted",
+    "note": "Accepted because the issue is environment-triggered SSL key logging behavior and the answer correctly identifies and resolves the root cause via configuration.",
+    "verified_at": "2026-06-04T18:53:09.981039Z"
+  },
+  "psf/requests/issue/6810": {
+    "status": "accepted",
+    "note": "Accepted because the question is a valid FIPS/MD5 compatibility issue and the answer correctly provides the standard usedforsecurity=False workaround used to restore HTTP Digest Auth functionality under FIPS constraints.",
+    "verified_at": "2026-06-04T18:54:13.629003Z"
+  },
+  "psf/requests/issue/6790": {
+    "status": "accepted",
+    "note": "Accepted because the issue is a valid SSLContext initialization concern and the answer correctly anchors the resolution in an upstream PR addressing the behavior.",
+    "verified_at": "2026-06-04T18:54:39.971739Z"
+  },
+  "psf/requests/issue/6784": {
+    "status": "accepted",
+    "note": "Accepted because the issue is a valid URL normalization regression affecting auth flows and the answer correctly attributes it to an upstream fix in urllib3.",
+    "verified_at": "2026-06-04T18:55:39.856799Z"
+  },
+  "psf/requests/issue/6764": {
+    "status": "accepted",
+    "note": "Accepted because the question concerns a valid permission/security regression and the answer correctly identifies its removal in Requests 2.32.5 as the fix.",
+    "verified_at": "2026-06-04T18:57:01.554397Z"
+  },
+  "psf/requests/issue/6745": {
+    "status": "accepted",
+    "note": "Accepted because the issue is a valid TLS-related segmentation fault and the answer correctly identifies the fixing PR as resolution evidence.",
+    "verified_at": "2026-06-04T18:58:34.853649Z"
+  },
+  "psf/requests/issue/6736": {
+    "status": "accepted",
+    "note": "Accepted because the issue is a valid TLS CA-loading regression and the answer correctly provides version-based and explicit CA-loading fixes.",
+    "verified_at": "2026-06-04T18:58:53.283638Z"
+  },
+  "psf/requests/issue/6733": {
+    "status": "accepted",
+    "note": "Accepted because the issue is a valid security-driven API regression and the answer correctly links it to the CVE fix and its compatibility workaround.",
+    "verified_at": "2026-06-04T18:59:09.878636Z"
+  },
+  "psf/requests/issue/6726": {
+    "status": "accepted",
+    "note": "Accepted because the issue is a valid SSL context isolation/security regression and the answer provides a concrete fix commit addressing the certificate handling bug.",
+    "verified_at": "2026-06-04T19:44:44.069168Z"
+  },
+  "psf/requests/issue/6717": {
+    "status": "accepted",
+    "note": "Accepted because the question concerns a legitimate SSLContext behavior change and the answer provides a correct adapter-based fix aligned with Requests internals.",
+    "verified_at": "2026-06-04T19:45:06.184991Z"
+  },
+  "psf/requests/issue/6715": {
+    "status": "accepted",
+    "note": "Accepted because the question is about TLS adapter compatibility after a security-related upgrade and the answer confirms stable behavior in 2.32.3 with correct migration guidance.",
+    "verified_at": "2026-06-04T19:45:38.699379Z"
+  },
+  "psf/requests/issue/6707": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:45:54.296197Z"
+  },
+  "psf/requests/issue/6706": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:46:03.070283Z"
+  },
+  "psf/requests/issue/6690": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:46:13.629293Z"
+  },
+  "psf/requests/issue/6669": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:46:25.619382Z"
+  },
+  "psf/requests/issue/6660": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:46:41.393622Z"
+  },
+  "psf/requests/issue/6628": {
+    "status": "rejected",
+    "note": "Rejected because although the question is valid, the answer only references a PR without confirming a fix or providing technical validation or resolution status.",
+    "verified_at": "2026-06-04T19:47:02.673615Z"
+  },
+  "psf/requests/issue/6616": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:47:16.483956Z"
+  },
+  "psf/requests/issue/6569": {
+    "status": "rejected",
+    "note": "Rejected because the answer is off-topic relative to the SSL error and does not establish a clear technical connection or resolution.",
+    "verified_at": "2026-06-04T19:47:33.846968Z"
+  },
+  "pyca/cryptography/issue/14733": {
+    "status": "rejected",
+    "note": "Rejected because although the workaround is relevant, the answer lacks clear causal explanation and direct validation of the ARM/OpenSSL/Docker interaction causing the crash.",
+    "verified_at": "2026-06-04T19:50:02.633186Z"
+  },
+  "pyca/cryptography/issue/14709": {
+    "status": "rejected",
+    "note": "Rejected because the answer is only a doc link and does not provide actionable guidance or explain how to perform the requested hashing/signing task.",
+    "verified_at": "2026-06-04T19:50:31.878565Z"
+  },
+  "pyca/cryptography/issue/14690": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:50:49.411322Z"
+  },
+  "pyca/cryptography/issue/14592": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:50:58.245749Z"
+  },
+  "pyca/cryptography/issue/14477": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:51:07.311314Z"
+  },
+  "pyca/cryptography/issue/14334": {
+    "status": "accepted",
+    "note": "Accepted because the question is a valid ECC compatibility regression and the answer correctly redirects to the upstream fix PR.",
+    "verified_at": "2026-06-04T19:51:42.464718Z"
+  },
+  "pyca/cryptography/issue/14207": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:51:53.586377Z"
+  },
+  "pyca/cryptography/issue/14173": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:52:08.733939Z"
+  },
+  "pyca/cryptography/issue/14073": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T19:52:18.477257Z"
+  },
+  "pyca/cryptography/issue/14048": {
+    "status": "accepted",
+    "note": "Accepted because the question is a valid TLS/DH performance/security issue and the answer correctly links it to a known fix in LibreSSL.",
+    "verified_at": "2026-06-04T19:52:35.365138Z"
+  },
+  "pyca/cryptography/issue/14013": {
+    "status": "accepted",
+    "note": "Accepted because the question is a valid ASN.1/RSA key parsing issue and the answer correctly points to the upstream fix commit.",
+    "verified_at": "2026-06-04T19:52:53.913953Z"
+  },
+  "pyca/cryptography/issue/13843": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:53:10.276336Z"
+  },
+  "pyca/cryptography/issue/13700": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:53:27.653663Z"
+  },
+  "pyca/cryptography/issue/13684": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:53:37.132799Z"
+  },
+  "pyca/cryptography/issue/13538": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:53:46.112233Z"
+  },
+  "pyca/cryptography/issue/13525": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T19:53:54.061682Z"
+  },
+  "pyca/cryptography/issue/13475": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:54:03.206634Z"
+  },
+  "pyca/cryptography/issue/13468": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:54:15.962201Z"
+  },
+  "pyca/cryptography/issue/13349": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:54:28.027008Z"
+  },
+  "pyca/cryptography/issue/13287": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:54:37.523874Z"
+  },
+  "pyca/cryptography/issue/13219": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:54:46.402764Z"
+  },
+  "pyca/cryptography/issue/13125": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:54:55.043945Z"
+  },
+  "pyca/cryptography/issue/13109": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:55:04.772901Z"
+  },
+  "pyca/cryptography/issue/13051": {
+    "status": "accepted",
+    "note": "Accepted because the question is a valid RFC 5280 compliance concern and the answer correctly analyzes the specification to confirm no explicit violation.",
+    "verified_at": "2026-06-04T19:55:49.505686Z"
+  },
+  "pyca/cryptography/issue/13034": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:56:04.516921Z"
+  },
+  "pyca/cryptography/issue/13030": {
+    "status": "accepted",
+    "note": "Accepted because the question is a valid cryptographic configuration issue and the answer correctly provides the appropriate lower-level API workaround.",
+    "verified_at": "2026-06-04T19:56:26.509110Z"
+  },
+  "pyca/cryptography/issue/13002": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:56:41.781543Z"
+  },
+  "pyca/cryptography/issue/12999": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:56:51.066727Z"
+  },
+  "pyca/cryptography/issue/12969": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:57:13.853408Z"
+  },
+  "pyca/cryptography/issue/12963": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:57:21.970970Z"
+  },
+  "pyca/cryptography/issue/12949": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:57:36.186064Z"
+  },
+  "pyca/cryptography/issue/12920": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:57:55.105379Z"
+  },
+  "pyca/cryptography/issue/12824": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:58:08.808813Z"
+  },
+  "pyca/cryptography/issue/12822": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T19:58:23.840329Z"
+  },
+  "pyca/cryptography/issue/12780": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:15:25.065509Z"
+  },
+  "pyca/cryptography/issue/12748": {
+    "status": "accepted",
+    "note": "Accepted because the question is a valid standards compliance concern and the answer clearly explains intentional leniency in parsing behavior.",
+    "verified_at": "2026-06-04T21:15:42.365823Z"
+  },
+  "pyca/cryptography/issue/12612": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:16:08.750297Z"
+  },
+  "pyca/cryptography/issue/12610": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:16:17.844349Z"
+  },
+  "pyca/cryptography/issue/12554": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:16:32.537683Z"
+  },
+  "pyca/cryptography/issue/12464": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:16:44.598157Z"
+  },
+  "pyca/cryptography/issue/12406": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:16:56.122575Z"
+  },
+  "pyca/cryptography/issue/12361": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:17:05.647891Z"
+  },
+  "pyca/cryptography/issue/12359": {
+    "status": "accepted",
+    "note": "Accepted because the question is a valid TLS/PKI workflow question and the answer correctly points to the appropriate standard library interface.",
+    "verified_at": "2026-06-04T21:18:05.912445Z"
+  },
+  "pyca/cryptography/issue/12332": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:18:41.390188Z"
+  },
+  "pyca/cryptography/issue/12301": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:19:26.591105Z"
+  },
+  "pyca/cryptography/issue/12258": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:19:40.954951Z"
+  },
+  "python-pillow/Pillow/issue/9600": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:23:58.129033Z"
+  },
+  "python-pillow/Pillow/issue/9579": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T21:24:12.253822Z"
+  },
+  "python-pillow/Pillow/issue/9439": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:24:21.208373Z"
+  },
+  "python-pillow/Pillow/issue/9361": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:24:29.754091Z"
+  },
+  "python-pillow/Pillow/issue/9295": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T21:24:40.755392Z"
+  },
+  "python-pillow/Pillow/issue/9178": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T21:25:08.456058Z"
+  },
+  "python-pillow/Pillow/issue/9162": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T21:25:26.483126Z"
+  },
+  "python-pillow/Pillow/issue/9079": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T21:25:45.310501Z"
+  },
+  "python-pillow/Pillow/issue/8935": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:25:59.641721Z"
+  },
+  "python-pillow/Pillow/issue/8706": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:26:09.329443Z"
+  },
+  "python-pillow/Pillow/issue/8669": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:26:19.869449Z"
+  },
+  "python-pillow/Pillow/issue/8546": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:26:28.938684Z"
+  },
+  "python-pillow/Pillow/issue/8439": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:26:48.250024Z"
+  },
+  "python-pillow/Pillow/issue/8405": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T21:26:59.025157Z"
+  },
+  "python-pillow/Pillow/issue/8363": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:27:09.536216Z"
+  },
+  "python-pillow/Pillow/issue/8073": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T21:27:22.731860Z"
+  },
+  "python-pillow/Pillow/issue/8047": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T21:27:32.957537Z"
+  },
+  "python-pillow/Pillow/issue/7910": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T21:27:50.478522Z"
+  },
+  "python-pillow/Pillow/issue/7876": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:28:04.994577Z"
+  },
+  "python-pillow/Pillow/issue/7873": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T21:28:15.393226Z"
+  },
+  "python-pillow/Pillow/issue/7626": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:28:23.989130Z"
+  },
+  "python-pillow/Pillow/issue/7518": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:28:41.484864Z"
+  },
+  "python-pillow/Pillow/issue/7504": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:28:54.293526Z"
+  },
+  "python-pillow/Pillow/issue/7485": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:29:05.065500Z"
+  },
+  "python-pillow/Pillow/issue/7454": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T21:29:17.364347Z"
+  },
+  "python-pillow/Pillow/issue/7391": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:29:43.962724Z"
+  },
+  "python-pillow/Pillow/issue/7390": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:29:54.569092Z"
+  },
+  "python-pillow/Pillow/issue/7361": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T21:30:41.745993Z"
+  },
+  "python-pillow/Pillow/issue/7179": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:30:57.151617Z"
+  },
+  "python-pillow/Pillow/issue/7137": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:31:22.667394Z"
+  },
+  "python-pillow/Pillow/issue/7042": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:31:38.479842Z"
+  },
+  "python-pillow/Pillow/issue/7031": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T21:32:19.433180Z"
+  },
+  "python-pillow/Pillow/issue/6963": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:32:30.754974Z"
+  },
+  "python-pillow/Pillow/issue/6955": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:33:40.709204Z"
+  },
+  "python-pillow/Pillow/issue/6687": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:34:04.842014Z"
+  },
+  "python-pillow/Pillow/issue/6665": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-04T21:34:19.320287Z"
+  },
+  "python-pillow/Pillow/issue/6495": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T21:34:31.225106Z"
+  },
+  "python-pillow/Pillow/issue/6407": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-04T21:34:55.679088Z"
+  },
+  "rails/rails/issue/57474": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:30:46.296367Z"
+  },
+  "rails/rails/issue/56869": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:31:32.446713Z"
+  },
+  "rails/rails/issue/56789": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-05T15:32:44.150012Z"
+  },
+  "rails/rails/issue/56736": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-05T15:33:11.145812Z"
+  },
+  "rails/rails/issue/56704": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:34:20.808619Z"
+  },
+  "rails/rails/issue/56684": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:34:36.501812Z"
+  },
+  "rails/rails/issue/56638": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:34:53.184123Z"
+  },
+  "rails/rails/issue/56452": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-05T15:35:18.880238Z"
+  },
+  "rails/rails/issue/56391": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:35:33.467175Z"
+  },
+  "rails/rails/issue/56158": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-05T15:35:49.819136Z"
+  },
+  "rails/rails/issue/56038": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-05T15:36:07.588226Z"
+  },
+  "rails/rails/issue/55886": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-05T15:36:25.427476Z"
+  },
+  "rails/rails/issue/55881": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:36:41.547761Z"
+  },
+  "rails/rails/issue/55866": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-05T15:37:04.247267Z"
+  },
+  "rails/rails/issue/55773": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:37:59.121497Z"
+  },
+  "rails/rails/issue/55764": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:38:19.108597Z"
+  },
+  "rails/rails/issue/55759": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:38:50.279644Z"
+  },
+  "rails/rails/issue/55528": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:39:14.741845Z"
+  },
+  "rails/rails/issue/55508": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-05T15:39:39.543322Z"
+  },
+  "rails/rails/issue/55460": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:42:22.108853Z"
+  },
+  "rails/rails/issue/55438": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:42:39.855599Z"
+  },
+  "rails/rails/issue/55423": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:44:20.479960Z"
+  },
+  "rails/rails/issue/55373": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:44:43.054648Z"
+  },
+  "rails/rails/issue/55245": {
+    "status": "accepted",
+    "note": "Addresses XSS risk in i18n interpolation via SafeBuffer-aware escaping and safe HTML output handling",
+    "verified_at": "2026-06-05T15:45:52.147228Z"
+  },
+  "rails/rails/issue/55219": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-05T15:46:12.411408Z"
+  },
+  "rails/rails/issue/55185": {
+    "status": "accepted",
+    "note": "ActiveRecord connection leaks are a resource exhaustion vulnerability affecting application availability, and the answer provides correct mitigation patterns",
+    "verified_at": "2026-06-05T15:46:40.825570Z"
+  },
+  "rails/rails/issue/55108": {
+    "status": "rejected",
+    "note": "interpreter segfault due to Ruby bug is a reliability/stability issue, not a security vulnerability",
+    "verified_at": "2026-06-05T15:47:07.895476Z"
+  },
+  "rails/rails/issue/54838": {
+    "status": "rejected",
+    "note": "CookieOverflow name/value boundary behavior is an implementation detail, not a security vulnerability",
+    "verified_at": "2026-06-05T15:47:40.031638Z"
+  },
+  "rails/rails/issue/54819": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:47:57.845505Z"
+  },
+  "rails/rails/issue/54778": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:48:18.340269Z"
+  },
+  "rails/rails/discussion/54773": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:48:34.783584Z"
+  },
+  "rails/rails/issue/54752": {
+    "status": "accepted",
+    "note": "Modifying ActiveStorage blob keys impacts secure token integrity and storage access safety, making this a security-relevant issue",
+    "verified_at": "2026-06-05T15:49:14.762782Z"
+  },
+  "rails/rails/issue/54595": {
+    "status": "accepted",
+    "note": "Warden failure_app reset affects authentication control flow and is security-relevant due to its impact on authentication handling integrity",
+    "verified_at": "2026-06-05T15:52:00.943215Z"
+  },
+  "rails/rails/issue/54534": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:52:24.857620Z"
+  },
+  "rails/rails/issue/54374": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:52:48.804901Z"
+  },
+  "rails/rails/issue/54357": {
+    "status": "accepted",
+    "note": "MessageVerifier key rotation callbacks are part of cryptographic security lifecycle handling, making this a security-relevant issue",
+    "verified_at": "2026-06-05T15:53:20.844745Z"
+  },
+  "rails/rails/issue/54343": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:53:46.710316Z"
+  },
+  "rails/rails/issue/54277": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T15:54:09.606574Z"
+  },
+  "rails/rails/issue/54139": {
+    "status": "accepted",
+    "note": "Unintended ActiveStorage initialization during asset precompilation can lead to secret exposure in CI/build environments, making this security-relevant",
+    "verified_at": "2026-06-05T15:54:42.849218Z"
+  },
+  "stripe/stripe-node/issue/2684": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:21:54.529563Z"
+  },
+  "stripe/stripe-node/issue/2665": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:22:13.683004Z"
+  },
+  "stripe/stripe-node/issue/2651": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:22:31.295899Z"
+  },
+  "stripe/stripe-node/issue/2534": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-05T23:22:51.602558Z"
+  },
+  "stripe/stripe-node/issue/2530": {
+    "status": "accepted",
+    "note": "Confirmed DoS vulnerability in dependency mitigated via patched qs version",
+    "verified_at": "2026-06-05T23:23:22.998295Z"
+  },
+  "stripe/stripe-node/issue/2369": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:23:51.040896Z"
+  },
+  "stripe/stripe-node/issue/2337": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:24:23.554966Z"
+  },
+  "stripe/stripe-node/issue/2223": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:24:41.263633Z"
+  },
+  "stripe/stripe-node/issue/2207": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:25:01.059406Z"
+  },
+  "stripe/stripe-node/issue/2124": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:25:25.617752Z"
+  },
+  "stripe/stripe-node/issue/2117": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:25:42.831452Z"
+  },
+  "stripe/stripe-node/issue/2078": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:25:59.984362Z"
+  },
+  "stripe/stripe-node/issue/2006": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:26:18.256387Z"
+  },
+  "stripe/stripe-node/issue/2004": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:26:55.708208Z"
+  },
+  "stripe/stripe-node/issue/1896": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:27:18.089776Z"
+  },
+  "stripe/stripe-node/issue/1886": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:27:45.908717Z"
+  },
+  "stripe/stripe-node/issue/1784": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:28:02.997089Z"
+  },
+  "stripe/stripe-node/issue/1778": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:28:22.545853Z"
+  },
+  "stripe/stripe-node/issue/1768": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:28:41.529935Z"
+  },
+  "stripe/stripe-node/issue/1645": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:29:02.050137Z"
+  },
+  "stripe/stripe-node/issue/1593": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:29:19.878533Z"
+  },
+  "stripe/stripe-node/issue/1577": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:31:07.442930Z"
+  },
+  "stripe/stripe-node/issue/1536": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:31:26.384269Z"
+  },
+  "stripe/stripe-node/issue/1517": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:31:44.935269Z"
+  },
+  "stripe/stripe-node/issue/1514": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:32:09.838133Z"
+  },
+  "stripe/stripe-node/issue/1504": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:32:31.555833Z"
+  },
+  "stripe/stripe-node/issue/1490": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-05T23:32:51.170695Z"
+  },
+  "stripe/stripe-node/issue/1428": {
+    "status": "accepted",
+    "note": "Security-relevant guidance on correct cryptographic webhook signature verification setup in Deno",
+    "verified_at": "2026-06-05T23:35:35.093850Z"
+  },
+  "stripe/stripe-node/issue/1356": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:36:34.212604Z"
+  },
+  "stripe/stripe-node/issue/1353": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:37:12.773457Z"
+  },
+  "stripe/stripe-node/issue/1294": {
+    "status": "accepted",
+    "note": "Security-relevant guidance on correct raw-body handling for webhook signature verification",
+    "verified_at": "2026-06-05T23:37:44.669618Z"
+  },
+  "stripe/stripe-node/issue/1286": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-05T23:38:10.411341Z"
+  },
+  "stripe/stripe-node/issue/1264": {
+    "status": "accepted",
+    "note": "Security-relevant guidance on PCI-driven restrictions for handling raw card data in Stripe SDK",
+    "verified_at": "2026-06-05T23:38:47.191865Z"
+  },
+  "stripe/stripe-node/issue/1254": {
+    "status": "accepted",
+    "note": "Security-relevant raw-body handling issue affecting webhook signature verification integrity",
+    "verified_at": "2026-06-05T23:39:28.168880Z"
+  },
+  "stripe/stripe-node/issue/1224": {
+    "status": "accepted",
+    "note": "security-relevant guidance on preventing sensitive PaymentIntent data exposure to client-side applications",
+    "verified_at": "2026-06-05T23:40:09.504874Z"
+  },
+  "stripe/stripe-node/issue/1214": {
+    "status": "accepted",
+    "note": "clear PCI compliance requirement enforcing tokenization instead of raw card data for Connect accounts",
+    "verified_at": "2026-06-05T23:40:49.093463Z"
+  },
+  "stripe/stripe-node/issue/1161": {
+    "status": "accepted",
+    "note": "security-relevant PCI compliance design decision restricting server-side raw card data handling",
+    "verified_at": "2026-06-05T23:42:12.500021Z"
+  },
+  "stripe/stripe-node/issue/1110": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-06T00:11:05.516805Z"
+  },
+  "stripe/stripe-node/issue/1085": {
+    "status": "accepted",
+    "note": "Security-relevant PCI compliance and secure token usage guidance",
+    "verified_at": "2026-06-06T00:11:34.513286Z"
+  },
+  "stripe/stripe-node/issue/1083": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-06T00:13:42.557530Z"
+  },
+  "stripe/stripe-node/issue/1067": {
+    "status": "accepted",
+    "note": "Security-relevant (webhook signature verification correctness and credential misuse risk)",
+    "verified_at": "2026-06-06T00:14:38.958990Z"
+  },
+  "stripe/stripe-node/issue/1043": {
+    "status": "accepted",
+    "note": "security-relevant (webhook payload integrity and signature verification correctness)",
+    "verified_at": "2026-06-06T00:15:50.118627Z"
+  },
+  "stripe/stripe-node/issue/1006": {
+    "status": "accepted",
+    "note": "Security-relevant (webhook signature verification broken by body parsing middleware)",
+    "verified_at": "2026-06-06T00:16:52.196190Z"
+  },
+  "stripe/stripe-node/issue/997": {
+    "status": "accepted",
+    "note": "Security-relevant (webhook signature verification and raw body handling in edge runtime)",
+    "verified_at": "2026-06-06T00:17:41.905586Z"
+  },
+  "stripe/stripe-node/issue/989": {
+    "status": "accepted",
+    "note": "Security-relevant (webhook signature verification depends on raw request body integrity)",
+    "verified_at": "2026-06-06T00:18:08.050801Z"
+  },
+  "stripe/stripe-node/issue/935": {
+    "status": "accepted",
+    "note": "security-relevant (OAuth credential misuse involving authorization code handling)",
+    "verified_at": "2026-06-06T00:18:31.792903Z"
+  },
+  "stripe/stripe-node/issue/932": {
+    "status": "accepted",
+    "note": "Security-relevant (webhook signature verification integrity depends on raw request body preservation)",
+    "verified_at": "2026-06-06T00:19:25.895335Z"
+  },
+  "urllib3/urllib3/issue/3745": {
+    "status": "accepted",
+    "note": "Confirmed security vulnerability with advisory and fix (redirect draining + attacker-controlled decompression).",
+    "verified_at": "2026-06-07T00:06:38.452373Z"
+  },
+  "urllib3/urllib3/issue/3734": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-07T00:07:00.482997Z"
+  },
+  "urllib3/urllib3/issue/3665": {
+    "status": "accepted",
+    "note": "Security-relevant (TLS certificate validation / X.509 verification behavior), with a mitigation tied to Python 3.13 verification changes.",
+    "verified_at": "2026-06-07T00:07:33.802914Z"
+  },
+  "urllib3/urllib3/issue/3640": {
+    "status": "accepted",
+    "note": "Directly addresses CVE applicability and mitigation/patchability for urllib3 2.2.0, which is clearly security-relevant.",
+    "verified_at": "2026-06-07T00:10:43.653850Z"
+  },
+  "urllib3/urllib3/issue/3632": {
+    "status": "accepted",
+    "note": "security-relevant due to HTTPS proxy TLS/SSL configuration and SSLContext handling, even though it is primarily a configuration issue rather than a vulnerability.",
+    "verified_at": "2026-06-07T17:10:53.686976Z"
+  },
+  "urllib3/urllib3/issue/3609": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-07T17:11:08.851577Z"
+  },
+  "urllib3/urllib3/issue/3608": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:11:30.961951Z"
+  },
+  "urllib3/urllib3/issue/3571": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-07T17:11:39.760848Z"
+  },
+  "urllib3/urllib3/issue/3542": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:12:10.500943Z"
+  },
+  "urllib3/urllib3/issue/3511": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:12:22.340156Z"
+  },
+  "urllib3/urllib3/issue/3465": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:12:32.111407Z"
+  },
+  "urllib3/urllib3/issue/3439": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-07T17:12:45.738762Z"
+  },
+  "urllib3/urllib3/issue/3432": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:12:56.071885Z"
+  },
+  "urllib3/urllib3/issue/3418": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:13:17.577296Z"
+  },
+  "urllib3/urllib3/issue/3374": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-07T17:13:27.534373Z"
+  },
+  "urllib3/urllib3/issue/3366": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:13:38.417370Z"
+  },
+  "urllib3/urllib3/issue/3352": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-07T17:14:15.961601Z"
+  },
+  "urllib3/urllib3/issue/3268": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:14:32.261722Z"
+  },
+  "urllib3/urllib3/issue/3201": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:14:44.577451Z"
+  },
+  "urllib3/urllib3/issue/3133": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:15:00.292678Z"
+  },
+  "urllib3/urllib3/issue/3111": {
+    "status": "accepted",
+    "note": "high-confidence security relevance due to TLS hardening bypass (DH parameter enforcement, cipher suite restrictions, and certificate verification weakening).",
+    "verified_at": "2026-06-07T17:15:27.016538Z"
+  },
+  "urllib3/urllib3/issue/3102": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:16:04.201562Z"
+  },
+  "urllib3/urllib3/issue/3081": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-07T17:17:20.652453Z"
+  },
+  "urllib3/urllib3/issue/3062": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:17:31.809536Z"
+  },
+  "urllib3/urllib3/issue/3053": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:17:42.742997Z"
+  },
+  "urllib3/urllib3/issue/3031": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:17:53.324153Z"
+  },
+  "urllib3/urllib3/issue/3020": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:18:05.534397Z"
+  },
+  "urllib3/urllib3/issue/3017": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-07T17:18:34.764206Z"
+  },
+  "urllib3/urllib3/issue/3016": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:20:47.435745Z"
+  },
+  "urllib3/urllib3/issue/3015": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:20:58.607703Z"
+  },
+  "urllib3/urllib3/issue/2982": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:21:11.513219Z"
+  },
+  "urllib3/urllib3/issue/2957": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:21:23.870983Z"
+  },
+  "urllib3/urllib3/issue/2955": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:21:35.797896Z"
+  },
+  "urllib3/urllib3/issue/2920": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:21:50.409207Z"
+  },
+  "urllib3/urllib3/issue/2915": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:22:02.019681Z"
+  },
+  "urllib3/urllib3/issue/2893": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:22:14.178448Z"
+  },
+  "urllib3/urllib3/issue/2886": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:22:26.999403Z"
+  },
+  "urllib3/urllib3/issue/2876": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-07T17:22:37.916053Z"
+  },
+  "urllib3/urllib3/issue/2867": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-07T17:22:51.318544Z"
+  },
+  "urllib3/urllib3/issue/2809": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:23:02.449436Z"
+  },
+  "urllib3/urllib3/issue/2802": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:23:16.038023Z"
+  },
+  "urllib3/urllib3/issue/2775": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:23:39.672144Z"
+  },
+  "urllib3/urllib3/issue/2700": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:23:59.655114Z"
+  },
+  "urllib3/urllib3/issue/2680": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-07T17:24:23.570933Z"
+  },
+  "tensorflow/tensorflow/issue/112207": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:47:17.757960Z"
+  },
+  "tensorflow/tensorflow/issue/107125": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:47:31.288075Z"
+  },
+  "tensorflow/tensorflow/issue/104359": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:47:40.096457Z"
+  },
+  "tensorflow/tensorflow/issue/104260": {
+    "status": "rejected",
+    "note": "false positive \u2014 malformed/invalid SparseTensor inputs caused sanitizer OOB warning; maintainer says SparseConcat is not the issue; input invariant violation, not security vulnerability",
+    "verified_at": "2026-06-09T18:48:00.182021Z"
+  },
+  "tensorflow/tensorflow/issue/104258": {
+    "status": "rejected",
+    "note": "false positive \u2014 invalid segment_ids violate documented constraints; GPU OOB write is a downstream effect of bad input, not a confirmed vulnerability or security-relevant bug",
+    "verified_at": "2026-06-09T18:48:22.921432Z"
+  },
+  "tensorflow/tensorflow/issue/104080": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:48:35.951437Z"
+  },
+  "tensorflow/tensorflow/issue/104079": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:48:43.163028Z"
+  },
+  "tensorflow/tensorflow/issue/104078": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:48:50.115476Z"
+  },
+  "tensorflow/tensorflow/issue/104076": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:49:03.587366Z"
+  },
+  "tensorflow/tensorflow/issue/102490": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:49:11.010201Z"
+  },
+  "tensorflow/tensorflow/issue/101746": {
+    "status": "rejected",
+    "note": "reject \u2014 GPU architecture/driver PTX incompatibility (Blackwell RTX 5080); tracking issue pointer and JIT/XLA workaround are compatibility guidance, not security vulnerability content",
+    "verified_at": "2026-06-09T18:49:28.010034Z"
+  },
+  "tensorflow/tensorflow/issue/101397": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:49:41.047528Z"
+  },
+  "tensorflow/tensorflow/issue/99592": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:50:05.205931Z"
+  },
+  "tensorflow/tensorflow/issue/98996": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:50:14.973190Z"
+  },
+  "tensorflow/tensorflow/issue/97941": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:50:22.622640Z"
+  },
+  "tensorflow/tensorflow/issue/97165": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:50:28.898498Z"
+  },
+  "tensorflow/tensorflow/issue/94709": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:50:35.824451Z"
+  },
+  "tensorflow/tensorflow/issue/87669": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:50:45.388119Z"
+  },
+  "tensorflow/tensorflow/issue/87468": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:50:51.811107Z"
+  },
+  "tensorflow/tensorflow/issue/86048": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:50:57.820848Z"
+  },
+  "tensorflow/tensorflow/issue/85174": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:51:05.967185Z"
+  },
+  "tensorflow/tensorflow/issue/84104": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:51:12.539760Z"
+  },
+  "tensorflow/tensorflow/issue/83379": {
+    "status": "rejected",
+    "note": "reject \u2014 CUDA/cuDNN compatibility crash on Manjaro resolved in tf-nightly/stable 2.20; installation/version guidance only, not a security vulnerability",
+    "verified_at": "2026-06-09T18:51:27.312080Z"
+  },
+  "tensorflow/tensorflow/issue/80951": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:51:41.356441Z"
+  },
+  "tensorflow/tensorflow/issue/80736": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:51:48.425237Z"
+  },
+  "tensorflow/tensorflow/issue/77843": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:51:53.883859Z"
+  },
+  "tensorflow/tensorflow/issue/76826": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T18:52:02.505462Z"
+  },
+  "magento/magento2/issue/40792": {
+    "status": "rejected",
+    "note": "reject \u2014 Magento customer grid indexing delay due to cron-based update mode; commit and release notes describe intended behavior change, not a security vulnerability",
+    "verified_at": "2026-06-09T19:49:34.181960Z"
+  },
+  "magento/magento2/issue/40785": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T19:49:45.459944Z"
+  },
+  "magento/magento2/issue/40762": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T19:49:53.335025Z"
+  },
+  "magento/magento2/issue/40616": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T19:50:16.883439Z"
+  },
+  "magento/magento2/issue/40591": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T19:50:33.373242Z"
+  },
+  "magento/magento2/issue/40568": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T19:50:42.308257Z"
+  },
+  "magento/magento2/issue/40551": {
+    "status": "rejected",
+    "note": "reject \u2014 sri-hashes.json race condition is a deployment/build integrity issue; response only states commit closure without verified security impact or detailed fix validation",
+    "verified_at": "2026-06-09T19:50:49.787515Z"
+  },
+  "magento/magento2/issue/40548": {
+    "status": "rejected",
+    "note": "reject \u2014 Magento REST product query slowdown is a database indexing/performance regression; fix is a query optimization (new index in 2.4.9), not a security vulnerability",
+    "verified_at": "2026-06-09T19:51:19.306458Z"
+  },
+  "magento/magento2/issue/40521": {
+    "status": "rejected",
+    "note": "reject \u2014 customer city field disallowed character validation is a functional input validation rule fix (AC-16504 commit reference), not a confirmed security vulnerability or exploit",
+    "verified_at": "2026-06-09T19:51:44.712747Z"
+  },
+  "magento/magento2/issue/40520": {
+    "status": "rejected",
+    "note": "reject \u2014 Magento MediaStorage nginx try_files / get.php routing behavior; response only confirms non-reproducibility in latest develop, no validated security vulnerability or exploit",
+    "verified_at": "2026-06-09T19:52:15.304938Z"
+  },
+  "magento/magento2/issue/40492": {
+    "status": "rejected",
+    "note": "reject \u2014 reported DivisionByZeroError in credit memo tax calculation was not reproducible by maintainer; no confirmed security vulnerability or exploitable condition established",
+    "verified_at": "2026-06-09T19:52:46.819870Z"
+  },
+  "magento/magento2/issue/40474": {
+    "status": "rejected",
+    "note": "reject \u2014 Magento FPC identifier change (IdentifierForSave vs Identifier) is a cache behavior/DI configuration issue; no confirmed customer data leakage or security vulnerability demonstrated",
+    "verified_at": "2026-06-09T19:53:20.735263Z"
+  },
+  "magento/magento2/issue/40437": {
+    "status": "rejected",
+    "note": "reject \u2014 SQL injection report in Magento collection filters is still in triage stage; response only requests reproduction details without confirming vulnerability or fix",
+    "verified_at": "2026-06-09T19:53:44.197099Z"
+  },
+  "magento/magento2/issue/40394": {
+    "status": "rejected",
+    "note": "reject \u2014 USPS OAuth token caching/backport AC-15210 is a performance/API efficiency patch for rate limiting, not a confirmed security vulnerability or exploit",
+    "verified_at": "2026-06-09T19:53:59.993059Z"
+  },
+  "magento/magento2/issue/40351": {
+    "status": "rejected",
+    "note": "reject \u2014 Magento PayPal_Braintree SalesOrderGridPlugin SQL rewrite causes invalid query; resolved by KB KA-27163 patch, but no confirmed security vulnerability or exploit scenario",
+    "verified_at": "2026-06-09T19:54:25.454534Z"
+  },
+  "magento/magento2/issue/40346": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-09T19:54:55.696302Z"
+  },
+  "magento/magento2/issue/40309": {
+    "status": "rejected",
+    "note": "reject \u2014 Magento sales_email disabled flag incorrectly ignored; fixed in AC-16059 (2.4.9-beta1), but no demonstrated security vulnerability or exploit impact",
+    "verified_at": "2026-06-09T19:55:16.282601Z"
+  },
+  "magento/magento2/issue/40308": {
+    "status": "rejected",
+    "note": "reject \u2014 Magento UPS SOAP integration deprecation and OAuth2 migration is a platform upgrade requirement, not a confirmed security vulnerability or exploit scenario",
+    "verified_at": "2026-06-09T19:55:37.432665Z"
+  },
+  "magento/magento2/issue/40304": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T19:55:48.934630Z"
+  },
+  "magento/magento2/issue/40297": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T19:55:54.223323Z"
+  },
+  "magento/magento2/issue/40287": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T19:56:06.289860Z"
+  },
+  "magento/magento2/issue/40270": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T19:56:16.491733Z"
+  },
+  "magento/magento2/issue/40247": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T19:56:29.788993Z"
+  },
+  "magento/magento2/issue/40241": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T19:56:54.172955Z"
+  },
+  "magento/magento2/issue/40236": {
+    "status": "accepted",
+    "note": "borderline: deployment pipeline regression affecting checkout rendering, but lacks confirmed security impact or official fix anchor; patch is user-proposed, not validated upstream fix; security framing (SRI regression) is plausible but not substantiated as vulnerability class",
+    "verified_at": "2026-06-09T19:59:14.138522Z"
+  },
+  "magento/magento2/issue/40230": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T19:59:50.333076Z"
+  },
+  "magento/magento2/issue/40226": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-09T20:00:24.843781Z"
+  },
+  "magento/magento2/issue/40211": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T20:00:34.647033Z"
+  },
+  "magento/magento2/issue/40190": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-09T20:00:52.843821Z"
+  },
+  "magento/magento2/issue/40189": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T20:01:13.714124Z"
+  },
+  "magento/magento2/issue/40187": {
+    "status": "accepted",
+    "note": "This is a clear functional correctness + inventory integrity issue exposed via GraphQL, which is security-relevant in e-commerce contexts (incorrect stock visibility can affect ordering logic and system trust boundaries).",
+    "verified_at": "2026-06-09T20:01:47.343649Z"
+  },
+  "magento/magento2/issue/40165": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T20:02:05.509526Z"
+  },
+  "magento/magento2/issue/40154": {
+    "status": "accepted",
+    "note": "This is a clear object state integrity bug in core order/invoice workflow, which can lead to incorrect business logic execution (order object being mutated into invoice state).",
+    "verified_at": "2026-06-09T20:02:33.383957Z"
+  },
+  "magento/magento2/issue/40146": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T20:02:51.724373Z"
+  },
+  "magento/magento2/issue/40138": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T20:05:17.464361Z"
+  },
+  "magento/magento2/issue/40120": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-09T20:06:06.663430Z"
+  },
+  "magento/magento2/issue/40117": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-09T20:06:36.843134Z"
+  },
+  "magento/magento2/issue/40102": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T20:07:22.891657Z"
+  },
+  "magento/magento2/issue/40099": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-09T20:07:39.491907Z"
+  },
+  "magento/magento2/issue/40093": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-09T20:08:04.940256Z"
+  },
+  "magento/magento2/issue/40044": {
+    "status": "accepted",
+    "note": "Clear security-relevant data integrity issue (store-view label overwrite) with valid Jira anchor AC-15208 and versioned fix target (2.4.9-alpha3); answer consistently maps issue to resolved internal ticket and release.",
+    "verified_at": "2026-06-09T20:08:34.436069Z"
+  },
+  "magento/magento2/issue/40039": {
+    "status": "accepted",
+    "note": "Security-relevant stale full-page cache issue after login with clear reproducible behavior; answer is anchored to PR #40008 and linked issue #40007, and provides a concrete patch-based resolution signal consistent with Magento fix workflows.",
+    "verified_at": "2026-06-09T20:09:04.695371Z"
+  },
+  "magento/magento2/issue/40029": {
+    "status": "accepted",
+    "note": "Clear security-relevant REST API authorization bypass (cross-website product add-to-cart and order placement); properly anchored with internal Jira AC-15054, related commits reference, and fixed version 2.4.9-alpha3, with consistent reproduction-to-fix mapping.",
+    "verified_at": "2026-06-09T20:09:32.476948Z"
+  },
+  "magento/magento2/issue/40028": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T20:09:49.910252Z"
+  },
+  "magento/magento2/issue/40021": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T20:10:00.072933Z"
+  },
+  "magento/magento2/issue/40019": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T20:10:30.229912Z"
+  },
+  "magento/magento2/issue/40006": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T20:10:41.618676Z"
+  },
+  "magento/magento2/issue/40002": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T20:10:53.768765Z"
+  },
+  "magento/magento2/issue/39995": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-09T20:11:10.263042Z"
+  },
+  "magento/magento2/issue/39994": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-09T20:11:34.661342Z"
+  },
+  "jenkinsci/jenkins/issue/26822": {
+    "status": "rejected",
+    "note": "This is a feature request / architectural security discussion, not a concrete security issue in Jenkins. The answer is security-aware (restrict to admin-only controllers because of risk), but it is opinion/guidance without a concrete fix anchor (no CVE, advisory, commit, or implemented change).",
+    "verified_at": "2026-06-10T01:31:19.527481Z"
+  },
+  "jenkinsci/jenkins/issue/26851": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T01:31:59.113173Z"
+  },
+  "jenkinsci/jenkins/issue/26810": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T01:32:40.205036Z"
+  },
+  "jenkinsci/jenkins/issue/26750": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T01:32:45.321540Z"
+  },
+  "jenkinsci/jenkins/issue/26716": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T01:33:09.590001Z"
+  },
+  "jenkinsci/jenkins/issue/26693": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T01:33:32.382833Z"
+  },
+  "jenkinsci/jenkins/issue/26592": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T01:33:52.169341Z"
+  },
+  "jenkinsci/jenkins/issue/26563": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T01:34:18.485624Z"
+  },
+  "jenkinsci/jenkins/issue/26507": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T01:35:34.978743Z"
+  },
+  "jenkinsci/jenkins/issue/26489": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T01:36:16.898173Z"
+  },
+  "jenkinsci/jenkins/issue/26204": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T01:36:43.140583Z"
+  },
+  "jenkinsci/jenkins/issue/26196": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T01:37:19.775958Z"
+  },
+  "jenkinsci/jenkins/issue/26097": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T01:38:05.807261Z"
+  },
+  "jenkinsci/jenkins/issue/26027": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T01:38:43.336960Z"
+  },
+  "jenkinsci/jenkins/issue/25958": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T01:39:02.959336Z"
+  },
+  "jenkinsci/jenkins/issue/25903": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T01:39:22.873575Z"
+  },
+  "kubernetes/kubernetes/issue/139515": {
+    "status": "accepted",
+    "note": "borderline: reliability/availability issue but security-relevant due to cluster-wide kube-proxy sync failure; answer well-anchored via nft reproduction and 128-char limit evidence",
+    "verified_at": "2026-06-10T16:18:23.937298Z"
+  },
+  "kubernetes/kubernetes/issue/139391": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:18:44.545300Z"
+  },
+  "kubernetes/kubernetes/issue/139389": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:18:56.809669Z"
+  },
+  "kubernetes/kubernetes/issue/139263": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:19:06.311563Z"
+  },
+  "kubernetes/kubernetes/issue/139069": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:19:20.892940Z"
+  },
+  "kubernetes/kubernetes/issue/139044": {
+    "status": "accepted",
+    "note": "accept \u2014 scheduler data race confirmed fixed via PR #139057 with supporting CI run evidence; concurrency correctness issue with security-adjacent implications (race condition in core scheduling path)",
+    "verified_at": "2026-06-10T16:19:38.355416Z"
+  },
+  "kubernetes/kubernetes/issue/138962": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:19:54.933913Z"
+  },
+  "kubernetes/kubernetes/issue/138952": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:20:01.275596Z"
+  },
+  "kubernetes/kubernetes/issue/138936": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:20:17.771626Z"
+  },
+  "kubernetes/kubernetes/issue/138826": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:20:52.190651Z"
+  },
+  "kubernetes/kubernetes/issue/138763": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:21:01.022895Z"
+  },
+  "kubernetes/kubernetes/issue/138707": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:22:12.504404Z"
+  },
+  "kubernetes/kubernetes/issue/138689": {
+    "status": "accepted",
+    "note": "accept \u2014 security-relevant workload identity/token rotation behavior in kubelet; well-anchored in specific kubelet token manager code and explains retry semantics under transient failures",
+    "verified_at": "2026-06-10T16:22:25.122016Z"
+  },
+  "kubernetes/kubernetes/issue/138607": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:22:36.425705Z"
+  },
+  "kubernetes/kubernetes/issue/138595": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:22:42.351242Z"
+  },
+  "kubernetes/kubernetes/issue/138556": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:22:56.119097Z"
+  },
+  "kubernetes/kubernetes/issue/138534": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:23:02.714012Z"
+  },
+  "kubernetes/kubernetes/issue/138489": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:23:12.971849Z"
+  },
+  "kubernetes/kubernetes/issue/138461": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:23:25.404674Z"
+  },
+  "kubernetes/kubernetes/issue/138436": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:23:32.492462Z"
+  },
+  "kubernetes/kubernetes/issue/138431": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:23:38.623575Z"
+  },
+  "kubernetes/kubernetes/issue/138402": {
+    "status": "accepted",
+    "note": "accept \u2014 kubelet/containerd CPU stats edge case (zero UsageNanoCores) affects resource reporting correctness; well-anchored in containerd issues #13138/#12629 and Kubernetes PR #138423 with explicit fallback fix",
+    "verified_at": "2026-06-10T16:23:55.452359Z"
+  },
+  "kubernetes/kubernetes/issue/138374": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:24:04.526892Z"
+  },
+  "kubernetes/kubernetes/issue/138329": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:24:16.956124Z"
+  },
+  "kubernetes/kubernetes/issue/138315": {
+    "status": "accepted",
+    "note": "accept \u2014 CVE applicability analysis correctly determined as non-exploitable in Kubernetes due to unsupported BSD/Solaris platform scope; well-anchored in OpenTelemetry source and Kubernetes platform support policy",
+    "verified_at": "2026-06-10T16:25:25.502815Z"
+  },
+  "kubernetes/kubernetes/issue/138225": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:25:39.482052Z"
+  },
+  "kubernetes/kubernetes/issue/138073": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:25:53.027552Z"
+  },
+  "kubernetes/kubernetes/issue/137915": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:27:11.510597Z"
+  },
+  "kubernetes/kubernetes/issue/137912": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:27:19.021132Z"
+  },
+  "kubernetes/kubernetes/issue/137895": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:27:27.192849Z"
+  },
+  "kubernetes/kubernetes/issue/137894": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:27:34.368277Z"
+  },
+  "kubernetes/kubernetes/issue/137893": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:27:42.006289Z"
+  },
+  "kubernetes/kubernetes/issue/137891": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:27:50.321568Z"
+  },
+  "kubernetes/kubernetes/issue/137886": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:28:00.004552Z"
+  },
+  "kubernetes/kubernetes/issue/137855": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:28:08.764138Z"
+  },
+  "kubernetes/kubernetes/issue/137853": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:28:21.190920Z"
+  },
+  "kubernetes/kubernetes/issue/137842": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:28:35.633647Z"
+  },
+  "kubernetes/kubernetes/issue/137841": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:28:45.056393Z"
+  },
+  "kubernetes/kubernetes/issue/137797": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:28:52.298046Z"
+  },
+  "kubernetes/kubernetes/issue/137782": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:29:01.877453Z"
+  },
+  "kubernetes/kubernetes/issue/137758": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:29:11.062375Z"
+  },
+  "kubernetes/kubernetes/issue/137737": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:29:24.382650Z"
+  },
+  "kubernetes/kubernetes/issue/137724": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:30:54.890855Z"
+  },
+  "kubernetes/kubernetes/issue/137705": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:31:04.551902Z"
+  },
+  "kubernetes/kubernetes/issue/137697": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:31:11.149723Z"
+  },
+  "kubernetes/kubernetes/issue/137686": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:31:18.588576Z"
+  },
+  "kubernetes/kubernetes/issue/137618": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:31:30.738004Z"
+  },
+  "kubernetes/kubernetes/issue/137617": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:31:54.532514Z"
+  },
+  "kubernetes/kubernetes/issue/137560": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T16:32:02.586910Z"
+  },
+  "kubernetes/kubernetes/issue/137459": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T16:32:14.870761Z"
+  },
+  "ImageMagick/ImageMagick/issue/8707": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:49:52.952571Z"
+  },
+  "ImageMagick/ImageMagick/issue/8706": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:49:59.175490Z"
+  },
+  "ImageMagick/ImageMagick/issue/8690": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T19:50:07.151777Z"
+  },
+  "ImageMagick/ImageMagick/issue/8609": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:50:12.664744Z"
+  },
+  "ImageMagick/ImageMagick/issue/8584": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T19:50:25.518366Z"
+  },
+  "ImageMagick/ImageMagick/issue/8582": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T19:50:38.383334Z"
+  },
+  "ImageMagick/ImageMagick/issue/8574": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:50:46.402538Z"
+  },
+  "ImageMagick/ImageMagick/issue/8567": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T19:50:59.810167Z"
+  },
+  "ImageMagick/ImageMagick/issue/8557": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T19:51:07.256932Z"
+  },
+  "ImageMagick/ImageMagick/issue/8538": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T19:51:13.021688Z"
+  },
+  "ImageMagick/ImageMagick/issue/8535": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T19:51:19.539726Z"
+  },
+  "ImageMagick/ImageMagick/issue/8508": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T19:51:25.683944Z"
+  },
+  "ImageMagick/ImageMagick/issue/8494": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T19:51:43.631158Z"
+  },
+  "ImageMagick/ImageMagick/issue/8460": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:51:55.531886Z"
+  },
+  "ImageMagick/ImageMagick/issue/8440": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:52:03.289729Z"
+  },
+  "ImageMagick/ImageMagick/issue/8375": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:52:11.289592Z"
+  },
+  "ImageMagick/ImageMagick/issue/8318": {
+    "status": "accepted",
+    "note": "ImageMagick release integrity verification via SHA256 checksum comparison and digest.rdf reference; addresses supply-chain consistency and CI validation mismatch; accepted as security-relevant artifact integrity and verification response",
+    "verified_at": "2026-06-10T19:52:29.807233Z"
+  },
+  "ImageMagick/ImageMagick/issue/8301": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T19:53:00.601917Z"
+  },
+  "ImageMagick/ImageMagick/issue/8265": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:53:07.336506Z"
+  },
+  "ImageMagick/ImageMagick/issue/8255": {
+    "status": "accepted",
+    "note": "GHSA-cfh4-9f7v-fhrc advisory updated to include fixing commits; confirms security fix provenance recorded in official advisory metadata; accepted as valid security traceability update without explicit commit enumeration but authoritative advisory-level confirmation",
+    "verified_at": "2026-06-10T19:53:30.982850Z"
+  },
+  "ImageMagick/ImageMagick/issue/8239": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T19:53:41.162780Z"
+  },
+  "ImageMagick/ImageMagick/issue/8234": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:53:53.992802Z"
+  },
+  "ImageMagick/ImageMagick/issue/8186": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T19:54:01.394360Z"
+  },
+  "ImageMagick/ImageMagick/issue/8184": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T19:54:17.672327Z"
+  },
+  "ImageMagick/ImageMagick/issue/8149": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:54:30.710040Z"
+  },
+  "ImageMagick/ImageMagick/issue/8135": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:54:39.045675Z"
+  },
+  "ImageMagick/ImageMagick/issue/8124": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:54:55.154001Z"
+  },
+  "ImageMagick/ImageMagick/issue/8109": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:55:06.237164Z"
+  },
+  "ImageMagick/ImageMagick/issue/8038": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T19:55:14.690629Z"
+  },
+  "ImageMagick/ImageMagick/issue/8022": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T19:55:22.620542Z"
+  },
+  "ImageMagick/ImageMagick/issue/8013": {
+    "status": "accepted",
+    "note": "Ghostscript delegate default pngalpha rendering introduces alpha channel causing Fax/Group4 TIFF compression to be skipped in PDF rasterization pipeline; mitigated via delegates.xml device change to png16m; accepted as security-relevant image processing pipeline regression affecting compression behavior and external delegate trust boundary",
+    "verified_at": "2026-06-10T19:55:39.393292Z"
+  },
+  "ImageMagick/ImageMagick/issue/8003": {
+    "status": "accepted",
+    "note": "BMP parser incorrectly accepts negative biHeight for compressed formats violating BITMAPINFOHEADER specification; confirmed reproducible parsing validation issue with active patch scheduled for main branch and beta releases; accepted as security-relevant image parser input validation flaw",
+    "verified_at": "2026-06-10T19:56:02.273357Z"
+  },
+  "ImageMagick/ImageMagick/issue/7978": {
+    "status": "accepted",
+    "note": "SVG MSVG/XML renderer hang due to crafted input causing infinite processing loop leading to denial of service; confirmed reproducible and patched in main branch with beta release propagation; accepted as security-relevant resource exhaustion vulnerability in image parsing pipeline",
+    "verified_at": "2026-06-10T19:56:20.090074Z"
+  },
+  "ImageMagick/ImageMagick/issue/7947": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:56:40.688227Z"
+  },
+  "ImageMagick/ImageMagick/issue/7941": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T19:56:54.453657Z"
+  },
+  "ImageMagick/ImageMagick/issue/7881": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:57:04.311326Z"
+  },
+  "ImageMagick/ImageMagick/issue/7837": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T19:57:14.601695Z"
+  },
+  "ImageMagick/ImageMagick/issue/7832": {
+    "status": "accepted",
+    "note": "MNG parser memory exhaustion caused by malicious LOOP value leading to excessive frame allocation (up to 2^31 images); mitigated via policy.xml list-length resource cap; accepted as security-relevant resource exhaustion vulnerability in image decoding pipeline",
+    "verified_at": "2026-06-10T19:57:55.968043Z"
+  },
+  "ImageMagick/ImageMagick/issue/7825": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:58:07.015707Z"
+  },
+  "ImageMagick/ImageMagick/issue/7751": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:58:19.256821Z"
+  },
+  "ImageMagick/ImageMagick/issue/7724": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:59:19.228477Z"
+  },
+  "ImageMagick/ImageMagick/issue/7628": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T19:59:55.400892Z"
+  },
+  "ImageMagick/ImageMagick/issue/7616": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T20:00:10.077979Z"
+  },
+  "ImageMagick/ImageMagick/issue/7610": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T20:00:35.314108Z"
+  },
+  "ImageMagick/ImageMagick/issue/7568": {
+    "status": "accepted",
+    "note": "CVE-2024-41817 scoped as Linux AppImage-only issue affecting pre-7.1.1-36 builds; Windows binaries confirmed unaffected; accepted as security-relevant vulnerability applicability clarification with platform-specific false-positive determination",
+    "verified_at": "2026-06-10T20:00:48.981718Z"
+  },
+  "ImageMagick/ImageMagick/issue/7562": {
+    "status": "accepted",
+    "note": "SVG parser hang due to crafted input causing infinite CPU consumption during conversion pipeline; confirmed reproducible DoS condition with upstream patch scheduled for main branch and beta release inclusion; accepted as security-relevant resource exhaustion vulnerability in SVG processing pipeline",
+    "verified_at": "2026-06-10T20:01:29.932022Z"
+  },
+  "ImageMagick/ImageMagick/issue/7542": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T20:01:43.962794Z"
+  },
+  "ImageMagick/ImageMagick/issue/7521": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T20:01:54.420813Z"
+  },
+  "ImageMagick/ImageMagick/issue/7513": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-10T20:02:02.577510Z"
+  },
+  "ImageMagick/ImageMagick/issue/7446": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-10T20:02:23.570829Z"
+  },
+  "kubernetes/kubernetes/issue/137409": {
+    "status": "rejected",
+    "note": "Reject - regression bug in StatefulSet rollout logic; availability/recovery issue, not a security risk or vulnerability despite concrete version anchors",
+    "verified_at": "2026-06-19T22:17:41.105224Z"
+  },
+  "kubernetes/kubernetes/issue/137381": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-19T22:17:58.658662Z"
+  },
+  "kubernetes/kubernetes/issue/137367": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-19T22:18:07.659996Z"
+  },
+  "kubernetes/kubernetes/issue/137195": {
+    "status": "rejected",
+    "note": "reject - deflection response without confirming CVE applicability or providing a concrete fix verification despite CVE/version context",
+    "verified_at": "2026-06-19T22:18:26.627707Z"
+  },
+  "kubernetes/kubernetes/issue/136919": {
+    "status": "accepted",
+    "note": "accept - managedFields loss during webhook failure is security-relevant API state integrity issue; answer is well-anchored with code path and patch fix",
+    "verified_at": "2026-06-19T22:18:48.363062Z"
+  },
+  "kubernetes/kubernetes/issue/136910": {
+    "status": "accepted",
+    "note": "accept - confirmed kubelet restart regression fixed by specific commit with reproducible validation; well-anchored and directly answers fix applicability/backport question",
+    "verified_at": "2026-06-19T22:19:13.551467Z"
+  },
+  "kubernetes/kubernetes/issue/136899": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-19T22:19:25.670633Z"
+  },
+  "kubernetes/kubernetes/issue/136789": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-19T22:19:32.883389Z"
+  },
+  "kubernetes/kubernetes/issue/136680": {
+    "status": "accepted",
+    "note": "accept - valid CVE mitigation advisory with explicit fixed versions and direct upgrade guidance for DoS vulnerability in ingress-nginx",
+    "verified_at": "2026-06-19T22:19:50.317208Z"
+  },
+  "kubernetes/kubernetes/issue/136679": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-19T22:20:04.240211Z"
+  },
+  "kubernetes/kubernetes/issue/136678": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-19T22:20:14.259463Z"
+  },
+  "kubernetes/kubernetes/issue/136677": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-19T22:20:21.723612Z"
+  },
+  "kubernetes/kubernetes/issue/136338": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-19T22:20:27.913820Z"
+  },
+  "kubernetes/kubernetes/issue/136331": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-19T22:20:34.697541Z"
+  },
+  "kubernetes/kubernetes/issue/135858": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-19T22:20:43.092932Z"
+  },
+  "kubernetes/kubernetes/issue/135795": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-19T22:20:51.065978Z"
+  },
+  "kubernetes/kubernetes/issue/135661": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-19T22:20:58.643644Z"
+  },
+  "kubernetes/kubernetes/issue/135525": {
+    "status": "accepted",
+    "note": "accept - CVE-based SSRF vulnerability with explicit fixed version matrix and feature-gate mitigation; strong security relevance and concrete remediation guidance",
+    "verified_at": "2026-06-19T22:21:10.856314Z"
+  },
+  "kubernetes/kubernetes/issue/135459": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-19T22:21:28.260176Z"
+  },
+  "kubernetes/kubernetes/issue/135404": {
+    "status": "accepted",
+    "note": "accept - quota bypass in DRA is security-relevant resource accounting issue; answer is PR-anchored and confirms fix with direct resolution statement",
+    "verified_at": "2026-06-19T22:22:03.447332Z"
+  },
+  "kubernetes/kubernetes/issue/135384": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-19T22:22:39.042735Z"
+  },
+  "kubernetes/kubernetes/issue/135352": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-19T22:26:53.879766Z"
+  },
+  "kubernetes/kubernetes/issue/135333": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-19T22:27:03.543659Z"
+  },
+  "kubernetes/kubernetes/issue/135329": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-19T22:27:13.378520Z"
+  },
+  "kubernetes/kubernetes/issue/135083": {
+    "status": "accepted",
+    "note": "accept - Go stdlib CVE mitigation confirmed via .go-version bump and commit reference; clear supply-chain security relevance with concrete version resolution",
+    "verified_at": "2026-06-19T22:27:29.558854Z"
+  },
+  "kubernetes/kubernetes/issue/134998": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-23T18:50:05.124835Z"
+  },
+  "kubernetes/kubernetes/issue/134929": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-19T22:27:53.251879Z"
+  },
+  "kubernetes/kubernetes/issue/134884": {
+    "status": "accepted",
+    "note": "accept - kube-proxy hairpin SNAT behavior is clearly explained with concrete packet flow logic and sysctl dependency; strong implementation-level networking grounding",
+    "verified_at": "2026-06-19T22:28:26.522998Z"
+  },
+  "kubernetes/kubernetes/issue/134789": {
+    "status": "accepted",
+    "note": "Accept - DRA ResourceClaim config attribution bug is security-relevant due to potential misrouting; answer clearly states cross-version impact and backport necessity",
+    "verified_at": "2026-06-19T22:28:51.632278Z"
+  },
+  "kubernetes/kubernetes/issue/134482": {
+    "status": "accepted",
+    "note": "accept - DRA ResourceHealthStatus bug confirmed with explicit fix PR and corrected claim-name logic; strong implementation-level anchoring and validation via added e2e tests",
+    "verified_at": "2026-06-19T22:29:13.395120Z"
+  },
+  "kubernetes/kubernetes/issue/134343": {
+    "status": "accepted",
+    "note": "accept - consistent-read cache issue correctly tied to etcd version bug; concrete fixed version (3.5.13+) and authoritative Kubernetes documentation support",
+    "verified_at": "2026-06-19T22:29:42.917094Z"
+  },
+  "kubernetes/kubernetes/issue/134215": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-19T22:29:55.843594Z"
+  },
+  "kubernetes/kubernetes/issue/134141": {
+    "status": "accepted",
+    "note": "accept - cgroup memory.high PSI metric reproduction issue is well-anchored with PR evidence and runtime validation; clear kubelet/CRI-O behavior explanation with working workaround",
+    "verified_at": "2026-06-19T22:30:09.561930Z"
+  },
+  "kubernetes/kubernetes/issue/134063": {
+    "status": "accepted",
+    "note": "accept - CVE-2025-9708 is a valid MITM vulnerability with clear fixed version (v17.0.14) and authoritative security advisory confirming remediation",
+    "verified_at": "2026-06-19T22:30:51.349144Z"
+  },
+  "kubernetes/kubernetes/issue/133897": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-19T22:31:12.358442Z"
+  },
+  "kubernetes/kubernetes/issue/133861": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-19T22:31:21.514913Z"
+  },
+  "kubernetes/kubernetes/issue/133764": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-19T22:31:29.769264Z"
+  },
+  "kubernetes/kubernetes/issue/133689": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-19T22:31:42.292449Z"
+  },
+  "kubernetes/kubernetes/issue/133671": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-19T22:31:50.084935Z"
+  },
+  "kubernetes/kubernetes/issue/133561": {
+    "status": "accepted",
+    "note": "accept - Go CVE deemed non-impacting and already mitigated via Go version bump; confirmed via release PRs and maintainer statement",
+    "verified_at": "2026-06-19T22:32:02.568308Z"
+  },
+  "kubernetes/kubernetes/issue/133532": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-19T22:32:15.405966Z"
+  },
+  "kubernetes/kubernetes/issue/133515": {
+    "status": "accepted",
+    "note": "accept - kubectl exec RBAC semantics clarified via PR 134577; create permission requirement restored in 1.35+, preventing perceived downgrade in authorization boundary",
+    "verified_at": "2026-06-19T22:33:37.066885Z"
+  },
+  "kubernetes/kubernetes/issue/133488": {
+    "status": "accepted",
+    "note": "accept - device plugin resource cleanup issue confirmed as kubelet bug; behavior grounded in Device Plugin KEP expectations for capacity/allocatable consistency",
+    "verified_at": "2026-06-19T22:34:30.899520Z"
+  },
+  "kubernetes/kubernetes/issue/133478": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-23T18:53:19.843761Z"
+  },
+  "kubernetes/kubernetes/issue/133471": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-19T22:37:58.620792Z"
+  },
+  "kubernetes/kubernetes/issue/133441": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-19T22:38:07.006719Z"
+  },
+  "kubernetes/kubernetes/issue/133405": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-19T22:38:14.398611Z"
+  },
+  "kubernetes/kubernetes/issue/133365": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-19T22:38:22.203287Z"
+  },
+  "kubernetes/kubernetes/issue/133361": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-19T22:38:30.683777Z"
+  },
+  "kubernetes/kubernetes/issue/133115": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-19T22:38:40.043940Z"
+  },
+  "hashicorp/terraform/issue/38695": {
+    "status": "accepted",
+    "note": "accept - Terraform null module source panic confirmed fixed with clear release boundary (1.15.6) and maintainer confirmation of resolution",
+    "verified_at": "2026-06-20T02:07:00.158905Z"
+  },
+  "hashicorp/terraform/issue/38694": {
+    "status": "accepted",
+    "note": "accept - sensitive module-source panic confirmed fixed in Terraform 1.15.6 with maintainer confirmation of resolution",
+    "verified_at": "2026-06-20T02:07:23.110433Z"
+  },
+  "hashicorp/terraform/issue/38576": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-20T02:08:16.612283Z"
+  },
+  "hashicorp/terraform/issue/38451": {
+    "status": "rejected",
+    "note": "The answer is unanchored and opinion-like, giving a generic \u201cupgrade to 1.12+\u201d recommendation without citing a source, confirming the specific bug, or clearly tying it to a documented fix or duplicate issue.",
+    "verified_at": "2026-06-20T02:08:34.410268Z"
+  },
+  "hashicorp/terraform/issue/38418": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-20T02:08:46.803933Z"
+  },
+  "hashicorp/terraform/issue/38404": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-20T02:08:54.672319Z"
+  },
+  "hashicorp/terraform/issue/38273": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-20T02:09:03.436264Z"
+  },
+  "hashicorp/terraform/issue/38074": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-20T02:09:10.928588Z"
+  },
+  "hashicorp/terraform/issue/37601": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-20T02:10:19.817878Z"
+  },
+  "hashicorp/terraform/issue/37568": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-20T02:10:34.237481Z"
+  },
+  "hashicorp/terraform/issue/37562": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-20T02:12:10.506614Z"
+  },
+  "hashicorp/terraform/issue/37431": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-20T02:12:18.995733Z"
+  },
+  "hashicorp/terraform/issue/37261": {
+    "status": "rejected",
+    "note": "The answer is speculative (\u201cbest guess\u201d) and does not clearly confirm a fix with a concrete version or authoritative reference tied to the SSH issue or #30962, making it insufficiently anchored for acceptance.",
+    "verified_at": "2026-06-20T02:12:34.519844Z"
+  },
+  "hashicorp/terraform/issue/37151": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-20T02:12:44.112750Z"
+  },
+  "hashicorp/terraform/issue/37139": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-20T02:12:52.297235Z"
+  },
+  "hashicorp/terraform/issue/36866": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-20T02:13:05.651003Z"
+  },
+  "hashicorp/terraform/issue/36519": {
+    "status": "accepted",
+    "note": "The answer is well-anchored with protocol documentation, a specific upcoming fix (v1.11 .netrc support), and a relevant tracking issue (#29349), clearly explaining the credential-handling behavior in provider installation requests.",
+    "verified_at": "2026-06-20T02:13:39.516147Z"
+  },
+  "hashicorp/terraform/issue/36492": {
+    "status": "accepted",
+    "note": "Question is security-relevant (CVE applicability in Terraform vendored deps) and answer is anchored (maintainer explicitly states CVEs don\u2019t directly apply and references release upgrade path beyond v1.10). Both Q and A align and are consistent with a concrete release/version context.",
+    "verified_at": "2026-06-20T02:15:30.952576Z"
+  },
+  "hashicorp/terraform/issue/36319": {
+    "status": "rejected",
+    "note": "Question is security-relevant (dependency CVE applicability), but the answer is a general statement about scanner false positives and maintenance priority with no concrete confirmation, no version upgrade (v3.10.0 not mentioned), and no direct linkage to the reported vulnerability resolution, so it is not sufficiently anchored.",
+    "verified_at": "2026-06-20T02:16:32.589542Z"
+  },
+  "hashicorp/terraform/issue/36133": {
+    "status": "accepted",
+    "note": "Question is security-relevant (handling secrets in Terraform state), and the answer is anchored to concrete sources\u2014the provider plugin protocol constraint and HashiCorp\u2019s Ephemeral Values initiative\u2014providing a specific technical explanation rather than opinion or deflection.",
+    "verified_at": "2026-06-20T02:17:02.419843Z"
+  },
+  "hashicorp/terraform/issue/36113": {
+    "status": "accepted",
+    "note": "Question is security-relevant (S3 state locking/Object Lock integrity requirements), and the answer is anchored by a concrete fix version (Terraform 1.10.1) that directly resolves the reported behavior; Q and A are aligned and actionable.",
+    "verified_at": "2026-06-20T02:17:38.457360Z"
+  },
+  "hashicorp/terraform/issue/36067": {
+    "status": "accepted",
+    "note": "Question is security-relevant (whether reported CVEs apply to Terraform CLI), and the answer is anchored by a maintainer assessment that the CVEs are not applicable to Terraform CLI plus a concrete release reference (v1.10 dependency updates); Q and A match the thread\u2019s security applicability discussion.",
+    "verified_at": "2026-06-20T02:18:57.541516Z"
+  },
+  "hashicorp/terraform/issue/36011": {
+    "status": "accepted",
+    "note": "Question is security-relevant (authentication token handling for private registry downloads), and the answer is anchored by a concrete merged fix/workaround with a specific release target (Terraform v1.11); Q and A are directly aligned.",
+    "verified_at": "2026-06-20T02:19:17.978682Z"
+  },
+  "hashicorp/terraform/issue/35821": {
+    "status": "accepted",
+    "note": "Question is security-relevant (protecting secrets in tfstate), and the answer is anchored to a specific tracking issue (#516) plus the concrete ephemeral-values initiative; it directly addresses why hashing is not viable and points to the documented solution path.",
+    "verified_at": "2026-06-20T02:20:05.472528Z"
+  },
+  "hashicorp/terraform/issue/35690": {
+    "status": "accepted",
+    "note": "Question is security-relevant (Go runtime/CVE applicability to Terraform CLI), and the answer is anchored by a maintainer statement explicitly saying the CVEs do not directly affect Terraform plus noting a forthcoming runtime update; both Q and A align with a clear security applicability assessment.",
+    "verified_at": "2026-06-20T02:20:25.019286Z"
+  },
+  "hashicorp/terraform/issue/35515": {
+    "status": "accepted",
+    "note": "Question is clearly security-relevant (crash from malformed S3 module source leading to panic), and answer is anchored to a concrete upstream fix (go-getter PR #501) that directly resolves the crash; both Q and A align and include a verifiable remediation source.",
+    "verified_at": "2026-06-20T03:49:10.838064Z"
+  },
+  "hashicorp/terraform/issue/35011": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-20T03:49:28.656770Z"
+  },
+  "hashicorp/terraform/issue/34992": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-20T03:49:39.782796Z"
+  },
+  "hashicorp/terraform/issue/34897": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-20T03:49:46.960716Z"
+  },
+  "hashicorp/terraform/issue/34584": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-20T03:49:53.735107Z"
+  }
+}

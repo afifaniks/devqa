@@ -1,0 +1,81 @@
+\documentclass[10pt,conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+% The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{colortbl}
+\usepackage{url}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric,fit,backgrounds}
+\usepackage{listings}
+
+% Verbatim style for the raw mined thread (Fig.~\ref{fig:normalization}): keep
+% the reporter's text exactly as posted---fragmentary, with line breaks and
+% markup intact---so the figure conveys why a raw thread is not yet gradeable.
+\lstdefinestyle{rawthread}{
+  basicstyle=\scriptsize\ttfamily,
+  breaklines=true,
+  breakatwhitespace=false,
+  columns=fullflexible,
+  keepspaces=true,
+  frame=none,
+  framesep=0pt,
+  aboveskip=2pt,belowskip=2pt,
+  xleftmargin=0pt,xrightmargin=0pt,
+  literate={’}{'}1 {‘}{`}1 {“}{"}1 {”}{"}1 {…}{...}3,
+}
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+% ── Provisional numeric values ───────────────────────────────────────────────
+% Wrap every tweakable statistic in \dnum{...}. While \shownumstrue, these
+% render highlighted (colored) so they are easy to find and update as the data
+% grows. To remove all highlighting for a clean PDF, flip to \shownumsfalse.
+\newif\ifshownums\shownumstrue
+\newcommand{\dnum}[1]{\ifshownums\textcolor{red!75!black}{\textbf{#1}}\else#1\fi}
+
+\newcommand{\researchquestion}[2]{%
+  \vspace{0.4em}
+  \noindent\colorbox{gray!15}{%
+    \parbox{\dimexpr\linewidth-2\fboxsep}{%
+      \vspace{0.3em}%
+      \textbf{#1:} #2%
+      \vspace{0.3em}%
+    }%
+  }%
+  \vspace{0.4em}%
+}
+
+\begin{document}
+
+\title{SecDevQA: Can AI Agents Answer Developers' Security Queries During Bug Fixing Tasks?}
+
+\author{
+\IEEEauthorblockN{Anonymous Authors}
+}
+\maketitle
+
+\begin{abstract}
+Developers routinely raise security queries in open-source project forums---whether a disclosed vulnerability affects their specific usage, which release fixes it, or whether a proposed patch is sufficient---sometimes as an explicit question, sometimes as a vulnerability report whose resolution they need. Answering such queries often requires cross-referencing artifacts that live partly outside the codebase---advisories, fix commits, dependency manifests---yet no existing benchmark evaluates LLMs or coding agents on the security queries developers actually raise, nor on the artifact dependence those queries exhibit. We present \mbox{SecDevQA}, a benchmark of \dnum{[N]} developer security query--answer pairs mined from issue threads across \dnum{[K]} open-source repositories. Each pair is synthesized into a self-contained, resolution-free query with a thread-grounded gold answer, and labeled along two axes: its \emph{knowledge type}---whether a correct answer follows from general security knowledge (parametric) or requires project- or advisory-specific information (grounded)---and how the maintainer answered---by citing an \emph{external reference} (a CVE/GHSA identifier, a fixed version, a fix commit or pull request, or a documentation or issue link) or from explanation alone. We also annotate the artifact types the maintainer drew on. Systems are evaluated at the moment the query was raised: an agent receives tool access over a \emph{time-capped snapshot} of the project (repository at the last pre-report commit; issues, pull requests, and advisories published before the report), so that answering is reconstruction of the maintainer's reasoning rather than retrieval of the posted resolution. Grading is two-tiered and condition-aware: a deterministic identifier check scores each verifiable fact only under conditions where it is knowable, and a per-claim LLM judge---validated against human labels---scores the free-text remainder, with fabricated specifics reported separately as hallucinations. Analysis of the corpus yields a taxonomy of developer security query categories and an empirical map from categories to required artifact types; selectively granting and withholding artifact access to LLMs, and coding agents quantifies the marginal value of each artifact type per category.
+\end{abstract}
+
+\begin{IEEEkeywords}
+software security, developer questions, benchmark, large language models, coding agents, question answering, mining software repositories
+\end{IEEEkeywords}
+
+\input{sections/introduction}
+\input{sections/benchmark-construction}
+\input{sections/experimental-setup}
+\input{sections/threats-to-validity}
+\input{sections/related-work}
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}

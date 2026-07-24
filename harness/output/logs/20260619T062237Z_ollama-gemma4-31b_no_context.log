@@ -1,0 +1,42 @@
+$ /local/home/amamun/envs/devqa/bin/python -m harness answer --model ollama/gemma4:31b --condition no_context --limit 20 && /local/home/amamun/envs/devqa/bin/python -m harness grade --answers /local/home/amamun/projects/dev-questions/harness/output/answers_ollama-gemma4-31b_no_context.jsonl --judge ollama/gemma4:31b
+
+Resuming: 20 answers already in /local/home/amamun/projects/dev-questions/harness/output/answers_ollama-gemma4-31b_no_context.jsonl
+Model: ollama/gemma4:31b | condition: no_context | items: 20
+
+Done: 0 new answers, 20 skipped (already done), 0 errors
+Output: /local/home/amamun/projects/dev-questions/harness/output/answers_ollama-gemma4-31b_no_context.jsonl
+Next: python -m harness grade --answers /local/home/amamun/projects/dev-questions/harness/output/answers_ollama-gemma4-31b_no_context.jsonl
+Judge: ollama/gemma4:31b | answers: 20 from /local/home/amamun/projects/dev-questions/harness/output/answers_ollama-gemma4-31b_no_context.jsonl
+[1/20] ImageMagick/ImageMagick/issue/8690#1 ... partial
+[2/20] ImageMagick/ImageMagick/issue/8584#1 ... partial
+[3/20] ImageMagick/ImageMagick/issue/8582#1 ... incorrect
+[4/20] ImageMagick/ImageMagick/issue/8567#1 ... incorrect
+[5/20] ImageMagick/ImageMagick/issue/8557#1 ... incorrect
+[6/20] ImageMagick/ImageMagick/issue/8538#1 ... partial
+[7/20] ImageMagick/ImageMagick/issue/8535#1 ... partial
+[8/20] ImageMagick/ImageMagick/issue/8494#1 ... incorrect judge_incorrect_but_hard_fact_matched
+[9/20] ImageMagick/ImageMagick/issue/8318#1 ... incorrect
+[10/20] ImageMagick/ImageMagick/issue/8186#2 ... incorrect HALLUC
+[11/20] ImageMagick/ImageMagick/issue/8186#3 ... correct
+[12/20] ImageMagick/ImageMagick/issue/8184#1 ... incorrect HALLUC
+[13/20] ImageMagick/ImageMagick/issue/8038#1 ... incorrect HALLUC
+[14/20] ImageMagick/ImageMagick/issue/7941#1 ... correct
+[15/20] ImageMagick/ImageMagick/issue/7837#1 ... incorrect
+[16/20] ImageMagick/ImageMagick/issue/7832#1 ... incorrect
+[17/20] ImageMagick/ImageMagick/issue/7568#1 ... partial
+[18/20] ImageMagick/ImageMagick/issue/7562#1 ... incorrect
+[19/20] ImageMagick/ImageMagick/issue/7446#1 ... partial
+[20/20] auth0/node-jsonwebtoken/issue/957#1 ... correct
+
+Graded: 20 total (0 errors this run) → /local/home/amamun/projects/dev-questions/harness/output/grades_ollama-gemma4-31b_no_context.jsonl
+
+Outcome by knowledge type:
+  grounded    correct    2
+  grounded    incorrect  8
+  grounded    partial    5
+  parametric  correct    1
+  parametric  incorrect  3
+  parametric  partial    1
+Hallucination rate: 3/20
+Hard-fact recall (gradeable under condition): 3/7
+Cross-check flags for human review: 1 records

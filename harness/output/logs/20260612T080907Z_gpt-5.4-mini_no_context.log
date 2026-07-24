@@ -1,0 +1,19 @@
+$ /local/home/amamun/envs/devqa/bin/python -m harness answer --model gpt-5.4-mini --condition no_context --limit 2 --force && /local/home/amamun/envs/devqa/bin/python -m harness grade --answers /local/home/amamun/projects/dev-questions/harness/output/answers_gpt-5.4-mini_no_context.jsonl --judge gpt-5.4
+
+Model: gpt-5.4-mini | condition: no_context | items: 2
+[1/2] axios/axios/issue/6545#1 ... ok (2126 chars)
+[2/2] auth0/node-jsonwebtoken/issue/706#1 ... ok (1969 chars)
+
+Done: 2 new answers, 0 skipped (already done), 0 errors
+Output: /local/home/amamun/projects/dev-questions/harness/output/answers_gpt-5.4-mini_no_context.jsonl
+Next: python -m harness grade --answers /local/home/amamun/projects/dev-questions/harness/output/answers_gpt-5.4-mini_no_context.jsonl
+Resuming: 2 already graded in /local/home/amamun/projects/dev-questions/harness/output/grades_gpt-5.4-mini_no_context.jsonl
+Judge: gpt-5.4 | answers: 2 from /local/home/amamun/projects/dev-questions/harness/output/answers_gpt-5.4-mini_no_context.jsonl
+
+Graded: 2 total (0 errors this run) → /local/home/amamun/projects/dev-questions/harness/output/grades_gpt-5.4-mini_no_context.jsonl
+
+Outcome by knowledge type:
+  grounded    correct    1
+  grounded    partial    1
+Hallucination rate: 0/2
+Hard-fact recall (gradeable under condition): 1/1

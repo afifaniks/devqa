@@ -4,11 +4,12 @@ Uses the official `ollama` Python library (pip install ollama).
 """
 
 import json
+
 import ollama
 
 # Models to use per stage — change these based on what you have pulled
-STAGE1_MODEL = "gpt-oss:120b"  # broad category classification
-STAGE2_MODEL = "gpt-oss:120b"  # specific question classification
+STAGE1_MODEL = "gemma4:31b"  # broad category classification
+STAGE2_MODEL = "gemma4:31b"  # specific question classification
 
 
 def is_running():
@@ -57,7 +58,7 @@ def generate(prompt, model, system=None, max_tokens=500, retries=3):
     return None
 
 
-def generate_json(prompt, model, system=None, max_tokens=500):
+def generate_json(prompt, model, system=None, max_tokens=500, usage_log=None, stage=None):
     """
     Like generate() but parses and returns JSON.
     Uses Ollama's native JSON format mode, with fallback extraction.

@@ -1,0 +1,145 @@
+import { useState } from "react";
+import { Paper, Group, Badge, Text, Code, Stack, Button, Box, Collapse } from "@mantine/core";
+import { IconChevronRight, IconChevronDown } from "@tabler/icons-react";
+import { api } from "../../api.js";
+import { VERDICT_COLOR } from "../../theme.js";
+import { outcomeOf, claimColor } from "../../lib/outcomes.js";
+import { FactChips } from "../FactChips.jsx";
+import { RubricGrades } from "../RubricGrades.jsx";
+
+const pre = { whiteSpace: "pre-wrap", wordBreak: "break-word", fontSize: 12, maxHeight: 320, overflow: "auto" };
+
+// One run's full prediction for a question: response, deterministic hard-fact
+// tier, judge claims, hallucinations, and (for agents) the tool transcript.
+export function DetailColumn({ runName, alias, cell, qidSlug }) {
+  const [tr, setTr] = useState(null);
+  const [showResp, setShowResp] = useState(false);
+  // runName is a compare column spec `run` or `run@judge-slug`; transcripts and answers
+  // live under the bare run name, so strip the judge before any path lookup.
+  const [bareRun, judge] = runName.split("@");
+
+  const header = (
+    <Group gap={6} mb={8} wrap="nowrap">
+      {alias && <Badge size="sm" variant="filled" color="azure">{alias}</Badge>}
+      <Text ff="monospace" size="xs" fw={600} style={{ wordBreak: "break-all" }}>{bareRun}</Text>
+      {judge && <Badge size="xs" variant="light" color="teal" style={{ flex: "none" }}>judge: {judge}</Badge>}
+    </Group>
+  );
+
+  if (!cell) {
+    return (
+      <Paper withBorder p="sm" radius="md" bg="var(--mantine-color-default)">
+        {header}
+        <Text size="xs" c="dimmed" fs="italic">— not answered in this run —</Text>
+      </Paper>
+    );
+  }
+
+  const o = outcomeOf(cell);
+  const loadTr = async () => {
+    try { setTr(await api.transcript(bareRun, qidSlug)); }
+    catch { setTr({ transcript: [{ step: 0, type: "no transcript found" }] }); }
+  };
+
+  return (
+    <Paper withBorder p="sm" radius="md" bg="var(--mantine-color-default)">
+      {header}
+
+      <Group gap={6} mb={8}>
+        <Badge size="sm" variant="light" color={VERDICT_COLOR[o] || "gray"}>{o}</Badge>
+        {cell.hallucinated && <Badge size="sm" variant="light" color="orange">hallucinated</Badge>}
+        {(cell.flags || []).map((f, i) => <Badge key={i} size="sm" variant="light" color="yellow">{f}</Badge>)}
+        {cell.n_tool_calls != null && <Text size="xs" c="dimmed">{cell.n_tool_calls} tool calls</Text>}
+        {cell.runtime_secs != null && <Text size="xs" c="dimmed">{cell.runtime_secs}s</Text>}
+      </Group>
+
+      {cell.hard_facts?.length > 0 && (
+        <Box mb="sm">
+          <Text size="xs" tt="uppercase" fw={600} c="dimmed" mb={4}>Hard facts</Text>
+          <FactChips facts={cell.hard_facts} />
+        </Box>
+      )}
+
+      {cell.rubric_grades?.length > 0 ? (
+        <Box mb="sm">
+          <Text size="xs" tt="uppercase" fw={600} c="dimmed" mb={4}>Rubric grading</Text>
+          <RubricGrades grades={cell.rubric_grades} scores={cell.scores}
+                        hallucinations={cell.hallucinations} compact />
+        </Box>
+      ) : cell.claims?.length > 0 && (
+        <Box mb="sm">
+          <Text size="xs" tt="uppercase" fw={600} c="dimmed" mb={4}>Judge claims (legacy)</Text>
+          <Stack gap={6}>
+            {cell.claims.map((c, i) => (
+              <Group key={i} gap={8} align="baseline" wrap="nowrap">
+                <Badge size="sm" variant="light" color={claimColor(c.verdict)}>{c.verdict}</Badge>
+                <Text size="sm" c="dimmed">{c.claim}</Text>
+              </Group>
+            ))}
+            {(cell.hallucinations || []).map((h, i) => (
+              <Group key={`h${i}`} gap={8} align="baseline" wrap="nowrap">
+                <Badge size="sm" variant="light" color="orange">halluc</Badge>
+                <Text size="sm" c="dimmed">{h.assertion || String(h)}</Text>
+              </Group>
+            ))}
+          </Stack>
+        </Box>
+      )}
+
+      {/* Response collapsed by default — rubric grading is the focus; open to read the
+          full answer. Errors always show (no point hiding a failure). */}
+      {cell.error ? (
+        <Code block c="red" style={pre}>{cell.error}</Code>
+      ) : (
+        <Box>
+          <Group
+            gap={6} mb={showResp ? 6 : 0} wrap="nowrap"
+            onClick={() => setShowResp(v => !v)} style={{ cursor: "pointer" }}
+          >
+            {showResp ? <IconChevronDown size={14} /> : <IconChevronRight size={14} />}
+            <Text size="xs" tt="uppercase" fw={600} c="dimmed">Response</Text>
+            {!showResp && (
+              <Text size="xs" c="dimmed" truncate style={{ flex: 1, minWidth: 0 }}>
+                {cell.response}
+              </Text>
+            )}
+          </Group>
+          <Collapse in={showResp}>
+            <Code block style={pre}>{cell.response}</Code>
+          </Collapse>
+        </Box>
+      )}
+
+      {cell.tool_calls_by_group && Object.keys(cell.tool_calls_by_group).length > 0 && (
+        <Text size="xs" c="dimmed" ff="monospace" mt={6}>
+          {Object.entries(cell.tool_calls_by_group).map(([g, n]) => `${g}:${n}`).join("  ")}
+        </Text>
+      )}
+
+      {cell.has_transcript && (
+        <Box mt="sm">
+          <Group justify="space-between" mb={4}>
+            <Text size="xs" tt="uppercase" fw={600} c="dimmed">Transcript</Text>
+            <Button size="compact-xs" variant="subtle" onClick={loadTr}>load</Button>
+          </Group>
+          {tr && (
+            <Stack gap={4}>
+              {!(tr.transcript || []).length && (
+                <Text size="xs" c="dimmed">No tool steps recorded for this item.</Text>
+              )}
+              {(tr.transcript || []).map((s, i) => (
+                <Box key={i} pl="sm" style={{ borderLeft: "2px solid var(--mantine-color-default-border)" }}>
+                  <Text ff="monospace" size="xs" fw={600}>
+                    #{s.step} {s.type === "tool" ? `${s.tool} ${JSON.stringify(s.args)}` : s.type}
+                  </Text>
+                  {s.result && <Code block style={{ ...pre, maxHeight: 180 }}>{s.result}</Code>}
+                  {s.stdout && <Code block style={{ ...pre, maxHeight: 180 }}>{s.stdout}</Code>}
+                </Box>
+              ))}
+            </Stack>
+          )}
+        </Box>
+      )}
+    </Paper>
+  );
+}

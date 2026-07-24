@@ -1,0 +1,404 @@
+\section{Benchmark Construction}
+\dnum{[The numeric data throughout the paper will be iteratively updated, hence they are colored and bold]}
+\label{sec:benchmark-construction}
+
+SecDevQA is built in three phases. \textbf{(1)~Query sourcing}
+(\S\ref{sec:phase-sourcing}) selects source repositories from the GitHub
+Advisory Database and mines their issue and discussion threads.
+\textbf{(2)~QA pair extraction and verification} (\S\ref{sec:phase-extraction})
+runs a two-stage LLM pipeline that detects and extracts candidate security
+query--answer (Q\&A) pairs---together with the artifact types and externally
+verifiable facts each answer draws on---after which the authors
+manually verify every candidate for inclusion. \textbf{(3)~Synthesis and
+coding} (\S\ref{sec:phase-normalization}) turns each verified pair into one or
+more self-contained, gradeable evaluation items---each carrying a dual-verified
+per-item grading rubric (\S\ref{sec:rubric-prep})---under independent dual
+review, and inductively codes the pairs---open coding followed by higher-level
+axial coding---toward a taxonomy of developer security queries.
+
+\input{figures/benchmark-pipeline}
+
+\subsection{Security Query}
+\label{sec:security-def}
+
+We adopt the standard security construct from dependable computing: the
+preservation of \textbf{confidentiality}, \textbf{integrity}, and \textbf{availability} (CIA) against a
+deliberate \emph{adversary}~\cite{avizienis2004taxonomy}. A thread is a
+\emph{security query} when its information need concerns a compromise of one of
+these properties by an adversary crossing a \emph{trust
+boundary}~\cite{shostack2014threat}---a party able to gain unauthorized access,
+escalate privilege, bypass a control, tamper with state, deny service to others,
+or expose private data. This need may be to \emph{assess} whether such a
+compromise is possible or to \emph{identify}, \emph{track}, or \emph{remediate}
+one already disclosed; a query asking which commit fixes a given CVE is a
+security query no less than one asking whether a weakness exists. We judge each
+thread by this criterion rather than by surface cues: a cited CVE, GHSA, or
+advisory is corroborating evidence, not a requirement, and many in-scope queries
+cite none.
+
+\subsection{Query Sourcing}
+\label{sec:phase-sourcing}
+
+\subsubsection{Repository Selection}
+\label{sec:repo-selection}
+
+To avoid hand-picking projects in a way that could bias the query distribution, we draw the source repositories from an external, independent maintained catalogue of security activity: the GitHub Advisory Database. We clone the database (snapshot \dnum{2026-06-04}; \dnum{31{,}213} reviewed advisories) and parse every reviewed GHSA entry, extracting the GitHub repositories referenced by each advisory and, for each repository, the number of advisories that carry a documented fix version. This yields \dnum{9{,}102} distinct repositories that have appeared in at least one reviewed advisory. We then apply three pre-specified filters intended to keep repositories that are
+both security-active and practically minable:
+
+\begin{enumerate}
+  \item \textbf{Security activity:} at least \dnum{10} advisories with a
+        documented fix version, so that the project has a substantive, externally
+        catalogued security history;
+  \item \textbf{Popularity:} at least \dnum{1{,}000} GitHub stars, as a proxy for
+        a real user base whose developers raise security queries;
+  \item \textbf{Maintenance:} a push within one week (as of \dnum{06-06-2026}) and not archived, so that threads reflect current practice.
+\end{enumerate}
+
+Applying the advisory-count filter leaves \dnum{440} repositories; adding the
+popularity and maintenance filters leaves \dnum{344}. To enforce language and
+ecosystem diversity rather than concentrating on whichever ecosystem happens to
+have the most advisories, we rank the survivors by fix-bearing advisory count
+within each package ecosystem (npm, PyPI, RubyGems, etc.) and retain the top
+repositories per ecosystem, producing a diverse candidate pool spanning
+\dnum{ten} ecosystems.
+
+From this pool we are mining repositories incrementally. The current corpus
+comprises the \dnum{ten} repositories in Table~\ref{tab:repos}, spanning
+\dnum{three} languages (Python, JavaScript, Ruby) and a range of
+security-sensitive domains:
+HTTP clients (\texttt{requests}, \texttt{urllib3}, \texttt{axios}),
+cryptography (\texttt{pyca/cryptography}), image processing (\texttt{Pillow}),
+web frameworks (\texttt{express}, \texttt{fastapi}, \texttt{rails}),
+authentication (\texttt{node-jsonwebtoken}), and payment integration
+(\texttt{stripe-node}). The selection deliberately mixes repositories with a
+large catalogued advisory history with widely used libraries in domains where
+security queries are common but formal advisories are sparser, so that the
+corpus is not skewed toward projects with heavyweight advisory processes
+(\S\ref{sec:verification} describes the per-repository cap that enforces this).
+
+\subsubsection{Thread Mining}
+\label{sec:mining}
+
+For each repository we retrieve the issues since \dnum{2024-01 to 2026-05} and
+discussion threads and flatten them into ordered comment sequences. We bound the
+window deliberately: our goal is not to harvest every security query--answer pair a
+project has ever produced, but to collect a corpus large and diverse enough to
+support the taxonomy and evaluation in this study. Recent threads also better
+reflect current libraries, advisories, and developer practice. Additionally, we only considered
+the closed issues as they are more likely to contain resolved queries.
+
+\subsection{QA Pair Extraction and Verification}
+\label{sec:phase-extraction}
+
+\subsubsection{LLM Detection and Extraction}
+\label{sec:extraction}
+
+Security query--answer pairs are a sparse minority scattered across thousands of
+mostly-functional issues, and confirming one requires reading a thread end to
+end, so manual triage across tens of thousands of threads is impractical. We
+instead use a two-stage LLM pipeline as a \emph{prefilter} that reads every
+thread and surfaces likely candidates, turning intractable full-text triage into
+tractable verification over a small candidate set.
+
+\textbf{Stage~1 (detection).} An LLM (GPT-5.4-mini) reads each thread and decides whether it
+contains a genuine developer security query---an explicit question, or a security concern raised in a vulnerability or bug report paired with a substantive answer. Because this stage
+is a prefilter feeding human verification, we deliberately prompt it to favor
+\emph{recall} over precision (\dnum{Prompt Reference}): the cost of a false positive is a few seconds of
+reviewer time at the verification stage, whereas a false negative silently drops
+a real pair from the corpus with no opportunity for recovery \dnum{Need to set a validation report}. 
+We accordingly set a permissive \dnum{0.70} confidence threshold and instruct the model to surface
+borderline threads rather than discard them. The downstream \dnum{39\%} rejection
+rate (\S\ref{sec:verification}) is the expected, acceptable price of this
+recall-oriented design.
+
+\textbf{Stage~2 (extraction).} For threads passing Stage~1, a second prompt
+extracts the specific query and answer comments, the role of the answerer
+(maintainer, contributor, commenter, or self-answer), the artifact types the
+answer draws on (\S\ref{sec:annotation}), and any externally
+\emph{verifiable facts} the answer states---CVE/GHSA/OSV identifiers, fixed version
+numbers, fix commit SHAs, fix PR references, and advisory URLs.
+
+This pipeline produced \dnum{XXXXX} candidate pairs across the \dnum{ten}
+repositories. We intentionally extract candidates broadly at this stage and rely
+on manual verification, rather than the LLM, to make the final inclusion
+decision.
+
+\subsubsection{Manual Verification}
+\label{sec:verification}
+
+Every candidate pair is reviewed by both authors through a purpose-built
+annotation interface that presents the full thread alongside the extracted
+query, answer, role, artifacts, and verifiable facts. A pair is \emph{accepted}
+only if it satisfies the inclusion criteria: the query is a security query in
+the sense of \S\ref{sec:security-def}---its resolution turns on a potential
+compromise of confidentiality, integrity, or availability by an adversary
+crossing a trust boundary---the answer is substantive and information-providing,
+and the query and answer are attributable to distinct, identifiable comments.
+Pairs whose faults involve no adversary and no trust boundary (e.g.\ ordinary
+functional or robustness bugs), that are unanswerable without information absent
+from the thread, or that are mis-extracted are \emph{rejected}; the reviewer
+records a short reason for each rejection.
+
+To prevent the most security-active projects from dominating the corpus, we cap
+the number of verified pairs retained per repository at \dnum{25}. This keeps the
+corpus balanced across projects, languages, and security domains rather than
+skewed toward the few repositories with the densest advisory history. In the
+current corpus the cap does not yet bind---every repository falls at or below it
+(the largest, \texttt{requests}, contributes \dnum{24} pairs)---but it fixes the
+composition policy as mining scales to more and larger repositories.
+
+Of the \dnum{XXXXX} candidates, \dnum{158} (\dnum{60.8\%}) were accepted and
+\dnum{102} were rejected---a rejection rate that, given the recall-oriented
+prefilter, is expected and underscores why LLM extraction alone is insufficient
+and human verification is required. \dnum{Report inter reviewer agreement} No single repository exceeds \dnum{15.2\%} of
+the verified pairs. The accepted pairs are answered predominantly by project
+maintainers (\dnum{104} of \dnum{158}), with the remainder from
+contributors~(\dnum{26}), other commenters~(\dnum{18}), and the original poster
+self-answering~(\dnum{10}). Threads span \dnum{2020--2026} and contain a median
+of \dnum{4} comments (mean \dnum{5.7}, max \dnum{41}).
+
+Inclusion does not require an answer to point to an artifact: it turns only on
+the criteria above. Instead, we \emph{record} whether each answer cites an
+\emph{external reference}---a CVE/GHSA/CWE/OSV identifier, a fixed version, a fix
+commit or PR, or an issue, advisory, documentation, or other external link---and
+treat this as an observed property rather than a filter. The answer cites at least
+one such reference in \dnum{80\%} of verified pairs; the remaining \dnum{20\%}
+resolve the query from explanation alone and are graded by the judge, and we
+retain them in full so the taxonomy is not biased toward only those queries that
+resolve to a citable artifact---some security queries are answered correctly
+without one, and that is itself a finding. The
+subset of references that are checkable identifiers additionally anchors
+deterministic grading; the most common are fixed version numbers (\dnum{47} pairs)
+and advisory URLs (\dnum{44}), followed by fix PRs (\dnum{26}), CVE identifiers
+(\dnum{24}), fix commits (\dnum{21}), and GHSA identifiers (\dnum{14}). These
+identifiers are spot-checked against NVD, GHSA, and OSV at construction time, and
+the advisory-database snapshot date is recorded with the release to support future
+re-verification.
+
+\subsubsection{Artifact-Type and Verifiable-Fact Annotation}
+\label{sec:annotation}
+
+Each verified pair carries an \texttt{artifacts\_needed} list recording which
+artifact types the maintainer's answer drew on, and a structured
+\texttt{hard\_facts} record. The artifact-type distribution
+(Table~\ref{tab:artifacts}) shows that answering these queries is rarely a
+matter of reading source code alone: documentation and project source dominate,
+but advisories, pull-request and commit history, dependency manifests, and
+external references (RFCs, registries, upstream issues) each appear in a
+non-trivial fraction of answers. This spread is what motivates the per-artifact
+context conditions in the evaluation (\S\ref{sec:experimental-setup}): different
+query categories lean on different artifact types, and the annotation makes
+that dependency measurable.
+
+\subsection{QA Synthesis and Coding}
+\label{sec:phase-normalization}
+
+\subsubsection{QA Synthesis}
+\label{sec:normalization}
+
+A verified thread is not yet a gradeable item: the query is embedded in a
+multi-comment exchange, leans on earlier comments (``the error above''), and
+often sits in a thread whose later comments---or title---already disclose the
+resolution. Handing such a thread to a model under test would leak the answer and
+conflate reading comprehension with security reasoning. We therefore synthesize
+each verified pair into one or more self-contained \emph{(query, answer)}
+items with a single \texttt{GPT-5.5} pass that is then human-verified, under one
+governing constraint: each item must stay faithful to what was really raised and
+answered. Because a security query surfaces as often as a vulnerability or bug
+report as it does as an explicit question, synthesis renders the developer's
+information need as a self-contained query regardless of its original surface
+form, without importing any detail the thread does not contain.
+Each item carries the synthesized query and thread-grounded gold answer, the
+report time $t_\theta$ (the issue's creation time), the knowledge-type label
+below, the artifact types the answer drew on (\S\ref{sec:annotation}), and the
+verifiable-fact record---partitioned into \emph{subject} facts (CVE/GHSA/CWE/OSV
+identifiers a reporter cites as a premise) and \emph{fix} facts (fixed versions,
+fix PRs/commits, advisory URLs that constitute the resolution).
+Figure~\ref{fig:normalization} contrasts a raw mined thread with the item it
+becomes, and makes the transformation concrete; we describe its components next.
+
+\input{figures/normalization-example}
+
+\noindent\textbf{Self-contained, resolution-free queries.}
+The query preserves every reporter-supplied specific verbatim (versions,
+OS/runtime, configuration, error and stack-trace text, code and
+proof-of-concept) and resolves dangling references against earlier comments, but
+never states its own resolution: a fix fact introduced \emph{as the answer} is
+withheld, so the item stays an open query rather than a fill-in-the-blank. To
+make this auditable we retain the verbatim original comment and run a
+deterministic leak check that flags any fix fact appearing in the query
+without having been stated by a participant \emph{before} the maintainer's
+answer---such an identifier can only have been imported from the answer, whereas
+a fix the reporter cited earlier is legitimate context. Authors reviewed the
+flagged items and found them to be predominantly false positives. Flagged items are
+corrected in the human pass, and we report the residual leak rate.
+
+\noindent\textbf{Thread-grounded answers.}
+The gold answer faithfully distills how the maintainer answered, drawn strictly
+from the thread; the synthesis must not add facts, fixes, or reasoning the thread
+lacks. A terse pointer---``fixed in \#932, released 9.0.2''---is kept as exactly
+that. We do not fetch external advisories or patch diffs to enrich the gold
+answer, which would fabricate ground truth the thread never contained; instead
+the artifacts it points to are recorded as \texttt{grounding\_sources} and the
+referenced diffs are resolved at grading time under the with-context conditions
+(\S\ref{sec:experimental-setup}), so a terse pointer can still corroborate a
+richer but correct model response.
+
+\noindent\textbf{Knowledge type.}
+Each item is also labelled by \emph{knowledge type}, recording whether answering
+it requires this project at all. A \emph{parametric} item is answerable from
+general security knowledge or a public standard the query cites. In
+\texttt{fastapi/fastapi}~\#5837,\footnote{\url{https://github.com/fastapi/fastapi/issues/5837}}
+a login cookie never reaches the browser, and the answer is a browser-platform
+rule rather than a fact about FastAPI: a \texttt{SameSite=None} cookie must also
+set \texttt{Secure}. A \emph{contextual} item instead rests on this project's own
+behavior, releases, or a source the thread points to. In
+\texttt{auth0/node-jsonwebtoken}~\#921,\footnote{\url{https://github.com/auth0/node-jsonwebtoken/issues/921}}
+the answer ``the fix was merged in \#932 and released in 9.0.2'' cannot be
+produced without the repository. A deterministic rule hardens the label: an answer stating
+a fix fact about the project's own code or releases is forced \emph{contextual},
+so a borderline judgment never admits an unanswerable pair into the no-context
+test. The label exists for the evaluation, where it keeps the no-context
+condition a fair capability test and serves as a contamination probe
+(\S\ref{sec:experimental-setup}).
+
+% \noindent\textbf{Decomposition.}
+% A thread sometimes bundles distinct needs---``am I affected?'' and ``how do I
+% remediate?''---each answered separately by the maintainer. We split into multiple
+% items only when the reporter genuinely raised distinct queries \emph{and} the
+% maintainer answered more than one; we never invent a sub-query the thread does
+% not answer.
+
+\noindent\textbf{Outcome.}
+An initial pass over \dnum{50} threads yields \dnum{56} items (\dnum{3} threads
+decomposed), \dnum{44} contextual and \dnum{12} parametric. Contextual pairs
+predominate, since an answer that cites the project's own fix is contextual by
+construction, but the \dnum{21\%} parametric share (secure-configuration,
+secure-API-usage, advisory-triage, and design-rationale queries) keeps the
+no-context capability test and the contamination analysis
+well populated. Every item
+retains its verbatim original, and \emph{two researchers independently review
+every pair}, letting us report Cohen's $\kappa$ on the knowledge-type label and
+the leak and context-completeness judgments over the whole benchmark and
+reconcile all disagreements before evaluation.
+
+\subsubsection{Per-Item Grading Rubrics}
+\label{sec:rubric-prep}
+
+Model answers to these queries are open-ended free text. An $n$-gram overlap
+with the gold answer is therefore an inadequate measure of correctness, and a
+single holistic quality score from an LLM judge is both noisy and difficult to
+audit~\cite{zheng2023judging,liu2023geval}. We adopt \emph{rubric-based}
+evaluation, which decomposes each judgment into atomic, separately verifiable
+criteria and has become established practice for making LLM-as-judge scoring
+more reliable and interpretable~\cite{ye2024flask,kim2024prometheus2}. Because
+every security query has its own notion of a correct answer, one item turning on
+a specific cookie attribute and another on a particular fixed release, the
+criteria must be \emph{instance-specific} rather than drawn from a fixed global
+scale~\cite{kim2025biggen}. We accordingly author one rubric per evaluation item
+during construction, following the use of expert-written, per-example rubrics to
+anchor evaluation in other high-stakes grounded domains~\cite{arora2025healthbench}.
+
+\noindent\textbf{Criteria.}
+Each criterion carries an \emph{axis}. \emph{Correctness} criteria state the
+load-bearing facts or verdicts that must hold, such as whether the project is
+affected, the fixed version, or the root cause the answer establishes.
+\emph{Completeness} criteria state the supporting coverage a thorough answer
+adds, such as the underlying mechanism, a scope caveat, or an alternative valid
+fix. The axis is a kind rather than a numeric weight: correctness \emph{gates}
+the item outcome while completeness only contributes coverage, so a missed
+load-bearing fact cannot be offset by surrounding detail, reflecting that
+incorrect security guidance is unsafe however thorough it is. Figure \ref{fig:rubric-example} shows an example of the generated rubrics across two axes for a transitive dependency-related query in \texttt{axios/axios} repository. Every
+criterion must be supported by a verbatim span of \emph{answer-side} evidence,
+namely the gold answer, the maintainer's reply, a referenced fix diff, an
+advisory, or a recorded verifiable fact, and a criterion grounded only in the
+query (which the candidate already receives) is discarded so that the rubric
+cannot reward a model for restating the question. We keep each rubric short, at
+most \dnum{five} criteria, so that a long checklist of easy criteria does not
+saturate and flatten the differences between systems.
+
+\input{figures/rubric-example}
+
+\noindent\textbf{Resolution timing.}
+Criteria are graded as facts a competent developer could supply rather than
+strings to reproduce, and each rubric is keyed to when the fix existed relative
+to the report time $t_\theta$ (\S\ref{sec:normalization}) so that it matches how
+the maintainer answered. When the fix predated $t_\theta$ it was already
+retrievable from the project, and the expected contribution, as it was for the
+maintainer, is to \emph{identify} it. The rubric then credits naming the fix (a
+pull request, commit, or release) and records equivalent acceptable forms,
+rather than requiring that the patch be reproduced. When the fix landed only
+afterward it was not retrievable at query time, so the rubric instead asks
+whether a proposed remediation moves in the \emph{same direction} as the
+eventual fix, and it marks that criterion unknowable at $t_\theta$ so that it is
+never scored under conditions that lacked the artifact. For
+\texttt{node-jsonwebtoken}~\#921, whose maintainer answer points to an upstream
+fix, the resulting rubric pairs a correctness criterion (establish that the issue
+is fixed and name pull request~\#932 or release~9.0.2) with a completeness
+criterion naming the weakness it addresses. A response that conveys the
+resolution by another route satisfies the former through its recorded
+alternatives, whereas one that merely echoes the reporter's symptom satisfies
+neither.
+
+\noindent\textbf{Verification.}
+We draft each rubric with \texttt{GPT-5.5}, prompting it with the synthesized
+query, the thread-grounded gold answer, and every artifact the answer draws on,
+namely the maintainer's reply, any referenced fix diff, the advisory, and the
+verifiable-fact record, subject to the axis, grounding, and length constraints
+above. Two researchers then independently verify every rubric criterion, editing
+or removing any criterion not grounded in the answer-side evidence, and we
+reconcile all disagreements before grading. We report inter-rater agreement on
+the criteria as Cohen's $\kappa = \dnum{0.00}$. A rubric is frozen once both
+reviewers accept it, and the rare item whose fix diff is too large to ground a
+criterion automatically is flagged for manual authoring rather than dropped.
+
+\subsubsection{Open and Axial Coding}
+\label{sec:open-coding}
+
+We code the verified pairs in two stages: inductive \emph{open coding} of each
+pair, followed by higher-level \emph{axial coding} that collapses the open codes
+into a smaller set of categories. Open coding characterizes \emph{what}
+developers raise; the coding unit is the verbatim query--answer exchange. An LLM
+coder (\texttt{gpt-5.4-mini}, accessed through a uniform LiteLLM interface) is
+prompted to assign one or two short noun-phrase codes naming the security
+concern at issue, given the issue title and body, the query--answer summary, the full
+thread, and the focal query and answer. As with detection, an LLM-assisted
+first pass makes coding tractable and consistent at corpus scale while keeping a
+human in control of the final code: the first author then reviewed every pair in
+the same annotation interface, free to edit or replace any LLM-assigned code, so
+the resulting codebook reflects human judgment rather than model output. The
+first-author verification note is deliberately withheld from the coder to avoid
+anchoring its codes to the acceptance rationale.
+
+This pass produced \dnum{261} code instances over the \dnum{158} pairs
+(\dnum{1--2} per pair), with \dnum{235} distinct codes---a fine-grained
+vocabulary that reflects how specific developer security queries are
+(e.g.\ ``missing subject alternative names,'' ``HTTPS redirect scheme
+downgrade,'' ``transitive dependency vulnerability''). The single most frequent
+code, \emph{transitive dependency vulnerability}, accounts for \dnum{12}
+instances; the long tail of singleton codes confirms that the corpus is not
+dominated by a handful of canned queries.
+
+Axial coding then groups the open codes into a smaller set of higher-level
+categories that anchor the per-category analysis in RQ2--RQ3. The grouping is
+emergent---codes are merged by conceptual affinity rather than fitted to a
+predefined list---but each resulting category is named and delimited by the
+security concern it captures: the property placed at risk (confidentiality,
+integrity, or availability) and the developer's underlying intent, consistent
+with the construct of \S\ref{sec:security-def}. This keeps the categories
+grounded in security semantics rather than surface phrasing, so the taxonomy
+reflects distinct classes of security query rather than an ad hoc partition of
+keywords. Table~\ref{tab:axial} presents a \emph{preliminary, author-proposed}
+grouping of the \dnum{235} codes into \dnum{eleven} candidate categories,
+reported here to convey the shape of the emerging taxonomy. The two largest
+groups---HTTP request and response security (SSRF, redirects, headers, cookies)
+and TLS and certificate validation---together cover roughly half the corpus,
+consistent with the HTTP-client and web-framework projects mined so far. We
+stress that this grouping is not final: category names and boundaries will be
+fixed through axial coding with an independent second coder, and we will report
+inter-rater agreement (Cohen's $\kappa$) on a held-out sample, together with a
+saturation analysis as the corpus grows.
+
+\input{tables/repo-stats}
+\input{tables/artifacts}
+\input{tables/axial-categories}
