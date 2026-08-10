@@ -3443,5 +3443,945 @@
     "status": "rejected",
     "note": "",
     "verified_at": "2026-06-20T03:49:53.735107Z"
+  },
+  "BerriAI/litellm/issue/30235": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-25T21:39:19.019074Z"
+  },
+  "BerriAI/litellm/issue/30210": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-25T21:39:25.244298Z"
+  },
+  "BerriAI/litellm/issue/30200": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-25T21:39:33.652190Z"
+  },
+  "BerriAI/litellm/issue/30198": {
+    "status": "accepted",
+    "note": "budget_enforcement_bypass; resource_governance_control_failure; fixed_in_pr_30201",
+    "verified_at": "2026-06-25T21:39:51.479014Z"
+  },
+  "BerriAI/litellm/issue/29923": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-25T21:40:12.407781Z"
+  },
+  "BerriAI/litellm/issue/29463": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-25T21:40:19.362075Z"
+  },
+  "BerriAI/litellm/issue/29145": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-25T21:40:28.437861Z"
+  },
+  "BerriAI/litellm/issue/29073": {
+    "status": "rejected",
+    "note": "budget_ceiling_bypass; delegated_authority_inconsistency; privilege_escalation_via_key_update",
+    "verified_at": "2026-06-29T21:00:26.335797Z"
+  },
+  "BerriAI/litellm/issue/28993": {
+    "status": "accepted",
+    "note": "dependency_cve_applicability; starlette_host_header_vulnerability; fixed_in_v1_84_plus",
+    "verified_at": "2026-06-25T21:40:56.138757Z"
+  },
+  "BerriAI/litellm/issue/28884": {
+    "status": "accepted",
+    "note": "streaming_parser_edge_case; metadata_only_chunk_handling; fixed_in_pr_29167",
+    "verified_at": "2026-06-25T21:41:11.020833Z"
+  },
+  "BerriAI/litellm/issue/28283": {
+    "status": "accepted",
+    "note": "redis_race_condition_spend_counter; distributed_metering_inflation; fixed_by_atomic_setnx_init",
+    "verified_at": "2026-06-25T21:41:30.172588Z"
+  },
+  "BerriAI/litellm/issue/28146": {
+    "status": "accepted",
+    "note": "internal_parameter_leakage; request_sanitization_failure; fixed_in_pr_27913_29447",
+    "verified_at": "2026-06-25T21:42:09.090818Z"
+  },
+  "BerriAI/litellm/issue/27855": {
+    "status": "accepted",
+    "note": "distributed_state_inconsistency; alerting_false_positive_bug; cross_worker_cache_mismatch",
+    "verified_at": "2026-06-25T21:42:33.218010Z"
+  },
+  "BerriAI/litellm/issue/27745": {
+    "status": "accepted",
+    "note": "billing_negative_cost_vulnerability; prompt_caching_metering_bug; fixed_in_v1_83_14_commit_3c9bf32611",
+    "verified_at": "2026-06-25T21:42:51.801768Z"
+  },
+  "BerriAI/litellm/issue/27657": {
+    "status": "accepted",
+    "note": "access_control_sync_bug; object_permission_missing_upsert; mcp_authorization_enforcement_failure",
+    "verified_at": "2026-06-25T21:43:15.516908Z"
+  },
+  "BerriAI/litellm/issue/27394": {
+    "status": "accepted",
+    "note": "budget_enforcement_bypass; team_associated_key_logic_flaw; user_budget_not_enforced_with_team_id",
+    "verified_at": "2026-06-25T21:43:46.647340Z"
+  },
+  "BerriAI/litellm/issue/27118": {
+    "status": "accepted",
+    "note": "streaming_metadata_loss; safety_ratings_propagation_fix; fixed_in_v1_83_14_stable",
+    "verified_at": "2026-06-25T21:44:06.830857Z"
+  },
+  "BerriAI/litellm/issue/26777": {
+    "status": "accepted",
+    "note": "dependency_pin_risk; blocked_cve_patch_adoption; supply_chain_version_constraints_issue",
+    "verified_at": "2026-06-25T21:44:24.162868Z"
+  },
+  "BerriAI/litellm/issue/26407": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-25T21:44:37.368119Z"
+  },
+  "BerriAI/litellm/issue/26154": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-25T21:44:48.000163Z"
+  },
+  "BerriAI/litellm/issue/24952": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-25T21:44:57.129749Z"
+  },
+  "BerriAI/litellm/issue/24843": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-25T21:45:05.160864Z"
+  },
+  "BerriAI/litellm/issue/24542": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-25T21:45:11.985171Z"
+  },
+  "BerriAI/litellm/issue/24517": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-25T21:45:18.160185Z"
+  },
+  "BerriAI/litellm/issue/24515": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-25T21:45:24.110514Z"
+  },
+  "BerriAI/litellm/issue/24512": {
+    "status": "accepted",
+    "note": "supply_chain_pypi_malware; pth_autorun_credential_theft; confirmed_package_compromise_incident",
+    "verified_at": "2026-06-25T21:45:40.844806Z"
+  },
+  "BerriAI/litellm/issue/24348": {
+    "status": "accepted",
+    "note": "guardrail_response_status_mismatch; security_control_signal_fix; fixed_in_pr_27617",
+    "verified_at": "2026-06-25T21:45:56.770888Z"
+  },
+  "BerriAI/litellm/issue/24234": {
+    "status": "accepted",
+    "note": "request_routing_prefix_bug_fix; openrouter_model_name_handling; fixed_in_main_v1_83_10_stable",
+    "verified_at": "2026-06-25T21:46:17.573763Z"
+  },
+  "BerriAI/litellm/issue/24160": {
+    "status": "accepted",
+    "note": "pii_redaction_offset_mismatch; anonymization_pipeline_leak; fixed_in_pr_24998",
+    "verified_at": "2026-06-25T21:47:45.315271Z"
+  },
+  "BerriAI/litellm/issue/23648": {
+    "status": "accepted",
+    "note": "authorization_header_leak_to_upstream; oauth_token_misrouting; credential_forwarding_vulnerability",
+    "verified_at": "2026-06-25T21:48:07.449229Z"
+  },
+  "BerriAI/litellm/issue/23572": {
+    "status": "accepted",
+    "note": "auth_header_precedence_bug; credential_overwrite_prevention; adc_auth_bypass_fix",
+    "verified_at": "2026-06-25T21:48:25.933917Z"
+  },
+  "BerriAI/litellm/issue/23561": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-25T21:48:31.014389Z"
+  },
+  "BerriAI/litellm/issue/23540": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-25T21:48:38.566248Z"
+  },
+  "BerriAI/litellm/issue/23150": {
+    "status": "accepted",
+    "note": "spend_tracking_bypass_callback_interference; metrics_logging_loss; streaming_accounting_integrity_failure",
+    "verified_at": "2026-06-25T21:48:55.569735Z"
+  },
+  "BerriAI/litellm/issue/22949": {
+    "status": "accepted",
+    "note": "bedrock_guardrail_enforcement_bypass; malformed_url_path_control_failure; guardrail_intervention_not_detected",
+    "verified_at": "2026-06-25T21:49:14.777956Z"
+  },
+  "BerriAI/litellm/issue/22478": {
+    "status": "accepted",
+    "note": "model_metadata_token_limit_misconfiguration; bedrock_request_validation_failure; fixed_in_pr_23334",
+    "verified_at": "2026-06-25T21:50:04.619483Z"
+  },
+  "BerriAI/litellm/issue/22205": {
+    "status": "accepted",
+    "note": "cve_assignment_confirmation; privilege_escalation_tracking; sandbox_escape_vulnerability_acknowledged",
+    "verified_at": "2026-06-25T21:50:41.984595Z"
+  },
+  "BerriAI/litellm/issue/21959": {
+    "status": "accepted",
+    "note": "dependency_cve_remediation_nodejs; docker_image_security_patch; version_upgrade_fix_cve_2025_55130",
+    "verified_at": "2026-06-25T21:51:01.404918Z"
+  },
+  "BerriAI/litellm/issue/21814": {
+    "status": "accepted",
+    "note": "azure_entra_auth_header_misuse; bearer_token_vs_api_key_confusion; authentication_scheme_mismatch_bug",
+    "verified_at": "2026-06-25T21:51:23.573219Z"
+  },
+  "BerriAI/litellm/issue/21377": {
+    "status": "accepted",
+    "note": "fallback_routing_not_found_bypass; order_based_failover_fix; router_retry_logic_correction",
+    "verified_at": "2026-06-25T21:51:42.595229Z"
+  },
+  "BerriAI/litellm/issue/21249": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-25T21:51:50.520811Z"
+  },
+  "BerriAI/litellm/issue/20419": {
+    "status": "accepted",
+    "note": "internal_metadata_request_leakage; api_bridge_parameter_sanitization_fix; litellm_params_boundary_enforcement",
+    "verified_at": "2026-06-25T21:52:09.776710Z"
+  },
+  "BerriAI/litellm/issue/20325": {
+    "status": "accepted",
+    "note": "mcp_server_information_disclosure_risk; virtual_key_access_control_limitation; endpoint_enumeration_leakage_concern",
+    "verified_at": "2026-06-25T21:52:29.098774Z"
+  },
+  "BerriAI/litellm/issue/20242": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-25T21:52:46.452660Z"
+  },
+  "BerriAI/litellm/issue/19977": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-25T21:52:57.121209Z"
+  },
+  "BerriAI/litellm/issue/19909": {
+    "status": "accepted",
+    "note": "stream_timeout_ttft_enforcement_fix; streaming_request_timeout_control; pr_19389_first_token_abort_behavior",
+    "verified_at": "2026-06-25T21:56:42.204597Z"
+  },
+  "BerriAI/litellm/issue/19663": {
+    "status": "accepted",
+    "note": "jwt_login_response_body_exposure; reverse_proxy_cookie_httpOnly_workaround; authentication_flow_session_handling_fix",
+    "verified_at": "2026-06-25T21:57:05.615335Z"
+  },
+  "BerriAI/litellm/issue/19418": {
+    "status": "accepted",
+    "note": "multi_tag_routing_isolation_fix; data_residency_routing_policy_correction; fixed_in_1_81_15",
+    "verified_at": "2026-06-25T21:58:44.034929Z"
+  },
+  "BerriAI/litellm/issue/19194": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-25T21:58:57.598675Z"
+  },
+  "BerriAI/litellm/issue/18953": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-25T21:59:26.249094Z"
+  },
+  "keycloak/keycloak/issue/46879": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-25T23:25:05.279342Z"
+  },
+  "keycloak/keycloak/issue/46845": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-25T23:25:18.192294Z"
+  },
+  "keycloak/keycloak/issue/46757": {
+    "status": "accepted",
+    "note": "This is a clear security-relevant dependency vulnerability assessment in Keycloak involving a flagged Jackson core deserialization/parsing vulnerability (GHSA-72hv-8253-57qq)",
+    "verified_at": "2026-06-25T22:17:25.693428Z"
+  },
+  "keycloak/keycloak/issue/46742": {
+    "status": "accepted",
+    "note": "This is a clear security design flaw discussion involving potential SSRF-like behavior via certificate revocation lookups in Keycloak.",
+    "verified_at": "2026-06-25T22:17:45.713074Z"
+  },
+  "keycloak/keycloak/issue/50316": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-25T22:55:20.374345Z"
+  },
+  "keycloak/keycloak/issue/49993": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-25T22:55:43.792676Z"
+  },
+  "keycloak/keycloak/issue/49960": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-25T22:55:52.666507Z"
+  },
+  "keycloak/keycloak/issue/49794": {
+    "status": "accepted",
+    "note": "This is a security-relevant authorization validation issue in Keycloak involving token introspection audience (aud) enforcement, which directly affects OAuth2/OIDC access control correctness.",
+    "verified_at": "2026-06-25T22:56:03.741227Z"
+  },
+  "keycloak/keycloak/issue/49766": {
+    "status": "accepted",
+    "note": "This is a clear authorization regression affecting role-based access control (RBAC) in Keycloak, which is a core security control mechanism.",
+    "verified_at": "2026-06-25T22:56:20.323732Z"
+  },
+  "keycloak/keycloak/issue/49753": {
+    "status": "accepted",
+    "note": "This is a security-relevant OAuth2/OIDC token validation issue in Keycloak involving bearer token introspection and audience (aud) enforcement, which directly affects authorization correctness between clients.",
+    "verified_at": "2026-06-25T22:56:55.590535Z"
+  },
+  "keycloak/keycloak/issue/49720": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-25T22:57:29.747217Z"
+  },
+  "keycloak/keycloak/issue/49693": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-25T22:57:39.954810Z"
+  },
+  "keycloak/keycloak/issue/49139": {
+    "status": "accepted",
+    "note": "This is a clear security-relevant build-time initialization issue in Keycloak involving FIPS crypto provider setup, which directly affects cryptographic security guarantees and system integrity.",
+    "verified_at": "2026-06-25T22:58:39.652837Z"
+  },
+  "keycloak/keycloak/issue/49137": {
+    "status": "accepted",
+    "note": "This is a security-relevant authentication bootstrap issue in Keycloak involving initial admin account creation bypass, which is a high-impact security control (privileged access setup).",
+    "verified_at": "2026-06-25T22:59:00.884377Z"
+  },
+  "keycloak/keycloak/issue/49094": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-25T22:59:16.198319Z"
+  },
+  "keycloak/keycloak/issue/48828": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-25T22:59:23.743469Z"
+  },
+  "keycloak/keycloak/issue/48827": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-25T22:59:29.948897Z"
+  },
+  "keycloak/keycloak/issue/48825": {
+    "status": "accepted",
+    "note": "This is a security-relevant cryptographic design discussion in Keycloak concerning SAML 2.0 signature and encryption mechanisms, which are core to federated authentication security.",
+    "verified_at": "2026-06-25T22:59:44.798015Z"
+  },
+  "keycloak/keycloak/issue/48805": {
+    "status": "accepted",
+    "note": "This is a valid security vulnerability applicability assessment involving HTTP request smuggling (CVE-2026-42581 / GHSA-xxqh-mfjm-7mv9) in the context of Keycloak.",
+    "verified_at": "2026-06-25T23:00:08.869658Z"
+  },
+  "keycloak/keycloak/issue/48802": {
+    "status": "rejected",
+    "note": "The extracted answer is too minimal and non-substantive, providing no technical explanation of applicability, no affected versions, and no concrete security analysis for Keycloak or its runtime stack.",
+    "verified_at": "2026-06-25T23:00:44.963256Z"
+  },
+  "keycloak/keycloak/issue/48593": {
+    "status": "accepted",
+    "note": "This is a security-relevant TLS/mTLS configuration behavior issue in Keycloak involving truststore inheritance for the management HTTPS interface, which directly affects authentication and transport security boundaries.",
+    "verified_at": "2026-06-25T23:01:06.198346Z"
+  },
+  "keycloak/keycloak/issue/48592": {
+    "status": "accepted",
+    "note": "This is a valid security-relevant performance + data exposure behavior issue in Keycloak involving LDAP user federation lookups during UMA/token issuance, which can impact authentication flow efficiency and backend load under authorization evaluation.",
+    "verified_at": "2026-06-25T23:01:29.929990Z"
+  },
+  "keycloak/keycloak/issue/48498": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-25T23:01:44.439487Z"
+  },
+  "keycloak/keycloak/issue/48432": {
+    "status": "accepted",
+    "note": "This is a security-relevant authentication/session management correctness issue in Keycloak involving logout behavior in client adapters, which directly affects session invalidation and front-channel logout security guarantees.",
+    "verified_at": "2026-06-25T23:02:04.082565Z"
+  },
+  "keycloak/keycloak/issue/48428": {
+    "status": "accepted",
+    "note": "This is a clear authentication and token-bound security control issue in Keycloak involving DPoP (Demonstration of Proof-of-Possession) enforcement, which is a core OAuth2/OIDC token security mechanism.",
+    "verified_at": "2026-06-25T23:02:47.694330Z"
+  },
+  "keycloak/keycloak/issue/48414": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-25T23:03:01.527332Z"
+  },
+  "keycloak/keycloak/issue/48412": {
+    "status": "accepted",
+    "note": "This is a security-relevant transport authentication design question in Keycloak involving mTLS truststore configuration and certificate validation strategy, which directly impacts how client authentication is enforced at the TLS layer.",
+    "verified_at": "2026-06-25T23:03:22.260071Z"
+  },
+  "keycloak/keycloak/issue/48388": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-25T23:03:34.518307Z"
+  },
+  "keycloak/keycloak/issue/48324": {
+    "status": "accepted",
+    "note": "This is a clear security-relevant authorization and data isolation issue in Keycloak involving UMA ticket filtering logic and cache consistency across resource servers, which can impact correct enforcement of access control boundaries.",
+    "verified_at": "2026-06-25T23:03:46.567506Z"
+  },
+  "keycloak/keycloak/issue/48275": {
+    "status": "accepted",
+    "note": "This is a clear dependency supply-chain security assessment in Keycloak involving a Bouncy Castle PKIX vulnerability (GHSA-wg6q-6289-32hp / CVE-2026-5588), which is a cryptographic validation issue affecting certificate handling.",
+    "verified_at": "2026-06-25T23:04:02.849250Z"
+  },
+  "keycloak/keycloak/issue/48273": {
+    "status": "accepted",
+    "note": "This is a clear authentication security behavior question in Keycloak involving login error handling for temporarily locked/disabled accounts, which directly relates to user enumeration risk.",
+    "verified_at": "2026-06-25T23:04:19.999497Z"
+  },
+  "keycloak/keycloak/issue/48272": {
+    "status": "accepted",
+    "note": "This is a security-relevant authentication and brute-force protection behavior issue in Keycloak involving concurrent login request handling under brute-force detection, which directly impacts account protection mechanisms.",
+    "verified_at": "2026-06-25T23:05:06.837088Z"
+  },
+  "keycloak/keycloak/issue/48269": {
+    "status": "accepted",
+    "note": "This is a clear security-relevant authentication configuration and trust-management issue in Keycloak involving client attestation (ABCA) and trusted key provisioning, which directly impacts authentication integrity and trust boundary enforcement.",
+    "verified_at": "2026-06-25T23:05:25.843274Z"
+  },
+  "keycloak/keycloak/issue/48049": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-25T23:05:51.375486Z"
+  },
+  "keycloak/keycloak/issue/48036": {
+    "status": "accepted",
+    "note": "This is a clear security-relevant CORS and token validation issue in Keycloak involving origin control derived from JWT claims (azp/web origins)",
+    "verified_at": "2026-06-25T23:06:11.837590Z"
+  },
+  "keycloak/keycloak/issue/48035": {
+    "status": "accepted",
+    "note": "This is a security-relevant cryptographic validation policy discussion in Keycloak involving OID4VCI key attestation and certificate trust verification (CWE-295).",
+    "verified_at": "2026-06-25T23:10:21.211720Z"
+  },
+  "keycloak/keycloak/issue/47935": {
+    "status": "accepted",
+    "note": "This is a clear security-relevant authorization and injection-style validation issue in Keycloak involving client-controlled client_session_host being used in backchannel logout URL construction, which directly impacts trust boundaries in logout flows.",
+    "verified_at": "2026-06-25T23:11:06.250604Z"
+  },
+  "keycloak/keycloak/issue/47915": {
+    "status": "accepted",
+    "note": "This is a clear template engine security hardening issue in Keycloak involving FreeMarker ?new() class instantiation, which can lead to arbitrary object creation and potential OS command execution (Execute utility)\u2014a well-known high-risk template injection class.",
+    "verified_at": "2026-06-25T23:12:05.058847Z"
+  },
+  "keycloak/keycloak/issue/47740": {
+    "status": "accepted",
+    "note": "This is a clear authentication identity-matching issue in Keycloak involving SAML attribute mapping and email verification logic, which directly affects user account state and authentication flows.",
+    "verified_at": "2026-06-25T23:21:59.703431Z"
+  },
+  "keycloak/keycloak/issue/47681": {
+    "status": "accepted",
+    "note": "This is a clear security-relevant logging and input sanitization issue in Keycloak involving OIDC authorization endpoint parameter handling and log injection (CWE-117)",
+    "verified_at": "2026-06-25T23:22:59.402625Z"
+  },
+  "keycloak/keycloak/issue/47545": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-25T23:23:10.499215Z"
+  },
+  "keycloak/keycloak/issue/47486": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-25T23:23:17.012190Z"
+  },
+  "keycloak/keycloak/issue/47485": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-25T23:23:23.894315Z"
+  },
+  "keycloak/keycloak/issue/47314": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-25T23:23:31.873275Z"
+  },
+  "keycloak/keycloak/issue/47276": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-25T23:23:38.796474Z"
+  },
+  "keycloak/keycloak/issue/47256": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-25T23:24:30.188701Z"
+  },
+  "keycloak/keycloak/issue/47084": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-25T23:24:37.965654Z"
+  },
+  "keycloak/keycloak/issue/47078": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-25T23:24:44.682339Z"
+  },
+  "keycloak/keycloak/issue/46997": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-25T23:24:53.233421Z"
+  },
+  "keycloak/keycloak/issue/46705": {
+    "status": "accepted",
+    "note": "",
+    "verified_at": "2026-06-25T23:25:32.877743Z"
+  },
+  "crewAIInc/crewAI/issue/5917": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T02:43:17.842332Z"
+  },
+  "crewAIInc/crewAI/issue/5561": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T02:43:23.952154Z"
+  },
+  "crewAIInc/crewAI/issue/5520": {
+    "status": "accepted",
+    "note": "dependency vulnerability remediation; GHSA-pjjw-68hj-v9mw; answer anchored by remediation commit 2f48937c and directly addresses downstream exposure concern.",
+    "verified_at": "2026-06-26T02:43:35.238469Z"
+  },
+  "crewAIInc/crewAI/issue/5517": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T02:43:46.737153Z"
+  },
+  "crewAIInc/crewAI/issue/5510": {
+    "status": "accepted",
+    "note": "availability/security-hardening issue; import-time external LLM call introduces startup failure risk; answer provides concrete mitigation (lazy init + fallback + timeout) aligned with deployment safety concerns.",
+    "verified_at": "2026-06-26T02:44:08.964815Z"
+  },
+  "crewAIInc/crewAI/issue/5470": {
+    "status": "accepted",
+    "note": "spoofable inter-agent handshake identified; lack of trust fields enables impersonation; mitigation proposed via Ed25519 signature binding and A2A Agent Card protocol for standardized authenticated agent identity.",
+    "verified_at": "2026-06-26T02:44:33.689685Z"
+  },
+  "crewAIInc/crewAI/issue/5368": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T02:44:51.733237Z"
+  },
+  "crewAIInc/crewAI/issue/5262": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T02:44:58.372077Z"
+  },
+  "crewAIInc/crewAI/issue/5102": {
+    "status": "accepted",
+    "note": "security-relevant mitigation for prompt-injection/unauthorized agent action chaining; anchored by concrete implementation artifacts (hdp-crewai PyPI package and PR #5135); provides deployment-level hook integration addressing delegation provenance and scope enforcement.",
+    "verified_at": "2026-06-26T02:45:09.809330Z"
+  },
+  "crewAIInc/crewAI/issue/4993": {
+    "status": "accepted",
+    "note": "confirmed SQL injection vulnerability in SnowflakeSearchTool due to unsafe identifier interpolation; includes reproducible attack example, maintainer acknowledgment, and concrete mitigation via identifier validation + quoting; also references related second-order injection risk in NL2SQL tool.",
+    "verified_at": "2026-06-26T02:45:24.809989Z"
+  },
+  "crewAIInc/crewAI/issue/4875": {
+    "status": "accepted",
+    "note": "valid security gap in MCP protocol tool-calling model; addresses message integrity, identity authentication, replay protection, and tool poisoning risks; answer grounded in layered security architecture aligned with IETF draft-sharif-mcps-secure-mcp and OWASP MCP Top 10 threat model.",
+    "verified_at": "2026-06-26T02:45:44.701642Z"
+  },
+  "crewAIInc/crewAI/issue/4865": {
+    "status": "accepted",
+    "note": "confirmed XXE and XML parser DoS risk in Python standard XML library; mitigation via defusedxml drop-in replacement correctly addresses external entity expansion and XML bomb attack vectors; concrete secure coding fix provided.",
+    "verified_at": "2026-06-26T02:46:03.448167Z"
+  },
+  "crewAIInc/crewAI/issue/4789": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T02:46:20.523543Z"
+  },
+  "crewAIInc/crewAI/issue/4754": {
+    "status": "accepted",
+    "note": "security-relevant provenance and audit integrity enhancement; cryptographic receipt system (AAR v1.1, commit 0a24988) introduces tamper-evident multi-agent execution tracing via evidenceRef hash-linked attestations; addresses agent action non-repudiation and handoff integrity.",
+    "verified_at": "2026-06-26T02:46:55.240932Z"
+  },
+  "crewAIInc/crewAI/issue/4558": {
+    "status": "accepted",
+    "note": "capability enforcement architecture with OS-level sandbox boundary (seccomp-bpf + bwrap); CI evidence provided for default-deny execution model; includes formal capability token schema and runtime enforcement path confirming hard-gate boundary at syscall layer.",
+    "verified_at": "2026-06-26T02:47:15.473895Z"
+  },
+  "crewAIInc/crewAI/issue/4525": {
+    "status": "accepted",
+    "note": "unintended telemetry transmission despite tracing being disabled; network exfiltration to telemetry endpoint observed; resolved in version 1.5.0 and above with upgrade mitigation.",
+    "verified_at": "2026-06-26T02:47:45.799351Z"
+  },
+  "crewAIInc/crewAI/issue/4523": {
+    "status": "accepted",
+    "note": "security-relevant authorization enforcement design; addresses bypass risk where agents skip governance tools; mitigation via infrastructure-level enforcement requiring signed attestations for downstream execution, ensuring unauthenticated actions are rejected.",
+    "verified_at": "2026-06-26T02:48:10.631024Z"
+  },
+  "crewAIInc/crewAI/issue/4516": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T02:48:21.754398Z"
+  },
+  "crewAIInc/crewAI/issue/4495": {
+    "status": "accepted",
+    "note": "regression in tool-call parsing causing retry loop / missing argument handling; resolved via PR #4518 one-line fix in crew_agent_executor.py L722; impacts execution flow integrity and can manifest as resource exhaustion behavior.",
+    "verified_at": "2026-06-26T02:48:41.969779Z"
+  },
+  "crewAIInc/crewAI/issue/4122": {
+    "status": "accepted",
+    "note": "integration-level access and configuration issue in GithubSearchTool; includes private repository access bug and embedding fallback misconfiguration; resolved via local cache reset and PR #4088 fix, with explicit Bedrock embedding configuration required to prevent incorrect provider fallback.",
+    "verified_at": "2026-06-26T02:49:23.596069Z"
+  },
+  "crewAIInc/crewAI/issue/3602": {
+    "status": "accepted",
+    "note": "dependency-level vulnerability mitigation for LiteLLM; CVEs addressed via relaxation and optional removal of dependency constraint in recent releases; maintainer confirms resolution of affected CVE exposure.",
+    "verified_at": "2026-06-26T02:49:43.477013Z"
+  },
+  "crewAIInc/crewAI/issue/2962": {
+    "status": "accepted",
+    "note": "tool-call execution failure in QdrantVectorSearchTool due to message-role handling edge case; resolved in CrewAI v0.150.0 per release note; upgrade provides workaround/fix for index-out-of-range error in agent tool invocation flow.",
+    "verified_at": "2026-06-26T02:51:13.939826Z"
+  },
+  "crewAIInc/crewAI/issue/2945": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T02:51:24.281290Z"
+  },
+  "crewAIInc/crewAI/issue/2688": {
+    "status": "accepted",
+    "note": "AWS credential misconfiguration issue in Bedrock/Boto3 session handling; missing aws_session_token in temporary credentials causes authentication failure; resolved by including AWS_SESSION_TOKEN in boto3.Session initialization per documented fix.",
+    "verified_at": "2026-06-26T02:51:39.242417Z"
+  },
+  "crewAIInc/crewAI/issue/2647": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T02:51:51.099740Z"
+  },
+  "crewAIInc/crewAI/issue/2051": {
+    "status": "accepted",
+    "note": "security-relevant workflow integrity issue in async HITL execution; addressed via enterprise webhook-based pause/resume mechanism ensuring stateful continuation of Crew/Flow after human approval, as documented in CrewAI HITL enterprise guide.",
+    "verified_at": "2026-06-26T02:52:08.857239Z"
+  },
+  "crewAIInc/crewAI/issue/1757": {
+    "status": "accepted",
+    "note": "knowledge ingestion bug causing metadata/document mismatch in upsert pipeline; confirmed fix scheduled in version 0.86.1 addressing StringKnowledgeSource chunking metadata generation inconsistency.",
+    "verified_at": "2026-06-26T02:52:31.739657Z"
+  },
+  "crewAIInc/crewAI/issue/1178": {
+    "status": "accepted",
+    "note": "privacy/telemetry governance clarification; maintainer confirms base_url removal and GDPR non-PII classification of collected telemetry; defines CVE scope as issue #1177 rather than broader telemetry disablement behavior.",
+    "verified_at": "2026-06-26T02:53:07.725024Z"
+  },
+  "crewAIInc/crewAI/issue/1072": {
+    "status": "accepted",
+    "note": "telemetry/privacy policy clarification; states telemetry is anonymous and non-private per official documentation; addresses user concern about default data collection and provides policy reference for validation.",
+    "verified_at": "2026-06-26T02:53:27.019221Z"
+  },
+  "crewAIInc/crewAI/issue/1022": {
+    "status": "accepted",
+    "note": "unintended telemetry transmission incident confirmed as maintainer-side error; caused runtime impact; acknowledged fix applied and follow-up library patch planned to prevent recurrence of telemetry endpoint calls.",
+    "verified_at": "2026-06-26T02:53:42.486469Z"
+  },
+  "crewAIInc/crewAI/issue/949": {
+    "status": "accepted",
+    "note": "tool invocation/dispatch bug in CrewAI causing missing or misinterpreted custom tool execution; resolved in PR #925 but not yet released to pip at time of report; impacts tool routing integrity and argument handling.",
+    "verified_at": "2026-06-26T02:54:02.545629Z"
+  },
+  "crewAIInc/crewAI/issue/524": {
+    "status": "accepted",
+    "note": "tool invocation/dispatch bug in CrewAI causing missing or misinterpreted custom tool execution; resolved in PR #925 but not yet released to pip at time of report; impacts tool routing integrity and argument handling.",
+    "verified_at": "2026-06-26T02:54:18.567328Z"
+  },
+  "crewAIInc/crewAI/issue/467": {
+    "status": "accepted",
+    "note": "dependency vulnerability remediation workflow; Trivy high findings addressed via Dependabot-enabled automated PRs updating poetry lockfile to patched versions; standard supply-chain security mitigation approach.",
+    "verified_at": "2026-06-26T02:54:42.183587Z"
+  },
+  "crewAIInc/crewAI/issue/439": {
+    "status": "accepted",
+    "note": "embedding provider schema validation bug affecting Ollama support in PDFSearchTool; resolved via embedchain>=0.1.107 upgrade enabling correct local embedding configuration and preserving data locality.",
+    "verified_at": "2026-06-26T02:55:18.559961Z"
+  },
+  "crewAIInc/crewAI/issue/372": {
+    "status": "accepted",
+    "note": "telemetry/privacy design discussion; confirms anonymous telemetry model and ongoing security hardening (HTTPS/encryption); indicates opt-out capability is under consideration but not finalized at time of response.",
+    "verified_at": "2026-06-26T02:55:55.528864Z"
+  },
+  "crewAIInc/crewAI/issue/254": {
+    "status": "accepted",
+    "note": "telemetry disablement supported via documented environment/configuration options; maintainer confirms updated documentation includes instructions for disabling telemetry to comply with network/proxy restrictions and prevent outbound calls to telemetry endpoint.",
+    "verified_at": "2026-06-26T02:56:20.259374Z"
+  },
+  "crewAIInc/crewAI/issue/241": {
+    "status": "accepted",
+    "note": "telemetry privacy issue involving unintended hostname collection; maintainer confirms removal in next release and migration to HTTPS with anonymization improvements, addressing sensitive-data leakage concerns in telemetry pipeline.",
+    "verified_at": "2026-06-26T02:56:36.644096Z"
+  },
+  "crewAIInc/crewAI/issue/222": {
+    "status": "accepted",
+    "note": "unintended OpenAI API usage due to default LLM fallback in hierarchical process; fixed in 0.5.3 via manager_llm attribute correction, resolving cross-provider routing and quota leakage issue.",
+    "verified_at": "2026-06-26T02:57:07.239312Z"
+  },
+  "open-webui/open-webui/issue/26244": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:11:39.498580Z"
+  },
+  "open-webui/open-webui/issue/25975": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:11:56.046002Z"
+  },
+  "open-webui/open-webui/issue/25920": {
+    "status": "accepted",
+    "note": "access-control vulnerability; recursive folder deletion bypassed chat.delete permission; maintainer-confirmed fix in dev branch",
+    "verified_at": "2026-06-26T16:12:13.811346Z"
+  },
+  "open-webui/open-webui/issue/25898": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:12:36.378353Z"
+  },
+  "open-webui/open-webui/issue/25496": {
+    "status": "accepted",
+    "note": "event-listener cleanup bug in shared socket; off(event) removes all listeners causing cross-instance interference; fixed via handler-bound off() pattern",
+    "verified_at": "2026-06-26T16:12:59.539826Z"
+  },
+  "open-webui/open-webui/issue/24992": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:26:02.117052Z"
+  },
+  "open-webui/open-webui/issue/24940": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:26:33.316589Z"
+  },
+  "open-webui/open-webui/issue/24893": {
+    "status": "accepted",
+    "note": "access control bypass via workspace model referencing private base model; prior security bug fixed; now enforces base-model permission inheritance",
+    "verified_at": "2026-06-26T16:26:51.933911Z"
+  },
+  "open-webui/open-webui/issue/24869": {
+    "status": "accepted",
+    "note": "workspace model access control regression; private base model dependency causes \"model not found\"; confirmed via issues #24829 and #23946",
+    "verified_at": "2026-06-26T16:27:11.894920Z"
+  },
+  "open-webui/open-webui/issue/24758": {
+    "status": "accepted",
+    "note": "tool-call reconstruction bug; KB rewrite/interrupted execution causes missing function_call_output; orphan tool_calls lead to provider validation failures; handled via convert_output_to_messages cleanup",
+    "verified_at": "2026-06-26T16:27:34.830270Z"
+  },
+  "open-webui/open-webui/issue/24751": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:27:59.945310Z"
+  },
+  "open-webui/open-webui/issue/24730": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:28:12.511024Z"
+  },
+  "open-webui/open-webui/issue/24714": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:28:22.019731Z"
+  },
+  "open-webui/open-webui/issue/24620": {
+    "status": "accepted",
+    "note": "MCP server trust boundary; user-supplied MCP treated as code-execution/exfiltration surface; admin gating required by design due to capability exposure (stdio, persistent sessions)",
+    "verified_at": "2026-06-26T16:29:11.032021Z"
+  },
+  "open-webui/open-webui/issue/24618": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:29:22.368836Z"
+  },
+  "open-webui/open-webui/issue/24565": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:29:31.128239Z"
+  },
+  "open-webui/open-webui/issue/24431": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:29:38.608506Z"
+  },
+  "open-webui/open-webui/issue/24348": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:29:45.726759Z"
+  },
+  "open-webui/open-webui/issue/24311": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:30:02.549217Z"
+  },
+  "open-webui/open-webui/issue/24168": {
+    "status": "accepted",
+    "note": "workspace model access control bug; indirect exposure of private base model via workspace model; known security issue fixed; enforce base-model permission inheritance",
+    "verified_at": "2026-06-26T16:30:17.799585Z"
+  },
+  "open-webui/open-webui/issue/24129": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:30:45.629153Z"
+  },
+  "open-webui/open-webui/issue/24096": {
+    "status": "accepted",
+    "note": "share-link authorization regression; chat_id vs share_id mismatch caused inconsistent access control; fixed in commit cde21b9f6dc11575a668484f42440824ec5a4fae",
+    "verified_at": "2026-06-26T16:31:08.160426Z"
+  },
+  "open-webui/open-webui/issue/23755": {
+    "status": "accepted",
+    "note": "SSL verification bypass configuration inconsistency; AIOHTTP_CLIENT_SESSION_SSL not applied consistently across urllib/websocket/aiohttp in ComfyUI integration; fix unifies SSL context handling",
+    "verified_at": "2026-06-26T16:31:38.511570Z"
+  },
+  "open-webui/open-webui/issue/23703": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:32:32.562410Z"
+  },
+  "open-webui/open-webui/issue/23406": {
+    "status": "accepted",
+    "note": "model visibility access control gap; client-side cache allows stale access after model becomes private; requires server-side authorization (403) enforcement and/or model update invalidation",
+    "verified_at": "2026-06-26T16:33:04.044124Z"
+  },
+  "open-webui/open-webui/issue/23400": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:33:20.219708Z"
+  },
+  "open-webui/open-webui/issue/23343": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:33:32.910169Z"
+  },
+  "open-webui/open-webui/issue/23175": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:33:40.201979Z"
+  },
+  "open-webui/open-webui/issue/23134": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:33:48.245636Z"
+  },
+  "open-webui/open-webui/issue/22965": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:34:05.006653Z"
+  },
+  "open-webui/open-webui/issue/22580": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:34:16.106023Z"
+  },
+  "open-webui/open-webui/issue/22526": {
+    "status": "accepted",
+    "note": "MCP tool output indirect prompt injection; untrusted tool data enters model context leading to instruction hijacking risk; aligns with OWASP Agentic AI Top 10 (goal hijack) and MCP CVE cluster; requires output isolation/mitigation",
+    "verified_at": "2026-06-26T16:34:56.523316Z"
+  },
+  "open-webui/open-webui/issue/22505": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:35:09.143645Z"
+  },
+  "open-webui/open-webui/issue/22217": {
+    "status": "accepted",
+    "note": "tool system is trusted-user only; tools execute arbitrary python code and can access filesystem including uploads; access must be restricted to admins/trusted users to prevent cross-user data exposure",
+    "verified_at": "2026-06-26T16:35:32.982004Z"
+  },
+  "open-webui/open-webui/issue/22206": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:35:51.076591Z"
+  },
+  "open-webui/open-webui/issue/21349": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:36:00.328375Z"
+  },
+  "open-webui/open-webui/issue/21348": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:36:10.571197Z"
+  },
+  "open-webui/open-webui/issue/20701": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:36:18.497671Z"
+  },
+  "open-webui/open-webui/issue/20641": {
+    "status": "accepted",
+    "note": "tool access control fix; builtin tools (including web search) can now be enabled/disabled per model via model editor; addresses native tool-calling tool availability control issue",
+    "verified_at": "2026-06-26T16:37:44.012550Z"
+  },
+  "open-webui/open-webui/issue/20595": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:37:58.127053Z"
+  },
+  "open-webui/open-webui/issue/20531": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:38:06.517981Z"
+  },
+  "open-webui/open-webui/issue/20048": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:38:17.759669Z"
+  },
+  "open-webui/open-webui/issue/19914": {
+    "status": "accepted",
+    "note": "authorization bypass in channels feature; global disable only affects UI visibility, not backend access control; users can still access /api/v1/channels/ and interact via direct URL/API calls",
+    "verified_at": "2026-06-26T16:38:43.217106Z"
+  },
+  "open-webui/open-webui/issue/19785": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:38:59.081038Z"
+  },
+  "open-webui/open-webui/issue/19778": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:39:08.122073Z"
+  },
+  "open-webui/open-webui/issue/19609": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:39:18.148176Z"
+  },
+  "open-webui/open-webui/issue/19556": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:39:34.537099Z"
+  },
+  "open-webui/open-webui/issue/19461": {
+    "status": "accepted",
+    "note": "Group model visibility/access-control inconsistency fixed in commit 69722ba9; affects private model visibility in group write contexts and /api/v1/models/list; fix targeted for .41 release; testing pending",
+    "verified_at": "2026-06-26T16:39:53.373552Z"
+  },
+  "open-webui/open-webui/issue/19360": {
+    "status": "accepted",
+    "note": "Cloned prompts/tools lose or reset access_control; prompts may incorrectly default to public or null permissions instead of inheriting original ACL; leads to potential unintended exposure; tools correctly default to private but inconsistency indicates access-control inheritance bug",
+    "verified_at": "2026-06-26T16:40:15.678377Z"
+  },
+  "open-webui/open-webui/issue/19328": {
+    "status": "rejected",
+    "note": "",
+    "verified_at": "2026-06-26T16:40:39.741552Z"
   }
 }
