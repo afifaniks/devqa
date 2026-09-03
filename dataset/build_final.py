@@ -16,7 +16,7 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
-BENCHMARK_DATA_PATH = ROOT / "dataset" / "security_benchmark_v3.jsonl"
+BENCHMARK_DATA_PATH = ROOT / "dataset" / "security_benchmark_filtered.jsonl"
 EVAL_PAIRS_PATH = ROOT / "dataset" / "eval_pairs.jsonl"
 OUTPUT_PATH = ROOT / "dataset" / "security_benchmark_final.jsonl"
 
